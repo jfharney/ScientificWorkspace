@@ -6,7 +6,6 @@ var app = express();
 
 var firewallMode = true;
 
-var hbs = require('hbs');
 
 var http = require('http');
 var url = require('url');

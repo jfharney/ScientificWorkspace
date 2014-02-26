@@ -6,7 +6,6 @@ var app = express();
 
 var firewallMode = true;
 
-var hbs = require('hbs');
 
 var http = require('http');
 var url = require('url');
@@ -52,6 +51,8 @@ exports.doQueryFiles = function(responseData,filePath) {
 	  							'}';
 		
 	  //console.log(fileResponseJSONStr);
+	  
+	  console.log('responseDataaaaa ' + responseData);
 	  
 	  var fileResponseJSONObj = JSON.parse(responseData);////JSON.parse(fileResponseJSONStr);//
 	  
