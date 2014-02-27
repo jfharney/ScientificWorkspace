@@ -339,7 +339,7 @@ module.exports =
                 else
                 {
                     var record = {};
-                    record["type"] = "tag";
+                    record.type = "tag";
                     results.forEach( function( row )
                     {
                         row.forEach( function( name, value, ts, ttl )
@@ -376,7 +376,7 @@ module.exports =
                 results.forEach( function( row )
                 {
                     var record = {};
-                    record["type"] = "tag";
+                    record.type = "tag";
                     row.forEach( function( name, value, ts, ttl )
                     {
                         if ( name === "uuid" )
@@ -393,9 +393,9 @@ module.exports =
         });
     },
 
-    // Creates or updates a tag with specified name and properties (in query)
-    // If tag is created/updated, call responds with newly created tag info in payload
-    tagPut : function ( reply, a_tagname, query )
+    // Creates a tag with specified name and properties (in query)
+    // If tag is created, call responds with newly created tag info in payload
+    tagPost : function ( reply, a_tagname, query )
     {
         // Enforce required query parameter(s)
         if ( query.uid === undefined )
@@ -403,27 +403,61 @@ module.exports =
 
         tagExistsByName( a_tagname, query.uid, function( tag_exists, a_tag_uuid )
         {
-            var qry;
             if ( tag_exists )
-                qry = "update tags set tagdesc = '"  + ((query.desc === undefined) ? "" : query.desc) + "', visibility = '"
-                      + ((query.visibility === undefined) ? "private" : query.visibility)
-                      + "', wtime = dateof(now()) where uuid = " + a_tag_uuid;
+                Err.sendError( reply, Err.CONFLICTING_REQUEST );
             else
-                qry = "insert into tags (uuid,tagdesc,tagname,uid,visibility,wtime) values (now(),'"
+            {
+                var qry = "insert into tags (uuid,tagdesc,tagname,uid,visibility,wtime) values (now(),'"
                       + ((query.desc === undefined) ? "" : query.desc) + "','" + a_tagname + "'," + query.uid + ",'"
                       + ((query.visibility === undefined) ? "private" : query.visibility) + "',dateof(now()))";
 
-            pool.cql( qry, [], function( err, results )
-            {
-                if ( err )
-                    Err.sendError( reply, err );
-                else
+                pool.cql( qry, [], function( err, results )
                 {
-                    var subquery = {};
-                    subquery.uid = query.uid;
-                    module.exports.tagGet( reply, a_tagname, subquery );
-                }
-            });
+                    if ( err )
+                        Err.sendError( reply, err );
+                    else
+                    {
+                        var subquery = {};
+                        subquery.uid = query.uid;
+                        module.exports.tagGet( reply, a_tagname, subquery );
+                    }
+                });
+            }
+        });
+    },
+
+
+    // Updates a tag with specified name and properties (in query)
+    // If tag is updated, call responds with newly created tag info in payload
+    tagPut : function ( reply, a_taguuid, query )
+    {
+        // Enforce required query parameter(s)
+        if ( query.uid === undefined )
+           throw Err.MISSING_REQUIRED_PARAM;
+
+        objectExists( a_taguuid, "tag", function( tag_exists )
+        {
+            if ( !tag_exists )
+                Err.sendError( reply, Err.INVALID_OBJECT );
+            else
+            {
+                var qry = "update tags set tagdesc = '"  + ((query.desc === undefined) ? "" : query.desc) + "', visibility = '"
+                      + ((query.visibility === undefined) ? "private" : query.visibility)
+                      + "', wtime = dateof(now()) where uuid = " + a_taguuid;
+
+                pool.cql( qry, [], function( err, results )
+                {
+                    if ( err )
+                        Err.sendError( reply, err );
+                    else
+                    {
+                        var subquery = {};
+                        subquery.uid = query.uid;
+                        subquery.uuid = a_taguuid;
+                        module.exports.tagQuery( reply, subquery );
+                    }
+                });
+            }
         });
     },
 
@@ -946,6 +980,7 @@ function shouldQuote( prop )
 {
     switch ( prop )
     {
+    case "uuid":
     case "uid":
     case "gid":
     case "jobid":

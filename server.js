@@ -206,6 +206,15 @@ function handleTagRequest( method, path, query, payload, reply )
         else
             throw Err.INVALID_REQUEST;
     }
+    else if ( method === "POST" )
+    {
+        if ( path.length === 3 )
+        {
+            DB.tagPost( reply, path[2], query );
+        }
+        else
+            throw Err.INVALID_REQUEST;
+    }
     else if ( method === "PUT" )
     {
         if ( path.length === 3 )
