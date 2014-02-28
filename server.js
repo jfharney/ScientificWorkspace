@@ -1,17 +1,8 @@
 
-
-// Exception values
-//TODO These need to be defined externally so they can be shared by db module
-var ERR_INVALID_REQUEST = -1;
-var ERR_INVALID_OBJECT  = -2;
-var ERR_INVALID_PROPERTY = -3;
-var ERR_MISSING_REQUIRE_PARAM = -4;
-
-var gHttp = require('http');
-var gUrl = require('url');
-//var gDB = require('./simdb');
-//var gDB = require('./mysqldb');
-var gDB = require('./cassdb');
+var Http = require('http');
+var Url = require('url');
+var Err = require('./errors');
+var DB = require('./cassdb');
 
 
 //=============================================================================
@@ -27,19 +18,19 @@ function handleUserRequest( method, path, query, payload, result )
     {
         if ( path.length === 2 )
         {
-        	console.log('result: ' + result + ' query: ' + query);
-            gDB.userQuery( result, query );
+            //console.log('result: ' + result + ' query: ' + query);
+            DB.userQuery( result, query );
         }
         else if ( path.length === 3 )
         {
-        	console.log('result: ' + result + ' path[2]: ' + path[2] + ' query: ' + query);
-            gDB.userGet( result, path[2], query );
+            //console.log('result: ' + result + ' path[2]: ' + path[2] + ' query: ' + query);
+            DB.userGet( result, path[2], query );
         }
         else
-            throw ERR_INVALID_REQUEST;
+            throw Err.INVALID_REQUEST;
     }
     else
-        throw ERR_INVALID_REQUEST;
+        throw Err.INVALID_METHOD;
 }
 
 
@@ -55,17 +46,17 @@ function handleGroupRequest( method, path, query, payload, result )
     {
         if ( path.length === 2 )
         {
-            gDB.groupQuery( result, query );
+            DB.groupQuery( result, query );
         }
         else if ( path.length === 3 )
         {
-            gDB.groupGet( result, path[2], query );
+            DB.groupGet( result, path[2], query );
         }
         else
-            throw ERR_INVALID_REQUEST;
+            throw Err.INVALID_REQUEST;
     }
     else
-        throw ERR_INVALID_REQUEST;
+        throw Err.INVALID_METHOD;
 }
 
 //=============================================================================
@@ -82,15 +73,15 @@ function handleJobRequest( method, path, query, payload, reply )
     {
         if ( path.length === 2 )
         {
-            gDB.jobQuery( reply, query );
+            DB.jobQuery( reply, query );
         }
         else if ( path.length === 3 )
         {
-            result = gDB.jobGet( reply, path[2], query );
+            result = DB.jobGet( reply, path[2], query );
         }
-        else throw ERR_INVALID_REQUEST;
+        else throw Err.INVALID_REQUEST;
     }
-    else throw ERR_INVALID_REQUEST;
+    else throw Err.INVALID_METHOD;
 }
 
 
@@ -108,15 +99,15 @@ function handleAppRequest( method, path, query, payload, reply )
     {
         if ( path.length === 2 )
         {
-            gDB.appQuery( reply, query );
+            DB.appQuery( reply, query );
         }
         else if ( path.length === 3 )
         {
-            gDB.appGet( reply, path[2], query );
+            DB.appGet( reply, path[2], query );
         }
-        else throw ERR_INVALID_REQUEST;
+        else throw Err.INVALID_REQUEST;
     }
-    else throw ERR_INVALID_REQUEST;
+    else throw Err.INVALID_METHOD;
 }
 
 
@@ -130,20 +121,60 @@ function handleFileRequest( method, path, query, payload, reply )
 
     if ( method === "GET" )
     {
-    	console.log('in server.js get for files');
+        //console.log('in server.js get for files');
         if ( path.length === 2 )
         {
-        	console.log('reply: ' + reply + ' query: ' + query);
-            gDB.filesGet( reply, query );
+            DB.filesGet( reply, query );
         }
         else
-            throw ERR_INVALID_REQUEST;
+            throw Err.INVALID_REQUEST;
     }
     else
-        throw ERR_INVALID_REQUEST;
+        throw Err.INVALID_METHOD;
 }
 
 
+//=============================================================================
+// ASSOCIATIONS Service Functions
+
+function handleAssociationRequest( method, path, query, payload, reply )
+{
+    // API:
+    // GET /host/associations?edge=(uuid)
+    // GET /host/associations?node=(uuid)
+    // PUT /host/associations?edge=(uuid)&node=(uuid)&type=x
+    // DEL /host/associations?edge=(uuid)&node=(uuid)
+
+    if ( method === "GET" )
+    {
+        if ( path.length === 2 )
+        {
+            DB.associationsGet( reply, query );
+        }
+        else
+            throw Err.INVALID_REQUEST;
+    }
+    else if ( method === "PUT" )
+    {
+        if ( path.length === 2 )
+        {
+            DB.associationsPut( reply, query );
+        }
+        else
+            throw Err.INVALID_REQUEST;
+    }
+    else if ( method === "DELETE" )
+    {
+        if ( path.length === 2 )
+        {
+            DB.associationsDelete( reply, query );
+        }
+        else
+            throw Err.INVALID_REQUEST;
+    }
+    else
+        throw Err.INVALID_METHOD;
+}
 
 //=============================================================================
 // TAGS Service Functions
@@ -160,53 +191,56 @@ API. If a domain is deleted, all tags associated with that domain are also
 deleted.
 */
 
-/*
-function handleTagRequest( method, path, query, payload, res )
+function handleTagRequest( method, path, query, payload, reply )
 {
     // API:
-    // GET host/tags/domain - all tags within a domain
-    // GET host/tags/domain/tag - a specific tag record
-    // PUT host/tags/domain - defines a tag from payload
-    // DELETE host/tags/domain - remove tags from job
-
-    var result = "";
+    // GET associations/uuid
 
     if ( method === "GET" )
     {
-        // Make sure domain exists
-
-        if ( path.length === 3 )
+        if ( path.length === 2 )
         {
-            result = gDB.tagGet( path[2] );
+            DB.tagQuery( reply, query );
         }
-        else if ( path.length === 4 )
+        else if ( path.length === 3 )
         {
-            result = gDB.tagGet( path[2], path[3] );
+            DB.tagGet( reply, path[2], query );
         }
         else
-            throw ERR_INVALID_REQUEST;
+            throw Err.INVALID_REQUEST;
+    }
+    else if ( method === "POST" )
+    {
+        if ( path.length === 3 )
+        {
+            DB.tagPost( reply, path[2], query );
+        }
+        else
+            throw Err.INVALID_REQUEST;
     }
     else if ( method === "PUT" )
     {
-        if ( path.length !== 3 )
-            throw ERR_INVALID_REQUEST;
-
-        gDB.tagDefine( path[2], payload );
+        if ( path.length === 3 )
+        {
+            DB.tagPut( reply, path[2], query );
+        }
+        else
+            throw Err.INVALID_REQUEST;
     }
     else if ( method === "DELETE" )
     {
-        if ( path.length !== 4 )
-            throw ERR_INVALID_REQUEST;
-
-        gDB.tagUndefine( path[2], path[3] );
+        if ( path.length === 3 )
+        {
+            DB.tagDelete( reply, path[2], query );
+        }
+        else
+            throw Err.INVALID_REQUEST;
     }
-    else throw ERR_INVALID_REQUEST;
-
-    res.writeHead(200);
-    res.write( result );
-    res.end();
+    else
+        throw Err.INVALID_METHOD;
 }
-*/
+
+
 
 //=============================================================================
 //=============================================================================
@@ -215,8 +249,6 @@ function handleTagRequest( method, path, query, payload, res )
 // Dispatch request to handler based on verb and URL path
 function dispatchRequest( method, path, query, payload, reply )
 {
-//console.log( method ); console.log( path.length ); console.log( path );
-
     if ( path[1] )
     {
         switch ( path[1] )
@@ -236,11 +268,14 @@ function dispatchRequest( method, path, query, payload, reply )
         case "files":
             handleFileRequest( method, path, query, payload, reply );
             break;
-        //case "tags":
-        //    handleTagRequest( method, path, query, payload, res );
-        //    break;
+        case "tags":
+            handleTagRequest( method, path, query, payload, reply );
+            break;
+        case "associations":
+            handleAssociationRequest( method, path, query, payload, reply );
+            break;
         default:
-            throw ERR_INVALID_REQUEST;
+            throw Err.INVALID_REQUEST;
         }
     }
     else
@@ -248,47 +283,18 @@ function dispatchRequest( method, path, query, payload, reply )
         if ( method === "GET" )
         {
             reply.writeHead(200);
-            reply.write('{"resources":["users","groups","jobs","apps","directories","files"]}');
+            reply.write('{"resources":["users","groups","jobs","apps","files","tags","associations"]}');
             reply.end();
         }
-        else throw ERR_INVALID_REQUEST;
+        else throw Err.INVALID_METHOD;
     }
-}
-
-// Generate error and exception messages for a service request
-function sendError(result,e)
-{
-    result.writeHead(400);
-    result.write("<html><body>Error: ");
-
-    switch ( e )
-    {
-    case ERR_INVALID_REQUEST:
-        result.write("Invalid request");
-        break;
-    case ERR_INVALID_OBJECT:
-        result.write("Invalid object");
-        break;
-    case ERR_INVALID_PROPERTY:
-        result.write("Invalid object property");
-        break;
-    case ERR_MISSING_REQUIRE_PARAM:
-        result.write("Missing required query parameter");
-        break;
-    default:
-        result.write( e.toString() );
-        break;
-    }
-
-    result.write("</body></html>");
-    result.end();
 }
 
 
 // Entry-point for service requests
-var server = gHttp.createServer( function( request, reply )
+var server = Http.createServer( function( request, reply )
 {
-    var url     = gUrl.parse( request.url, true );
+    var url     = Url.parse( request.url, true );
     var query   = url.query;
     var path    = url.pathname.split("/");
     var payload;
@@ -317,7 +323,7 @@ var server = gHttp.createServer( function( request, reply )
                 }
                 catch ( e )
                 {
-                    sendError(reply,e);
+                    Err.sendError(reply,e);
                 }
             });
         }
@@ -328,7 +334,7 @@ var server = gHttp.createServer( function( request, reply )
     }
     catch ( e )
     {
-        sendError(reply,e);
+        Err.sendError(reply,e);
     }
 });
 

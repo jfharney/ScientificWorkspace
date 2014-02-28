@@ -4,82 +4,44 @@ BASE="http://localhost:8080"
 
 if [ $# == 0 ]
 then
-echo "usage: test [list,get,add,del] topic [object [param]]"
-echo "  topics: domains, tags, jobs, projects"
-echo "  add tag domain tag desc"
+echo "usage: srv command ptype param1 [param2...]"
+echo "  commands:"
+echo "    user all"
+echo "    user name <uname>"
+echo "    user uid <uid>"
+echo "    group uid <uid>"
+echo "    group gid <gid>"
 exit -1
 fi
 
 command=$1
-topic=$2
+paramtype=$2
 p1=$3
 p2=$4
 p3=$5
 
-if [[ "$topic" == "domains" || "$topic" == "domain" ]]
+if [[ "$command" == "users" || "$command" == "user" ]]
 then
 
-    if [ "$command" = "list" ]
+    if [ "$paramtype" = "all" ]
     then
-        curl -X GET ${BASE}/domains
-    elif [ "$command" = "get" ]
+        curl -X GET ${BASE}/users
+    elif [ "$paramtype" = "name" ]
     then
-        curl -X GET ${BASE}/domains/{$p1}
-    elif [ "$command" = "add" ]
+        curl -X GET ${BASE}/users/{$p1}
+    elif [ "$paramtype" = "uid" ]
     then
-        curl -X PUT ${BASE}/domains/{$p1}
-    elif [ "$command" = "del" ]
-    then
-        curl -X DELETE ${BASE}/domains/{$p1}
+        curl -X GET ${BASE}/users?uid={$p1}
     fi
 
-elif [[ "$topic" == "tags" || "$topic" == "tag" ]]
+elif [[ "$command" == "groups" || "$command" == "group" ]]
 then
 
-    if [ "$command" = "list" ]
+    if [ "$paramtype" = "uid" ]
     then
-        curl -X GET ${BASE}/tags/{$p1}
-    elif [ "$command" = "get" ]
+        curl -X GET ${BASE}/groups?uid=${p1}
+    elif [ "$paramtype" = "gid" ]
     then
-        curl -X GET ${BASE}/tags/{$p1}/{$p2}
-    elif [ "$command" = "add" ]
-    then
-        body='-d {"tags":[{"id":"'${p2}'","desc":"'${p3}'"}]}'
-        curl -X PUT ${BASE}/tags/{$p1} $body
-    elif [ "$command" = "del" ]
-    then
-        curl -X DELETE ${BASE}/tags/{$p1}/{$p2}
+        curl -X GET ${BASE}/groups/{$p1}
     fi
-
-elif [[ "$topic" == "jobs" || "$topic" == "job" ]]
-then
-
-    if [ "$command" = "list" ]
-    then
-        curl -X GET ${BASE}/jobs
-    elif [ "$command" = "get" ]
-    then
-        curl -X GET ${BASE}/jobs/${p1}
-    elif [ "$command" = "tag" ]
-    then
-        curl -X PUT ${BASE}/jobs/${p1}/${p2}/${p3};
-    elif [ "$command" = "untag" ]
-    then
-        curl -X DELETE ${BASE}/jobs/${p1}/${p2}/${p3};
-    fi
-
-elif [[ "$command" == "setup" ]]
-then
-    curl -X PUT ${BASE}/domains/d1
-    curl -X PUT ${BASE}/domains/d2
-    curl -X PUT ${BASE}/domains/d3
-    body='-d {"tags":[{"id":"Tag1","desc":"A_tag"}]}'
-    curl -X PUT ${BASE}/tags/d1 $body
-    curl -X PUT ${BASE}/tags/d2 $body
-    body='-d {"tags":[{"id":"Tag2","desc":"Another_tag"}]}'
-    curl -X PUT ${BASE}/tags/d1 $body
-    body='-d {"tags":[{"id":"Tag3","desc":"Yet_another_tag"}]}'
-    curl -X PUT ${BASE}/tags/d1 $body
-    curl -X PUT ${BASE}/tags/d3 $body
-
 fi
