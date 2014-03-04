@@ -1,0 +1,47 @@
+#!/bin/bash
+
+BASE="http://localhost:8080"
+
+if [ $# == 0 ]
+then
+echo "usage: srv command ptype param1 [param2...]"
+echo "  commands:"
+echo "    user all"
+echo "    user name <uname>"
+echo "    user uid <uid>"
+echo "    group uid <uid>"
+echo "    group gid <gid>"
+exit -1
+fi
+
+command=$1
+paramtype=$2
+p1=$3
+p2=$4
+p3=$5
+
+if [[ "$command" == "users" || "$command" == "user" ]]
+then
+
+    if [ "$paramtype" = "all" ]
+    then
+        curl -X GET ${BASE}/users
+    elif [ "$paramtype" = "name" ]
+    then
+        curl -X GET ${BASE}/users/{$p1}
+    elif [ "$paramtype" = "uid" ]
+    then
+        curl -X GET ${BASE}/users?uid={$p1}
+    fi
+
+elif [[ "$command" == "groups" || "$command" == "group" ]]
+then
+
+    if [ "$paramtype" = "uid" ]
+    then
+        curl -X GET ${BASE}/groups?uid=${p1}
+    elif [ "$paramtype" = "gid" ]
+    then
+        curl -X GET ${BASE}/groups/{$p1}
+    fi
+fi
