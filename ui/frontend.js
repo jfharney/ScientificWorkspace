@@ -33,8 +33,6 @@ var jobs = require('./proxy/jobs.js');
 
 var apps = require('./proxy/apps.js');
 
-
-
 app.get("/", function(request, response) {
 	  //response.render("index1", { message: "I love anime" });
 	  //response.render("index1", { uid : "8xo" });
