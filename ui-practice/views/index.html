@@ -7,53 +7,267 @@
 	 -->
 	
 	
+  		<link href="css/dynatree/ui.dynatree.css" rel="stylesheet" type="text/css" />
+  		<link href="css/bootstrap/bootstrap.css" rel="stylesheet" />
+		
+  		
+  		<script src='js/core.js' type="text/javascript"></script>
+  		<script src='js/jquery-1.7.2.min.js' type="text/javascript"></script>
+		<script src='js/jquery-ui-1.8.21.custom.min.js' type="text/javascript"></script>
+		<script src='js/jquery.dynatree.min.js' type="text/javascript"></script>
+		<script src="js/bootstrap/bootstrap.min.js"></script>
+		<script src="js/bootstrap/bootstrap-combobox.js"></script>
+		<script src="js/tree_options/multiselect.js"></script>
+		<script src="js/tag_autocomplete.js"></script>
+		
+		<style>
+			#myModal1 {
+	
+				margin-top: 150px
+			}
+
+
+			/* Start by setting display:none to make this hidden.
+			   Then we position it in relation to the viewport window
+			   with position:fixed. Width, height, top and left speak
+			   speak for themselves. Background we set to 80% white with
+			   our animation centered, and no-repeating */
+			#modal1 {
+			    display:    none;
+			    position:   fixed;
+			    z-index:    1000;
+			    top:        0;
+			    left:       0;
+			    height:     100%;
+			    width:      100%;
+			    background: rgba( 255, 255, 255, .8 ) 
+			                url('http://i.stack.imgur.com/FhHRx.gif') 
+			                50% 50% 
+			                no-repeat;
+			}
+		</style>
+		
 	</head>
 
 	<body>
 	
-		<div>Hello World</div>
 	
+	<!-- Button trigger modal -->
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" style="margin-bottom:50px">
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+        	Tag Name: <input type="text" class="form-control create_tree_options" placeholder="Tree Bookmark Name" id="tag_name">
+			<br>
+			Tag Description: <textarea class="form-control" rows="3" id="tag_description"></textarea>
+			<br>
+			Resource: <span>Insert resource here</span>
+			<br>
+			Share with: <span>Insert options for people, groups, etc here</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="create_tag">Create Tag</button>
+      </div>
+    </div>
+  </div>
+</div>
 	
+		
+  <hr>
 	
-	
-		<script src='js/jquery-1.7.2.min.js' type="text/javascript"></script>
-		<script src='js/jquery-ui-1.8.21.custom.min.js' type="text/javascript"></script>
-	
-	
-		<script type="text/javascript">
+		
+  <h1>Example: Selection and checkbox</h1>
 		
 
-		$(document).ready(function(){
-			
-			
-			
-			alert('loading page index.html');
-			
-			var url = 'http://localhost:8001/jobs';
-			$.ajax({
-				  type: "GET",
-				  url: url,
-				  success: function(data)
-				  { 
-					  console.log('success ' + data);
-				  },
-				  error: function(xhr, status, error) {
-					  console.log('error'); 
-					  
-					  if(xhr.status==404)
-					  { 
-					    	
-					  }
-					  
-				  }
-				});
-			
-			
-			
-		});
-		
-		</script>
+  <!-- Tree #2 -->
+
+<!-- 
+  <p class="description">
+    This tree has <b>selectMode 2 (multi-selection)</b> enabled.<br>
+    A single-click handler selects the node.<br>
+    A keydown handler selects on [space].
+  </p>
+  <p>
+    <a href="#" id="btnSelectAll">Select all</a> -
+    <a href="#" id="btnDeselectAll">Deselect all</a> -
+    <a href="#" id="btnToggleSelect">Toggle select</a>
+  </p>
+  <div id="tree2"></div>
+  <div>Selected keys: <span id="echoSelection2">-</span></div>
+ -->		
 	
-	</body>
+	
+  <!-- Tree #3 -->
+
+  <p class="description">
+    This tree has <b>checkoxes and selectMode 3 (hierarchical multi-selection)</b> enabled.<br>
+    A double-click handler selects the node.<br>
+    A keydown handler selects on [space].
+  </p>
+  <div id="tree3"></div>
+  <div>Selected keys: <span id="echoSelection3">-</span></div>
+  <div>Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
+  <div>Selected root nodes: <span id="echoSelectionRoots3">-</span></div>
+	
+
+  <hr>
+		
+
+  <div style="min-height:200px;margin-top:50px">
+	  <div class="ui-widget">
+	    <h2 style="">Search tags</h2>
+	    <!-- <label for="tags">Tags: </label>  -->
+		<input id="tags">
+		<button type="button" class="btn btn-primary" id="search_tags">Search Tags</button>
+      
+	  </div>
+		<hr>
+	  <div>
+	    
+	    <h2 style="">Tag information</h2>
+	    
+	    <div id="tag_results">
+	    
+	    </div>
+	    
+	  </div>
+  </div>	
+  
+  
+  
+  </body>
+
+
+  <script type="text/javascript">
+		
+  $(document).ready(function(){
+	
+	  
+	  $('#create_tag').click(function() {
+		  
+		  console.log('SW.tagged_items: ' + SW.tagged_items);
+		  
+		  var host = 'localhost';
+		  var port = '8001';
+		  
+		  
+		  var uid = '5112';
+		  var tagname = $('#tag_name').val();
+		  var tagdescription = $('#tag_description').val();
+		  var tagged_items = new Array();
+
+		  tagged_items = SW.tagged_items.split(', ');
+		  /*
+		  tagged_items.push('obj1');
+		  tagged_items.push('obj2');
+		  tagged_items.push('obj3');
+		  */
+		  var tag_name = tagname;
+		  var tag_description = tagdescription;
+		  
+		  if(tag_name == '') {
+			  tag_name = 'tagname1';
+		  }
+		  if(tag_description == '') {
+			  tag_description = 'tagdescription1';
+		  }
+		  
+		  
+		  //alert('tag_name: ' + tag_name + ' tag_description: ' + tag_description);
+		  
+		  //SW.tagged_items = tagged_items;
+		  
+		  
+		  var url = 'http://' + host + ':' + port + '/tagproxy';
+		  
+		  var data = {
+				  'tag_name' : tag_name,
+				  'tag_description' : tag_description,
+				  'tagged_items' : tagged_items
+		  }
+		  
+		  url = url + '?tag_name=' + tag_name + '&tag_description=' + tag_description;
+		  for(var i=0;i<tagged_items.length;i++) {
+			  if(i == tagged_items.length-1) {
+				  url += '&tagged_items=' + tagged_items[i];
+			  } else {
+				  url += '&tagged_items=' + tagged_items[i];
+			  }
+		  }
+		  
+		  $.ajax({
+			  type: "POST",
+			  url: url,
+			  data: data,
+			  success: function(data)
+			  { 
+				  
+				  if(data == 'success') {
+					  console.log('Tag successfully created');
+				  } else {
+					  console.log('Tag not successfully created.  Please try again');
+				  }
+			  },
+			  error: function(xhr, status, error) {
+			    if(xhr.status==404)
+			      { }
+			  }
+			});
+		    
+	  });
+	  
+	  
+	  var num_tags_returned = 3;
+	  
+	  $('#search_tags').click(function() {
+		 
+		  $('#tag_results').empty();
+		  
+
+		  url = url + '?tag_name=' + tag_name + '&tag_description=' + tag_description;
+		  
+		  $.ajax({
+			  type: "GET",
+			  url: url,
+			  data: data,
+			  success: function(data)
+			  { 
+				  
+				  if(data == 'success') {
+					  console.log('Tag successfully created');
+				  } else {
+					  console.log('Tag not successfully created.  Please try again');
+				  }
+			  },
+			  error: function(xhr, status, error) {
+			    if(xhr.status==404)
+			      { }
+			  }
+			});
+		  
+		  for(var i=0;i<num_tags_returned;i++) {
+			  $('#tag_results').append('<div>tag ' + i + '</div>');
+		  }
+		  
+	  });
+	  
+	  
+	
+  });
+		
+  </script>
+		
 
 </html>

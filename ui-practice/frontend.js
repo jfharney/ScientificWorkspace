@@ -41,6 +41,45 @@ app.get('/sciworkspace',function(request,response) {
 });
 
 
+app.post('/tagproxy',function(request,response) {
+	
+	console.log('in tag proxy');
+	
+	var request_obj = request['query'];
+	
+	console.log('request_obj: ' + request_obj);
+
+	//grab the tag parameters from the query parameter list
+	var tag_name = '';
+	var tag_description = '';
+	var tagged_items = '';
+	
+	tag_name = request_obj['tag_name'];
+	tag_description = request_obj['tag_description'];
+	tagged_items = request_obj['tagged_items'];
+	
+	
+	console.log('tag_name: ' + tag_name + ' tag_descrition: ' + tag_description + ' tagged_items: ' + tagged_items);
+	
+	
+	//reassemble the url and query string given the query parameters
+	
+	 //curl -X POST 'http://localhost:8080/tags/tag100?uid=5112&desc=A_new_tag
+	
+
+	//forward the request to backend services
+	console.log('add tag ' + tag_name + ' to the data store');
+	
+	
+	console.log('connect tag ' + tag_name + ' to object(s): ' + tagged_items);
+	
+	//get response from backend services
+	
+	
+	//return "success" or "failure"
+	
+	response.send('success');
+});
 
 
 
