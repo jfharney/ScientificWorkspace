@@ -33,8 +33,6 @@ var jobs = require('./proxy/jobs.js');
 
 var apps = require('./proxy/apps.js');
 
-
-
 app.get("/", function(request, response) {
 	  //response.render("index1", { message: "I love anime" });
 	  //response.render("index1", { uid : "8xo" });
@@ -59,6 +57,8 @@ app.get("/groupinfo/:uid", function(request, response) {
 
 	//make a call to http://localhost:8080/users/<user_id>
 	var path = '/groups?uid='+request.params.uid;
+	
+	console.log('path: ' + path);
 	
 	//query the userlist service here
 	var options = {

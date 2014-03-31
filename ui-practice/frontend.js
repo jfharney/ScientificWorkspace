@@ -1,46 +1,37 @@
-var express = require('express');
-var app = express();
-
 var firewallMode = false;
 
 //var hbs = require('hbs');
-
 var http = require('http');
 var url = require('url');
 
+//Start Express
+var express = require("express");
+var app = express();
 
 app.use(express.static('public'));
 
 var servicePort = 8080;
 
-
-// Start Express
-var express = require("express");
-var app = express();
-
 // Set the view directory to /views
 app.set("views", __dirname + "/views");
-
-app.use(express.static('public'));
 
 // Use the Jade templating language
 app.set("view engine", "jade");
 
-
-app.get("/", function(request, response) {
-
-	//response.redirect('/workspace/users/j1s');
-	
+app.get("/", function(request, response) 
+{
+	response.redirect('/sciworkspace');
 });
 
-app.get('/sciworkspace',function(request,response) {
-	var jsonModel = {a : 'a'};
-	//res.sendfile('./views/charisma/index.html');
-	//res.render('./views/index.html',jsonModel);
-	response.render("index", { uid : request.params.user_id });
-});
+/* This code was originally inside the succeeding function.
+ * var query = url.parse(request.url, true).query;
+console.log("The value of query.color is " + query);
 
+for (var key in query) {
+	console.log('key: ' + key + ' ' + query[key]);
+}
 
+<<<<<<< HEAD
 app.post('/tagproxy',function(request,response) {
 	
 	console.log('in tag proxy');
@@ -191,57 +182,165 @@ app.post('/associationsproxy',function(request,response) {
 	associations_api_req.end();
 	
 	
+=======
+// How to add a key-value pair to an existing object:
+jsonModel['color'] = query.color;*/
+
+app.get('/sciworkspace', function(request, response) 
+{
+	var jsonModel = {'a' : 'apple'};
+
+	response.render("index3", jsonModel);
 });
 
-
-app.get('/groups', function(request,response) {
-	
-	console.log('in get groups');
-	
-	response.send('\ngroups data\n');
-	
+app.get('/groups', function(request, response) 
+{
+	var query = url.parse(request.url, true).query;	
+	console.log('Attempting to output ' + query.color + '.');
+	response.send('<h3 style="color: ' + query.color + '">' + query.color + ' Output Data</h3>');
 });
 
-
-
-
-app.get('/groupsproxy', function(request,response) {
+app.get('/tags', function(request, response) 
+{
+	console.log('Received http://localhost:8001/tags');
 	
+	var args = url.parse(request.url, true).query;
+	// query above is an object containing all the 
+	// arguments in the URL as key-value pairs. 
+	
+	for(i in args)
+	  console.log(args[i]);
+	
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: "/tags?uid=" + args['uid'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+});
+
+app.get('/associations', function(request, response) 
+{
+	console.log('Received http://localhost:8001/associations');
+	var args = url.parse(request.url, true).query;
+	// query above is an object containing all the 
+	// arguments in the URL as key-value pairs. 
+	console.log('args[edge]: ' + args['edge']);
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: "/associations?edge=" + args['edge'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();	
+});
+
+app.get('/jobs', function(request, response) {
+	console.log('Received http://localhost:8001/jobs');
+	var args = url.parse(request.url, true).query;
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: '/jobs?uuid=' + args['uuid'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+});
+
+// Calls Dale's service. 
+app.get('/groupsproxy', function(request, response) 
+{
 	console.log('in get groups proxy');
 	
 	//console.log(request['query']);
 	console.log('gid -> ' + request.params.gid);
 	
-	
-	
 	//make a call to http://localhost:8080/groups/<gid>
-	var path = '/groups/'+'6969';
+	var path = '/groups/' + '6969';
 	
-	//query the userlist service here
+	//query the user list service here
 	var options = {
 			host: 'localhost',
 			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
-			method: 'GET'
+			path: path,
+			method: 'GET',
 		  };
 	
 	 console.log('path-> ' + path);
 	 var responseData = '';
 	
-	 
 	 var req = http.request(options, function(res) {
 		  console.log("Got response: " + res.statusCode);
 		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
+		  
+		  // Because the data is not sent all at once. 
 		  res.on('data', function (chunk) {
 			  //console.log('\n\n\n\nchunk: ' + chunk);
-			  responseData += chunk;	
-				
+			  responseData += chunk;
 		  });
-		  res.on('end',function() {
+		  
+		  // When the last of the response data is received. 
+		  res.on('end', function() {
 			  
-			  console.log('ending groups/gid...');
-			  
+			  console.log('ending groups/gid...');  
 			  console.log('response data\n' + responseData);
 			  
 			  var jsonObj = JSON.parse(responseData);
@@ -253,7 +352,7 @@ app.get('/groupsproxy', function(request,response) {
 			  
 			  //get all the users associated with this group
 			  for(var key in jsonObj) {
-				  for(var i=0;i<jsonObj[key].length;i++) {
+				  for(var i=0; i < jsonObj[key].length; i++) {
 					  var uid = jsonObj[key][i]['uid'];
 					  var uidName = jsonObj[key][i]['username'];
 					  uidArr.push(uid);
@@ -264,14 +363,12 @@ app.get('/groupsproxy', function(request,response) {
 			  console.log(uidArr);
 			  
 			  var respArr = [];
-			  for(var i=0;i<uidArr.length;i++) {
-				  var respObj = {"title" : uidArr[i], "id" : uidArr[i] , 'username' : uidNameArr[i]};
+			  for(var i=0; i<uidArr.length; i++) {
+				  var respObj = {"title" : uidArr[i], "id" : uidArr[i] , 'username' : uidNameArr[i]}; 
 				  respArr.push(respObj);
 			  }
 			  
-			  
-				response.send(respArr);
-			  
+			  response.send(respArr);
 		  });
 		  
 	  
@@ -279,19 +376,14 @@ app.get('/groupsproxy', function(request,response) {
 		 
 		  console.log("Got error: " + e.message);
 	 
-		  var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
-			//respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
-			respText = '[{"title": "Jobs For eeendeve", "isFolder": true, "isLazy": true	, "type" : "jobs" } ]';
+		  var respText = '[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
+		  //respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
+		  respText = '[{"title": "Jobs For eeendeve", "isFolder": true, "isLazy": true	, "type" : "jobs" } ]';
 									
-			response.send(respText);
-
-		  
+		  response.send(respText);	  
 	 });
 	
-	
-
-	 req.end();
-	 
+	 req.end();	 
 	
 });
 

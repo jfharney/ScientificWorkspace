@@ -1,6 +1,6 @@
-doctype 5
+doctype html 
 head
-  title Free HTML5 Bootstrap Admin Template
+  title ORNL Scientific Workspace
   link(id="bs-css", href="css/bootstrap-cerulean.css", rel="stylesheet",type="text/css")
   link(href="css/bootstrap-responsive.css", rel="stylesheet",type="text/css")
   link(href="css/charisma-app.css", rel="stylesheet",type="text/css")
@@ -110,6 +110,7 @@ html
         div.span1.main-menu-span side menu                
         div.span8
           div.row-fluid.sortable
+
             div.box.span4
               div.box-header.well
                 h2 Collaborators
@@ -121,6 +122,7 @@ html
                     i.icon-remove
               div.box-content
                 div#collaborators_tree(style="height:200px") 
+
             div.box.span4
               div.box-header.well
                 h2 Project Space
@@ -132,6 +134,7 @@ html
                     i.icon-remove
               div.box-content 
                 div#files_tree(style="height:200px")
+
             div.box.span4
               div.box-header.well
                 h2 Jobs
@@ -143,6 +146,19 @@ html
                     i.icon-remove
               div.box-content 
                 div#jobss_tree(style="height:200px")
+
+            div.box.span4
+              div.box-header.well
+                h2 Tags
+                  i.icon-user
+                div.box-icon
+                  a.btn.btn-minimize.btn-round(href="#")
+                    i.icon-chevron-up
+                  a.btn.btn-close.btn-round(href="#")
+                    i.icon-remove
+              div.box-content 
+                div#tags_tree(style="height:200px")
+
           div.row-fluid.sortable
             div.span12
               div.box.span12
@@ -161,7 +177,7 @@ html
                   div#collaborator_info
                   h3 File Info
                   div#file_info
-                  h3 Job/Type Info
+                  h3 Job/Type Info 
                   div#job_info
                   h3 App Info
                   div#app_info
@@ -209,3 +225,4 @@ html
     script(src="js/ajax/jobtree.js")
     script(src="js/ajax/filetree.js")
     script(src="js/ajax/userinfo.js")
+    script(src="js/ajax/tagTree.js")
