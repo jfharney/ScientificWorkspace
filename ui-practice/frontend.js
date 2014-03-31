@@ -23,19 +23,22 @@ app.get("/", function(request, response)
 	response.redirect('/sciworkspace');
 });
 
+/* This code was originally inside the succeeding function.
+ * var query = url.parse(request.url, true).query;
+console.log("The value of query.color is " + query);
+
+for (var key in query) {
+	console.log('key: ' + key + ' ' + query[key]);
+}
+
+// How to add a key-value pair to an existing object:
+jsonModel['color'] = query.color;*/
+
 app.get('/sciworkspace', function(request, response) 
 {
 	var jsonModel = {'a' : 'apple'};
-	var query = url.parse(request.url, true).query;
-	console.log("The value of query.color is " + query);
-	
-	for (var key in query) {
-		console.log('key: ' + key + ' ' + query[key]);
-	}
-	
-	// How to add a key-value pair to an existing object:
-	jsonModel['color'] = query.color;
-	response.render("index2", jsonModel);
+
+	response.render("index3", jsonModel);
 });
 
 app.get('/groups', function(request, response) 
@@ -43,6 +46,111 @@ app.get('/groups', function(request, response)
 	var query = url.parse(request.url, true).query;	
 	console.log('Attempting to output ' + query.color + '.');
 	response.send('<h3 style="color: ' + query.color + '">' + query.color + ' Output Data</h3>');
+});
+
+app.get('/tags', function(request, response) 
+{
+	console.log('Received http://localhost:8001/tags');
+	
+	var args = url.parse(request.url, true).query;
+	// query above is an object containing all the 
+	// arguments in the URL as key-value pairs. 
+	
+	for(i in args)
+	  console.log(args[i]);
+	
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: "/tags?uid=" + args['uid'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+});
+
+app.get('/associations', function(request, response) 
+{
+	console.log('Received http://localhost:8001/associations');
+	var args = url.parse(request.url, true).query;
+	// query above is an object containing all the 
+	// arguments in the URL as key-value pairs. 
+	console.log('args[edge]: ' + args['edge']);
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: "/associations?edge=" + args['edge'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();	
+});
+
+app.get('/jobs', function(request, response) {
+	console.log('Received http://localhost:8001/jobs');
+	var args = url.parse(request.url, true).query;
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: '/jobs?uuid=' + args['uuid'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
 });
 
 // Calls Dale's service. 
@@ -56,13 +164,12 @@ app.get('/groupsproxy', function(request, response)
 	//make a call to http://localhost:8080/groups/<gid>
 	var path = '/groups/' + '6969';
 	
-	//query the userlist service here
+	//query the user list service here
 	var options = {
 			host: 'localhost',
 			port: servicePort,
-			path: path,			//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
-			method: 'GET'
+			path: path,
+			method: 'GET',
 		  };
 	
 	 console.log('path-> ' + path);
@@ -71,12 +178,15 @@ app.get('/groupsproxy', function(request, response)
 	 var req = http.request(options, function(res) {
 		  console.log("Got response: " + res.statusCode);
 		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
+		  
+		  // Because the data is not sent all at once. 
 		  res.on('data', function (chunk) {
 			  //console.log('\n\n\n\nchunk: ' + chunk);
-			  responseData += chunk;	
-				
+			  responseData += chunk;
 		  });
-		  res.on('end',function() {
+		  
+		  // When the last of the response data is received. 
+		  res.on('end', function() {
 			  
 			  console.log('ending groups/gid...');  
 			  console.log('response data\n' + responseData);
