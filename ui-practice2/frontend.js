@@ -41,6 +41,126 @@ app.get('/sciworkspace',function(request,response) {
 });
 
 
+app.get('/sciworkspace1', function(request, response) 
+{
+	console.log('in sciworkspace 1');
+	var jsonModel = {'a' : 'apple'};
+
+	response.render("index3", jsonModel);
+});
+
+
+app.get('/tags', function(request, response) 
+{
+	console.log('Received http://localhost:8001/tags');
+	
+	var args = url.parse(request.url, true).query;
+	// query above is an object containing all the 
+	// arguments in the URL as key-value pairs. 
+	
+	for(i in args)
+	  console.log(args[i]);
+	
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: "/tags?uid=" + args['uid'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+});
+
+app.get('/associations', function(request, response) 
+{
+	console.log('Received http://localhost:8001/associations');
+	var args = url.parse(request.url, true).query;
+	// query above is an object containing all the 
+	// arguments in the URL as key-value pairs. 
+	console.log('args[edge]: ' + args['edge']);
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: "/associations?edge=" + args['edge'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();	
+});
+
+		
+		
+app.get('/jobs', function(request, response) {
+	console.log('Received http://localhost:8001/jobs');
+	var args = url.parse(request.url, true).query;
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: '/jobs?uuid=' + args['uuid'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+});
+
+
+
+
+
 app.post('/tagproxy',function(request,response) {
 	
 	console.log('in tag proxy');
