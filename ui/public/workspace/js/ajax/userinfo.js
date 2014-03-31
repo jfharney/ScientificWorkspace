@@ -12,7 +12,7 @@ $(function(){
 	
 	var user_info_obj = '';
 	
-	alert('user: ' + user);
+	//alert('user: ' + user);
 	
 	var url = 'http://localhost:1337/userinfo/'+user;
 	var queryString = '';
@@ -28,11 +28,11 @@ $(function(){
 			
 			console.log(jQuery.isEmptyObject(data));
 			
-			alert('data: ' + data);
+			//alert('data: ' + data);
 			
 			user_info_obj = data;
 			for(var key in data) {
-				alert('key: ' + key + " " + data[key]);
+				//alert('key: ' + key + " " + data[key]);
 				console.log('user key: ' + key);
 			}
 			
@@ -408,7 +408,7 @@ function getFileInfo(uid) {
 
 function getGroupInfo(uid) {
 	
-	alert('uid: ' + uid);
+	//alert('uid: ' + uid);
 	
 	//groupinfo
 	var url = 'http://localhost:1337/groupinfo/'+uid;
