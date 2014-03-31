@@ -50,7 +50,8 @@ app.get('/groups', function(request, response)
 
 app.get('/tags', function(request, response) 
 {
-	console.log('Received http://localhost:8001/tags');
+	if(verbose)
+		console.log('Received http://localhost:8001/tags');
 	
 	var args = url.parse(request.url, true).query;
 	// query above is an object containing all the 
@@ -89,7 +90,8 @@ app.get('/tags', function(request, response)
 
 app.get('/associations', function(request, response) 
 {
-	console.log('Received http://localhost:8001/associations');
+	if(verbose)
+		console.log('Received http://localhost:8001/associations');
 	var args = url.parse(request.url, true).query;
 	// query above is an object containing all the 
 	// arguments in the URL as key-value pairs. 
@@ -122,8 +124,42 @@ app.get('/associations', function(request, response)
 	req.end();	
 });
 
-app.get('/jobs', function(request, response) {
-	console.log('Received http://localhost:8001/jobs');
+app.get('/jobs', function(request, response) 
+{
+	if(verbose)
+		console.log('Received http://localhost:8001/jobs');
+	var args = url.parse(request.url, true).query;
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: '/jobs?uuid=' + args['uuid'],
+			method: 'GET'
+	};
+	
+	var req = http.request(options, function(resp) {
+		console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+});
+
+app.get('/apps', function(request, response) {
+	if(verbose)
+		console.log('Received http://localhost:8001/apps');
 	var args = url.parse(request.url, true).query;
 	var options = {
 			host: 'localhost',
