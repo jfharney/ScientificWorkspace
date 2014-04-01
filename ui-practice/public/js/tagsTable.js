@@ -21,7 +21,7 @@ $(document).ready(function()
            											taggedObjs += "<span class='objUuid' id='" + i + "'>" + assocData['associations'][i]['uuid'] + "</span><br />";
            										var taggedObjTypes = '';
            										for(var i = 0; i < assocData['associations'].length; i++)
-           											taggedObjTypes += "<span class='objType' id='" + i + "'>" + assocData['associations'][i]['type'] + '<br />';
+           											taggedObjTypes += "<span class='objType' id='" + i + "'>" + assocData['associations'][i]['type'] + '</span><br />';
 	               									$tbody.append( 	"<tr>" +
 							                							"<td>" + arVal['tagname'] + "</td>" +
 							                							"<td>" + arVal['tagdesc'] + "</td>" + 
@@ -44,8 +44,8 @@ $(document).ready(function()
 	
     $(document).on("click", ".objUuid", function(e) 
     {
-    	var typeField = $(this).parent().next("td").children("#" + this.id).text();
-    	alert("this.id = " + this.id + ", typeField = "+ typeField);
+    	var typeField = $(this).parent().next("td").html();//.children("#" + this.id).html();
+    	alert(typeField);
     	if(typeField == 'job') {
 		   	$.ajax({
 		       	type: "GET", 
