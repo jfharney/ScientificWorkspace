@@ -25,28 +25,39 @@ head
     
 html
   body
+    
+    
+    //div Selected Uuids:
+    //  span#echoSelectionUuids3
+    //div Selected Types:
+    //  span#echoSelectionTypes3
+    
     div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
-          h4#myModalLabel.modal-title Modal title
+          h4#myModalLabel.modal-title Tag Information
         div.modal-body
           div Tag Name:
-            input#tag_name.form-control.create_tree_options
+          input#tag_name.form-control.create_tree_options(style="margin-bottom:10px")
           div Tag Description:
-          textarea#tag_description.form-control(rows="3",placeholder="Tag description")
+          textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px")
           div Resources:
-          div#resources_to_tag
-          div 
-            Share with:
-            div#shared_users Insert Options for people, groups, etc
+          div#resources_to_tag(style="margin-bottom:10px")
+          div Types:
+          div#resources_types_to_tag(style="margin-bottom:10px")
+          div Share with:
+          div#shared_users(style="margin-bottom:10px") Insert Options for people, groups, etc
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
           button#create_tag.btn.btn-primary Create Tag
+          
     div.navbar
       div.navbar-inner 
         div.container-fluid
+        
     div.container-fluid
+    
       div.row-fluid
         div.span12
           div
@@ -67,6 +78,8 @@ html
               button#userdropdownMenu.btn.dropdown-toggle.sr-only(type="button",data-toggle="dropdown") Users
                 span.caret
               ul.dropdown-menu(role="menu",aria-labelledby="userdropdownMenu")
+                li(role="presentation")
+                  a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") jamroz
                 li(role="presentation")
                   a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 1qk
                 li(role="presentation")
@@ -122,16 +135,22 @@ html
                 li(role="presentation")
                   a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") ajg
                 li(role="presentation")
+                
       div.row-fluid
         div.span12
           div
             p.user_info
+            
       div.row-fluid
+      
+        //left bar
         div.span1.main-menu-span 
-          button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal",data-target="#myModal",style="margin-bottom:50px") Add Tag    
+          button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal",data-target="#myModal",style="margin-bottom:50px") Add Tag
+        
+        //main content
         div.span8
           div.row-fluid.sortable
-
+          
             div.box.span4
               div.box-header.well
                 h2 Collaborators
@@ -168,18 +187,39 @@ html
               div.box-content 
                 div#jobss_tree(style="height:200px")
 
-            div.box.span4
-              div.box-header.well
-                h2 Tags
-                  i.icon-user
-                div.box-icon
-                  a.btn.btn-minimize.btn-round(href="#")
-                    i.icon-chevron-up
-                  a.btn.btn-close.btn-round(href="#")
-                    i.icon-remove
-              div.box-content 
-                div#tags_tree(style="height:200px")
-
+          div.row-fluid.sortable
+            div.span12
+              div.box.span12
+                div.box-header.well
+                  h2 Tags
+                    i.icon-user
+                  div.box-icon
+                    a.btn.btn-minimize.btn-round(href="#")
+                      i.icon-chevron-up
+                    a.btn.btn-close.btn-round(href="#")
+                      i.icon-remove
+                div.box-content
+                  div.row-fluid
+                    div.span3
+                      h4(style="margin-bottom:5px") Tag Clouds
+                        div#tagClouds(style="margin-top:10px;")
+                    div.span3
+                      h4(style="margin-bottom:5px;") Tag Info
+                        div#tagCloudInfo(style="margin-top:10px;")
+                    div.span6
+                      h4(style="margin-bottom:5px") Tags Table
+                        div#tagsTableContainer(style="margin-top:10px;max-height:225px;width:auto;overflow:auto")
+                          table#tagsTable
+                            thead
+                              tr
+                                th(style="background-color:lightblue;font-size: 12px;font-family: arial;text-align: left;border: 1px solid black;padding: 5px;") Tag Name
+                                th(style="background-color:lightblue;font-size: 12px;font-family: arial;text-align: left;border: 1px solid black;padding: 5px;") Description
+                                th(style="background-color:lightblue;font-size: 12px;font-family: arial;text-align: left;border: 1px solid black;padding: 5px;") Tag Associaton(s)
+                                th(style="background-color:lightblue;font-size: 12px;font-family: arial;text-align: left;border: 1px solid black;padding: 5px;") Association Type(s)
+                                th(style="background-color:lightblue;font-size: 12px;font-family: arial;text-align: left;border: 1px solid black;padding: 5px;") Create Time
+                            tbody
+                
+                
           div.row-fluid.sortable
             div.span12
               div.box.span12
@@ -202,9 +242,11 @@ html
                   div#job_info
                   h3 App Info
                   div#app_info
+        
+        //feed
         div.span2 feed
-        
-        
+      
+            
     script(src="js/jquery/jquery-1.7.2.min.js")
     script(src="js/jquery/jquery-ui-1.8.21.custom.min.js")
     script(src="js/bootstrap/bootstrap-transition.js")
@@ -240,11 +282,15 @@ html
     script(src="js/jquery/jquery.autogrow-textarea.js")
     script(src="js/jquery/jquery.uploadify-3.1.min.js")
     script(src="js/jquery/jquery.history.js")
+    script(src='js/tablesorter-master/js/jquery.tablesorter.js')
     script(src="js/charisma.js")
     script(src="js/jquery/jquery.dynatree.min.js")
     script(src="js/main.js")
     script(src="js/ajax/jobtree.js")
     script(src="js/ajax/filetree.js")
+    script(src="js/ajax/jobs_widget.js")
     script(src="js/ajax/userinfo.js")
     script(src="js/ajax/tagTree.js")
-    script(src="js/Addtag.js")
+    script(src="js/ajax/tagstable.js")
+    script(src="js/ajax/tagclouds.js")
+    script(src="js/addtag.js")

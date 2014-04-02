@@ -8,6 +8,7 @@ $(function(){
 	
 	//changing user option
 	$('.user_dropdown_list').click(function(){
+		alert('user dropdown');
 		var userName = $(this).html();
 		location.href=host+userName;
 		
