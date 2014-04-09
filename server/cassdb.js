@@ -1,7 +1,8 @@
-var helenus = require('./node_modules/helenus');
+var helenus = require('../node_modules/helenus');
 var Err = require('./errors');
+var Tags = require('./cassdb_tags.js');
 
-var pool = new helenus.ConnectionPool(
+global.pool = new helenus.ConnectionPool(
     {
         hosts       : ['dexter.ornl.gov:9160'],
         keyspace    : 'SciDataPtl',
@@ -10,13 +11,13 @@ var pool = new helenus.ConnectionPool(
         timeout     : 3000
     });
 
-pool.on( 'error',
+global.pool.on( 'error',
     function(err)
     {
         console.error( err.name, err.message );
     });
 
-pool.connect( function( err, keyspace )
+global.pool.connect( function( err, keyspace )
     {
         console.error( err, keyspace );
     });
@@ -48,7 +49,7 @@ module.exports =
         var columns = parseColumns( query );
 
         //console.log("IN User Get Quuery");
-        pool.cql( "select " + columns + " from users where username = ?", [a_username], function( err, results )
+        global.pool.cql( "select " + columns + " from users where username = ?", [a_username], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -79,7 +80,7 @@ module.exports =
         var where_clause = parseWhereClause( query );
         var columns = parseColumns( query );
         //console.log("QUERY..." + "select " + columns + " from users" + where_clause);
-        pool.cql( "select " + columns + " from users" + where_clause, [], function( err, results )
+        global.pool.cql( "select " + columns + " from users" + where_clause, [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -118,7 +119,7 @@ module.exports =
         var where_clause = parseWhereClause( query );
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from groups" + where_clause, [], function( err, results )
+        global.pool.cql( "select " + columns + " from groups" + where_clause, [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -150,7 +151,7 @@ module.exports =
     {
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from groups where gid = " + a_gid + " allow filtering", [], function( err, results )
+        global.pool.cql( "select " + columns + " from groups where gid = " + a_gid + " allow filtering", [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -184,7 +185,7 @@ module.exports =
     {
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from jobs where jobid = " + a_jobid, [], function( err, results )
+        global.pool.cql( "select " + columns + " from jobs where jobid = " + a_jobid, [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -217,7 +218,7 @@ module.exports =
         var where_clause = parseWhereClause( query );
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from jobs" + where_clause, [], function( err, results )
+        global.pool.cql( "select " + columns + " from jobs" + where_clause, [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -256,7 +257,7 @@ module.exports =
         var where_clause = parseWhereClause( query );
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from apps" + where_clause, [], function( err, results )
+        global.pool.cql( "select " + columns + " from apps" + where_clause, [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -292,7 +293,7 @@ module.exports =
 
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from apps where appid = " + a_appid + " and jobid = " + query.jobid + " allow filtering", [], function( err, results )
+        global.pool.cql( "select " + columns + " from apps where appid = " + a_appid + " and jobid = " + query.jobid + " allow filtering", [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -322,24 +323,23 @@ module.exports =
 
     //===== TAG API ===========================================================
 
-    tagGet : function ( reply, a_tagname, query )
+    tagGet : function ( reply, query, a_taguuid )
     {
-        //console.log('in filesGet');
-    	
-        //for(var key in reply) {
-    		//console.log('reply key: ' + key);
-        //}
-        //for (var key in query) {
-    		//console.log('query key: ' + key);
-        //}
-    	
+        console.log( "tagGet: " + a_taguuid );
+
         // Enforce required query parameter(s)
-        if ( query.uid === undefined )
+        if ( a_taguuid === undefined && ( query.uid === undefined || query.tagname === undefined ))
            throw Err.MISSING_REQUIRED_PARAM;
 
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from tags where tagname = '" + a_tagname + "' and uid = " + query.uid + " allow filtering", [], function( err, results )
+        var qry;
+        if ( a_taguuid )
+            qry = "select " + columns + " from tags where uuid = " + a_taguuid;
+        else
+            qry = "select " + columns + " from tags where tagname = '" + query.tagname + "' and uid = " + query.uid + " allow filtering";
+
+        global.pool.cql( qry, [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -349,19 +349,21 @@ module.exports =
                     Err.sendError( reply, Err.INVALID_OBJECT );
                 else
                 {
-                    var record = {};
-                    record.type = "tag";
-                    results.forEach( function( row )
-                    {
+                    //var record = {};
+                    //record.type = "tag";
+                    //results.forEach( function( row )
+                    //{
+                        /*
                         row.forEach( function( name, value, ts, ttl )
                         {
                             if ( name === "uuid" )
                                 record[name] = value.toString();
                             else
                                 record[name] = value;
-                        });
-                    });
-                    sendReply( reply, record );
+                        });*/
+                    //});
+                    //sendReply( reply, record );
+                    sendReply( reply, Tags.tagRowToObject( reply, results[0] ));
                 }
             }
         });
@@ -376,17 +378,18 @@ module.exports =
         var where_clause = parseWhereClause( query );
         var columns = parseColumns( query );
 
-        pool.cql( "select " + columns + " from tags" + where_clause, [], function( err, results )
+        global.pool.cql( "select " + columns + " from tags" + where_clause, [], function( err, results )
         {
-            //console.log('in cassandra callback');
             if ( err )
                 Err.sendError( reply, err );
             else
             {
                 var tags = [];
 
+
                 results.forEach( function( row )
                 {
+/*
                     var record = {};
                     record.type = "tag";
                     row.forEach( function( name, value, ts, ttl )
@@ -395,9 +398,9 @@ module.exports =
                             record[name] = value.toString();
                         else
                             record[name] = value;
-                    });
+                    });*/
 
-                    tags.push( record );
+                    tags.push( Tags.tagRowToObject( reply, row ));
                 });
 
                 sendReply( reply, { tags: tags } );
@@ -407,52 +410,86 @@ module.exports =
 
     // Creates a tag with specified name and properties (in query)
     // If tag is created, call responds with newly created tag info in payload
-    tagPost : function ( reply, a_tagname, query )
+    tagPost : function ( reply, query )
     {
         // Enforce required query parameter(s)
-        if ( query.uid === undefined )
+        if ( query.uid === undefined || query.tagname === undefined )
            throw Err.MISSING_REQUIRED_PARAM;
 
-        tagExistsByName( a_tagname, query.uid, function( tag_exists, a_tag_uuid )
+        Tags.getTagUUID( query.tagname, query.uid, function( tag_exists, taguuid )
         {
             if ( tag_exists )
                 Err.sendError( reply, Err.CONFLICTING_REQUEST );
             else
-                updateTag( reply, query, a_tagname, undefined );
+            {
+                Tags.createTag( reply, query, function()
+                {
+                    module.exports.tagGet( reply, { uid : query.uid, tagname: query.tagname } );
+                });
+            }
         });
     },
 
 
     // Updates a tag with specified name and properties (in query)
     // If tag is updated, call responds with newly created tag info in payload
-    tagPut : function ( reply, a_taguuid, query )
+    tagPut : function ( reply, query, a_taguuid )
     {
         // Enforce required query parameter(s)
-        if ( query.uid === undefined )
+        if ( a_taguuid === undefined && ( query.uid === undefined || query.tagname === undefined ))
            throw Err.MISSING_REQUIRED_PARAM;
 
-        objectExists( a_taguuid, "tag", function( tag_exists )
+        if ( a_taguuid )
         {
-            if ( tag_exists )
-                updateTag( reply, query, undefined, a_taguuid );
-            else
-                Err.sendError( reply, Err.INVALID_OBJECT );
-        });
+            objectExists( a_taguuid, "tag", function( tag_exists )
+            {
+                if ( tag_exists )
+                {
+                    Tags.updateTag( reply, query, a_taguuid, function()
+                    {
+                        console.log( "back from updateTag" );
+                        module.exports.tagGet( reply, {}, a_taguuid );
+                    });
+                }
+                else
+                    Err.sendError( reply, Err.INVALID_OBJECT );
+            });
+        }
+        else
+        {
+            console.log( "calling getTagUUID" );
+            Tags.getTagUUID( query.tagname, query.uid, function( tag_exists, taguuid )
+            {
+                if ( tag_exists )
+                {
+                    Tags.updateTag( reply, query, taguuid, function()
+                    {
+                        console.log( "back from updateTag" );
+                        module.exports.tagGet( reply, {}, taguuid );
+                    });
+                }
+                else
+                    Err.sendError( reply, Err.CONFLICTING_REQUEST );
+            });
+        }
     },
 
-
     // Deletes based on Tag UUID
-    tagDelete : function ( reply, a_taguuid, query )
+    tagDelete : function ( reply, query, a_taguuid )
     {
         // Check if tag exists and get uuid if it does...
         objectExists( a_taguuid, "tag", function( obj_exists )
-        {
+        {   d
             if ( obj_exists )
             {
-                // Delete Tag and all associated records
-                deleteTag( reply, a_taguuid, function()
+                // Delete all associations referring to this tag
+                deleteAssociations( reply, a_taguuid, function()
                 {
-                    sendReply( reply );
+                    // Delete Tag record
+                    Tags.deleteTag( reply, a_taguuid, function()
+                    {
+                        sendReply( reply );
+                    });
                 });
             }
             else
@@ -486,7 +523,7 @@ module.exports =
                 if ( tag_exists )
                 {
                     // Return object/type associated with tag
-                    pool.cql( "select nodeuuid, nodetype from associations where edgeuuid = " + query.edge + " allow filtering", [], function( err, results )
+                    global.pool.cql( "select nodeuuid, nodetype from associations where edgeuuid = " + query.edge + " allow filtering", [], function( err, results )
                     {
                         if ( err )
                             Err.sendError( reply, err );
@@ -529,7 +566,7 @@ module.exports =
                 if ( node_exists )
                 {
                     // Return TAGS associated with object/type
-                    pool.cql( "select edgeuuid from associations where nodeuuid = " + query.node + " allow filtering", [], function( err, results )
+                    global.pool.cql( "select edgeuuid from associations where nodeuuid = " + query.node + " allow filtering", [], function( err, results )
                     {
                         if ( err )
                             Err.sendError( reply, err );
@@ -669,7 +706,7 @@ module.exports =
         }
 
         // Find starting point using provided path
-        pool.cql( "select * from spiderfs where namespace = '" + query.path + "'", [], function( err, results )
+        global.pool.cql( "select * from spiderfs where namespace = '" + query.path + "'", [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -797,7 +834,7 @@ function processNextDirectory( reply, query, data, metadata, uid, gids, hidefile
         cur_row.processed = 1;
 
         // Query db for next directory
-        pool.cql( "select * from spiderfs where pid = " + cur_row.id, [], function( err, results )
+        global.pool.cql( "select * from spiderfs where pid = " + cur_row.id, [], function( err, results )
         {
             if ( err )
                 Err.sendError( reply, err );
@@ -836,7 +873,7 @@ function buildFileObject( object, obj_idx, data, metadata )
 /// Checks if an object exists in database by uuid and type
 function objectExists( a_uuid, a_type, callback )
 {
-    pool.cql( "select uuid from " + tableByType[a_type] + " where uuid = " + a_uuid, [], function( err, results )
+    global.pool.cql( "select uuid from " + tableByType[a_type] + " where uuid = " + a_uuid, [], function( err, results )
     {
         if ( err || !results.length )
             callback( 0 );
@@ -846,154 +883,11 @@ function objectExists( a_uuid, a_type, callback )
 }
 
 
-function tagExistsByName( a_tagname, a_uid, callback )
-{
-    pool.cql( "select uuid from tags where tagname = '" + a_tagname + "' and uid = " + a_uid + " allow filtering", [], function( err, results )
-    {
-        if ( !err && results.length )
-            callback( 1, results[0][0].value );
-        else
-            callback( 0, null );
-    });
-}
-
-
-function updateTag( reply, query, a_tagname, a_taguuid )
-{
-    var qry;
-
-    // Delete existing ACLs
-    // Insert new ACLs if specified
-    //
-
-    // Delete tagaccess rows referring to this tag
-    if ( a_taguuid )
-    {
-        deleteTagACL( reply, a_taguuid, function()
-        {
-            createTagACL( reply, query, a_taguuid, function()
-            {
-                var qry = "update tags set tagdesc = '"  + ((query.desc === undefined) ? "" : query.desc) + "', visibility = '"
-                  + ((query.visibility === undefined) ? "private" : query.visibility)
-                  + "', wtime = dateof(now()) where uuid = " + a_taguuid;
-
-                pool.cql( qry, [], function( error, results )
-                {
-                    if ( error )
-                        Err.sendError( reply, error );
-                    else
-                    {
-                        var subquery = {};
-                        subquery.uid = query.uid;
-                        module.exports.tagGet( reply, a_tagname, subquery );
-                    }
-                });
-            });
-        });
-    }
-    else
-    {
-        createTagACL( reply, query, a_taguuid, function()
-        {
-            var qry = "insert into tags (uuid,tagdesc,tagname,uid,visibility,wtime) values (now(),'"
-              + ((query.desc === undefined) ? "" : query.desc) + "','" + a_tagname + "'," + query.uid + ",'"
-              + ((query.visibility === undefined) ? "private" : query.visibility) + "',dateof(now()))";
-
-            pool.cql( qry, [], function( error, results )
-            {
-                if ( error )
-                    Err.sendError( reply, error );
-                else
-                {
-                    var subquery = {};
-                    subquery.uid = query.uid;
-                    module.exports.tagGet( reply, a_tagname, subquery );
-                }
-            });
-
-        });
-    }
-}
-
-function createTagGroupACL( reply, query, a_taguuid, callback )
-{
-    if ( query.group_acl !== undefined )
-    {
-        var gids = [];
-        var tmp = query.group_acl.split(',');
-
-        for ( var i = 0; i < tmp.length; ++i )
-            gids.push( parseInt( tmp[i] ));
-
-        i = 0;
-
-        pool.cql( "insert into tagaccess", [], function( error, results )
-        {
-            if ( error )
-                Err.sendError( reply, error );
-            else
-            {
-            }
-        });
-    }
-    else
-        callback();
-}
-
-
-function createTagUserACL( reply, query, a_taguuid, callback )
-{
-}
-
-
-function createTagACL( reply, query, a_taguuid, callback )
-{
-    if ( query.visibility === "shared" )
-    {
-        createTagGroupACL( reply, query, a_taguuid, function()
-        {
-            createTagUserACL( reply, query, a_taguuid, callback );
-        });
-    }
-    else
-        callback();
-}
-
-
-function deleteTag( reply, a_taguuid, callback )
-{
-    // Delete all associations referring to this tag
-    deleteAssociations( reply, a_taguuid, function()
-    {
-        // Delete tagaccess rows referring to this tag
-        deleteTagACL( reply, a_taguuid, function()
-        {
-            pool.cql( "delete from tags where uuid = " + a_taguuid, [], function( error, results )
-            {
-                if ( error )
-                    Err.sendError( reply, error );
-                else if ( callback )
-                    callback();
-            });
-        });
-    });
-}
-
-function deleteTagACL( reply, a_taguuid, callback )
-{
-    pool.cql( "delete from tagaccess where uuid = " + a_taguuid, [], function( error, results )
-    {
-        if ( error )
-            Err.sendError( reply, error );
-        else if ( callback )
-            callback();
-    });
-}
 
 
 function associationExists( a_edgeuuid, a_nodeuuid, callback )
 {
-    pool.cql( "select edgeuuid from associations where edgeuuid = " + a_edgeuuid + " and nodeuuid = " + a_nodeuuid + " allow filtering", [], function( err, results )
+    global.pool.cql( "select edgeuuid from associations where edgeuuid = " + a_edgeuuid + " and nodeuuid = " + a_nodeuuid + " allow filtering", [], function( err, results )
     {
         callback( !err && results.length );
     });
@@ -1003,7 +897,7 @@ function associationExists( a_edgeuuid, a_nodeuuid, callback )
 // This is a temporary function that will be replaced when arbitrary objects can be associated
 function deleteAssociations( reply, a_edgeuuid, callback )
 {
-    pool.cql( "delete from associations where edgeuuid = " + a_edgeuuid, [], function( error, results )
+    global.pool.cql( "delete from associations where edgeuuid = " + a_edgeuuid, [], function( error, results )
     {
         if ( error )
             Err.sendError( reply, error );
@@ -1014,7 +908,7 @@ function deleteAssociations( reply, a_edgeuuid, callback )
 
 function deleteAssociation( reply, a_edgeuuid, a_nodeuuid, callback )
 {
-    pool.cql( "delete from associations where edgeuuid = " + a_edgeuuid + " and nodeuuid = " + a_nodeuuid, [], function( error, results )
+    global.pool.cql( "delete from associations where edgeuuid = " + a_edgeuuid + " and nodeuuid = " + a_nodeuuid, [], function( error, results )
     {
         if ( error )
             Err.sendError( reply, error );
@@ -1026,7 +920,7 @@ function deleteAssociation( reply, a_edgeuuid, a_nodeuuid, callback )
 
 function createAssociation( a_edgeuuid, a_nodeuuid, a_nodetype, callback )
 {
-    pool.cql( "insert into associations (edgeuuid,nodeuuid,nodetype) values (" + a_edgeuuid + "," + a_nodeuuid + ",'" + a_nodetype + "')", [], function( err, results )
+    global.pool.cql( "insert into associations (edgeuuid,nodeuuid,nodetype) values (" + a_edgeuuid + "," + a_nodeuuid + ",'" + a_nodetype + "')", [], function( err, results )
     {
         callback( err );
     });
@@ -1036,7 +930,12 @@ function createAssociation( a_edgeuuid, a_nodeuuid, a_nodetype, callback )
 function parseColumns( query )
 {
     if ( query.retrieve !== undefined )
+    {
+        if ( query.retrieve.indexOf("uuid") === -1 )
+            query.retrieve += ",uuid";
+
         return query.retrieve;
+    }
     else
         return "*";
 }
@@ -1126,7 +1025,7 @@ function parseWhereClause( query )
             if ( isStartRange( prop ))
                 clause += prop + " >= " + tmp;
             else if ( isEndRange( prop ))
-                clause += prop + " <= " + tmp;
+                    clause += prop + " <= " + tmp;
             else
                 clause += prop + " = " + tmp;
         }
@@ -1151,5 +1050,7 @@ function sendReply( reply, payload )
         reply.write( "\n" );
     }
     reply.end();
+
+    console.log( "sent reply" );
 }
 
