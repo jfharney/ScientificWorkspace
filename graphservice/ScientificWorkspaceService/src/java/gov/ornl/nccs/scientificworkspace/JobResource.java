@@ -6,8 +6,8 @@
 
 package gov.ornl.nccs.scientificworkspace;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.DefaultValue;
@@ -27,13 +27,23 @@ import org.json.JSONStringer;
 @Path("")
 public class JobResource
 {
-    @Context
-    private UriInfo context;
+    //@Context
+    //private ServletContext context;
 
     /**
      * Creates a new instance of UserResource
      */
-    public JobResource() {
+    public JobResource()
+    {
+        /*
+        System.out.print("Making JobResource!");
+        m_api = (TitanAPI)context.getAttribute("titan");
+        if ( m_api == null )
+        {
+            System.out.println("Titan context object was missing or null.");
+            m_api = TitanAPI.getInstance();
+            context.setAttribute("titan",m_api);
+        }*/
     }
 
     /**
@@ -52,7 +62,7 @@ public class JobResource
         JSONStringer output = new JSONStringer();
 
         if ( a_jid >= 0 )
-            m_job_api.getJobByJID( a_jid, a_properties, output );
+            m_api.getJobByJID( a_jid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
@@ -69,7 +79,7 @@ public class JobResource
         JSONStringer output = new JSONStringer();
 
         if ( a_nodeid > -1 )
-            m_gen_api.getObjectByNID( a_nodeid, a_properties, output );
+            m_api.getObjectByNID( a_nodeid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
@@ -86,13 +96,14 @@ public class JobResource
         JSONStringer output = new JSONStringer();
 
         if ( a_uid >= 0 )
-            m_job_api.getJobs( a_uid, a_properties, output );
+            m_api.getJobs( a_uid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 
         return output.toString();
     }
 
-    private static final IJobAPI m_job_api = TitanAPI.getInstance();
-    private static final IGeneralAPI m_gen_api = TitanAPI.getInstance();
+    //private static final IJobAPI m_job_api = TitanAPI.getInstance();
+    //private static final IGeneralAPI m_gen_api = TitanAPI.getInstance();
+    private final TitanAPI m_api = TitanAPI.getInstance();
 }

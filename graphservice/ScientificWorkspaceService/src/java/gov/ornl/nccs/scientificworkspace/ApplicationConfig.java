@@ -17,7 +17,8 @@ import javax.ws.rs.core.Application;
 public class ApplicationConfig extends Application {
 
     @Override
-    public Set<Class<?>> getClasses() {
+    public Set<Class<?>> getClasses()
+    {
         Set<Class<?>> resources = new java.util.HashSet<>();
         addRestResourceClasses(resources);
         return resources;
@@ -30,8 +31,11 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(gov.ornl.nccs.scientificworkspace.AppResource.class);
         resources.add(gov.ornl.nccs.scientificworkspace.FileResource.class);
+        resources.add(gov.ornl.nccs.scientificworkspace.GroupResource.class);
         resources.add(gov.ornl.nccs.scientificworkspace.JobResource.class);
+        resources.add(gov.ornl.nccs.scientificworkspace.TagResource.class);
         resources.add(gov.ornl.nccs.scientificworkspace.UserResource.class);
     }
     

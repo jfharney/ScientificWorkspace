@@ -25,90 +25,71 @@ import org.json.JSONStringer;
  * @author d3s
  */
 @Path("")
-public class UserResource
+public class AppResource
 {
-    //@Context
-    //private ServletContext context;
-
     /**
      * Creates a new instance of UserResource
      */
-    public UserResource()
+    public AppResource()
     {
-        /*
-        System.out.print("Making UserResource!");
-        m_api = (TitanAPI)context.getAttribute("titan");
-        if ( m_api == null )
-        {
-            System.out.println("Titan context object was missing or null.");
-            m_api = TitanAPI.getInstance();
-            context.setAttribute("titan",m_api);
-        }
-        */
     }
 
     /**
      * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
-     * @param a_uid - User id
-     * @param a_uname - Username
+     * @param a_aid - App id
      * @param a_properties - Properties to retrieve
      * @return an instance of java.lang.String
      */
-    @Path("user")
+    @Path("app")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUser(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @QueryParam("uname") String a_uname,
+    public String getApp(
+        @DefaultValue("-1") @QueryParam("aid") int a_aid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_uid >= 0 )
-            m_api.getUserByUID( a_uid, a_properties, output );
-        else if ( a_uname != null )
-            m_api.getUserByUname( a_uname, a_properties, output );
+        if ( a_aid >= 0 )
+            m_api.getAppByAID( a_aid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
     }
 
-    @Path("user/{nodeid}")
+    @Path("app/{nodeid}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUserByNID(
-        @DefaultValue("-1") @PathParam("nid") int a_nid,
+    public String getAppByNID(
+        @DefaultValue("-1") @PathParam("nodeid") int a_nodeid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_nid > -1 )
-            m_api.getObjectByNID( a_nid, a_properties, output );
+        if ( a_nodeid > -1 )
+            m_api.getObjectByNID( a_nodeid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
     }
 
-    @Path("users")
+    @Path("apps")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUsers(
-        @DefaultValue("-1") @QueryParam("gid") int a_gid,
+    public String getApps(
+        @DefaultValue("-1") @QueryParam("jid") int a_jid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_gid >= 0 )
-            m_api.getUsersByGID( a_gid, a_properties, output );
+        if ( a_jid >= 0 )
+            m_api.getAppsByJID( a_jid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 
         return output.toString();
     }
 
- //   private static final IGeneralAPI m_gen_api = TitanAPI.getInstance();
-//    private static final IUserAPI m_user_api = TitanAPI.getInstance();
     private final TitanAPI m_api = TitanAPI.getInstance();
 }

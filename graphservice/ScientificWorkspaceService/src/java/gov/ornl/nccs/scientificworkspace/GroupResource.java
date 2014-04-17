@@ -25,7 +25,7 @@ import org.json.JSONStringer;
  * @author d3s
  */
 @Path("")
-public class UserResource
+public class GroupResource
 {
     //@Context
     //private ServletContext context;
@@ -33,51 +33,50 @@ public class UserResource
     /**
      * Creates a new instance of UserResource
      */
-    public UserResource()
+    public GroupResource()
     {
         /*
-        System.out.print("Making UserResource!");
+        System.out.print("Making GroupResource!");
         m_api = (TitanAPI)context.getAttribute("titan");
         if ( m_api == null )
         {
             System.out.println("Titan context object was missing or null.");
             m_api = TitanAPI.getInstance();
             context.setAttribute("titan",m_api);
-        }
-        */
+        }*/
     }
 
     /**
      * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
-     * @param a_uid - User id
-     * @param a_uname - Username
+     * @param a_gid - Group id
+     * @param a_gname - Group name
      * @param a_properties - Properties to retrieve
      * @return an instance of java.lang.String
      */
-    @Path("user")
+    @Path("group")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUser(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @QueryParam("uname") String a_uname,
+    public String getGroup(
+        @DefaultValue("-1") @QueryParam("gid") int a_gid,
+        @QueryParam("gname") String a_gname,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_uid >= 0 )
-            m_api.getUserByUID( a_uid, a_properties, output );
-        else if ( a_uname != null )
-            m_api.getUserByUname( a_uname, a_properties, output );
+        if ( a_gid >= 0 )
+            m_api.getGroupByGID( a_gid, a_properties, output );
+        else if ( a_gname != null )
+            m_api.getGroupByGname( a_gname, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
     }
 
-    @Path("user/{nodeid}")
+    @Path("group/{nodeid}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUserByNID(
+    public String getGroupByNID(
         @DefaultValue("-1") @PathParam("nid") int a_nid,
         @QueryParam("retrieve") String a_properties )
     {
@@ -91,24 +90,24 @@ public class UserResource
         return output.toString();
     }
 
-    @Path("users")
+    @Path("groups")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUsers(
-        @DefaultValue("-1") @QueryParam("gid") int a_gid,
+    public String getGroups(
+        @DefaultValue("-1") @QueryParam("uid") int a_uid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_gid >= 0 )
-            m_api.getUsersByGID( a_gid, a_properties, output );
+        if ( a_uid >= 0 )
+            m_api.getGroupsByUID( a_uid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 
         return output.toString();
     }
 
- //   private static final IGeneralAPI m_gen_api = TitanAPI.getInstance();
-//    private static final IUserAPI m_user_api = TitanAPI.getInstance();
+    //private static final IGeneralAPI m_gen_api = TitanAPI.getInstance();
+    //private static final IGroupAPI m_group_api = TitanAPI.getInstance();
     private final TitanAPI m_api = TitanAPI.getInstance();
 }
