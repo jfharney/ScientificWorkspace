@@ -1,6 +1,6 @@
 function getJobInfo(username) {
 	
-	console.log('getting job infor for username...' + username);
+	console.log('getting job inforrrr for username...' + username);
 	
 	var jobsArr = [];
 	
@@ -18,11 +18,11 @@ function getJobInfo(username) {
 		//dataType: JSON,
 		data: queryString,
 		success: function(data) {
-			console.log('success');
+			console.log('job widget successssw');
 			
 			for(var i=0;i<data.length;i++) {
 				for (var key in data[i]) {
-					//console.log('key: ' + key + ' data: ' + data[i][key]);
+					console.log('key: ' + key + ' data: ' + data[i][key]);
 					
 				}
 				children.push(data[i]);
@@ -113,7 +113,16 @@ function getJobInfo(username) {
 			    			async: false,
 			    			data: queryString,
 			    			success: function(data) {
+			    				
+			    				
 			    				info_obj = data;
+			    				
+
+			    				//console.log('info_obj: ' + info_obj);
+			    				
+			    				for(var key in info_obj['jobs'][0]) {
+			    					//console.log('key: ' + key + ' ' + info_obj['jobs'][0][key]);
+			    				}
 			    				
 			    				if(!jQuery.isEmptyObject(info_obj)) {
 		    						$(info_space).append('<div>jobid: ' + info_obj['jobs'][0]['jobid']+ '</div>');

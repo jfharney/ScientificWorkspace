@@ -22,6 +22,9 @@ var app = express();
 app.set("views", __dirname + "/views");
 
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.bodyParser());
 
 // Let's use the Jade templating language
 app.set("view engine", "jade");
@@ -57,7 +60,34 @@ app.get("/workspace/:user_id", function(request, response) {
 	  response.render("index1", { uid : request.params.user_id });
 });
 
+app.get("/doi/:user_id", function(request, response) {
+	  console.log('in /:user_id');
+	  for(var key in request.params) {
+		  console.log('key: ' + key + ' value: ' + request.params[key]);
+	  }
+	  //console.log('params: ' + request.params.user_id);
+	
+	  response.render("index2", { uid : request.params.user_id });
+	});
 
+
+app.post('/doi_send/:user_id',function(request,response) {
+	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
+	
+	//var title = request.body.title;
+	
+	console.log('stringify: ' + JSON.stringify(request.body));
+	
+	for (var key in request.body) {
+		console.log('key--->' + key + ' value--->' + request.body[key]);
+	}
+	
+	
+	//var res = tags.tagsproxyHelper(request,response);
+	console.log('sending back doi_send');
+	
+	response.send("doi_send");
+});
 
 
 app.get("/userinfo/:user_id", function(request, response) {
@@ -142,7 +172,7 @@ app.get('/groups/:gid',function(request,response) {
 
 app.get('/jobsproxy/:username',function(request,response) {
 
-	console.log('in apps proxy');
+	console.log('in jobs proxy');
 
 	var res = jobs.jobsproxyHelper(request,response);
 	
@@ -341,6 +371,41 @@ app.get('/associations', function(request, response)
 
 
 //--------files API---------//
+
+//example
+app.get('/files1', function(request,response) {
+	
+	console.log('in files1...');
+	
+	var fileName = "file" + Date.now();
+	var folderName = "folder" + Date.now();
+	
+	var respText = '[';
+	
+    //var respText = respText + ' {title: "widow1|proj|root", isFolder: true, isLazy: true, key: "id3"';
+     	
+    //var respText = respText + '  	,';
+    //var respText = respText + '   children: [';
+    var respText = respText + '     {';
+    var respText = respText + '     	"title": "' + fileName + '", "key":"' + fileName + '", "type" : "file", "uuid" : "uuid' + fileName + '"';
+           
+    var respText = respText + '     },'
+    var respText = respText + '     {';
+    var respText = respText + '     	"title": "' + folderName + '", "key":"'  + folderName + '", "isLazy": true, "isFolder": true, "type" : "file", "uuid" : "uuid' + fileName + '"';
+    var respText = respText + '     }';
+        
+    var respText = respText + '   ]';
+	
+    console.log('respText: ' + respText);
+	//var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
+	//respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
+    //"type" : "job",
+								
+	response.send(respText);
+
+	
+});
+
 
 
 //sample- initial files data proxy service
