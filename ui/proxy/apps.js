@@ -74,7 +74,7 @@ var appsproxyHelper = function(request, response) {
 				  respArr.push(respObj);
 			  }
 			  
-			  //console.log('respArr: ' + respArr);
+			  console.log('apps respArr: ' + respArr);
 			  
 				response.send(respArr);
 			  

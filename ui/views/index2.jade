@@ -1,0 +1,290 @@
+doctype html 
+head
+  title ORNL Scientific Workspace
+  link(id="bs-css", href="css/bootstrap-cerulean.css", rel="stylesheet",type="text/css")
+  link(href="css/bootstrap-responsive.css", rel="stylesheet",type="text/css")
+  link(href="css/charisma-app.css", rel="stylesheet",type="text/css")
+  link(href="css/jquery-ui-1.8.21.custom.css", rel="stylesheet",type="text/css")
+  link(href="css/fullcalendar.css", rel="stylesheet",type="text/css")
+  link(href="css/fullcalendar.print.css", rel="stylesheet",type="text/css")
+  link(href="css/chosen.css", rel="stylesheet",type="text/css")
+  link(href="css/uniform.default.css", rel="stylesheet",type="text/css")
+  link(href="css/colorbox.css", rel="stylesheet",type="text/css")
+  link(href="css/jquery.cleditor.css", rel="stylesheet",type="text/css")
+  link(href="css/jquery.noty.css", rel="stylesheet",type="text/css")
+  link(href="css/noty_theme_default.css", rel="stylesheet",type="text/css")
+  link(href="css/elfinder.min.css", rel="stylesheet",type="text/css")
+  link(href="css/elfinder.theme.css", rel="stylesheet",type="text/css")
+  link(href="css/jquery.iphone.toggle.css", rel="stylesheet",type="text/css")
+  link(href="css/opa-icons.css", rel="stylesheet",type="text/css")
+  link(href="css/uploadify.css", rel="stylesheet",type="text/css")
+  link(href="css/dynatree/ui.dynatree.css", rel="stylesheet",type="text/css")
+  link(href="css/modal.css" rel="stylesheet")
+  script(src="js/core.js")
+    
+    
+html
+  body
+    
+    
+    //div Selected Uuids:
+    //  span#echoSelectionUuids3
+    //div Selected Types:
+    //  span#echoSelectionTypes3
+    
+    div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
+      div.modal-dialog
+        div.modal-header
+          button.close(type="button",data-dismiss="modal",aria-hidden="true")
+          h4#myModalLabel.modal-title Tag Information
+        div.modal-body
+          div Tag Name:
+          input#tag_name.form-control.create_tree_options(style="margin-bottom:10px")
+          div Tag Description:
+          textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px")
+          div Resources:
+          div#resources_to_tag(style="margin-bottom:10px")
+          div Types:
+          div#resources_types_to_tag(style="margin-bottom:10px")
+          div Share with:
+          div#shared_users(style="margin-bottom:10px") Insert Options for people, groups, etc
+        div.modal-footer
+          button.btn.btn-default(data-dismiss="modal") Cancel
+          button#create_tag.btn.btn-primary Create Tag
+          
+    div.navbar
+      div.navbar-inner 
+        div.container-fluid
+          div.top-nav.nav-collapse
+            ul.nav
+              li 
+                a(href="#") #{uid}
+              li
+                a(href="../workspace/#{uid}") Workspace
+              li
+                a(href="../doi/#{uid}") DOI
+              li
+                form.navbar-search.pull-left
+                  input(placeholder="Search this workspace",name="query",type="text").search-query.span2
+              
+          div.btn-group.pull-right
+            ul.nav
+              a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
+                i.icon-user
+                span.hidden-phone #{uid}
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href="#") Profile
+                li.divider
+                li
+                  a(href="login.html") Logout
+                li.divider
+                li
+                  a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 1qk
+                li(role="presentation")
+                  a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") jamroz
+                li(role="presentation")
+                  a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 8xo
+                li(role="presentation")
+                  
+        
+    div.container-fluid
+    
+      div.row-fluid
+        div.span12
+          div
+            ul.breadcrumb
+              li
+                a(href="#")
+                  span#user_id_label #{uid}
+                span.divider /
+              li
+                a(href="#") DOI
+      div.row-fluid
+        div.span12#user_info_space
+     
+      div.row-fluid
+        div.span12
+          div
+            p.user_info
+            
+      div.row-fluid
+      
+        //left bar
+        div.span2.main-menu-span 
+          div.well.nav-collapse.sidebar-nav
+            ul.nav.nav-tabs.nav-stacked.main-menu
+              li.nav-header.hidden-tablet Main
+              li
+                a.ajax-link(href="#")
+                  span.hidden-tablet Manage DOIs
+              // li.nav-header.hidden-tablet DOIs
+              li
+                a.ajax-link(href="#")
+                  span.hidden-tablet Add DOI
+              li
+                a.ajax-link(href="#")
+                  span.hidden-tablet Remove DOI
+          //  button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal",data-target="#myModal",style="margin-bottom:50px") Add Tag
+          // <i class="icon-home"></i><span class="hidden-tablet"> Dashboard</span>
+        //main content
+        div.span8
+        
+        
+                
+          div.row-fluid.sortable
+            div.span12
+              div.box.span12
+                div.box-header.well
+                  h2 New DOI Form
+                    i.icon-user
+                  div.box-icon
+                    a.btn.btn-minimize.btn-round(href="#")
+                      i.icon-chevron-up
+                    a.btn.btn-close.btn-round(href="#")
+                      i.icon-remove
+                div.box-content
+                  div.row-fluid
+                    div.span12 
+                      fieldset
+                        legend Datepicker, Autocomplete, WYSIWYG
+                      
+                    div.row-fluid
+                      div.span6
+                        div.control-group
+                          label.control-label(for="typeahead") Title
+                          div.controls
+                            input.span10.typeahead#title(type="text")
+                      
+                    div.row-fluid
+                      div.span6
+                        div.control-group.span12#addCreator
+                          label.control-label(for="typeahead") Creator
+                            div.controls
+                              input.typeahead#creator(type="text",data-provide="typeahead")
+                            a#creator_link(style="margin-bottom:40px;cursor:pointer") Add Creator
+                      div.span6
+                        div.control-group.span12#addCreatorEmail
+                          label.control-label(for="typeahead") Creator Email
+                            div.controls
+                              input.typeahead#creator_email(type="text",data-provide="typeahead")
+                            a#creator_email_link(style="margin-bottom:40px;cursor:pointer;display:none") Add Creator
+                    
+                    
+                      //
+                        div.row-fluid  
+                          div.control-group
+                            div.span4
+                            div.span6
+                              button.btn.btn-primary#submit_doi(type="submit",style="margin-left:10px;margin-right:20px") Submit DOI
+                              button.btn(type="reset") Cancel
+                        
+                  //
+                      div.control-group
+                          label.control-label(for="typeahead") Resource(s)
+                          div.controls
+                            input.span6.typeahead#typeahead(type="text",data-provide="typeahead",data-items="4")
+                            // p.help-block Resource(s)
+                        div.control-group
+                          label.control-label(for="date01") Date input
+                          div.controls
+                            input.span6.input-xlarge.datepicker#date01(type="text")
+                        div.control-group
+                          label.control-label(for="typeahead") Other Metadata
+                          div.controls
+                            textarea.span6#textarea2(rows="3")
+          
+          //      
+            div.row-fluid.sortable
+          
+              div.box.span4
+                div.box-header.well
+                  h2 Collaborators
+                    i.icon-user
+                  div.box-icon
+                    a.btn.btn-minimize.btn-round(href="#")
+                      i.icon-chevron-up
+                    a.btn.btn-close.btn-round(href="#")
+                      i.icon-remove
+                div.box-content
+                  div content
+
+              div.box.span4
+                div.box-header.well
+                  h2 Project Space
+                    i.icon-user
+                  div.box-icon
+                    a.btn.btn-minimize.btn-round(href="#")
+                      i.icon-chevron-up
+                    a.btn.btn-close.btn-round(href="#")
+                      i.icon-remove
+                div.box-content 
+                  div content
+
+              div.box.span4
+                div.box-header.well
+                  h2 Jobs
+                    i.icon-user
+                  div.box-icon
+                    a.btn.btn-minimize.btn-round(href="#")
+                      i.icon-chevron-up
+                    a.btn.btn-close.btn-round(href="#")
+                      i.icon-remove
+                div.box-content 
+                  div content
+
+          
+        
+        //feed
+        div.span2 feed
+      
+            
+    script(src="js/jquery/jquery-1.7.2.min.js")
+    script(src="js/jquery/jquery-ui-1.8.21.custom.min.js")
+    script(src="js/bootstrap/bootstrap-transition.js")
+    script(src="js/bootstrap/bootstrap-alert.js")
+    script(src="js/bootstrap/bootstrap-modal.js")
+    script(src="js/bootstrap/bootstrap-dropdown.js")
+    script(src="js/bootstrap/bootstrap-scrollspy.js")
+    script(src="js/bootstrap/bootstrap-tab.js")
+    script(src="js/bootstrap/bootstrap-tooltip.js")
+    script(src="js/bootstrap/bootstrap-popover.js")
+    script(src="js/bootstrap/bootstrap-button.js")
+    script(src="js/bootstrap/bootstrap-collapse.js")
+    script(src="js/bootstrap/bootstrap-carousel.js")
+    script(src="js/bootstrap/bootstrap-typeahead.js")
+    script(src="js/bootstrap/bootstrap-tour.js")
+    script(src="js/jquery/jquery.cookie.js")
+    script(src="js/fullcalendar.min.js")
+    script(src="js/jquery/jquery.dataTables.min.js")
+    script(src="js/excanvas.js")
+    script(src="js/jquery/jquery.flot.min.js")
+    script(src="js/jquery/jquery.flot.pie.min.js")
+    script(src="js/jquery/jquery.dataTables.min.js")
+    script(src="js/jquery/jquery.flot.stack.js")
+    script(src="js/jquery/jquery.flot.resize.min.js")
+    script(src="js/jquery/jquery.chosen.min.js")
+    script(src="js/jquery/jquery.uniform.min.js")
+    script(src="js/jquery/jquery.colorbox.min.js")
+    script(src="js/jquery/jquery.cleditor.min.js")
+    script(src="js/jquery/jquery.noty.js")
+    script(src="js/jquery/jquery.elfinder.min.js")
+    script(src="js/jquery/jquery.raty.min.js")
+    script(src="js/jquery/jquery.iphone.toggle.js")
+    script(src="js/jquery/jquery.autogrow-textarea.js")
+    script(src="js/jquery/jquery.uploadify-3.1.min.js")
+    script(src="js/jquery/jquery.history.js")
+    script(src='js/tablesorter-master/js/jquery.tablesorter.js')
+    script(src="js/charisma.js")
+    script(src="js/jquery/jquery.dynatree.min.js")
+    script(src="js/main.js")
+    script(src="js/ajax/doi.js")
+    // script(src="js/ajax/jobtree.js")
+    // script(src="js/ajax/filetree.js")
+    // script(src="js/ajax/jobs_widget.js")
+    // script(src="js/ajax/userinfo.js")
+    // script(src="js/ajax/tagTree.js")
+    // script(src="js/ajax/tagstable.js")
+    // script(src="js/ajax/tagclouds.js")
+    // script(src="js/addtag.js")

@@ -14,7 +14,7 @@ var groupinfoHelper = function(request,response) {
 	//make a call to http://localhost:8080/users/<user_id>
 	var path = '/groups?uid='+request.params.uid;
 	
-	console.log('path: ' + path);
+	console.log('path----------<>: ' + path);
 	
 	//query the userlist service here
 	var options = {
@@ -40,7 +40,7 @@ var groupinfoHelper = function(request,response) {
 			  
 			  console.log('ending group info...');
 			 
-			  console.log('response data\n' + responseData);
+			  console.log('response data\n\n' + responseData);
 			  
 			  try {
 				  var jsonObj = JSON.parse(responseData);
@@ -84,7 +84,7 @@ var groupsHelper = function(request, response) {
 			method: 'GET'
 		  };
 	
-	 console.log('path-> ' + path);
+	 console.log('path<---------> ' + path);
 	 var responseData = '';
 	
 	 

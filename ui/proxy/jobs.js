@@ -70,7 +70,10 @@ var jobsproxyHelper = function(request, response) {
 				  respArr.push(respObj);
 			  }
 			  
-			  //console.log('respArr: ' + respArr);
+			  console.log('respArrrrr: ' + respArr[0]);
+			  for(var key in respArr[0]) {
+				  console.log('key: ' + key + ' ' + respArr[0][key]);
+			  }
 			  response.send(respArr);
 			  
 			  
