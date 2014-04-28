@@ -51,8 +51,6 @@ app.get('/sciworkspace1', function(request, response)
 
 app.get('/tags', function(request, response) 
 {
-	if(verbose)
-		console.log('Received http://localhost:8001/tags');
 	
 	var args = url.parse(request.url, true).query;
 	// query above is an object containing all the 
@@ -91,8 +89,7 @@ app.get('/tags', function(request, response)
 
 app.get('/associations', function(request, response) 
 {
-	if(verbose)
-		console.log('Received http://localhost:8001/associations');
+
 	var args = url.parse(request.url, true).query;
 	// query above is an object containing all the 
 	// arguments in the URL as key-value pairs. 
@@ -128,8 +125,7 @@ app.get('/associations', function(request, response)
 
 app.get('/jobs', function(request, response) 
 {
-	if(verbose)
-		console.log('Received http://localhost:8001/jobs');
+
 	var args = url.parse(request.url, true).query;
 	var options = {
 			host: 'localhost',
@@ -160,8 +156,7 @@ app.get('/jobs', function(request, response)
 });
 
 app.get('/apps', function(request, response) {
-	if(verbose)
-		console.log('Received http://localhost:8001/apps');
+
 
 });
 

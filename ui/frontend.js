@@ -48,37 +48,36 @@ app.get("/", function(request, response) {
 	});
 
 app.get("/workspace/:user_id", function(request, response) {
-	  console.log('in /:user_id');
-	  for(var key in request.params) {
+	  //console.log('in /:user_id');
+	  /*for(var key in request.params) {
 		  console.log('key: ' + key + ' value: ' + request.params[key]);
-	  }
+	  }*/
 	  //console.log('params: ' + request.params.user_id);
 	
 	  response.render("index1", { uid : request.params.user_id });
-	});
+});
 
 
 
 
 app.get("/userinfo/:user_id", function(request, response) {
 	
-	console.log ('calling user info...' + request.params.user_id);
+	console.log('calling user info...' + request.params.user_id);
 
 	//make a call to http://localhost:8080/users/<user_id>
-	var path = '/users/'+request.params.user_id;
+	var path = '/users/' + request.params.user_id;
 	
 	//query the userlist service here
 	var options = {
 			host: 'localhost',
 			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
+			path: path,
 			method: 'GET'
 		  };
 	
 	 var responseData = '';
 
-	 console.log ('calling user info...' + request.params.user_id + ' path: ' + path);
+	 //console.log ('calling user info...' + request.params.user_id + ' path: ' + path);
 	 
 	 var req = http.request(options, function(res) {
 		  //console.log("Got response: " + res.statusCode);
@@ -90,9 +89,9 @@ app.get("/userinfo/:user_id", function(request, response) {
 		  });
 		  res.on('end',function() {
 			  
-			  console.log('ending user info...');
+			  //console.log('ending user info...');
 			  
-			  console.log('response data\n' + responseData);
+			  //console.log('response data\n' + responseData);
 			  
 			  var jsonObj = JSON.parse(responseData);
 		      response.send(jsonObj);
@@ -116,7 +115,7 @@ app.get("/userinfo/:user_id", function(request, response) {
 
 app.get("/groupinfo/:uid", function(request, response) {
 
-	console.log ('calling group info...');
+	//console.log ('calling group info...');
 
 	var res = groups.groupinfoHelper(request,response);
 });
@@ -126,7 +125,7 @@ app.get("/groupinfo/:uid", function(request, response) {
 
 //groups on lazy read off of the tree
 app.get('/groups/:gid',function(request,response) {
-	console.log('gid -> ' + request.params.gid);
+	//console.log('gid -> ' + request.params.gid);
 	
 	var res = groups.groupsHelper(request,response);
 });
@@ -152,7 +151,7 @@ app.get('/jobsproxy/:username',function(request,response) {
 
 app.get('/appsproxy',function(request,response) {
 
-	console.log('in apps proxy');
+	//console.log('in apps proxy');
 
 	var res = apps.appsproxyHelper(request,response);
 	
@@ -185,24 +184,30 @@ app.get("/appinfo/:app_id", function(request, response) {
 
 //-----------Tags-----------//
 
-app.post('/tagproxy',function(request,response) {
+app.post('/tagproxy', function(request, response) {
 	console.log('\n\n---------in tag proxy----------');
 	
-	var res = tags.tagsproxyHelper(request,response);
+	var res = tags.tagsproxyHelper(request, response);
 });
 
 
 
 app.get('/tags', function(request, response) 
-{
-	console.log('Received http://localhost:8001/tags');
-	
+{	
 	var args = url.parse(request.url, true).query;
 	// query above is an object containing all the 
-	// arguments in the URL as key-value pairs. 
+	// arguments in the URL as key-value pairs.
+	console.log("In frontend.js (app.get '/tags'...), received: " + request.url);
+	
+	var arguments = '';
 	
 	for(i in args)
-	  console.log(args[i]);
+	  if(arguments == '')
+		arguments = i + "=" + args[i];
+	  else
+		arguments += "&" + i + "=" + args[i];
+	
+	console.log("The value of arguments is " + args['uid']);
 	
 	var options = {
 			host: 'localhost',
@@ -211,10 +216,8 @@ app.get('/tags', function(request, response)
 			method: 'GET'
 	};
 	
-	console.log('path--->' + options['path']);
-	
 	var req = http.request(options, function(resp) {
-		console.log('Got response status code ' + resp.statusCode);
+		//console.log('Got response status code ' + resp.statusCode);
 		
 		var responseData = '';
 		resp.on('data', function(chunk) {
@@ -223,6 +226,7 @@ app.get('/tags', function(request, response)
 		
 		resp.on('end', function() {
 			var jsonObj = JSON.parse(responseData);
+			console.log(jsonObj);
 			response.send(jsonObj);
 		});
 		
@@ -234,7 +238,41 @@ app.get('/tags', function(request, response)
 	req.end();
 });
 
-
+app.get('/tags/:tag_name', function(request, response) 
+{	
+	//console.log ('calling tags info...' + request.params.tag_name);
+	var args = url.parse(request.url, true).query;
+	
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: "/tags/" + request.params.tag_name + "?uid=" + args['uid'],
+			method: 'GET'
+	};
+	
+	//console.log("Sending path " + options['path']);
+	
+	var req = http.request(options, function(resp) {
+		//console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			var jsonObj = JSON.parse(responseData);
+			//console.log(jsonObj);
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();	
+});
 
 
 
@@ -245,18 +283,18 @@ app.get('/tags', function(request, response)
 //-----------Associations-----------//
 
 app.post('/associationsproxy',function(request,response) {
-	console.log('In associationsproxy');
+	//console.log('In associationsproxy');
 	var res = associations.associationsproxyHelper(request,response);
 });
 
 
 app.get('/associations', function(request, response) 
 {
-	console.log('Received http://localhost:8001/associations');
+	//console.log('Received http://localhost:8001/associations');
 	var args = url.parse(request.url, true).query;
 	// query above is an object containing all the 
 	// arguments in the URL as key-value pairs. 
-	console.log('args[edge]: ' + args['edge']);
+	//console.log('args[edge]: ' + args['edge']);
 	var options = {
 			host: 'localhost',
 			port: 8080,
@@ -265,7 +303,7 @@ app.get('/associations', function(request, response)
 	};
 	
 	var req = http.request(options, function(resp) {
-		console.log('Got response status code ' + resp.statusCode);
+		//console.log('Got response status code ' + resp.statusCode);
 		
 		var responseData = '';
 		resp.on('data', function(chunk) {
@@ -308,7 +346,7 @@ app.get('/associations', function(request, response)
 //sample- initial files data proxy service
 app.get('/initfilesdata',function(request,response) {
 
-	console.log('init files data');
+	//console.log('init files data');
 	
 	var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
 	respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
@@ -321,7 +359,7 @@ app.get('/initfilesdata',function(request,response) {
 
 
 app.get('/userlist', function(request,response) {
-	console.log ('calling userlist...');
+	//console.log ('calling userlist...');
 	
 	var path = '/users?retrieve=username';
 	
@@ -347,7 +385,7 @@ app.get('/userlist', function(request,response) {
 		  });
 		  res.on('end',function() {
 			  
-			  console.log('ending userlist...');
+			 // console.log('ending userlist...');
 			 
 			  var jsonObj = JSON.parse(responseData);
 		      response.send(jsonObj);
@@ -370,7 +408,7 @@ app.get('/userlist', function(request,response) {
 //files proxy service
 app.get('/filesinfo',function(request,response) {
 	
-	console.log ('calling filesinfo proxy...');
+	//console.log ('calling filesinfo proxy...');
 	
 	//grab the different components of the url
 	var url_parts = url.parse(request.url, true);
@@ -477,14 +515,12 @@ app.get('/filesinfo',function(request,response) {
 
 
 //files proxy service
-app.get('/files',function(request,response) {
+app.get('/files', function(request,response) {
 	
 	
 	console.log ('calling files...\n\n\n\n\n\n\n');
 	var url_parts = url.parse(request.url, true);
 	var query = url_parts.query;
-	
-	
 	
 	var path = '/files?';
 	
