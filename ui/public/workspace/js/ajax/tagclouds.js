@@ -28,16 +28,23 @@ $(document).ready(function()
 			{
 			  var associations_length = associations_data['associations'].length;
 			  var fontsize = 8;
-			  $tagcloud = $('<a class="tagcloud" id="' + tag_uuid + '" style="font-size:' + (fontsize + associations_length ) + 'px">' + tag_name + '</a> <span> </span>').on( "click", function() 
+			  $tagcloud = $('<a class="tagcloud" id="' + 
+					  		tag_uuid + 
+					  		'" style="font-size:' + 
+					  		(fontsize + associations_length ) + 
+					  		'px">' + 
+					  		tag_name + 
+					  		'</a> <span> </span>').on( "click", function()   
 			  {  
 			    $('#tagCloudInfo').empty();
 				$('#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Objects tagged by: ' + $( this ).text() + "</div>");
 								
 				// Get the various resources here.
 				for(var i = 0; i < associations_length; i++) {
-				  $('#cloud_info').append('<div style="margin-top:5px;color: black">Resource: ' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</div>');
+				  $('#cloud_info').append('<div style="margin-top:5px;color:black">Resource: ' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</div>');
 				  $('#cloud_info').append('<hr>');
 				}
+				console.log($(this).text());
 			  });
 			  $('#tagClouds').append($tagcloud);
 			},
@@ -47,13 +54,7 @@ $(document).ready(function()
 	  });
 	},
 	error: function() {}
-  });
-	
-  $( "#tagClouds a" ).on( "click", function() 
-  {		  
-    console.log( $( this ).text() );		  
-  });
-	
+  })
 });
 
 
