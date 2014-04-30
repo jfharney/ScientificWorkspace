@@ -32,20 +32,21 @@ $(document).ready(function()
 					  		tag_uuid + 
 					  		'" style="font-size:' + 
 					  		(fontsize + associations_length ) + 
-					  		'px">' + 
+					  		'px; cursor:pointer">' + 
 					  		tag_name + 
 					  		'</a> <span> </span>').on( "click", function()   
 			  {  
-			    $('#tagCloudInfo').empty();
-				$('#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Objects tagged by: ' + $( this ).text() + "</div>");
+			    $('div#tagCloudInfo').empty();
+				$('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: ' + $( this ).text() + "</div>");
 								
 				// Get the various resources here.
 				for(var i = 0; i < associations_length; i++) {
-				  $('#cloud_info').append('<div style="margin-top:5px;color:black">Resource: ' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</div>');
+				  $('#cloud_info').append('<div style="margin-top:5px;color:black">Resource: ' + associations_data['assoc iations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</div>');
 				  $('#cloud_info').append('<hr>');
 				}
 				console.log($(this).text());
 			  });
+			  
 			  $('#tagClouds').append($tagcloud);
 			},
 			error: function() {}
