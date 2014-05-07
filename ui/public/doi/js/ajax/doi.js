@@ -17,11 +17,29 @@ $(document).ready(function()
 	});
 	
 	$('#creator_link').click(function() {
+			
+			console.log('adding creator');
+			
+			totalCreators = totalCreators + 1;
+			
+			var html = '';
+			html += '<div class="controls">';
+			html += '<span><input class="typeahead creator" type="text" data-provide="typeahead"> </span><span> <img src="../img/cancel-off.png" class="delete_creator" style="cursor:pointer"> </span>';
+			
+			html += '</div>';
+			$('#creator_link').before(html);
+			
+			$('#creator_email_link').before(html);
+			
+		});
+	
+	$('#resource_link').click(function() {
 		
-		console.log('adding creator');
+		console.log('adding resource');
 		
 		totalCreators = totalCreators + 1;
 		
+		/*
 		var html = '';
 		html += '<div class="controls">';
 		html += '<span><input class="typeahead creator" type="text" data-provide="typeahead"> </span><span> <img src="../img/cancel-off.png" class="delete_creator" style="cursor:pointer"> </span>';
@@ -30,9 +48,12 @@ $(document).ready(function()
 		$('#creator_link').before(html);
 		
 		$('#creator_email_link').before(html);
-		
+		*/
 	});
+
+
 	
+	/*
 	$('#keyword_link').click(function() {
 		
 		console.log('adding keyword');
@@ -53,6 +74,7 @@ $(document).ready(function()
 		
 		
 	});
+	*/
 	
 	
 	$('#submit_doi').click(function() {

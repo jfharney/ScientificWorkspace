@@ -32,30 +32,17 @@ head
 html(lang="en")
   body
     
-    //div Selected Uuids:
-      //span#echoSelectionUuids3
-    //div Selected Types:
-      //span#echoSelectionTypes3
-    
     div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
           h4#myModalLabel.modal-title DOI 
         div.modal-body
-          //div Tag Name:
-          //input#tag_name.form-control.create_tree_options(style="margin-bottom:10px")
-          div Tag Description:
-          textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px")
           div Add the following resources to DOI form?
           div#resources_to_doi(style="margin-bottom:10px")
-          //div Types:
-          //div#resources_types_to_tag(style="margin-bottom:10px")
-          //div Share with:
-          //div#shared_users(style="margin-bottom:10px") Insert Options for people, groups, etc
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
-          button#create_doi_button.btn.btn-primary Add DOI form
+          button#create_doi_button.btn.btn-primary Create DOI form
        
     
     div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
@@ -78,6 +65,7 @@ html(lang="en")
           button.btn.btn-default(data-dismiss="modal") Cancel
           button#create_tag.btn.btn-primary Create Tag
       
+      
     div#tableModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
@@ -94,7 +82,7 @@ html(lang="en")
                 th uid
                 th visibility
                 th wtime
-             tbody
+            tbody
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
       

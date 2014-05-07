@@ -7,3 +7,6 @@ SW.tagged_types = '';
 SW.selected_file_items = '';
 SW.selected_file_types = '';
 SW.selected_file_keys = '';
+
+SW.current_user = '';
+SW.current_user_email = '';

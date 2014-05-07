@@ -148,29 +148,92 @@ html
                   div.row-fluid
                     div.span12 
                       fieldset
-                        legend Datepicker, Autocomplete, WYSIWYG
-                      
+                        legend DOI Submittal Form
+                    
+                    
                     div.row-fluid
                       div.span6
                         div.control-group
-                          label.control-label(for="typeahead") Title
+                          label.control-label(for="typeahead") Title 
                           div.controls
-                            input.span10.typeahead#title(type="text")
+                            input.span10.typeahead#title(type="text",value="#{default_title}")
                       
-                    div.row-fluid
-                      div.span6
-                        div.control-group.span12#addCreator
-                          label.control-label(for="typeahead") Creator
-                            div.controls
-                              input.typeahead#creator(type="text",data-provide="typeahead")
-                            a#creator_link(style="margin-bottom:40px;cursor:pointer") Add Creator
-                      div.span6
-                        div.control-group.span12#addCreatorEmail
-                          label.control-label(for="typeahead") Creator Email
-                            div.controls
-                              input.typeahead#creator_email(type="text",data-provide="typeahead")
-                            a#creator_email_link(style="margin-bottom:40px;cursor:pointer;display:none") Add Creator
+                    - var a = creators_email.length
+                    //note creator and creator_email MUST be the same length
+                    if creators.length == 0
+                      div.row-fluid
+                        div.span6
+                          div.control-group.span12#addCreator
+                            label.control-label(for="typeahead") Creator
+                              div.controls
+                                input.typeahead#creator(type="text",data-provide="typeahead")
+                              a#creator_link(style="margin-bottom:40px;cursor:pointer") Add Creator
+                        div.span6
+                          div.control-group.span12#addCreatorEmail
+                            label.control-label(for="typeahead") Creator Email
+                              div.controls
+                                input.typeahead#creator_email(type="text",data-provide="typeahead")
+                              a#creator_email_link(style="margin-bottom:40px;cursor:pointer;display:none") Add Creator
                     
+                    
+                    else
+                      -for (var i=0;i<a;i++) {
+                        div.row-fluid
+                          div.span6
+                            div.control-group.span12#addCreator
+                              label.control-label(for="typeahead") Creator
+                                div.controls
+                                  input.typeahead#creator(type="text",data-provide="typeahead",value="#{creators[i]}")
+                          div.span6
+                            div.control-group.span12#addCreatorEmail
+                              label.control-label(for="typeahead") Creator Email
+                                div.controls
+                                  input.typeahead#creator_email(type="text",data-provide="typeahead",value="#{creators_email[i]}")
+                      -}
+                    
+                    if resources.length == 0
+                      div.row-fluid
+                          div.span6
+                            div.control-group.span12#addResource
+                              label.control-label(for="typeahead") Resource
+                                div.controls
+                                  input.typeahead.related_resource(type="text",data-provide="typeahead",value="default")
+                                a#resource_link(style="margin-bottom:40px;cursor:pointer") Add Resource
+                    
+                    else 
+                      each resource, i in resources
+                        div.row-fluid
+                          div.span6
+                            div.control-group.span12#addResource
+                              label.control-label(for="typeahead") Resource
+                                div.controls
+                                  input.typeahead.related_resource(type="text",data-provide="typeahead",value="#{resource}")
+                    
+                    
+                    div.control-group
+                        label.control-label(for="typeahead") Language
+                        div.controls
+                          input.span6.typeahead#related_resources(value="English",type="text",data-provide="typeahead")
+                         
+                      div.control-group
+                        label.control-label(for="selectError") Country
+                        div.controls
+                          select.span6.typeahead#selectError(data-rel="chosen")
+                            option United States
+                            option Canada
+                            option Mexico
+                    
+                    div.control-group
+                        label.control-label(for="typeahead") Description
+                        div.controls
+                          textarea.span6.typeahead#description(type="textarea",data-provide="typeahead")
+                       
+                    //
+                      div.control-group
+                        label.control-label(for="typeahead") Related Resources
+                        div.controls
+                          input.span6.typeahead#related_resources(type="text",data-provide="typeahead")
+                      
                     
                       //
                         div.row-fluid  

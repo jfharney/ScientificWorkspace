@@ -70,17 +70,22 @@ $(document).ready(function()
     	console.log("$result[i].html() : " + $result[i].html());
     }*/
     
-    alert("Value of collisionFlag is " + collisionFlag);
+    //alert("Value of collisionFlag is " + collisionFlag);
+    
+    $('#myModal').dialog('close');
+    
+    console.log('tag url: ' + url);
+    
     
     /*********************************/
                   
-    /*$.ajax({
+    $.ajax({
       type: "POST",
       url: url,
       data: input_data,
       success: function(data)
       {
-        alert('success ' + data);
+        console.log('successful tag creations ' + data);
         for(var key in data) {
           console.log('key: ' + key + ' value: ' + data[key]);
         }
@@ -96,15 +101,45 @@ $(document).ready(function()
         var tagged_item = '';
         var tagged_type = '';
                                             
+        var base_url = url;
         if(length < 1) {
           alert('nothing to associate '  + data );
         } 
         else if(length > 1) {
 	      alert('calling addAssociation for multiple items');
 	      for(var j = 0; j < tagged_items.length; j++) {
+	    	url = base_url;
 	        tagged_item = tagged_items[j];
 	        tagged_type = tagged_types[j];
-	        addAssociation(url, input_data, length, tagged_item, tagged_type);
+	        //addAssociation(url, input_data, length, tagged_item, tagged_type);
+	        
+	        
+	        
+	        url += '&length=' + length;
+	        url += '&tagged_item=' + tagged_item;
+	        url += '&tagged_type=' + tagged_type;
+	        
+	        console.log('associations url: ' + url);
+	        
+	        $.ajax({
+	          type: "POST",
+	          url: url,
+	          data: input_data,
+	          success: function(associations_data) 
+	          {
+	            //console.log('associations response: ' + associations_data);
+	            if(associations_data == 'success') {
+	              console.log('Tag successfully added to resources');
+	            } else {
+	              console.log('Tag not successfully added to resources');
+	            }
+	          },
+	          error: function(xhr, status, error) {
+	            alert('error');
+	            if(xhr.status == 404) { }
+	          }
+	        });
+	        
           }
 	    } 
         else {
@@ -113,71 +148,49 @@ $(document).ready(function()
 
           alert('calling addAssociation for single item');
 
-          addAssociation(url, input_data, length, tagged_item, tagged_type);
+          //addAssociation(url, input_data, length, tagged_item, tagged_type);
+          
+          url += '&length=' + length;
+          url += '&tagged_item=' + tagged_item;
+          url += '&tagged_type=' + tagged_type;
+          
+
+          console.log('associations url: ' + url);
+          
+          $.ajax({
+            type: "POST",
+            url: url,
+            data: input_data,
+            success: function(associations_data) 
+            {
+              //console.log('associations response: ' + associations_data);
+              if(associations_data == 'success') {
+                console.log('Tag successfully added to resources');
+              }
+            },
+            error: function(xhr, status, error) {
+              alert('error');
+              if(xhr.status == 404) { }
+            }
+          });
+          
+          
         }
+        alert('closing mymodal: ');
+        
       },
       error: function() 
       {
-        alert('error');
+        console.log('error in associations');
       }
-    });*/		// End of ajax call. 
+    });		// End of ajax call. 
   });		// End of $('#create_tag').click(function()
 
   var num_tags_returned = 3;
 
-  $('#search_tags').click(function() {
+  
 
-        	  
-        	  
-        	  /*
-                  $('#tag_results').empty();
-
-
-                  url = url + '?tag_name=' + tag_name + '&tag_description=' + tag_description;
-
-                  $.ajax({
-                          type: "GET",
-                          url: url,
-                          data: data,
-                          success: function(data)
-                          {
-
-                                  if(data == 'success') {
-                                          console.log('Tag successfully created');
-                                  } else {
-                                          console.log('Tag not successfully created.  Please try again');
-                                  }
-                          },
-                          error: function(xhr, status, error) {
-                            if(xhr.status==404)
-                              { }
-                          }
-                        });
-
-                  for(var i=0;i<num_tags_returned;i++) {
-                          $('#tag_results').append('<div>tag ' + i + '</div>');
-                  }
-                  */
-
-          });
-
-
-
-          $('#add_tag_button').click(function(){
-        	  
-        	  /*
-                  var tagged_items = new Array();
-                  tagged_items = SW.tagged_items.split(', ');
-                  var tagged_types = new Array();
-                  tagged_types = SW.tagged_types.split(', ');
-
-                  $('#resources_to_tag').empty();
-                  $('#resources_to_tag').append('<span>' + tagged_items + '</span>');
-                  $('#resources_to_tag').append('<div><span>' + tagged_types + '</span></div>');
-                  console.log('resources to tag: ' + $('#resources_to_tag').html());
-              */
-          });
-
+          
 
 
   });
@@ -185,9 +198,13 @@ $(document).ready(function()
   
   function addAssociation(url, input_data, length, tagged_item, tagged_type) 
   {
+	 // alert('am i here?');
     url += '&length=' + length;
     url += '&tagged_item=' + tagged_item;
     url += '&tagged_type=' + tagged_type;
+    
+
+    console.log('associations url: ' + url);
     
     $.ajax({
       type: "POST",
@@ -195,9 +212,9 @@ $(document).ready(function()
       data: input_data,
       success: function(associations_data) 
       {
-        console.log('associations response: ' + associations_data);
+        //console.log('associations response: ' + associations_data);
         if(associations_data == 'success') {
-          alert('Tag successfully added to resources');
+          console.log('Tag successfully added to resources');
         }
       },
       error: function(xhr, status, error) {
@@ -206,3 +223,65 @@ $(document).ready(function()
       }
     });
   }
+
+  
+  
+  
+  
+  /*
+	$('#search_tags').click(function() {
+
+  	  
+  	  
+  	  
+            $('#tag_results').empty();
+
+
+            url = url + '?tag_name=' + tag_name + '&tag_description=' + tag_description;
+
+            $.ajax({
+                    type: "GET",
+                    url: url,
+                    data: data,
+                    success: function(data)
+                    {
+
+                            if(data == 'success') {
+                                    console.log('Tag successfully created');
+                            } else {
+                                    console.log('Tag not successfully created.  Please try again');
+                            }
+                    },
+                    error: function(xhr, status, error) {
+                      if(xhr.status==404)
+                        { }
+                    }
+                  });
+
+            for(var i=0;i<num_tags_returned;i++) {
+                    $('#tag_results').append('<div>tag ' + i + '</div>');
+            }
+            
+
+    });
+*/
+
+  
+  
+  /*
+  $('#add_tag_button').click(function(){
+	  
+	  
+          var tagged_items = new Array();
+          tagged_items = SW.tagged_items.split(', ');
+          var tagged_types = new Array();
+          tagged_types = SW.tagged_types.split(', ');
+
+          $('#resources_to_tag').empty();
+          $('#resources_to_tag').append('<span>' + tagged_items + '</span>');
+          $('#resources_to_tag').append('<div><span>' + tagged_types + '</span></div>');
+          console.log('resources to tag: ' + $('#resources_to_tag').html());
+     
+  });
+ */
+  

@@ -75,7 +75,7 @@ $(function(){
 	
 	
 	//get the groups/collaborators here
-	getCollaboratorInfo(user_info_obj['uid']);
+	//getCollaboratorInfo(user_info_obj['uid']);
 	
 	
 	//get the file info here

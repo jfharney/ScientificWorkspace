@@ -66,10 +66,74 @@ app.get("/doi/:user_id", function(request, response) {
 		  console.log('key: ' + key + ' value: ' + request.params[key]);
 	  }
 	  //console.log('params: ' + request.params.user_id);
-	
-	  response.render("index2", { uid : request.params.user_id });
+
+	  var model = {};
+	  var request_obj = request['query'];
+	  
+	  var resources = request_obj['resource'];
+	  model['resources'] = [];
+	  if(resources != undefined) {
+		  console.log('typeof: ' + isArray(resources));
+		  //this is called if there is only one
+		  if(!isArray(resources)) {
+
+			  model['resources'] = [ resources ];
+		  } else {
+			  model['resources'] = resources;
+		  }
+	  }
+	  
+	  
+	  var creators = request_obj['creator'];
+	  model['creators'] = [];
+	  if(creators != undefined) {
+		  console.log('typeof: ' + isArray(creators));
+		  //this is called if there is only one
+		  if(!isArray(creators)) {
+
+			  model['creators'] = [ creators ];
+		  } else {
+			  model['creators'] = creators;
+		  }
+	  } 
+	  
+	  var creators_email = request_obj['creator_email'];
+	  model['creators_email'] = [];
+	  if(creators_email != undefined) {
+		  console.log('typeof: ' + isArray(creators_email));
+		  //this is called if there is only one
+		  if(!isArray(creators_email)) {
+
+			  model['creators_email'] = [ creators_email ];
+		  } else {
+			  model['creators_email'] = creators_email;
+		  }
+	  } 
+	  
+	  if(model['creators_email'].length != model['creators'].length) {
+
+		  model['creators_email'] = [];
+		  model['creators'] = [];
+		  
+	  }
+
+	  console.log('creators email length ' + model['creators_email'].length);
+	  console.log('creators length ' + model['creators'].length);
+	  
+	  
+	  model['default_title'] = 'doi_' + (new String(new Date().getTime()));
+	  
+	  console.log(model['default_title']);
+	  
+	  model['uid'] = request.params.user_id;
+	  //model['creators'] = ['a','b','c'];
+	  //response.render("index2", { uid : request.params.user_id });
+	  response.render("index2", model);
 	});
 
+function isArray(what) {
+    return Object.prototype.toString.call(what) === '[object Array]';
+}
 
 app.post('/doi_send/:user_id',function(request,response) {
 	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
