@@ -74,13 +74,13 @@ $(document).ready(function()
     
     /*********************************/
                   
-    /*$.ajax({
+    $.ajax({
       type: "POST",
       url: url,
       data: input_data,
       success: function(data)
       {
-        alert('success ' + data);
+        //alert('success ' + data);
         for(var key in data) {
           console.log('key: ' + key + ' value: ' + data[key]);
         }
@@ -112,7 +112,7 @@ $(document).ready(function()
           tagged_type = tagged_types;
 
           alert('calling addAssociation for single item');
-
+alert('sending url: ' + url);
           addAssociation(url, input_data, length, tagged_item, tagged_type);
         }
       },
@@ -120,7 +120,7 @@ $(document).ready(function()
       {
         alert('error');
       }
-    });*/		// End of ajax call. 
+    });		// End of ajax call. 
   });		// End of $('#create_tag').click(function()
 
   var num_tags_returned = 3;
@@ -188,6 +188,7 @@ $(document).ready(function()
     url += '&length=' + length;
     url += '&tagged_item=' + tagged_item;
     url += '&tagged_type=' + tagged_type;
+    alert("About to make AJAX call to " + url);
     
     $.ajax({
       type: "POST",
