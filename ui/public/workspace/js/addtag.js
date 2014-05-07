@@ -107,7 +107,7 @@ $(document).ready(function()
           alert('nothing to associate '  + data );
         } 
         else if(length > 1) {
-	      alert('calling addAssociation for multiple items');
+	      console.log('calling addAssociation for multiple items');
 	      for(var j = 0; j < tagged_items.length; j++) {
 	    	url = base_url;
 	        tagged_item = tagged_items[j];

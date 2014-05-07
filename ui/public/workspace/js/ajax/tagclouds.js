@@ -60,9 +60,15 @@ $(document).ready(function()
 								var jobUuid = resourceData['jobs'][0]['uuid'];
 								var jobStartDate = resourceData['jobs'][0]['starttime'];
 								var fJobStartDate = formatDate(jobStartDate);		// formatDate is defined below in this file.
-								$lessLink = $('<span id="lessTagInfoSpan_'+jobUuid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+jobId+'<br />&nbsp;&nbsp;&nbsp;Group: '+jobGroupName+'<br />&nbsp;&nbsp;&nbsp;Started: '+fJobStartDate+'</span>').on("click", function() {$('#moreTagInfoLink_'+jobUuid).css('display', 'inline'); $(this).hide()});
-								$moreLink = $('<a id="moreTagInfoLink_'+jobUuid+'" style="cursor:pointer">more</a>').on("click", function() {$('#lessTagInfoSpan_'+jobUuid).css('display', 'inline'); $(this).hide()});
-								$('#cloud_info').append('<li id="tagResource_'+jobUuid+'"><b>' + jobName + '</b> (job)&nbsp;</li>');
+								$lessLink = $('<span id="lessTagInfoSpan_'+jobUuid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+jobId+'<br />&nbsp;&nbsp;&nbsp;Group: '+jobGroupName+'<br />&nbsp;&nbsp;&nbsp;Started: '+fJobStartDate+'</span>').on("click", function() {
+									$('#moreTagInfoLink_'+jobUuid).css('display', 'inline'); 
+									$(this).hide();
+								});
+								$moreLink = $('<a id="moreTagInfoLink_'+jobUuid+'" style="cursor:pointer">more</a>').on("click", function() {
+									$('#lessTagInfoSpan_'+jobUuid).css('display', 'inline'); 
+									$(this).hide();
+								});
+								$('#cloud_info').append('<li id="tagResource_'+jobUuid+'"><b>' + jobName + '</b> (job)&nbsp;</li><hr>');
 								$('#tagResource_'+jobUuid).append($lessLink);
 								$('#tagResource_'+jobUuid).append($moreLink);
 							}, 
@@ -70,7 +76,7 @@ $(document).ready(function()
 						});
 				  	}
 					else if(resType == 'app') {
-						$('#cloud_info').append('<li>' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</li>');
+						$('#cloud_info').append('<li>' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</li><hr>');
 				  	}
 				  }
 				  $('#cloud_info').append('</ul>');

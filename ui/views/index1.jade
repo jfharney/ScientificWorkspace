@@ -71,6 +71,7 @@ html(lang="en")
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
           h4#tableModalLabel.modal-title Tags Table
+        
         div.modal-body.box-content#tagsTableContainer(style="margin-top:10px; max-height:550px; width:750px; overflow:auto")
           table#tagsTable.display.dataTable
             thead
@@ -260,10 +261,10 @@ html(lang="en")
                 div.box-content
                   div.row-fluid
                     div.span8
-                      h3 Tag Cloud
+                      h3(style="margin-bottom:15px") Tag Cloud
                       div#tagClouds(style="margin-top:10px;")
                     div.span4
-                      h3 Tag Info
+                      h3(style="margin-bottom:15px") Tag Info
                       div#tagCloudInfo
                 
           div.row-fluid.sortable

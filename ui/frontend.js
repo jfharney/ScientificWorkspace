@@ -413,6 +413,7 @@ app.get('/associations', function(request, response)
 		});
 		
 		resp.on('end', function() {
+			//console.log('in resp end for associations... ' + responseData);
 			var jsonObj = JSON.parse(responseData);
 			response.send(jsonObj);
 		});
