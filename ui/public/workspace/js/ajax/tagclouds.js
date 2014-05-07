@@ -27,19 +27,57 @@ $(document).ready(function()
 			success: function(associations_data) 
 			{
 			  var associations_length = associations_data['associations'].length;
-			  var fontsize = 8;
-			  $tagcloud = $('<a class="tagcloud" id="' + tag_uuid + '" style="font-size:' + (fontsize + associations_length ) + 'px">' + tag_name + '</a> <span> </span>').on( "click", function() 
-			  {  
-			    $('#tagCloudInfo').empty();
-				$('#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Objects tagged by: ' + $( this ).text() + "</div>");
-								
-				// Get the various resources here.
-				for(var i = 0; i < associations_length; i++) {
-				  $('#cloud_info').append('<div style="margin-top:5px;color: black">Resource: ' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</div>');
-				  $('#cloud_info').append('<hr>');
-				}
-			  });
-			  $('#tagClouds').append($tagcloud);
+			  if(associations_length > 0) { 
+			    var fontsize = 8;
+			    $tagcloud = $('<a class="tagcloud" id="' + 
+					  		tag_uuid + 
+					  		'" style="font-size:' + 
+					  		(fontsize + associations_length) + 
+					  		'px; cursor:pointer">' + 
+					  		tag_name + 
+					  		'</a> <span> </span>').on( "click", function()   
+			    {  
+			      $('div#tagCloudInfo').empty();
+			      $('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: ' + $( this ).text() + "</div>");
+			      $('#cloud_info').append('<div># Objects: ' + associations_length + '</div>');
+			      $('#cloud_info').append('<ul id="tagContentsList">');
+
+				  // Get the various resources here.
+				  for(var i = 0; i < associations_length; i++) {
+					// Get the name of the resource, according to its type.
+					var resType = associations_data['associations'][i]['type'];
+					var resUuid = associations_data['associations'][i]['uuid'];
+					if(resType == 'job') {
+						$.ajax({
+							type: "GET", 
+							url: "http://localhost:1337/jobUuid/" + associations_data['associations'][i]['uuid'],
+							async: false,
+							success: function(resourceData) 
+							{
+								var jobName = resourceData['jobs'][0]['jobname'];
+								var jobId = resourceData['jobs'][0]['jobid'];
+								var jobGroupName =  resourceData['jobs'][0]['groupname'];
+								var jobUuid = resourceData['jobs'][0]['uuid'];
+								var jobStartDate = resourceData['jobs'][0]['starttime'];
+								var fJobStartDate = formatDate(jobStartDate);		// formatDate is defined below in this file.
+								$lessLink = $('<span id="lessTagInfoSpan_'+jobUuid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+jobId+'<br />&nbsp;&nbsp;&nbsp;Group: '+jobGroupName+'<br />&nbsp;&nbsp;&nbsp;Started: '+fJobStartDate+'</span>').on("click", function() {$('#moreTagInfoLink_'+jobUuid).css('display', 'inline'); $(this).hide()});
+								$moreLink = $('<a id="moreTagInfoLink_'+jobUuid+'" style="cursor:pointer">more</a>').on("click", function() {$('#lessTagInfoSpan_'+jobUuid).css('display', 'inline'); $(this).hide()});
+								$('#cloud_info').append('<li id="tagResource_'+jobUuid+'"><b>' + jobName + '</b> (job)&nbsp;</li>');
+								$('#tagResource_'+jobUuid).append($lessLink);
+								$('#tagResource_'+jobUuid).append($moreLink);
+							}, 
+							error: function(e) {console.log('jobUuidHelper query failed.');}
+						});
+				  	}
+					else if(resType == 'app') {
+						$('#cloud_info').append('<li>' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</li>');
+				  	}
+				  }
+				  $('#cloud_info').append('</ul>');
+				  console.log($(this).text());
+			    }); // End of the onClick for tag cloud elements.
+			    $('#tagClouds').append($tagcloud);
+			  }
 			},
 			error: function() {}
 		  });
@@ -48,12 +86,8 @@ $(document).ready(function()
 	},
 	error: function() {}
   });
-	
-  $( "#tagClouds a" ).on( "click", function() 
-  {		  
-    console.log( $( this ).text() );		  
-  });
-	
+  
+  //$("#moreTagInfoLink").on("click", function() {alert("more was clicked!");});	Doesn't work.
 });
 
 
@@ -111,4 +145,13 @@ function getCountsArr(tag_name_arr)
 	return tag_counts;
 	//console.log('tag_names: ' + tag_names);
 	//console.log('tag_counts: ' + tag_counts);
+}
+
+// Takes a string like 2014-02-05T17:56:23.000Z and returns 2014-02-05.  
+function formatDate(jobStartDate)
+{
+	var n = jobStartDate.indexOf('T');
+	if(n != -1)
+	  jobStartDate = jobStartDate.substring(0, n);
+	return jobStartDate;
 }

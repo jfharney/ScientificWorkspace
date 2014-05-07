@@ -259,6 +259,15 @@ app.get("/jobinfo/:job_id", function(request, response) {
 	
 });
 
+// This method has been added to solve the problem of finding a job name
+// given its UUID (from the associations table). 
+app.get("/jobUuid/:job_uuid", function(request, response) 
+{	
+	console.log ('Calling jobUuid on ' + request.params.job_uuid);	
+	var res = jobs.jobsUuidHelper(request, response);
+	
+});
+
 
 app.get("/appinfo/:app_id", function(request, response) {
 	console.log ('calling user info...' + request.params.app_id);
@@ -320,7 +329,7 @@ app.get('/tags', function(request, response)
 		
 		resp.on('end', function() {
 			var jsonObj = JSON.parse(responseData);
-			console.log(jsonObj);
+			//console.log(jsonObj);
 			response.send(jsonObj);
 		});
 		
@@ -356,7 +365,6 @@ app.get('/tags/:tag_name', function(request, response)
 		
 		resp.on('end', function() {
 			var jsonObj = JSON.parse(responseData);
-			//console.log(jsonObj);
 			response.send(jsonObj);
 		});
 		

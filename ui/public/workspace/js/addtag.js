@@ -86,8 +86,9 @@ $(document).ready(function()
       success: function(data)
       {
         console.log('successful tag creations ' + data);
+        
         for(var key in data) {
-          console.log('key: ' + key + ' value: ' + data[key]);
+          //console.log('key: ' + key + ' value: ' + data[key]);
         }
                     	               	  
         var tag_uuid = data['uuid'];
@@ -146,7 +147,6 @@ $(document).ready(function()
           tagged_item = tagged_items;
           tagged_type = tagged_types;
 
-          alert('calling addAssociation for single item');
 
           //addAssociation(url, input_data, length, tagged_item, tagged_type);
           
@@ -202,6 +202,7 @@ $(document).ready(function()
     url += '&length=' + length;
     url += '&tagged_item=' + tagged_item;
     url += '&tagged_type=' + tagged_type;
+    alert("About to make AJAX call to " + url);
     
 
     console.log('associations url: ' + url);
