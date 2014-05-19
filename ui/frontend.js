@@ -45,27 +45,21 @@ var tags = require('./proxy/tags.js');
 
 
 app.get("/", function(request, response) {
-	  //response.render("index1", { message: "I love anime" });
-	  //response.render("index1", { uid : "8xo" });
 	  response.redirect('/workspace/users/j1s');
-	});
+});
 
 app.get("/workspace/:user_id", function(request, response) {
-	  //console.log('in /:user_id');
-	  /*for(var key in request.params) {
-		  console.log('key: ' + key + ' value: ' + request.params[key]);
-	  }*/
-	  //console.log('params: ' + request.params.user_id);
 	
 	  response.render("index1", { uid : request.params.user_id });
 });
 
 app.get("/doi/:user_id", function(request, response) {
 	  console.log('in /:user_id');
-	  for(var key in request.params) {
-		  console.log('key: ' + key + ' value: ' + request.params[key]);
-	  }
-	  //console.log('params: ' + request.params.user_id);
+	  
+	  
+	  //for(var key in request.params) {
+	  //	  console.log('key: ' + key + ' value: ' + request.params[key]);
+	  //}
 
 	  var model = {};
 	  var request_obj = request['query'];
@@ -73,7 +67,6 @@ app.get("/doi/:user_id", function(request, response) {
 	  var resources = request_obj['resource'];
 	  model['resources'] = [];
 	  if(resources != undefined) {
-		  console.log('typeof: ' + isArray(resources));
 		  //this is called if there is only one
 		  if(!isArray(resources)) {
 
@@ -117,13 +110,9 @@ app.get("/doi/:user_id", function(request, response) {
 		  
 	  }
 
-	  console.log('creators email length ' + model['creators_email'].length);
-	  console.log('creators length ' + model['creators'].length);
 	  
 	  
 	  model['default_title'] = 'doi_' + (new String(new Date().getTime()));
-	  
-	  console.log(model['default_title']);
 	  
 	  model['uid'] = request.params.user_id;
 	  //model['creators'] = ['a','b','c'];
@@ -136,19 +125,9 @@ function isArray(what) {
 }
 
 app.post('/doi_send/:user_id',function(request,response) {
-	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
-	
-	//var title = request.body.title;
-	
-	console.log('stringify: ' + JSON.stringify(request.body));
-	
-	for (var key in request.body) {
-		console.log('key--->' + key + ' value--->' + request.body[key]);
-	}
+	//console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
 	
 	
-	//var res = tags.tagsproxyHelper(request,response);
-	console.log('sending back doi_send');
 	
 	response.send("doi_send");
 });
@@ -156,7 +135,7 @@ app.post('/doi_send/:user_id',function(request,response) {
 
 app.get("/userinfo/:user_id", function(request, response) {
 	
-	console.log('calling user info...' + request.params.user_id);
+	//console.log('calling user info...' + request.params.user_id);
 
 	//make a call to http://localhost:8080/users/<user_id>
 	var path = '/users/' + request.params.user_id;
@@ -263,14 +242,14 @@ app.get("/jobinfo/:job_id", function(request, response) {
 // given its UUID (from the associations table). 
 app.get("/jobUuid/:job_uuid", function(request, response) 
 {	
-	console.log ('Calling jobUuid on ' + request.params.job_uuid);	
+	//console.log ('Calling jobUuid on ' + request.params.job_uuid);	
 	var res = jobs.jobsUuidHelper(request, response);
 	
 });
 
 
 app.get("/appinfo/:app_id", function(request, response) {
-	console.log ('calling user info...' + request.params.app_id);
+	//console.log ('calling user info...' + request.params.app_id);
 
 	var res = apps.appsinfoHelper(request,response);
 
@@ -288,7 +267,7 @@ app.get("/appinfo/:app_id", function(request, response) {
 //-----------Tags-----------//
 
 app.post('/tagproxy', function(request, response) {
-	console.log('\n\n---------in tag proxy----------');
+	//console.log('\n\n---------in tag proxy----------');
 	
 	var res = tags.tagsproxyHelper(request, response);
 });
@@ -300,7 +279,7 @@ app.get('/tags', function(request, response)
 	var args = url.parse(request.url, true).query;
 	// query above is an object containing all the 
 	// arguments in the URL as key-value pairs.
-	console.log("In frontend.js (app.get '/tags'...), received: " + request.url);
+	//console.log("In frontend.js (app.get '/tags'...), received: " + request.url);
 	
 	var arguments = '';
 	
@@ -310,7 +289,7 @@ app.get('/tags', function(request, response)
 	  else
 		arguments += "&" + i + "=" + args[i];
 	
-	console.log("The value of arguments is " + args['uid']);
+	//console.log("The value of arguments is " + args['uid']);
 	
 	var options = {
 			host: 'localhost',
@@ -320,7 +299,6 @@ app.get('/tags', function(request, response)
 	};
 	
 	var req = http.request(options, function(resp) {
-		//console.log('Got response status code ' + resp.statusCode);
 		
 		var responseData = '';
 		resp.on('data', function(chunk) {
@@ -329,7 +307,6 @@ app.get('/tags', function(request, response)
 		
 		resp.on('end', function() {
 			var jsonObj = JSON.parse(responseData);
-			//console.log(jsonObj);
 			response.send(jsonObj);
 		});
 		
@@ -448,7 +425,6 @@ app.get('/associations', function(request, response)
 //example
 app.get('/files1', function(request,response) {
 	
-	console.log('in files1...');
 	
 	var fileName = "file" + Date.now();
 	var folderName = "folder" + Date.now();
@@ -497,7 +473,6 @@ app.get('/initfilesdata',function(request,response) {
 
 
 app.get('/userlist', function(request,response) {
-	//console.log ('calling userlist...');
 	
 	var path = '/users?retrieve=username';
 	
@@ -514,16 +489,12 @@ app.get('/userlist', function(request,response) {
 	
 	 
 	 var req = http.request(options, function(res) {
-		  //console.log("Got response: " + res.statusCode);
-		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
 		  res.on('data', function (chunk) {
-			  //console.log('\n\n\n\nchunk: ' + chunk);
 			  responseData += chunk;	
 				
 		  });
 		  res.on('end',function() {
 			  
-			 // console.log('ending userlist...');
 			 
 			  var jsonObj = JSON.parse(responseData);
 		      response.send(jsonObj);
@@ -546,7 +517,6 @@ app.get('/userlist', function(request,response) {
 //files proxy service
 app.get('/filesinfo',function(request,response) {
 	
-	//console.log ('calling filesinfo proxy...');
 	
 	//grab the different components of the url
 	var url_parts = url.parse(request.url, true);
@@ -577,8 +547,6 @@ app.get('/filesinfo',function(request,response) {
 	 
 	 if(!firewallMode) {
 		 var req = http.request(options, function(res) {
-			  //console.log("Got response: " + res.statusCode);
-			  //console.log('HEADERS: ' + JSON.stringify(res.headers));
 			  res.on('data', function (chunk) {
 				  //console.log('\n\n\n\nchunk: ' + chunk);
 				  responseData += chunk;	
@@ -689,7 +657,7 @@ app.get('/files', function(request,response) {
 	 if(firewallMode) {
 		//use hard coded values
 		 
-		 console.log('\n\nfirewall mode for file --> off\n\n')
+		 //console.log('\n\nfirewall mode for file --> off\n\n')
 		 
 		 var fileResponseJSONStr = '{ ' + 
 			'"name" : "lgt006" , ' +
@@ -730,7 +698,7 @@ app.get('/files', function(request,response) {
 	 //call the service for the data
 	 else {
 		 
-		 console.log('\n\nfirewall mode for file --> off\n\n')
+		 //console.log('\n\nfirewall mode for file --> off\n\n')
 		 
 		 var req = http.request(options, function(res) {
 			  //console.log("Got response: " + res.statusCode);
@@ -740,27 +708,11 @@ app.get('/files', function(request,response) {
 				  responseData += chunk;	
 				  
 				  
-				  // you can use res.send instead of console.log to output via express
-				  //var jsonObj = JSON.parse(responseData);
-			      //response.send(jsonObj);
-			     
-		    	  //construct the respText array
-		    	  //var a = '{"title": "SubItem 1", "isLazy": true }';
-		    	  
-		    	  //jsonStr = '[{ "title" : "ChromaBuilds1",  "isLazy" : true ,  "isFolder" : true} , { "title" : "ChromaBuilds2",  "isLazy" : true ,  "isFolder" : true}]';
-
 		    	
 			  });
 			  res.on('end',function() {
 				 
-				  /*
-				  for(var key in files) {
-						console.log('key: ' + key + ' value: ' + files[key]);
-					}
-					*/
 				  var jsonStr = files.doQueryFiles(responseData,filePath);
-		    	  
-				  console.log('ending...');
 		    	  
 				 var respText = jsonStr; //'[ {"title": "SubItem 1", "isLazy": true }, 	{"title": "SubFolder 2", "isFolder": true, "isLazy": true } ]';
 		    	  response.send(respText);

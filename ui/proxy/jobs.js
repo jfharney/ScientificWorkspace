@@ -25,13 +25,11 @@ var jobsproxyHelper = function(request, response) {
 			method: 'GET'
 		  };
 	
-	 console.log('path-> ' + path);
 	 var responseData = '';
 	
 	 
 	 
 	 var req = http.request(options, function(res) {
-		  console.log("Got response: " + res.statusCode);
 		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
 		  res.on('data', function (chunk) {
 			  //console.log('\n\n\n\nchunk: ' + chunk);
@@ -70,15 +68,13 @@ var jobsproxyHelper = function(request, response) {
 				  respArr.push(respObj);
 			  }
 			  
-			  console.log('respArrrrr: ' + respArr[0]);
-			  for(var key in respArr[0]) {
-				  console.log('key: ' + key + ' ' + respArr[0][key]);
-			  }
+			  //console.log('respArrrrr: ' + respArr[0]);
+			  //for(var key in respArr[0]) {
+			  //	  console.log('key: ' + key + ' ' + respArr[0][key]);
+			  //}
+			  
 			  response.send(respArr);
 			  
-			  
-			 
-				
 		  });
 		  
 	  
@@ -117,11 +113,8 @@ var jobsinfoHelper = function(request, response)
 	
 	 var responseData = '';
 
-	 console.log ('calling job info...' + request.params.job_id + ' path: ' + path);
 	 
 	 var req = http.request(options, function(res) {
-		  //console.log("Got response: " + res.statusCode);
-		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
 		  res.on('data', function (chunk) {
 			  //console.log('\n\n\n\nchunk: ' + chunk);
 			  responseData += chunk;	
@@ -129,9 +122,6 @@ var jobsinfoHelper = function(request, response)
 		  });
 		  res.on('end',function() {
 			  
-			  console.log('ending user info...');
-			  
-			  console.log('response data\n' + responseData);
 			  
 			  var jsonObj = JSON.parse(responseData);
 		      response.send(jsonObj);
@@ -166,20 +156,15 @@ var jobsUuidHelper = function(request, response)
 	
 	var responseData = '';
 
-	console.log ('Calling jobUuidHelper for...' + request.params.job_uuid);
 	 
 	var req = http.request(options, function(res) 
 	{
-		 console.log("Got response: " + res.statusCode);
-		 console.log('HEADERS: ' + JSON.stringify(res.headers));
 		 res.on('data', function (chunk) 
 		 {
 			 responseData += chunk;	
 		 });
 		 res.on('end',function() 
 		 { 
-			 console.log('Ending job UUID query.');
-			 console.log('response data\n' + responseData);
 			  
 			 var jsonObj = JSON.parse(responseData);
 		     response.send(jsonObj); 
@@ -198,9 +183,7 @@ module.exports.jobsUuidHelper = jobsUuidHelper;
 
 exports.doQueryJobs = function(responseData) {
 	
-	//console.log('responseData: \n' + responseData);
 	
-	console.log('---------------')
 	var fileResponseJSONObj = JSON.parse(responseData);//JSON.parse(fileResponseJSONStr);////
 	  
 	var hasJobs = false;
@@ -212,8 +195,6 @@ exports.doQueryJobs = function(responseData) {
 		var jobsObj = fileResponseJSONObj[key];
 		for(var keykey in jobsObj) {
 			var jobObj = jobsObj[keykey];
-			//for(var keykeykey in jobObj) 
-				//console.log('\t' + keykeykey + ' val: ' + jobObj[keykeykey]);
 		}
 	}
 	
@@ -230,10 +211,9 @@ exports.doQueryJobs = function(responseData) {
 		}
 	}
 	jsonStr += ']';
-	//fileResponseJSONStr = '[{"title": "aTitle", "isFolder": true, "isLazy": true , "type" : "apps" }]';
+	
 	fileResponseJSONStr = jsonStr;
 	
-	//console.log('fileResponse: ' + fileResponseJSONStr);
 	
 	return fileResponseJSONStr;
 	
