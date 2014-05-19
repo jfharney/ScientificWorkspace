@@ -6,8 +6,6 @@
 
 package gov.ornl.nccs.scientificworkspace;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.DefaultValue;
@@ -35,10 +33,11 @@ public class AppResource
     }
 
     /**
-     * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
-     * @param a_aid - App id
+     * @param a_aid - App ID of application to retrieve
      * @param a_properties - Properties to retrieve
-     * @return an instance of java.lang.String
+     * @return JSON output payload
+     * 
+     * Retrieves an application record by App ID.
      */
     @Path("app")
     @GET
@@ -51,12 +50,20 @@ public class AppResource
 
         if ( a_aid >= 0 )
             m_api.getAppByAID( a_aid, a_properties, output );
-        else // ERROR
+        else
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
     }
 
+
+    /**
+     * @param a_nodeid - Node ID of application to retrieve
+     * @param a_properties - Properties to retrieve
+     * @return JSON output payload
+     * 
+     * Retrieves an application record by Node ID.
+     */
     @Path("app/{nodeid}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -68,12 +75,20 @@ public class AppResource
 
         if ( a_nodeid > -1 )
             m_api.getObjectByNID( a_nodeid, a_properties, output );
-        else // ERROR
+        else
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
     }
 
+
+    /**
+     * @param a_jid - Job ID of applications to retrieve
+     * @param a_properties - Properties to retrieve
+     * @return JSON output payload
+     * 
+     * Retrieves an application record(s) by owning job ID.
+     */
     @Path("apps")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -85,7 +100,7 @@ public class AppResource
 
         if ( a_jid >= 0 )
             m_api.getAppsByJID( a_jid, a_properties, output );
-        else // ERROR
+        else
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 
         return output.toString();

@@ -35,6 +35,8 @@ public class ApplicationConfig extends Application {
         resources.add(gov.ornl.nccs.scientificworkspace.FileResource.class);
         resources.add(gov.ornl.nccs.scientificworkspace.GroupResource.class);
         resources.add(gov.ornl.nccs.scientificworkspace.JobResource.class);
+        resources.add(gov.ornl.nccs.scientificworkspace.NodeResource.class);
+        resources.add(gov.ornl.nccs.scientificworkspace.SearchResource.class);
         resources.add(gov.ornl.nccs.scientificworkspace.TagResource.class);
         resources.add(gov.ornl.nccs.scientificworkspace.UserResource.class);
     }

@@ -23,46 +23,19 @@ import org.json.JSONStringer;
  * @author d3s
  */
 @Path("")
-public class GroupResource
+public class NodeResource
 {
     /**
      * Creates a new instance of UserResource
      */
-    public GroupResource()
+    public NodeResource()
     {
     }
 
-    /**
-     * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
-     * @param a_gid - Group id
-     * @param a_gname - Group name
-     * @param a_properties - Properties to retrieve
-     * @return an instance of java.lang.String
-     */
-    @Path("group")
+    @Path("node/{nodeid}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getGroup(
-        @DefaultValue("-1") @QueryParam("gid") int a_gid,
-        @QueryParam("gname") String a_gname,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
-
-        if ( a_gid >= 0 )
-            m_api.getGroupByGID( a_gid, a_properties, output );
-        else if ( a_gname != null )
-            m_api.getGroupByGname( a_gname, a_properties, output );
-        else // ERROR
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-
-    @Path("group/{nodeid}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getGroupByNID(
+    public String getNodeByNID(
         @DefaultValue("-1") @PathParam("nid") int a_nid,
         @QueryParam("retrieve") String a_properties )
     {
@@ -76,17 +49,18 @@ public class GroupResource
         return output.toString();
     }
 
-    @Path("groups")
+    @Path("nodes")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getGroups(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
+    public String getTaggedNodes(
+        //@DefaultValue("-1") @QueryParam("uid") int a_uid,
+        @DefaultValue("-1") @QueryParam("tag-nid") int a_tag_nid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_uid >= 0 )
-            m_api.getGroupsByUID( a_uid, a_properties, output );
+        if ( a_tag_nid > -1 )
+            m_api.getNodesByTagNID( a_tag_nid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 

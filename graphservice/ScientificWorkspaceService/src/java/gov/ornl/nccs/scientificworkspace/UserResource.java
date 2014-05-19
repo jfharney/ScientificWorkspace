@@ -6,8 +6,6 @@
 
 package gov.ornl.nccs.scientificworkspace;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.DefaultValue;
@@ -27,24 +25,11 @@ import org.json.JSONStringer;
 @Path("")
 public class UserResource
 {
-    //@Context
-    //private ServletContext context;
-
     /**
      * Creates a new instance of UserResource
      */
     public UserResource()
     {
-        /*
-        System.out.print("Making UserResource!");
-        m_api = (TitanAPI)context.getAttribute("titan");
-        if ( m_api == null )
-        {
-            System.out.println("Titan context object was missing or null.");
-            m_api = TitanAPI.getInstance();
-            context.setAttribute("titan",m_api);
-        }
-        */
     }
 
     /**
@@ -108,7 +93,5 @@ public class UserResource
         return output.toString();
     }
 
- //   private static final IGeneralAPI m_gen_api = TitanAPI.getInstance();
-//    private static final IUserAPI m_user_api = TitanAPI.getInstance();
     private final TitanAPI m_api = TitanAPI.getInstance();
 }
