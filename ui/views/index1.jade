@@ -51,9 +51,9 @@ html(lang="en")
           h4#myModalLabel.modal-title Tag Information
         div.modal-body
           div Tag Name:
-          input#tag_name.form-control.create_tree_options(style="margin-bottom:10px")
+          input#tag_name.form-control.create_tree_options(placeholder="Tag name",style="margin-bottom:10px;margin-top:10px")
           div Tag Description:
-            textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px")
+          textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px;margin-top:10px")
           div Resources:
           div#resources_to_tag(style="margin-bottom:10px")
           div Types:
@@ -343,13 +343,15 @@ html(lang="en")
     script(src="js/ajax/jobinfo.js")
     
     script(src="js/main.js")
+    
+    
     // script(src="js/ajax/jobtree.js")
     // script(src="js/ajax/filetree.js")
     
     // script(src="js/ajax/jobs_widget.js")
-    // script(src="js/ajax/userinfo.js")
-    // script(src="js/ajax/tagTree.js")
+    
+    script(src="js/ajax/tagTree.js")
     // script(src="js/ajax/tagstable.js")
-    // script(src="js/ajax/tagclouds.js")
+    script(src="js/ajax/tagclouds.js")
     // script(src="js/addtag.js")
     // script(src="js/add_doi.js")

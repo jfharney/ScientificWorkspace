@@ -292,6 +292,8 @@ app.get('/tags', function(request, response)
 			method: 'GET'
 	};
 	
+	console.log('path-->' + options['path']);
+	
 	var req = http.request(options, function(resp) {
 		
 		var responseData = '';

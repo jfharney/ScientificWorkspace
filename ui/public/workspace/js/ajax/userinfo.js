@@ -1,6 +1,42 @@
-//<<<<<<< HEAD
 
 
+
+function getUserFromModel() {
+	return user = $('#user_id_label').html();
+}
+
+
+
+
+function postUserData(user_data,element) {
+	var user_info_space = element;//'#user_info';
+	
+	$(user_info_space).empty();
+	
+	if(!jQuery.isEmptyObject(user_data)) {
+		
+		
+		$(user_info_space).append('<div>username: ' + user_data['username']+ '</div>');
+		$(user_info_space).append('<div>uid: <span id="user_info_id">' + user_data['uid']+ '</span></div>');
+		$(user_info_space).append('<div>email: ' + user_data['email']+ '</div>');
+		$(user_info_space).append('<div>firstname: ' + user_data['firstname']+ '</div>');
+		$(user_info_space).append('<div>middlename: ' + user_data['middlename']+ '</div>');
+		$(user_info_space).append('<div style="margin-bottom:10px">lastname: ' + user_data['lastname']+ '</div>');
+		
+		
+	} else {
+		
+		$(user_info_space).append('<div>The user does not exist</div>');
+		
+	}
+	
+	
+}
+
+
+
+
+/* old 5-22-14
 function getUserFromModel() {
 	return user = $('#user_id_label').html();
 }
@@ -13,14 +49,19 @@ function getUserFromModel() {
 $(function()
 {
   //for creating the dropdown list
-  appendUserList();
+  //appendUserList();
 	
   //get user info first (synchronous call needed by everyone else)
   var docurl = document.URL;
-  var user = getUserFromURL(docurl);
+  //var user = getUserFromURL(docurl);
+  
+  var user = getUserFromModel();
+  
   var user_info_obj = '';
 	
-  var url = 'http://localhost:1337/userinfo/'+user;
+  //var url = 'http://localhost:1337/userinfo/'+user;
+  
+  var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/'+user;
   var queryString = '';
   $.ajax({
     url: url,
@@ -99,6 +140,8 @@ $(function()
 
 function getFileInfo1(uid) {
 
+	var docurl = document.URL;
+	  
 	var groupsArr = getGroupInfo(uid);
 	
 	var children = [];
@@ -192,7 +235,7 @@ function getGroupInfo(uid) {
 	
 }
 
-
+*/
 
 
 function getUserFromURL(docurl) {

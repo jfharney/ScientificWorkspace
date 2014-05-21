@@ -56,3 +56,41 @@ var treeData1 = [
                 }
                 
               ];
+
+var treeData2 = [
+                {title: "widow1|proj|root", isFolder: true, isLazy: true, key: "id3", uuid: "uuidroot", type: "file"
+                	
+                	,
+                  children: [
+                    {
+                    	title: "file" + Date.now(), key: "file" + Date.now(), uuid: "child1", type: "file"
+                      
+                    },
+                    {
+                    	title: "folder" + Date.now(), key: "folder" + Date.now(), isLazy: true, isFolder: true, uuid: "childfolder1", type: "file"
+                    }
+                    
+                  ]
+                  
+                }
+                
+              ];
+
+var treeData3 = [
+                {title: "widow1|proj|root", isFolder: true, isLazy: true, key: "id3", uuid: "uuidroot", type: "file"
+                	
+                	,
+                  children: [
+                    {
+                    	title: "file" + Date.now(), key: "file" + Date.now(), uuid: "child1", type: "file"
+                      
+                    },
+                    {
+                    	title: "folder" + Date.now(), key: "folder" + Date.now(), isLazy: true, isFolder: true, uuid: "childfolder1", type: "file"
+                    }
+                    
+                  ]
+                  
+                }
+                
+              ];

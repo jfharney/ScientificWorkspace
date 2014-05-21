@@ -3,29 +3,40 @@ $(document).ready(function()
   var host = 'localhost';
   var port = '1337';
 
+  /*
   var user_label = $('#user_info_id').html();
   var uid = user_label.trim();
-	
-  var t_url_prefix = 'http://' + host + ':' + port + '/tags?';
-  var a_url_prefix = 'http://' + host + ':' + port + '/associations?';
+  */
+  //need to get the uid here
+  //var uid = getUserFromModel();
+  //MUST FIX!!!!
+  var uid = '9328';
+  
+  var t_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
+  var a_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/associations?';
 	
   $.ajax({
     type: "GET",
 	url: t_url_prefix + 'uid=' + uid,
 	success: function(data) 
 	{
-	  $.each(data, function(key, value) 
-	  {
-	    $.each(value, function(index, arVal) 
-	    {
+		
+	  $.each(data, function(key, value) {
+		  
+		  
+		  
+		  
+	    $.each(value, function(index, arVal) {
+	    	
 		  var tag_uuid = arVal['uuid'];
 		  var tag_name = arVal['tagname'];
-					
+		  		
 		  $.ajax({
 		    type: "GET",
 			url: a_url_prefix + 'edge=' + tag_uuid,
-			success: function(associations_data) 
-			{
+			success: function(associations_data) {
+				
+				
 			  var associations_length = associations_data['associations'].length;
 			  if(associations_length > 0) { 
 			    var fontsize = 8;
@@ -50,7 +61,8 @@ $(document).ready(function()
 					if(resType == 'job') {
 						$.ajax({
 							type: "GET", 
-							url: "http://localhost:1337/jobUuid/" + associations_data['associations'][i]['uuid'],
+							//url: "http://localhost:1337/jobUuid/" + associations_data['associations'][i]['uuid'],
+							url: 'http://' + SW.hostname + ':' + SW.port + "/jobUuid/" + associations_data['associations'][i]['uuid'],
 							async: false,
 							success: function(resourceData) 
 							{
@@ -83,12 +95,26 @@ $(document).ready(function()
 				  console.log($(this).text());
 			    }); // End of the onClick for tag cloud elements.
 			    $('#tagClouds').append($tagcloud);
+			    
 			  }
+			  
+			  
+			  
 			},
 			error: function() {}
-		  });
-		});
-	  });
+			
+		  }); //end ajax
+		 
+		  
+	    
+	    }); //$.each(value, function(index, arVal) 
+	  
+	 
+	  
+	  
+	  }); //end $.each(data, function(key, value) 
+	  
+	  
 	},
 	error: function() {}
   });
