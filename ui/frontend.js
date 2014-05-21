@@ -188,7 +188,7 @@ app.get("/userinfo/:user_id", function(request, response) {
 
 app.get("/groupinfo/:uid", function(request, response) {
 
-	//console.log ('calling group info...');
+	console.log ('calling group info...');
 
 	var res = groups.groupinfoHelper(request,response);
 });

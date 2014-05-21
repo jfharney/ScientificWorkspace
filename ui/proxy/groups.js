@@ -37,7 +37,6 @@ var groupinfoHelper = function(request,response) {
 		  });
 		  res.on('end',function() {
 			  
-			  
 			  try {
 				  var jsonObj = JSON.parse(responseData);
 			      response.send(jsonObj);
@@ -110,7 +109,6 @@ var groupsHelper = function(request, response) {
 				  }
 			  }
 			  
-			  console.log(uidArr);
 			  
 			  var respArr = [];
 			  for(var i=0;i<uidArr.length;i++) {

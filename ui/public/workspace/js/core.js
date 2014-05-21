@@ -10,3 +10,7 @@ SW.selected_file_keys = '';
 
 SW.current_user = '';
 SW.current_user_email = '';
+
+
+SW.hostname = 'localhost';
+SW.port = '1337';
