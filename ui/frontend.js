@@ -1,18 +1,11 @@
+//comment here
 var express = require('express');
 var app = express();
-
 var firewallMode = false;
-
-//var hbs = require('hbs');
-
 var http = require('http');
 var url = require('url');
-
-
 app.use(express.static('public'));
-
 var servicePort = 8080;
-
 
 // Start Express
 var express = require("express");
@@ -26,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.bodyParser());
 
-// Let's use the Jade templating language
+// Let's use the Jade templating language.
 app.set("view engine", "jade");
 
 var users = require('./proxy/users.js');
@@ -120,7 +113,8 @@ app.get("/doi/:user_id", function(request, response) {
 	  response.render("index2", model);
 	});
 
-function isArray(what) {
+function isArray(what) 
+{
     return Object.prototype.toString.call(what) === '[object Array]';
 }
 
@@ -210,19 +204,19 @@ app.get('/groups/:gid',function(request,response) {
 //--------jobs API----------//
 
 
+/*************************************************************/
 
-
-
-app.get('/jobsproxy/:username',function(request,response) {
-
-	console.log('in jobs proxy');
-
-	var res = jobs.jobsproxyHelper(request,response);
+app.get('/jobsproxy/:username', function(request, response) 
+{
+	// jobsproxyHelper is defined in the file proxy/jobs.js.
+	jobs.jobsproxyHelper(request, response);
 	
+	// We may reference :username with request.params.username.
 });
 
+/*************************************************************/
 
-app.get('/appsproxy',function(request,response) {
+app.get('/appsproxy', function(request,response) {
 
 	//console.log('in apps proxy');
 
@@ -230,12 +224,12 @@ app.get('/appsproxy',function(request,response) {
 	
 });
 
-app.get("/jobinfo/:job_id", function(request, response) {
-	
-	console.log ('calling jobs info...' + request.params.job_id);
-	
-	var res = jobs.jobsinfoHelper(request,response);
-	
+app.get("/jobinfo/:job_id", function(request, response) 
+{
+  console.log ('calling jobs info...' + request.params.job_id);
+
+  var res = jobs.jobsinfoHelper(request, response);
+  
 });
 
 // This method has been added to solve the problem of finding a job name
