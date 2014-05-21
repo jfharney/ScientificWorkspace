@@ -31,7 +31,6 @@ head
     
 html(lang="en")
   body
-    
     div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
@@ -54,7 +53,7 @@ html(lang="en")
           div Tag Name:
           input#tag_name.form-control.create_tree_options(style="margin-bottom:10px")
           div Tag Description:
-          textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px")
+            textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px")
           div Resources:
           div#resources_to_tag(style="margin-bottom:10px")
           div Types:
@@ -221,7 +220,7 @@ html(lang="en")
             div.box.span4
               div.box-header.well
                 h2 Collaborators
-                  i.icon-user
+                  //i.icon-user
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
@@ -234,7 +233,7 @@ html(lang="en")
               // (All the "box" classes are defined in the file charisma-app.css.
               div.box-header.well
                 h2 Project Space
-                  i.icon-user
+                  //i.icon-user
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
@@ -246,13 +245,18 @@ html(lang="en")
             div.box.span4
               div.box-header.well
                 h2 Jobs
-                  i.icon-user
+                i.icon-search#jobSearchIcon(style="margin-top:7px;margin-bottom:12px;margin-left:12px;margin-right:12px;cursor:default;padding:5px")
+                // Padding added to make it easier to click?
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
                   a.btn.btn-close.btn-round(href="#")
                     i.icon-remove
-              div.box-content 
+              div.box-content
+                span#jobSearchFields(style="display:none;position:absolute;z-index:1;border-style:none;background-color:white")
+                  input#jobsSearchText(type="text", style="width:100px")
+                  button#jobsRefreshButton(type="button") Search
+                  button#clearJobsSearchButton(type="button") Clear
                 div#jobss_tree(style="height:200px")
 
           div.row-fluid.sortable
@@ -272,7 +276,7 @@ html(lang="en")
               div.box.span12
                 div.box-header.well
                   h2 Info
-                    i.icon-user
+                    //i.icon-user
                   div.box-icon
                     a.btn.btn-minimize.btn-round(href="#")
                       i.icon-chevron-up

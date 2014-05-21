@@ -1,90 +1,90 @@
-
-
-
-$(function(){
+// Note that the following is an alternative syntax for the document ready event. 
+// That is, for $(document).ready(function(){...})
+$(function()
+{
+  //for creating the dropdown list
+  appendUserList();
 	
+  //get user info first (synchronous call needed by everyone else)
+  var docurl = document.URL;
+  var user = getUserFromURL(docurl);
+  var user_info_obj = '';
 	
-	//for creating the dropdown list
-	appendUserList();
-	
-	
-	//get user info first (synchronous call needed by everyone else)
-	var docurl = document.URL;
-	
-	var user = getUserFromURL(docurl);
-	
-	var user_info_obj = '';
-	
-	//alert('user: ' + user);
-	
-	var url = 'http://localhost:1337/userinfo/'+user;
-	var queryString = '';
-	$.ajax({
-		url: url,
-		global: false,
-		type: 'GET',
-		async: false,
-		data: queryString,
-		success: function(data) {
+  var url = 'http://localhost:1337/userinfo/'+user;
+  var queryString = '';
+  $.ajax({
+    url: url,
+    global: false,
+    type: 'GET',
+    async: false,
+    data: queryString,
+    success: function(data) 
+    {
+      console.log(data);
+      console.log(jQuery.isEmptyObject(data));
 			
-			console.log(data);
+      user_info_obj = data;
+      for(var key in data) {
+        console.log('user key: ' + key);
+      }
 			
-			console.log(jQuery.isEmptyObject(data));
+      var user_info_space = '#user_info';
+      $(user_info_space).empty();
 			
-			//alert('data: ' + data);
-			
-			user_info_obj = data;
-			for(var key in data) {
-				//alert('key: ' + key + " " + data[key]);
-				console.log('user key: ' + key);
-			}
-			
-			var user_info_space = '#user_info';
-			
-			$(user_info_space).empty();
-			//$('#user_info_space').empty();
-			
-			if(!jQuery.isEmptyObject(user_info_obj)) {
-				
-				
-				$(user_info_space).append('<div>username: ' + data['username']+ '</div>');
-				$(user_info_space).append('<div>uid: <span id="user_info_id">' + data['uid']+ '</span></div>');
-				$(user_info_space).append('<div>email: ' + data['email']+ '</div>');
-				$(user_info_space).append('<div>firstname: ' + data['firstname']+ '</div>');
-				$(user_info_space).append('<div>middlename: ' + data['middlename']+ '</div>');
-				$(user_info_space).append('<div style="margin-bottom:10px">lastname: ' + data['lastname']+ '</div>');
-				
-				
-			} else {
-				
-				$(user_info_space).append('<div>The user does not exist</div>');
-				
-			}
-			
-			
-			
-			
-			
-			
-		},
-		error: function() {
-			console.log('error in getting user id');
-		}
-	});
+      if(!jQuery.isEmptyObject(user_info_obj)) {
+		$(user_info_space).append('<div>username: ' + data['username']+ '</div>');
+		$(user_info_space).append('<div>uid: <span id="user_info_id">' + data['uid']+ '</span></div>');
+		$(user_info_space).append('<div>email: ' + data['email']+ '</div>');
+		$(user_info_space).append('<div>firstname: ' + data['firstname']+ '</div>');
+		$(user_info_space).append('<div>middlename: ' + data['middlename']+ '</div>');
+		$(user_info_space).append('<div style="margin-bottom:10px">lastname: ' + data['lastname']+ '</div>');
+      } 
+      else {
+        $(user_info_space).append('<div>The user does not exist</div>');
+      }
+    },
+    error: function() 
+    {
+      console.log('error in getting user id');
+    }
+  });
 	
+  // Get the groups/collaborators here.
+  //getCollaboratorInfo(user_info_obj['uid']);
 	
+  // Get the file info here.
+  //getFileInfo(user_info_obj['uid']);
+  getFileInfo1(user_info_obj['uid']);
 	
-	//get the groups/collaborators here
-	getCollaboratorInfo(user_info_obj['uid']);
-	
-	
-	//get the file info here
-	//getFileInfo(user_info_obj['uid']);
-	getFileInfo1(user_info_obj['uid']);
-	
-	//get the jobs info here
-	getJobInfo(user_info_obj['username']);
-	
+  // Get the jobs info here.
+  // This function is defined in jobs_widget.js. 
+  getJobInfo(user_info_obj['username']);
+  
+  // I don't really know where the best place to do this is.
+  // Attach the following event to the search button click.
+  $("#jobSearchIcon").on("click", function()
+  {
+	$("#jobSearchFields").slideToggle();
+  });
+  
+  $("#jobsRefreshButton").on("click", function()
+  {
+	getJobInfo(user_info_obj['username'], $('#jobsSearchText').val());
+	$("#jobss_tree").dynatree("getTree").reload();
+	$("#jobSearchFields").slideToggle();
+  });
+  
+  // Clicking the Clear button should: 
+  // 1. Clear the text out of the search box.
+  // 2. Restore the jobs tree to its default state.
+  $("#clearJobsSearchButton").on("click", function()
+  {
+    console.log("Clicking the clear button.");
+	$("#jobsSearchText").val('');
+	getJobInfo(user_info_obj['username'], $('#jobsSearchText').val());
+	$("#jobss_tree").dynatree("getTree").reload();
+	$("#jobSearchFields").slideToggle();
+  });
 });
 
 function getFileInfo1(uid) {
