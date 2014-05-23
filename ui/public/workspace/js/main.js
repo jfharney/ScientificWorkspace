@@ -13,7 +13,9 @@ $(function(){
 	//get user info first (synchronous call needed by everyone else)
 	var user = getUserFromModel();
 	
-	var url = 'http://localhost:1337/userinfo/'+user;
+	//var url = 'http://localhost:1337/userinfo/'+user;
+	var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/' + user;
+	
 	var queryString = '';
 	
 	var data = '';
@@ -139,6 +141,8 @@ $(function(){
 	
 	
 	
+	  
+	  //$('#myform').submit();
 	
 	
 	

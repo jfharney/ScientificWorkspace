@@ -31,7 +31,9 @@ head
     
 html(lang="en")
   body
-    div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
+    
+    //DOI modal
+    // div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
@@ -198,7 +200,8 @@ html(lang="en")
             ul.nav.nav-tabs.nav-stacked.main-menu
               li.nav-header.hidden-tablet Main
               li
-                a.ajax-link(data-toggle="modal",data-target="#doiModal",style="margin-bottom:50px",href="#")
+                //a.ajax-link(data-toggle="modal",data-target="#doiModal",style="margin-bottom:50px",href="#")
+                a#create_doi_button
                   span.hidden-tablet Create DOI
               li.nav-header.hidden-tablet Tags
               li
@@ -353,5 +356,5 @@ html(lang="en")
     script(src="js/ajax/tagTree.js")
     // script(src="js/ajax/tagstable.js")
     script(src="js/ajax/tagclouds.js")
-    // script(src="js/addtag.js")
-    // script(src="js/add_doi.js")
+    // script(src="js/add_tag.js")
+    script(src="js/add_doi.js")

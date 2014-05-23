@@ -114,6 +114,9 @@ function buildJobsTree(children) {
 	          SW.tagged_items = selUuids.join(", ");
 	          SW.tagged_types = selTypes.join(", ");
 
+	          
+	          SW.selected_job_items = selUuids.join(", ");
+	          SW.selected_job_types = selTypes.join(", ");
 
 	          $("#echoSelectionUuids3").text(selUuids.join(", "));
 	          $("#echoSelectionTypes3").text(selTypes.join(", "));

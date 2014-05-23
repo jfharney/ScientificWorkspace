@@ -4,121 +4,98 @@
 
 	  
 	  $('#create_doi_button').click(function() {
-		 
-		  //console.log('create doi');
-		  
 
+		  console.log('create doi');
+
+		  
           var selected_file_items = new Array();
           var selected_file_types = new Array();
           var selected_file_keys = new Array();
           
+          var selected_job_items = new Array();
+          var selected_job_types = new Array();
           
 		  if(SW.selected_file_items != '') {
 			  selected_file_items = SW.selected_file_items.split(', ');
 		  }
-
 		  if(SW.selected_file_types != '') {
 			  selected_file_types = SW.selected_file_types.split(', ');
 		  }
-
-
 		  if(SW.selected_file_keys != '') {
 			  selected_file_keys = SW.selected_file_keys.split(', ');
 		  }
 
+
+		  if(SW.selected_job_items != '') {
+			  selected_job_items = SW.selected_job_items.split(', ');
+		  }
+
+		  if(SW.selected_job_types != '') {
+			  selected_job_types = SW.selected_job_types.split(', ');
+		  }
+
+
+		  //alert('selected_file_items: ' + selected_file_items);
+		  //alert('selected_file_types: ' + selected_file_types);
+		  //alert('selected_file_keys: ' + selected_file_keys);
 		  
 		  
-		  
-		//get user info first (synchronous call needed by everyone else)
 			var docurl = document.URL;
 			
-			var user = getUserFromURL(docurl);
-			
-			var user_info_obj = '';
+			var user = getUserFromModel();//getUserFromURL(docurl);
 			
 			
 			
+			//get user info first (synchronous call needed by everyone else)
+
+			var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/' + user;
 			
-			var url = 'http://localhost:1337/userinfo/'+user;
 			var queryString = '';
+			
+			var data = '';
+			
+			//callback hell ... need to include the userinfo in the model to avoid this particular ajax call
 			$.ajax({
 				url: url,
-				global: false,
+				//global: false,
 				type: 'GET',
-				async: false,
 				data: queryString,
-				success: function(data) {
+				success: function(user_data) {
 					
-					  //console.log(data);
+
 					
-					  url = "http://" + "localhost" + ":" + "1337" + "/doi/" + user + "?";
-					  
-					  //alert('Name: ' + data['firstname'] + ' ' + data['middlename'] + ' ' + data['lastname'] + ' ' +
-						//  'Email: ' + data['email']);
+					var input = '';
+					//put the user data in the hidden input fields
+					input += addUserData(user_data);
 					
-					  if(data['firstname'] == null || data['firstname'] == 'NULL') {
-						  data['firstname'] = '';
-					  }
-					  if(data['middlename'] == null || data['middlename'] == 'NULL') {
-						  data['middlename'] = '';
-					  }
-					  if(data['lastname'] == null || data['lastname'] == 'NULL') {
-						  data['lastname'] = '';
-					  }
-					  
-					  //default is the current username
-					  //get username and email of current user here
-					  var creator_name = data['firstname'] + ' ' + data['middlename'] + ' ' + data['lastname'];
-					  var creator_email = data['email'];
+					//put the selected file keys in the hidden input fields
+					input += addResources(selected_file_items);
 					
-					  //add creators and creator emails to the url
-					  var creators = [];
-					  creators.push(creator_name);
+					//put the selected apps/jobs in the hidden input fields
+					input += addJobs(selected_job_items);
+					
+					
+					
+					//put the selected collaborators in the hidden input fields (may be deprecated)
 					  
-					  var creators_email = [];
-					  creators_email.push(creator_email);
-					  
-					  
-					  for(var i=0;i<creators.length;i++) {
-						  var arg = 'creator=' + creators[i] + '&';
-						  arg = arg + 'creator_email= ' + creators_email[i] + '&';
-						  url = url + arg;
-					  }
-					  
-					  
-					  
-					  //add resources to the url
-					  //no default
-					  for(var i=0;i<selected_file_keys.length;i++) {
-						  var arg = 'selected_file_key=' + selected_file_keys[i] + '&';
-						  arg = 'resource=' + selected_file_keys[i] + '&';
-						  url = url + arg;
-						  console.log('selected_file_key=' + selected_file_keys[i]);  
-					  }
-					  
-					  
-					  
-					  //url = 'http://localhost:1337/doi/jamroz?resource=aa&resource=b&creator=1&creator=33';
-					  
-					  
-					  //alert('sending url: ' + url);
-					  location.href = url;
+					
+					//alert('input: ' + input);
+					
+					url = "http://" + "localhost" + ":" + "1337" + "/doi/" + user + "";
+					
+					//send request
+			        jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
+			        .appendTo('body').submit().remove();
+			    	
 					
 					
 					
 				},
 				error: function() {
-					console.log('error in getting user id');
+					
 				}
 			});
 			
-		  
-		  //location.href = "http://" + "localhost" + ":" + "1337" + "/doi/jamroz";
-		  
-		  
-		  
-		  
-		  
 		  
 	  });
 	  
@@ -130,56 +107,58 @@
   });
 
   
-  function addAssociation(url,input_data,length,tagged_item,tagged_type) {
+  function addUserData(user_data) {
+	  var input = '';
+	  
+	  if(user_data['firstname'] == null || user_data['firstname'] == 'NULL') {
+		  user_data['firstname'] = '';
+	  }
+	  if(user_data['middlename'] == null || user_data['middlename'] == 'NULL') {
+		  user_data['middlename'] = '';
+	  }
+	  if(user_data['lastname'] == null || user_data['lastname'] == 'NULL') {
+		  user_data['lastname'] = '';
+	  }
+	  
+	  //default is the current username
+	  //get username and email of current user here
+	  var creator_name = user_data['firstname'] + ' ' + user_data['middlename'] + ' ' + user_data['lastname'];
+	  var creator_email = user_data['email'];
+	
+	  //add creators and creator emails to the url
+	  //so far, we are assuming that the current user is the only "creator"
+	  var creators = [];
+	  creators.push(creator_name);
+	  
+	  var creators_email = [];
+	  creators_email.push(creator_email);
+	  
+	  for(var i=0;i<creators.length;i++) {
+		  input+='<input type="hidden" name="'+ 'creator' +'" value="'+ creators[i] +'" />';
+		  input+='<input type="hidden" name="'+ 'creator_email' +'" value="'+ creators_email[i] +'" />';
+	  }
+	  
+	  
+	  return input;
+  }
 
-
-	  /*
-      url += '&length=' + length;
-      url += '&tagged_item=' + tagged_item;
-      url += '&tagged_type=' + tagged_type;
-
-
-      //alert('associations url: ' + url);
-      
-
-      //alert('associations tagged_item: ' + tagged_item + ' tagged_type: ' + tagged_type);
-      
-      
-      
-      //associations api
-      $.ajax({
-            type: "POST",
-            url: url,
-            data: input_data,
-            success: function(associations_data) {
-                    console.log('associations response: ' + associations_data);
-                    if(associations_data == 'success') {
-                    	alert('Tag successfully added to resources');
-                    	
-                    	//add the tag to the table
-                    	
-                    	
-                    	
-                    	
-                    }
-                    
-                    
-            },
-            error: function(xhr, status, error) {
-                    alert('error');
-                if(xhr.status==404)
-                  { }
-              }
-      });
-
-		*/
-
-}
-
-
-
-
-
+  function addJobs(selected_job_items) {
+	  var input = '';
+	  for(var i=0;i<selected_job_items.length;i++) {
+		input+='<input type="hidden" name="'+ 'job' +'" value="'+ selected_job_items[i] +'" />';
+	  }
+      return input;
+  }
+  
+  function addResources(selected_file_items) {
+	var input = '';
+	for(var i=0;i<selected_file_items.length;i++) {
+		  //console.log('selected_file_key=' + selected_file_keys[i]);  
+		//input+='<input type="hidden" name="'+ key +'" value="'+ user_data[key] +'" />';
+		input+='<input type="hidden" name="'+ 'resource' +'" value="'+ selected_file_items[i] +'" />';
+	}
+	return input;
+  }
                             	  
                             	  
                             	  

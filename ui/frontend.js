@@ -4,7 +4,7 @@ var app = express();
 var firewallMode = false;
 var http = require('http');
 var url = require('url');
-app.use(express.static('public'));
+app.use(express.static(__dirname + 'public'));
 var servicePort = 8080;
 
 // Start Express
@@ -12,9 +12,10 @@ var express = require("express");
 var app = express();
 
 // Set the view directory to /views
+console.log('___dirname: ' + __dirname);
 app.set("views", __dirname + "/views");
 
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.bodyParser());
@@ -46,6 +47,30 @@ app.get("/workspace/:user_id", function(request, response) {
 	  response.render("index1", { uid : request.params.user_id });
 });
 
+app.get('/doi/:user_id',function(request,response) {
+	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
+
+	response.render("index2", { uid : request.params.user_id });
+});
+
+app.post('/doi/:user_id',function(request,response) {
+	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
+	
+	//console.log('rendering index2.jade');
+	//response.render("index2", { uid : request.params.user_id });
+	
+	var model = {};
+	for(var key in request['body']) {
+		console.log('key: ' + key + ' value: ' + request['body'][key]);
+		model[key] = request['body'][key];
+	}
+	
+	//response.redirect('/doi/'+ request.params.user_id,model);
+	//response.send("doi_send");
+	response.render("index2", { uid : request.params.user_id });
+});
+
+/*
 app.get("/doi/:user_id", function(request, response) {
 	  console.log('in /:user_id');
 	  
@@ -113,18 +138,13 @@ app.get("/doi/:user_id", function(request, response) {
 	  response.render("index2", model);
 	});
 
+*/
+
 function isArray(what) 
 {
     return Object.prototype.toString.call(what) === '[object Array]';
 }
 
-app.post('/doi_send/:user_id',function(request,response) {
-	//console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
-	
-	
-	
-	response.send("doi_send");
-});
 
 
 app.get("/userinfo/:user_id", function(request, response) {
