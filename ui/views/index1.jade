@@ -67,10 +67,10 @@ html(lang="en")
           button#create_tag.btn.btn-primary Create Tag
       
       
-    // div#tableModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
+    div#tableModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
       div.modal-dialog
         div.modal-header
-          button.close(type="button",data-dismiss="modal",aria-hidden="true")
+          button.close(type="button", data-dismiss="modal", aria-hidden="true")
           h4#tableModalLabel.modal-title Tags Table
         
         div.modal-body.box-content#tagsTableContainer(style="margin-top:10px; max-height:550px; width:750px; overflow:auto")
@@ -123,7 +123,6 @@ html(lang="en")
                 li(role="presentation")
                   a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 8xo
                 li(role="presentation")
-                  
         
     div.container-fluid
     
@@ -139,48 +138,6 @@ html(lang="en")
                 a(href="#") Workspace
       div.row-fluid
         div.span12#user_info_space
-      //
-        div.row-fluid
-          div.span12
-            div
-              div.dropdown
-                button#userdropdownMenu.btn.dropdown-toggle.sr-only(type="button",data-toggle="dropdown") Users
-                  span.caret
-                ul.dropdown-menu(role="menu",aria-labelledby="userdropdownMenu")
-                  li(role="presentation")
-                    a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") jamroz
-                  li(role="presentation")
-                    a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 1qk
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") r2y
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 8xo
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") bci
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 35z
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 9vi
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") bc4
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") bqg
-                  li(role="presentation")  
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") c4k
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 6zc
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") alm
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") ajy
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") aaa
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") cgj
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 8vt
-                  li(role="presentation")
-                    a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") a67
                 
       div.row-fluid
         div.span12
@@ -189,11 +146,7 @@ html(lang="en")
             
       div.row-fluid
       
-        //left bar
-
-        //div.span1.main-menu-span 
-          //button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal", data-target="#myModal", style="margin-bottom:50px") Add Tag
-          //button#show_table_button.btn.btn-primary.btn-lg(data-toggle="modal", data-target="#tableModal", style="margin-bottom:50px") Show Table
+        // left menu panel
         
         div.span2.main-menu-span 
           div.well.nav-collapse.sidebar-nav
@@ -202,20 +155,19 @@ html(lang="en")
               li
                 //a.ajax-link(data-toggle="modal",data-target="#doiModal",style="margin-bottom:50px",href="#")
                 a#create_doi_button
+                //a.ajax-link(data-toggle="modal", data-target="#doiModal", style="margin-bottom:50px", href="#")
                   span.hidden-tablet Create DOI
               li.nav-header.hidden-tablet Tags
               li
-                a#add_tag_button.ajax-link(data-toggle="modal",data-target="#myModal",href="#")
-                  span.hidden-tablet Add tag
+                a#add_tag_button.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
+                  span.hidden-tablet Add Tag
               li
                 a.ajax-link(href="#")
-                  span.hidden-tablet Remove tag
+                  span.hidden-tablet Remove Tag
               li
-                a#show_table_button.ajax-link(data-toggle="modal", data-target="#tableModal", style="margin-bottom:50px",href="#")
-                  span.hidden-tablet Review tags
-          //  button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal",data-target="#myModal",style="margin-bottom:50px") Add Tag
-          // <i class="icon-home"></i><span class="hidden-tablet"> Dashboard</span>
-
+                a#show_table_button.ajax-link(data-toggle="modal", data-target="#tableModal", style="margin-bottom:50px", href="#")
+                  span.hidden-tablet Review Tags
+                  
         //main content
         div.span8
           div.row-fluid.sortable
@@ -223,7 +175,6 @@ html(lang="en")
             div.box.span4
               div.box-header.well
                 h2 Collaborators
-                  //i.icon-user
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
@@ -236,7 +187,6 @@ html(lang="en")
               // (All the "box" classes are defined in the file charisma-app.css.
               div.box-header.well
                 h2 Project Space
-                  //i.icon-user
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
@@ -347,14 +297,12 @@ html(lang="en")
     
     script(src="js/main.js")
     
-    
     // script(src="js/ajax/jobtree.js")
     // script(src="js/ajax/filetree.js")
-    
     // script(src="js/ajax/jobs_widget.js")
     
     script(src="js/ajax/tagTree.js")
-    // script(src="js/ajax/tagstable.js")
+    script(src="js/ajax/tagstable.js")
     script(src="js/ajax/tagclouds.js")
     // script(src="js/add_tag.js")
     script(src="js/add_doi.js")

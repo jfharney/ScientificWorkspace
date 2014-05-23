@@ -1,36 +1,31 @@
 
 
-
+// Return the username (like 'wac') of the current user from the DOM. 
+// But would this not return the return value of the assignment? 
 function getUserFromModel() {
 	return user = $('#user_id_label').html();
 }
 
 
 
-
-function postUserData(user_data,element) {
-	var user_info_space = element;//'#user_info';
+// postUserData is called in main.js, where element is the string '#user_info'.
+// This function populates the User Info section of the Info pane at bottom of main page.
+function postUserData(user_data, element) {
+	var user_info_space = element;
 	
 	$(user_info_space).empty();
 	
 	if(!jQuery.isEmptyObject(user_data)) {
-		
-		
 		$(user_info_space).append('<div>username: ' + user_data['username']+ '</div>');
 		$(user_info_space).append('<div>uid: <span id="user_info_id">' + user_data['uid']+ '</span></div>');
 		$(user_info_space).append('<div>email: ' + user_data['email']+ '</div>');
 		$(user_info_space).append('<div>firstname: ' + user_data['firstname']+ '</div>');
 		$(user_info_space).append('<div>middlename: ' + user_data['middlename']+ '</div>');
 		$(user_info_space).append('<div style="margin-bottom:10px">lastname: ' + user_data['lastname']+ '</div>');
-		
-		
-	} else {
-		
+	} 
+	else {
 		$(user_info_space).append('<div>The user does not exist</div>');
-		
 	}
-	
-	
 }
 
 
@@ -239,14 +234,11 @@ function getGroupInfo(uid) {
 
 
 function getUserFromURL(docurl) {
-	
-	
-	//reverse
+
 	var theChar = '';
 	var revuser = '';
 	var j = docurl.length-1;
-	while(theChar != '/') {
-		
+	while(theChar != '/') {		
 		revuser += theChar;
 		theChar = docurl[j];
 		j--;
@@ -254,15 +246,11 @@ function getUserFromURL(docurl) {
 	console.log('user: ' + revuser);
 	
 	var user = '';
-	for(var i=revuser.length-1;i>=0;i--) {
-		
+	for(var i = revuser.length-1; i >=0 ;i--) {
 		user += revuser[i];
 	}
-
-	console.log('user: ' + user);
 	
 	return user;
-	
 }
 
 /*
