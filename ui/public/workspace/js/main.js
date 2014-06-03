@@ -35,8 +35,9 @@ $(function() {
 			// postUserData is defined in userinfo.js. 
 			postUserData(user_data, element);
 			
+			
 			// Get the groups/collaborators here.
-			getCollaboratorInfo(user_data['uid']);
+			//getCollaboratorInfo(user_data['uid']);
 			
 			
 			//get the file info here
@@ -47,7 +48,7 @@ $(function() {
 			
 			
 			//get the jobs info here
-			getJobInfo(user_data['username']);
+			//getJobInfo(user_data['username']);
 			
 			
 			

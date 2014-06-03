@@ -21,3 +21,6 @@ SW.hostname = 'localhost';
 SW.port = '1337';
 
 SW.current_user_id= '';
+
+SW.fileScratchPrefix = 'widow1|scratch';
+SW.fileProjPrefix = 'widow1|proj';

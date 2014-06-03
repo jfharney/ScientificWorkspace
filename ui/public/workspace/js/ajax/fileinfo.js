@@ -16,6 +16,8 @@ function getFileInfo1(uid,type) {
 
 	console.log('in getFileInfo1 for uid: ' + uid);
 	
+	
+	
 	var url = 'http://' + SW.hostname + ':' + SW.port + '/groupinfo/'+uid;
 	
 	
@@ -33,6 +35,8 @@ function getFileInfo1(uid,type) {
 	//First get the group info 
 	//Second get the ...
 	
+	
+	
 	$.ajax({
 		url: url,
 		global: false,
@@ -44,6 +48,9 @@ function getFileInfo1(uid,type) {
 			
 			groupsArr = data['groups'];
 			console.log('groupsArr: ' + groupsArr);
+			
+			type = '2';
+			
 			
 			for(var i=0;i<groupsArr.length;i++) {
 				var title = 'widow1|proj|' + groupsArr[i]['groupname'];
@@ -57,6 +64,8 @@ function getFileInfo1(uid,type) {
 			} else {
 				buildFileTree(type);
 			}
+			
+			
 			
 		},
 		error: function() {
@@ -198,6 +207,13 @@ function buildFileTree(type) {
 		treeData = treeData3; 
 	}
 	
+	//for (var key in treeData[0]['children'][0]) {
+	//	console.log('key: ' + key + ' value: ' + treeData[0]['children'][0][key]);
+	//}
+	
+	treeData[0]['title'] = treeData[0]['title'] + '|8xo';
+	
+	
 	$("#files_tree").dynatree({
 		
 		
@@ -212,13 +228,13 @@ function buildFileTree(type) {
 	        // convert to title/key array
 	        var selKeys = $.map(selNodes, function(node){
 	        	
-/*	        	
+	        	
 	        	  console.log('keys---> node.data: ' + node.data);
 	        	  for(var key in node.data) {
-	        		  console.log('key : ' + key + ' node.data: ' + node.data[key]);
+	        		//  console.log('key : ' + key + ' node.data: ' + node.data[key]);
 	        	  }
 	             //return "[" + node.data.key + "]: '" + node.data.title + "'";
-*/
+
 	        	  return node.data.key;
 	        });
 	        
@@ -236,7 +252,10 @@ function buildFileTree(type) {
 	        SW.selected_file_types = selTypes.join(", ");
 	        SW.selected_file_keys = selKeys.join(", ");
 
-        
+	        console.log('selected_file_items: ' + SW.selected_file_items);
+	        console.log('selected_file_types: ' + SW.selected_file_types);
+	        console.log('selected_file_keys: ' + SW.selected_file_keys);
+	        
 	        $('#resources_to_doi').empty();
 	        $('#resources_to_doi').append('<div>' + SW.selected_file_items + '</div>')
 	        $('#resources_types_to_doi').empty();
@@ -259,13 +278,27 @@ function buildFileTree(type) {
 	      onLazyRead: function(node){
 
 	    	  
-	    	  var url = 'http://' + SW.hostname + ':' + SW.port + '/files1';
+	    	  //must change - start with the prefix
+	    	  if(node.data.path == undefined) {
+	    		  node.data.path = SW.fileScratchPrefix;
+	    		  
+	    		  
+	    		  node.data.title = '|' + '8xo';//current user
+	    	  }
+
+	    	  console.log('node.data.title--->' + node.data.title);
+	    	  console.log('node.data.path--->' + node.data.path);
+	    	  
+	    	  var url = 'http://' + SW.hostname + ':' + SW.port + '/files1?path=' + (node.data.path + node.data.title);
 		    	 
+	    	  //alert(url);
+	    	  console.log('url->'+url);
 	          node.appendAjax({
 	        	  url: url,
 	        	  // We don't want the next line in production code:
 	          	  debugLazyDelay: 50
 	          });
+	          
 	    	  
 	      },
 	      // The following options are only required, if we have more than one tree on one page:
