@@ -1,7 +1,6 @@
-$(document).ready(function()
-{
-  $('#create_tag').click(function() 
-  {
+$(document).ready(function() {
+	
+  $('#create_tag').click(function() {
     console.log('SW.tagged_items: ' + SW.tagged_items);
     var host = 'localhost';
     var port = '1337';
@@ -9,6 +8,26 @@ $(document).ready(function()
     var user_label = $('#user_info_id').html();
     console.log(user_label.trim());
               	  
+    
+    var tagged_files = new Array();
+    var tagged_files_keys = new Array();
+
+    if(SW.selected_file_items != '') {
+    	tagged_files = SW.selected_file_items;
+    }
+
+    if(SW.selected_file_keys != '') {
+    	tagged_files_keys = SW.selected_file_keys;
+    }
+    
+    var tagged_resources = new Array();
+    var tagged_resources_types = new Array();
+    var tagged_resources_keys = new Array();
+    
+    
+    
+    /*
+    
     var uid = user_label.trim();
               	  
     var tagname = $('#tag_name').val();
@@ -43,8 +62,8 @@ $(document).ready(function()
     }
 
     url = url + '?uid=' + uid + '&tag_name=' + tag_name + '&tag_description=' + tag_description;
-				
-    /*********************************/
+		
+			
     
     var collisionFlag = false;
     
@@ -63,21 +82,11 @@ $(document).ready(function()
     })
     	
     
-    /*var $result = $('#tagClouds').find(allAnchorElements);
-    for(i in $result) {
-    	if($result[i].html() == tag_name)
-    		collisionFlag = true;
-    	console.log("$result[i].html() : " + $result[i].html());
-    }*/
-    
-    //alert("Value of collisionFlag is " + collisionFlag);
-    
     $('#myModal').dialog('close');
     
     console.log('tag url: ' + url);
     
     
-    /*********************************/
                   
     $.ajax({
       type: "POST",
@@ -87,6 +96,7 @@ $(document).ready(function()
       {
         console.log('successful tag creations ' + data);
         
+        ///*
         for(var key in data) {
           //console.log('key: ' + key + ' value: ' + data[key]);
         }
@@ -177,6 +187,8 @@ $(document).ready(function()
           
         }
         alert('closing mymodal: ');
+        //
+        
         
       },
       error: function() 
@@ -184,18 +196,64 @@ $(document).ready(function()
         console.log('error in associations');
       }
     });		// End of ajax call. 
+    
+    
+    */
+    
   });		// End of $('#create_tag').click(function()
-
+	
   var num_tags_returned = 3;
 
   
 
           
-
-
-  });
-
   
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
   function addAssociation(url, input_data, length, tagged_item, tagged_type) 
   {
 	 // alert('am i here?');
@@ -224,7 +282,7 @@ $(document).ready(function()
       }
     });
   }
-
+*/
   
   
   

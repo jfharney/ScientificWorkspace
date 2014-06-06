@@ -433,33 +433,97 @@ app.get('/associations', function(request, response)
 //example
 app.get('/files1', function(request,response) {
 	
+	//console.log('Received http://localhost:8001/associations');
+	var args = url.parse(request.url, true).query;
+	console.log(args['path']);
 	
-	var fileName = "file" + Date.now();
-	var folderName = "folder" + Date.now();
+	//console.log('before keys');
+	//for(var key in request.params) {
+	//	console.log('key: ' + key + ' value: ' + request.params[key]);
+	//}
+	var path = "/files?uid=0&gid=0&path=" + args['path'];
 	
-	var respText = '[';
 	
-    //var respText = respText + ' {title: "widow1|proj|root", isFolder: true, isLazy: true, key: "id3"';
-     	
-    //var respText = respText + '  	,';
-    //var respText = respText + '   children: [';
-    var respText = respText + '     {';
-    var respText = respText + '     	"title": "' + fileName + '", "key":"' + fileName + '", "type" : "file", "uuid" : "uuid' + fileName + '"';
-           
-    var respText = respText + '     },'
-    var respText = respText + '     {';
-    var respText = respText + '     	"title": "' + folderName + '", "key":"'  + folderName + '", "isLazy": true, "isFolder": true, "type" : "file", "uuid" : "uuid' + fileName + '"';
-    var respText = respText + '     }';
-        
-    var respText = respText + '   ]';
+	// query above is an object containing all the 
+	// arguments in the URL as key-value pairs. 
+	//console.log('args[edge]: ' + args['edge']);
+	var options = {
+			host: 'localhost',
+			port: 8080,
+			path: path,
+			method: 'GET'
+	};
 	
-    console.log('respText: ' + respText);
-	//var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
-	//respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
-    //"type" : "job",
-								
-	response.send(respText);
+	
+	
+	
+	//console.log('file request...' + options['path']);
+	
+	
+	
+	
+	var numPipes = (args['path'].split('|')).length - 1;
+	
+	var respJSON = {};
+	respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+	respJSON['isFolder'] = true;
+	respJSON['isLazy'] = true;
+	respJSON['type'] = 'file';
+	respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+	respJSON['path'] = args['path']
+	respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+	
+	var respArr = [];
+	respArr.push(respJSON);
+	
+	for(var i=0;i<numPipes;i++) {
+		respJSON = {};
+		respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
+		respJSON['isFolder'] = false;
+		respJSON['type'] = 'file';
+		respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+		respJSON['path'] = args['path']
+		respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
+		respArr.push(respJSON);
+	}
+	
 
+	
+	var respText = JSON.stringify(respArr);
+	
+	//console.log('respText: ' + respText);
+	
+	
+	
+	response.send(respText);
+	
+	/*
+	var req = http.request(options, function(resp) {
+		//console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			console.log('in resp end for files... ' + responseData);
+			var jsonObj = JSON.parse(responseData);
+			
+			var title = jsonObj[];
+			
+			
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();	
+	*/
+	
 	
 });
 

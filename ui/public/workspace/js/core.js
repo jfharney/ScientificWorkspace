@@ -12,6 +12,10 @@ SW.selected_job_items = '';
 SW.selected_job_types = '';
 SW.selected_job_keys = '';
 
+SW.selected_resource_items = '';
+SW.selected_resource_types = '';
+SW.selected_resource_keys = '';
+
 
 SW.current_user = '';
 SW.current_user_email = '';
@@ -21,3 +25,6 @@ SW.hostname = 'localhost';
 SW.port = '1337';
 
 SW.current_user_id = '';
+
+SW.fileScratchPrefix = 'widow1|scratch';
+SW.fileProjPrefix = 'widow1|proj';

@@ -10,6 +10,9 @@ $(document).ready(function()
   //need to get the uid here
   //var uid = getUserFromModel();
   //MUST FIX!!!!
+  
+  
+  
   var uid = '9328';
   
   var t_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
@@ -36,7 +39,7 @@ $(document).ready(function()
 			url: a_url_prefix + 'edge=' + tag_uuid,
 			success: function(associations_data) {
 				
-				
+			
 			  var associations_length = associations_data['associations'].length;
 			  if(associations_length > 0) { 
 			    var fontsize = 8;

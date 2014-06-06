@@ -15,7 +15,7 @@ $(function() {
   var data = '';
 	
   // This function, defined in jobinfo.js, indirectly initializes the jobs tree. 
-  getJobInfo(userName);
+  //getJobInfo(userName);
 	
   //callback hell ... need to include the userinfo in the model to avoid this particular ajax call
   $.ajax({
@@ -39,6 +39,10 @@ $(function() {
 	  // Other types will be added later.
 	  var type = '1';
 	  getFileInfo(user_data['uid'],type);
+	  
+	  
+
+      getJobInfo(user_data['username']);
 
 	  console.log('<><><>END MAIN<><><>')
     },
@@ -126,7 +130,7 @@ $(function() {
 	  alert(this.title);
   });*/
   
-  var hoverHTMLDemoCallback = '<p style="z-index: 1000">Here is the paragraph tag.</p>'; 
+  var hoverHTMLDemoCallback = '<p style="z-index: 9999999">Here is the paragraph tag.</p>'; 
   $('.dynatree-title').hovercard({
     detailsHTML: hoverHTMLDemoCallback,
     width: 300,
@@ -153,3 +157,70 @@ function getVisibilityCookies(visibilityObj) {
 	else {}
   }
 }
+
+
+
+/*	  
+=======
+	var hostname = SW.hostname;
+	var port = SW.port;
+	
+	console.log('<><><>MAIN<><><>');
+	
+	//get user info first (synchronous call needed by everyone else)
+	var user = getUserFromModel();
+	
+	//var url = 'http://localhost:1337/userinfo/'+user;
+	var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/' + user;
+	
+	var queryString = '';
+	
+	var data = '';
+	
+	//callback hell ... need to include the userinfo in the model to avoid this particular ajax call
+	$.ajax({
+		url: url,
+		//global: false,
+		// "Whether to trigger global Ajax event handlers for this request. The default 
+		// is true. Set to false to prevent the global handlers like ajaxStart or ajaxStop 
+		// from being triggered. This can be used to control various Ajax Events."
+		type: 'GET',
+		data: queryString,
+		success: function(user_data) {
+			
+			var element = '#user_info';
+			
+			// Mark 5-22-14
+			SW.current_user_id = user_data['uid'];
+			console.log('SW.current_user_id is ' + SW.current_user_id);
+			
+			// postUserData is defined in userinfo.js. 
+			postUserData(user_data, element);
+			
+			
+			// Get the groups/collaborators here.
+			//getCollaboratorInfo(user_data['uid']);
+			
+			
+			//get the file info here
+			//type '1' is the hard coded file hierarchy
+			//other types will be added later
+			var type = '1';
+			getFileInfo(user_data['uid'],type);
+			
+			
+			//get the jobs info here
+			getJobInfo(user_data['username']);
+			
+			
+			
+			
+			console.log('<><><>END MAIN<><><>')
+			
+			
+		},
+		error: function() {
+			console.log('error in getting user id');
+			
+>>>>>>> 3613f3e5d2bc1b9cf5aedf78430854aada13b5bd
+*/
