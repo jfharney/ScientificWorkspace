@@ -48,7 +48,7 @@ $(function() {
 			
 			
 			//get the jobs info here
-			//getJobInfo(user_data['username']);
+			getJobInfo(user_data['username']);
 			
 			
 			

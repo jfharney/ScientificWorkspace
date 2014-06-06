@@ -115,16 +115,28 @@ function buildJobsTree(children) {
 	          SW.tagged_types = selTypes.join(", ");
 
 	          
-	          SW.selected_job_items = selUuids.join(", ");
-	          SW.selected_job_types = selTypes.join(", ");
+	          //SW.selected_job_items = selUuids.join(", ");
+	          //SW.selected_job_types = selTypes.join(", ");
+	          
 
+	          SW.selected_resource_items = selUuids.join(", ");
+	          SW.selected_resource_types = selTypes.join(", ");
+	          SW.selected_resource_keys = selUuids.join(", ");
+
+
+		      console.log('selected_resource_items: ' + SW.selected_resource_items);
+		      console.log('selected_resource_types: ' + SW.selected_resource_types);
+		      console.log('selected_resource_keys: ' + SW.selected_resource_keys);
+		        
 	          $("#echoSelectionUuids3").text(selUuids.join(", "));
 	          $("#echoSelectionTypes3").text(selTypes.join(", "));
 	          
               $('#resources_to_tag').empty();
-              $('#resources_to_tag').append('<div>' + SW.tagged_items + '</div>')
+              //$('#resources_to_tag').append('<div>' + SW.tagged_items + '</div>')
+              $('#resources_to_tag').append('<div>' + SW.selected_resource_items + '</div>')
               $('#resources_types_to_tag').empty();
-              $('#resources_types_to_tag').append('<div>' + SW.tagged_types + '</div>')
+              //$('#resources_types_to_tag').append('<div>' + SW.tagged_types + '</div>')
+              $('#resources_types_to_tag').append('<div>' + SW.selected_resource_types + '</div>')
 	      },
 
 	      onActivate: function(node) {

@@ -255,11 +255,14 @@ function buildFileTree(type) {
 	        console.log('selected_file_items: ' + SW.selected_file_items);
 	        console.log('selected_file_types: ' + SW.selected_file_types);
 	        console.log('selected_file_keys: ' + SW.selected_file_keys);
-	        
+
+            $('#files_to_tag').empty();
+            $('#files_to_tag').append('<div>' + SW.selected_file_items + '</div>');
+            
 	        $('#resources_to_doi').empty();
-	        $('#resources_to_doi').append('<div>' + SW.selected_file_items + '</div>')
+	        $('#resources_to_doi').append('<div>' + SW.selected_file_items + '</div>');
 	        $('#resources_types_to_doi').empty();
-	        $('#resources_types_to_doi').append('<div>' + SW.selected_file_types + '</div>')
+	        $('#resources_types_to_doi').append('<div>' + SW.selected_file_types + '</div>');
 	      },
 	      onClick: function(node, event) {
 	        // We should not toggle, if target was "checkbox", because this

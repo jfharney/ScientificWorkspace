@@ -477,6 +477,7 @@ app.get('/files1', function(request,response) {
 	respJSON['isFolder'] = true;
 	respJSON['isLazy'] = true;
 	respJSON['type'] = 'file';
+	respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
 	respJSON['path'] = args['path']
 	respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
 	
@@ -488,6 +489,7 @@ app.get('/files1', function(request,response) {
 		respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
 		respJSON['isFolder'] = false;
 		respJSON['type'] = 'file';
+		respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
 		respJSON['path'] = args['path']
 		respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
 		respArr.push(respJSON);
