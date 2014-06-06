@@ -4,64 +4,71 @@ var express = require('express');
 var app = express();
 
 var firewallMode = false;
-
 var http = require('http');
-
+var url = require('url');
 var servicePort = 8080;
 
-var groupinfoHelper = function(request,response) {
+var groupinfoHelper = function(request, response) {
+  
+  var path = '/groups?uid='+request.params.uid;
 	
-	//make a call to http://localhost:8080/users/<user_id>
-	var path = '/groups?uid='+request.params.uid;
+  // Query for all groups with the specified user number ('uid').
+  var options = {
+	host: 'localhost',
+	port: servicePort,
+	path: path,
+	method: 'GET'
+  };
+  
+  var args = url.parse(request.url, true).query;
+  searchArg = args['search'];
+  var responseData = '';
 	
-	
-	//query the userlist service here
-	var options = {
-			host: 'localhost',
-			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
-			method: 'GET'
-		  };
-	
-	 var responseData = '';
-	
+  var req = http.request(options, function(res) {
+    res.on('data', function (chunk) {
+      responseData += chunk;	
+    });
+    res.on('end', function() {
+      try {
+	    var jsonObj = JSON.parse(responseData);
+	    var filteredGroupsObj = {'groups' : []};
+	    
+		// Modularize the search refinement.
+	    if(searchArg != undefined && searchArg != '') {
+		  filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj);
+	      response.send(filteredGroupsObj);
+	    }
+	    else
+          response.send(jsonObj);
+      } 
+      catch (e) {
+        var emptyReturnObj = { groups : [] };		
+        response.send(emptyReturnObj);
+      }
+	});
+  }).on('error', function(e) {
+    console.log("Got error: " + e.message);
+  });
 	 
-	 var req = http.request(options, function(res) {
-		  //console.log("Got response: " + res.statusCode);
-		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
-		  res.on('data', function (chunk) {
-			  //console.log('\n\n\n\nchunk: ' + chunk);
-			  responseData += chunk;	
-				
-		  });
-		  res.on('end',function() {
-			  
-			  try {
-				  var jsonObj = JSON.parse(responseData);
-			      response.send(jsonObj);
-				} catch (e) {
-					var emptyReturnObj = { groups : [] };
-					response.send(emptyReturnObj);
-				}
-			  
-			 
-			  
-		  });
-		  
-	  
-	 }).on('error', function(e) {
-		 
-		  console.log("Got error: " + e.message);
-	 
-	 });
-	 
-	 req.end();
-	
-	
+  req.end();
 };
 
 module.exports.groupinfoHelper = groupinfoHelper;
+
+function filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj) {
+  if(searchArg == '') {
+	filteredGroupsObj = jsonObj;
+	return;
+  }
+  
+  var pattern = new RegExp(searchArg);
+  
+  for(var i in jsonObj['groups'])
+	if(pattern.test(jsonObj['groups'][i]['groupname'])) {
+	  filteredGroupsObj['groups'].push(jsonObj['groups'][i]);
+    }
+  return;
+}
 
 var groupsHelper = function(request, response) {
 

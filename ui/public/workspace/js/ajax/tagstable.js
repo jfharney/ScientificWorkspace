@@ -1,4 +1,3 @@
-//$(document).ready(function() {
 $('#show_table_button').click(function() {
   var user_label = $('#user_info_id').html();
   var uid = user_label.trim();

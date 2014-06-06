@@ -20,9 +20,6 @@ var jobsproxyHelper = function(request, response) {
   console.log('searchArg is ' + args['search']);
   searchArg = args['search'];
 
-	
-	 
-
   var responseData = '';
   var req = http.request(options, function(res) {
 	res.on('data', function(chunk) {
@@ -32,19 +29,28 @@ var jobsproxyHelper = function(request, response) {
 	res.on('end', function() {
       var jsonObj = JSON.parse(responseData);
 			 
-	  var jobIdsArr = new Array();
+      var jobUuidsArr = new Array();
+      var endTimeArr = new Array();
+      var groupNameArr = new Array();
+      var hostNameArr = new Array();
+      var jobIdsArr = new Array();
 	  var jobNamesArr = new Array();
-	  var jobUuidsArr = new Array();
+	  var wallTimeArr = new Array();
+	  
+	  var startTimeArr = new Array();
+	  
 	  // Modularize the search refinement. 
-	  filterJobsProxyData(searchArg, jsonObj, jobIdsArr, jobNamesArr, jobUuidsArr);
+	  filterJobsProxyData(searchArg, jsonObj, jobUuidsArr, endTimeArr, groupNameArr, hostNameArr, jobIdsArr, jobNamesArr, startTimeArr, wallTimeArr);
       
 	  var respArr = [];
       for(var i = 0; i < jobIdsArr.length; i++) {
+    	var tooltip = 'Job ID: '+ jobIdsArr[i] + '\nJob Name: ' + jobNamesArr[i] + '\nStart Time: ' + formatTimestamp(startTimeArr[i]) + '\nEnd Time: ' + formatTimestamp(endTimeArr[i]) + '\nGroup Name: ' + groupNameArr[i]+ '\nHost Name: ' + hostNameArr[i] + '\nWall Time: ' + wallTimeArr[i];
         var respObj = {"title" : jobNamesArr[i], 
         			   "isFolder" : true, 
         			   "isLazy" : true, 
         			   "type" : "job", 
-        			   "jobid" : jobIdsArr[i], 
+        			   "jobid" : jobIdsArr[i],
+        			   //"tooltip" :  tooltip,
         			   "uuid" : jobUuidsArr[i]};
         respArr.push(respObj);
       }
@@ -62,8 +68,18 @@ var jobsproxyHelper = function(request, response) {
   req.end();
 };
 
+/* We want to take a time like this: 
+ * 		2014-02-05T17:56:23.000Z
+ * and turn it into: 
+ * 		2014-02-05 17:56:23
+ */
+function formatTimestamp(timestamp) {
+  timestamp = timestamp.replace('T', ' ');
+  timestamp = timestamp.substring(0, timestamp.indexOf('Z')-4);
+  return timestamp;
+}
 
-function filterJobsProxyData(searchArg, jsonObj, jobIdsArr, jobNamesArr, jobUuidsArr) {
+function filterJobsProxyData(searchArg, jsonObj, jobUuidsArr, endTimeArr, groupNameArr, hostNameArr, jobIdsArr, jobNamesArr, startTimeArr, wallTimeArr) {
   var colonIndex, searchPrefix, searchTerm;
   
   // If a search prefix is provided, like jobid:12345, then search over job IDs. 
@@ -88,32 +104,38 @@ function filterJobsProxyData(searchArg, jsonObj, jobIdsArr, jobNamesArr, jobUuid
     // The value of jsonObj is an array.
     for(var i = 0; i < jsonObj[key].length; i++) {
       if(searchTerm == '') { 
-        var jobid = jsonObj[key][i]['jobid'];
-		var jobname = jsonObj[key][i]['jobname'];
-        var jobuuid = jsonObj[key][i]['uuid'];
-        jobIdsArr.push(jobid);
-        jobNamesArr.push(jobname);
-        jobUuidsArr.push(jobuuid);
+    	jobUuidsArr.push(jsonObj[key][i]['uuid']);
+    	endTimeArr.push(jsonObj[key][i]['endtime']);
+    	groupNameArr.push(jsonObj[key][i]['groupname']);
+    	hostNameArr.push(jsonObj[key][i]['hostname']);
+    	jobIdsArr.push(jsonObj[key][i]['jobid']);
+        jobNamesArr.push(jsonObj[key][i]['jobname']);
+        startTimeArr.push(jsonObj[key][i]['starttime']);
+        wallTimeArr.push(jsonObj[key][i]['walltime']);
+        
       }
       else if(searchPrefix == 'id') {
         if(pattern.test(jsonObj[key][i]['jobid'])) {
-          //console.log(jsonObj[key][i]['jobid'] + ' matches ' + searchTerm);
-          var jobid = jsonObj[key][i]['jobid'];
-		  var jobname = jsonObj[key][i]['jobname'];
-		  var jobuuid = jsonObj[key][i]['uuid'];
-		  jobIdsArr.push(jobid);
-		  jobNamesArr.push(jobname);
-		  jobUuidsArr.push(jobuuid);
+        	jobUuidsArr.push(jsonObj[key][i]['uuid']);
+        	endTimeArr.push(jsonObj[key][i]['endtime']);
+        	groupNameArr.push(jsonObj[key][i]['groupname']);
+        	hostNameArr.push(jsonObj[key][i]['hostname']);
+        	jobIdsArr.push(jsonObj[key][i]['jobid']);
+            jobNamesArr.push(jsonObj[key][i]['jobname']);
+            startTimeArr.push(jsonObj[key][i]['starttime']);
+            wallTimeArr.push(jsonObj[key][i]['walltime']);
         }
       }
       else {
         if(pattern.test(jsonObj[key][i]['jobname'])) {
-          var jobid = jsonObj[key][i]['jobid'];
-          var jobname = jsonObj[key][i]['jobname'];
-          var jobuuid = jsonObj[key][i]['uuid'];
-          jobIdsArr.push(jobid);
-          jobNamesArr.push(jobname);
-          jobUuidsArr.push(jobuuid);
+        	jobUuidsArr.push(jsonObj[key][i]['uuid']);
+        	endTimeArr.push(jsonObj[key][i]['endtime']);
+        	groupNameArr.push(jsonObj[key][i]['groupname']);
+        	hostNameArr.push(jsonObj[key][i]['hostname']);
+        	jobIdsArr.push(jsonObj[key][i]['jobid']);
+            jobNamesArr.push(jsonObj[key][i]['jobname']);
+            startTimeArr.push(jsonObj[key][i]['starttime']);
+            wallTimeArr.push(jsonObj[key][i]['walltime']);
         }
       }
     }
@@ -164,16 +186,15 @@ var jobsinfoHelper = function(request, response)
 module.exports.jobsinfoHelper = jobsinfoHelper;
 
 
-var jobsUuidHelper = function(request, response) 
-{
-	var path = '/jobs?uuid='+request.params.job_uuid;
-	
-	var options = {
-			host: 'localhost',
-			port: servicePort,
-			path: path,
-			method: 'GET'
-		  };
+var jobsUuidHelper = function(request, response) {
+
+  var path = '/jobs?uuid='+request.params.job_uuid;
+  var options = {
+	host: 'localhost',
+	port: servicePort,
+	path: path,
+	method: 'GET'
+  };
 	
 	var responseData = '';
 

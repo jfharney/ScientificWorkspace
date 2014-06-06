@@ -1,6 +1,6 @@
 doctype html
 head
-  title ORNL Scientific Workspace
+  title ORNL Constellate
   link(id="bs-css", href="css/bootstrap-cerulean.css", rel="stylesheet", type="text/css")
   link(href="css/bootstrap-responsive.css", rel="stylesheet", type="text/css")
   link(href="css/charisma-app.css", rel="stylesheet", type="text/css")
@@ -94,7 +94,7 @@ html(lang="en")
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="#") #{uid}
+                a(href="../settings/#{uid}") #{uid}
               li
                 a(href="../workspace/#{uid}") Workspace
               li
@@ -146,18 +146,14 @@ html(lang="en")
             
       div.row-fluid
       
-        // left menu panel
-        
+        // LEFT MENU PANEL
         div.span2.main-menu-span 
           div.well.nav-collapse.sidebar-nav
             ul.nav.nav-tabs.nav-stacked.main-menu
               li.nav-header.hidden-tablet Main
               li
-                //a.ajax-link(data-toggle="modal",data-target="#doiModal",style="margin-bottom:50px",href="#")
-                a#create_doi_button
+                a#create_doi_button(href="#")
                   span.hidden-tablet Create DOI
-                //a.ajax-link(data-toggle="modal", data-target="#doiModal", style="margin-bottom:50px", href="#")
-                  
               li.nav-header.hidden-tablet Tags
               li
                 a#add_tag_button.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
@@ -173,18 +169,26 @@ html(lang="en")
         div.span8
           div.row-fluid.sortable
           
-            div.box.span4
+            // COLLABORATORS
+            div#collabBox.box.span4
               div.box-header.well
-                h2 Collaborators
+                span#collabSearchIcon(style="cursor:default")
+                  h2 Collaborators
+                  i.icon-search#collabSearchIcon(title="Search Collaborators",style="margin-top:5px;margin-bottom:12px;margin-left:12px;margin-right:12px;padding:5px")
                 div.box-icon
-                  a.btn.btn-minimize.btn-round(href="#")
-                    i.icon-chevron-up
+                  //a.btn.btn-minimize.btn-round(href="#")
+                    //i.icon-chevron-up
                   a.btn.btn-close.btn-round(href="#")
                     i.icon-remove
               div.box-content
+                span#collabSearchPanel(style="display:none;position:absolute;z-index:1;border-style:none;background-color:white")
+                  input#collabSearchText(type="text", style="width:100px")
+                  button#collabSearchButton Search
+                  button#clearCollabSearchTextButton Clear
                 div#collaborators_tree(style="height:200px") 
 
-            div.box.span4
+            // PROJECT SPACE
+            div#projectsBox.box.span4
               // (All the "box" classes are defined in the file charisma-app.css.
               div.box-header.well
                 h2 Project Space
@@ -196,34 +200,41 @@ html(lang="en")
               div.box-content 
                 div#files_tree(style="height:200px")
 
+            // JOBS
             div.box.span4
               div.box-header.well
-                h2 Jobs
-                i.icon-search#jobSearchIcon(style="margin-top:7px;margin-bottom:12px;margin-left:12px;margin-right:12px;cursor:default;padding:5px")
-                // Padding added to make it easier to click?
+                span#jobSearchIcon(style="cursor:default")
+                  h2 Jobs
+                  i.icon-search(title="Search Jobs",style="margin-top:5px;margin-bottom:12px;margin-left:12px;margin-right:12px")
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
                   a.btn.btn-close.btn-round(href="#")
                     i.icon-remove
               div.box-content
-                span#jobSearchFields(style="display:none;position:absolute;z-index:1;border-style:none;background-color:white")
+                span#jobsSearchPanel(style="display:none;position:absolute;z-index:1;border-style:none;background-color:white")
                   input#jobsSearchText(type="text", style="width:100px")
-                  button#jobsRefreshButton(type="button") Search
-                  button#clearJobsSearchButton(type="button") Clear
-                div#jobss_tree(style="height:200px")
-
+                  button#jobsSearchButton Search
+                  button#clearJobsSearchTextButton Clear
+                div#jobs_tree(style="height:200px")
+          
+          // TAG CLOUD
           div.row-fluid.sortable
-            div.span12
-              div.span12
-                div.box-content
-                  div.row-fluid
-                    div.span8
-                      h3(style="margin-bottom:15px") Tag Cloud
-                      div#tagClouds(style="margin-top:10px;")
-                    div.span4
-                      h3(style="margin-bottom:15px") Tag Info
-                      div#tagCloudInfo
+            div.box.span12
+              div.box-header.well
+                span#jobSearchIcon
+                  h2 Tag Cloud
+                div.box-icon
+                  a.btn.btn-minimize.btn-round(href="#")
+                    i.icon-chevron-up
+                  a.btn.btn-close.btn-round(href="#")
+                    i.icon-remove
+              div.box-content
+                div.row-fluid
+                  div.span8
+                    div#tagClouds(style="margin-top:10px;")
+                  div.span4
+                    div#tagCloudInfo
                 
           div.row-fluid.sortable
             div.span12
@@ -249,7 +260,8 @@ html(lang="en")
                   div#app_info
         
         //feed
-        div.span2 feed
+        div.span2
+          h3 My Feed
       
             
     script(src="js/jquery/jquery-1.7.2.min.js")
@@ -284,6 +296,7 @@ html(lang="en")
     script(src="js/jquery/jquery.cleditor.min.js")
     script(src="js/jquery/jquery.noty.js")
     script(src="js/jquery/jquery.elfinder.min.js")
+    script(src="js/jquery/jquery.hovercard.min.js")
     script(src="js/jquery/jquery.raty.min.js")
     script(src="js/jquery/jquery.iphone.toggle.js")
     script(src="js/jquery/jquery.autogrow-textarea.js")

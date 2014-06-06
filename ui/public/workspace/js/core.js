@@ -20,4 +20,4 @@ SW.current_user_email = '';
 SW.hostname = 'localhost';
 SW.port = '1337';
 
-SW.current_user_id= '';
+SW.current_user_id = '';

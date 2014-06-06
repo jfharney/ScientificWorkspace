@@ -1,10 +1,9 @@
-//comment here
 var express = require('express');
 var app = express();
 var firewallMode = false;
 var http = require('http');
 var url = require('url');
-app.use(express.static(__dirname + 'public'));
+//app.use(express.static(__dirname + 'public'));
 var servicePort = 8080;
 
 // Start Express
@@ -12,7 +11,7 @@ var express = require("express");
 var app = express();
 
 // Set the view directory to /views
-console.log('___dirname: ' + __dirname);
+console.log('__dirname: ' + __dirname);
 app.set("views", __dirname + "/views");
 
 app.use(express.static(__dirname + '/public'));
@@ -40,6 +39,12 @@ var tags = require('./proxy/tags.js');
 
 app.get("/", function(request, response) {
 	  response.redirect('/workspace/users/j1s');
+});
+
+app.get("/settings/:user_id", function(request, response) {
+	  console.log('\n\n---------in settings proxy for ' + request.params.user_id + '----------');
+	
+	  response.render("settings", { uid : request.params.user_id });
 });
 
 app.get("/workspace/:user_id", function(request, response) {
@@ -193,22 +198,20 @@ app.get("/userinfo/:user_id", function(request, response) {
 	 
 	 });
 	 
-	 req.end()
+	 req.end();
 	
 });
 
-//--------groups API----------//
 
+/*************************************************************/
+//--------groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
 
 	console.log ('calling group info...');
 
-	var res = groups.groupinfoHelper(request,response);
+	var res = groups.groupinfoHelper(request, response);
 });
-
-
-
 
 //groups on lazy read off of the tree
 app.get('/groups/:gid',function(request,response) {
@@ -217,21 +220,25 @@ app.get('/groups/:gid',function(request,response) {
 	var res = groups.groupsHelper(request,response);
 });
 
-
-//--------end groups API----------//
-
-
-//--------jobs API----------//
-
-
 /*************************************************************/
+//--------Jobs API----------//
 
-app.get('/jobsproxy/:username', function(request, response) 
-{
-	// jobsproxyHelper is defined in the file proxy/jobs.js.
-	jobs.jobsproxyHelper(request, response);
-	
-	// We may reference :username with request.params.username.
+app.get('/jobsproxy/:username', function(request, response) {
+  // jobsproxyHelper is defined in the file proxy/jobs.js.
+  jobs.jobsproxyHelper(request, response);
+  // We may reference :username with request.params.username.
+});
+
+app.get("/jobinfo/:job_id", function(request, response) {
+  console.log ('calling jobs info...' + request.params.job_id);
+  var res = jobs.jobsinfoHelper(request, response);
+});
+
+// This method has been added to solve the problem of finding a job name
+// given its UUID (from the associations table). 
+app.get("/jobUuid/:job_uuid", function(request, response) {	
+  //console.log ('Calling jobUuid on ' + request.params.job_uuid);	
+  var res = jobs.jobsUuidHelper(request, response);
 });
 
 /*************************************************************/
@@ -244,22 +251,7 @@ app.get('/appsproxy', function(request,response) {
 	
 });
 
-app.get("/jobinfo/:job_id", function(request, response) 
-{
-  console.log ('calling jobs info...' + request.params.job_id);
 
-  var res = jobs.jobsinfoHelper(request, response);
-  
-});
-
-// This method has been added to solve the problem of finding a job name
-// given its UUID (from the associations table). 
-app.get("/jobUuid/:job_uuid", function(request, response) 
-{	
-	//console.log ('Calling jobUuid on ' + request.params.job_uuid);	
-	var res = jobs.jobsUuidHelper(request, response);
-	
-});
 
 
 app.get("/appinfo/:app_id", function(request, response) {
