@@ -1,0 +1,195 @@
+doctype html
+head
+  title ORNL Constellate
+  link(id="bs-css", href="css/bootstrap-cerulean.css", rel="stylesheet", type="text/css")
+  link(href="css/bootstrap-responsive.css", rel="stylesheet", type="text/css")
+  link(href="css/charisma-app.css", rel="stylesheet", type="text/css")
+  link(href="css/jquery-ui-1.8.21.custom.css", rel="stylesheet", type="text/css")
+  link(href="css/fullcalendar.css", rel="stylesheet", type="text/css")
+  link(href="css/fullcalendar.print.css", rel="stylesheet", type="text/css")
+  link(href="css/chosen.css", rel="stylesheet", type="text/css")
+  link(href="css/uniform.default.css", rel="stylesheet", type="text/css")
+  link(href="css/colorbox.css", rel="stylesheet", type="text/css")
+  link(href="css/jquery.cleditor.css", rel="stylesheet", type="text/css")
+  link(href="css/jquery.noty.css", rel="stylesheet", type="text/css")
+  link(href="css/noty_theme_default.css", rel="stylesheet", type="text/css")
+  link(href="css/elfinder.min.css", rel="stylesheet", type="text/css")
+  link(href="css/elfinder.theme.css", rel="stylesheet", type="text/css")
+  link(href="css/jquery.iphone.toggle.css", rel="stylesheet", type="text/css")
+  link(href="css/opa-icons.css", rel="stylesheet", type="text/css")
+  link(href="css/uploadify.css", rel="stylesheet", type="text/css")
+  link(href="css/dynatree/ui.dynatree.css", rel="stylesheet", type="text/css")
+  link(href="css/modal.css" rel="stylesheet")
+  link(href="css/settings.css" rel="stylesheet")
+  
+  link(href="css/DataTables/jquery.dataTables_themeroller.css", rel="stylesheet")
+  link(href="css/DataTables/jquery.dataTables.css", rel="stylesheet")
+  link(href="css/DataTables/demo_table_jui.css", rel="stylesheet")
+  //link(href="css/DataTables/ColVis/ColVis.css", rel="stylesheet")
+  
+  script(src="js/core.js")
+  script(src="js/sampledata.js")
+    
+html(lang="en")
+  body
+      
+    div.navbar
+      div.navbar-inner 
+        div.container-fluid
+          div.top-nav.nav-collapse
+            ul.nav
+              li 
+                a(href="../settings/#{uid}") #{uid}
+              li
+                a(href="../workspace/#{uid}") Workspace
+              li
+                a(href="../doi/#{uid}") DOI
+              li
+                form.navbar-search.pull-left
+                  input(placeholder="Search this workspace",name="query",type="text").search-query.span2
+              
+          div.btn-group.pull-right
+            ul.nav
+              a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
+                i.icon-user
+                span.hidden-phone #{uid}
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href="#") Profile
+                li.divider
+                li
+                  a(href="login.html") Logout
+                li.divider
+                li
+                  a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 1qk
+                li(role="presentation")
+                  a#j1s.user_dropdown_list(role="menuitem",tabindex="-1",href="#") jamroz
+                li(role="presentation")
+                  a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 8xo
+                li(role="presentation")
+        
+    div.container-fluid
+    
+      div.row-fluid
+        div.span12
+          div
+            ul.breadcrumb
+              li
+                a(href="#")
+                  span#user_id_label #{uid}
+                span.divider /
+              li
+                a(href="#") Workspace
+      div.row-fluid
+        div.span12#user_info_space
+                
+      div.row-fluid
+        div.span12
+          div
+            p.user_info
+            
+      div.row-fluid.sortable
+      
+        // LEFT MENU PANEL
+        div.span2.main-menu-span
+          div.well.nav-collapse.sidebar-nav
+            ul.nav.nav-tabs.nav-stacked.main-menu
+              li.nav-header.hidden-tablet Settings
+              li
+                a#panelVisibilityButton.ajax-link(href="#")
+                  span.hidden-tablet Viewing Options
+              li
+                a#panelArrangementButton.ajax-link(href="#")
+                  span.hidden-tablet My Account
+              li
+                a#panelArrangementButton.ajax-link(href="#")
+                  span.hidden-tablet Edge Reviews
+                  
+        // MAIN PANEL
+        div.span6
+          div.row-fluid.sortable
+            h3 Visibility
+            ul
+              li.settings-panels
+                input#collabVisibilityCheckbox(type="checkbox") 
+                span(style="margin-left: 8px") Collaborators Panel
+              li.settings-panels
+                input#projectSpaceVisibilityCheckbox(type="checkbox") 
+                span(style="margin-left: 8px") Project Space Panel
+              li.settings-panels 
+                input#jobsVisibilityCheckbox(type="checkbox") 
+                span(style="margin-left: 8px") Jobs Panel
+              li.settings-panels 
+                input#tagcloudVisibilityCheckbox(type="checkbox") 
+                span(style="margin-left: 8px") Tag Cloud
+            br
+          div.row-fluid.sortable
+            h3 Panel Ordering
+            br
+          div.row-fluid.sortable
+            h3 Search Only Option
+            ul
+              li.settings-panels
+                input#searchOnlyCheckbox(type="checkbox") 
+                span(style="margin-left: 8px") Present me with only a search field when the application loads.
+          br
+          div
+            button#saveViewingOptionsButton Save Changes
+            button#clearVisCookies Clear Settings
+            
+    script(src="js/jquery/jquery-1.7.2.min.js")
+    script(src="js/jquery/jquery-ui-1.8.21.custom.min.js")
+    script(src="js/bootstrap/bootstrap-transition.js")
+    script(src="js/bootstrap/bootstrap-alert.js")
+    script(src="js/bootstrap/bootstrap-modal.js")
+    script(src="js/bootstrap/bootstrap-dropdown.js")
+    script(src="js/bootstrap/bootstrap-scrollspy.js")
+    script(src="js/bootstrap/bootstrap-tab.js")
+    script(src="js/bootstrap/bootstrap-tooltip.js")
+    script(src="js/bootstrap/bootstrap-popover.js")
+    script(src="js/bootstrap/bootstrap-button.js")
+    script(src="js/bootstrap/bootstrap-collapse.js")
+    script(src="js/bootstrap/bootstrap-carousel.js")
+    script(src="js/bootstrap/bootstrap-typeahead.js")
+    script(src="js/bootstrap/bootstrap-tour.js")
+    script(src="js/jquery/jquery.cookie.js")
+    script(src="js/fullcalendar.min.js")
+    
+    script(src="js/jquery/DataTables/jquery.dataTables.js")
+    script(src="js/jquery/DataTables/ColVis/ColVis.js")
+    
+    script(src="js/excanvas.js")
+    script(src="js/jquery/jquery.flot.min.js")
+    script(src="js/jquery/jquery.flot.pie.min.js")
+    script(src="js/jquery/jquery.flot.stack.js")
+    script(src="js/jquery/jquery.flot.resize.min.js")
+    script(src="js/jquery/jquery.chosen.min.js")
+    script(src="js/jquery/jquery.uniform.min.js")
+    script(src="js/jquery/jquery.colorbox.min.js")
+    script(src="js/jquery/jquery.cleditor.min.js")
+    script(src="js/jquery/jquery.noty.js")
+    script(src="js/jquery/jquery.elfinder.min.js")
+    script(src="js/jquery/jquery.raty.min.js")
+    script(src="js/jquery/jquery.iphone.toggle.js")
+    script(src="js/jquery/jquery.autogrow-textarea.js")
+    script(src="js/jquery/jquery.uploadify-3.1.min.js")
+    script(src="js/jquery/jquery.history.js")
+    //script(src="js/charisma.js")
+    script(src="js/jquery/jquery.dynatree.min.js")
+    //script(src="js/ajax/userinfo.js")
+    //script(src="js/ajax/groupinfo.js")
+    //script(src="js/ajax/fileinfo.js")
+    //script(src="js/ajax/jobinfo.js")
+    
+    script(src="js/main.js")
+    
+    // script(src="js/ajax/jobtree.js")
+    // script(src="js/ajax/filetree.js")
+    // script(src="js/ajax/jobs_widget.js")
+    
+    //script(src="js/ajax/tagTree.js")
+    //script(src="js/ajax/tagstable.js")
+    //script(src="js/ajax/tagclouds.js")
+    //script(src="js/add_tag.js")
+    //script(src="js/add_doi.js")

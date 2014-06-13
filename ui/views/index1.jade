@@ -96,11 +96,11 @@ html(lang="en")
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="../settings/#{uid}") #{uid}
+                a(href="../settings/#{username}") #{username}
               li
-                a(href="../workspace/#{uid}") Workspace
+                a(href="../workspace/#{username}") Workspace
               li
-                a(href="../doi/#{uid}") DOI
+                a(href="../doi/#{username}") DOI
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
@@ -109,7 +109,7 @@ html(lang="en")
             ul.nav
               a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
                 i.icon-user
-                span.hidden-phone #{uid}
+                span.hidden-phone #{username}
                 span.caret
               ul.dropdown-menu
                 li
@@ -134,12 +134,20 @@ html(lang="en")
             ul.breadcrumb
               li
                 a(href="#")
-                  span#user_id_label #{uid}
+                  span#user_id_label #{username}
                 span.divider /
               li
                 a#tag_create(href="#") Workspace
       div.row-fluid
         div.span12#user_info_space
+          // This seems like as good a place as any to store the remainder of the user data in the document object.
+          p#curUserUuid(style='display:none') #{uuid}
+          p#curUserEmail(style='display:none') #{email}
+          p#curUserFirstname(style='display:none') #{firstname}
+          p#curUserLastname(style='display:none') #{lastname}
+          p#curUserMiddlename(style='display:none') #{middlename}
+          p#curUserNumber(style='display:none') #{uid}
+          p#curUserUsername(style='display:none') #{username}
                 
       div.row-fluid
         div.span12
@@ -193,7 +201,7 @@ html(lang="en")
             div#projectsBox.box.span4
               // (All the "box" classes are defined in the file charisma-app.css.
               div.box-header.well
-                h2 Project Space
+                h2#myProjectHeader Project Space
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
@@ -297,8 +305,9 @@ html(lang="en")
     script(src="js/jquery/jquery.colorbox.min.js")
     script(src="js/jquery/jquery.cleditor.min.js")
     script(src="js/jquery/jquery.noty.js")
-    script(src="js/jquery/jquery.elfinder.min.js")
-    script(src="js/jquery/jquery.hovercard.min.js")
+    script(src="js/jquery/jquery.elfinder.min.js")  
+    //script(src="js/jquery/jquery.hovercard.min.js")
+    //script(src="js/jquery/jquery.hovercard.custom.js")
     script(src="js/jquery/jquery.raty.min.js")
     script(src="js/jquery/jquery.iphone.toggle.js")
     script(src="js/jquery/jquery.autogrow-textarea.js")
@@ -306,6 +315,9 @@ html(lang="en")
     script(src="js/jquery/jquery.history.js")
     script(src="js/charisma.js")
     script(src="js/jquery/jquery.dynatree.min.js")
+    //script(src="js/jquery/jquery.tools.min.js")
+    
+
     script(src="js/ajax/userinfo.js")
     script(src="js/ajax/groupinfo.js")
     script(src="js/ajax/fileinfo.js")
