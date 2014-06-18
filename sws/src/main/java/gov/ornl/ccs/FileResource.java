@@ -1,4 +1,4 @@
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -27,30 +27,6 @@ public class FileResource
     }
 
     /**
-     * @param a_nodeid - Node ID of file to retrieve
-     * @param a_properties - Properties to retrieve
-     * @return JSON output payload
-     * 
-     * Retrieves a file record by Node ID.
-     */
-    @Path("file/{nodeid}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getFileByNID(
-        @DefaultValue("-1") @PathParam("nodeid") int a_nodeid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
-
-        if ( a_nodeid > -1 )
-            m_api.getObjectByNID( a_nodeid, a_properties, output );
-        else
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-    
-    /**
      * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
      * @param a_path - File path (pipe separated)
      * @param a_nid - Node ID for direct access
@@ -66,10 +42,10 @@ public class FileResource
     @Path("files")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getFile(
+    public String getFiles(
         @QueryParam("path") String a_path,
-        @DefaultValue("-1") @QueryParam("nid") int a_nid,
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
+        @DefaultValue("-1") @QueryParam(Schema.NID) int a_nid,
+        @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
         @QueryParam("list") String a_list,
         @DefaultValue("-1") @QueryParam("off") int a_off,
         @DefaultValue("-1") @QueryParam("len") int a_len,
@@ -89,6 +65,31 @@ public class FileResource
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
+    }
+
+    @Path("admin/files")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String adminGetFiles(
+        @DefaultValue("-1") @QueryParam("nid") int a_nid,
+        @QueryParam("root") String a_root )
+    {
+        // Check required parameter
+        if ( a_nid < 0 && a_root == null )
+            throw new WebApplicationException( Response.Status.BAD_REQUEST );
+
+        if ( a_root != null )
+            return m_api.adminGetRootFiles();
+        else
+            return m_api.adminGetFiles( a_nid );
+    }
+
+    @Path("admin/filetest")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String adminFileTest()
+    {
+        return m_api.adminFileTest();
     }
 
     private final TitanAPI m_api = TitanAPI.getInstance();

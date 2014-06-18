@@ -1,4 +1,4 @@
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.DefaultValue;
@@ -29,13 +29,13 @@ public class SearchResource
      * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
      * @param a_uid - User id
      * @param a_query - Lucene query string
-     * @return an instance of java.lang.String
+     * @return JSON output payload
      */
     @Path("search")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String search(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
+        @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
         @QueryParam("query") String a_query )
     {
         JSONStringer output = new JSONStringer();

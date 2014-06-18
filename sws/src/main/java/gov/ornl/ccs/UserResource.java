@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -37,14 +37,14 @@ public class UserResource
      * @param a_uid - User id
      * @param a_uname - Username
      * @param a_properties - Properties to retrieve
-     * @return an instance of java.lang.String
+     * @return JSON output payload
      */
     @Path("user")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getUser(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @QueryParam("uname") String a_uname,
+        @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
+        @QueryParam(Schema.UNAME) String a_uname,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
@@ -59,28 +59,17 @@ public class UserResource
         return output.toString();
     }
 
-    @Path("user/{nodeid}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getUserByNID(
-        @DefaultValue("-1") @PathParam("nid") int a_nid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
 
-        if ( a_nid > -1 )
-            m_api.getObjectByNID( a_nid, a_properties, output );
-        else // ERROR
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-
+    /**
+     * @param a_gid
+     * @param a_properties
+     * @return JSON output payload
+     */
     @Path("users")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getUsers(
-        @DefaultValue("-1") @QueryParam("gid") int a_gid,
+        @DefaultValue("-1") @QueryParam(Schema.GID) int a_gid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
@@ -91,6 +80,19 @@ public class UserResource
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 
         return output.toString();
+    }
+
+    /**
+     * @param a_uname
+     * @return Status of login
+     */
+    @Path("login")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String login(
+        @QueryParam(Schema.UNAME) String a_uname )
+    {
+        return a_uname;
     }
 
     private final TitanAPI m_api = TitanAPI.getInstance();

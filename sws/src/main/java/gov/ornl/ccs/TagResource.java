@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -35,32 +35,6 @@ public class TagResource
     {
     }
 
-    /**
-     * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
-     * @param a_name - Tag name
-     * @param a_uid - Owning user id
-     * @param a_properties - Properties to retrieve
-     * @return an instance of java.lang.String
-     */
-    /*
-    @Path("tag")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getTag(
-        @QueryParam("name") String a_name,
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
-
-        if ( a_name != null && a_uid > -1 )
-            m_api.getTagByName( a_name, a_uid, a_properties, output );
-        else // ERROR
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-    */
 
     /**
      * Creates a new tag resource
@@ -70,18 +44,18 @@ public class TagResource
      * @param a_access - Access mode (0=private,1=shared,2=public)
      * @param a_acl_uids - ACL list of uids
      * @param a_acl_gids - ACL list of gids
-     * @return an instance of java.lang.String
+     * @return JSON output payload
      */
     @Path("tag")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public String postTag(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @QueryParam("name") String a_name,
-        @QueryParam("desc") String a_desc,
-        @DefaultValue("0") @QueryParam("access") int a_access,
-        @QueryParam("acl_uids") String a_acl_uids,
-        @QueryParam("acl_gids") String a_acl_gids )
+        @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
+        @QueryParam(Schema.NAME) String a_name,
+        @QueryParam(Schema.DESC) String a_desc,
+        @DefaultValue("0") @QueryParam(Schema.ACCESS) int a_access,
+        @QueryParam(Schema.ACLUIDS) String a_acl_uids,
+        @QueryParam(Schema.ACLGIDS) String a_acl_gids )
     {
         JSONStringer output = new JSONStringer();
 
@@ -101,18 +75,18 @@ public class TagResource
      * @param a_access - New access mode (0=private,1=shared,2=public)
      * @param a_acl_uids - New ACL list of uids
      * @param a_acl_gids - New ACL list of gids
-     * @return an instance of java.lang.String
+     * @return JSON output payload
      */
     @Path("tag")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public String putTag(
-        @DefaultValue("-1") @QueryParam("nid") int a_nid,
-        @QueryParam("name") String a_name,
-        @QueryParam("desc") String a_desc,
-        @DefaultValue("0") @QueryParam("access") int a_access,
-        @QueryParam("acl_uids") String a_acl_uids,
-        @QueryParam("acl_gids") String a_acl_gids )
+        @DefaultValue("-1") @QueryParam(Schema.NID) int a_nid,
+        @QueryParam(Schema.NAME) String a_name,
+        @QueryParam(Schema.DESC) String a_desc,
+        @DefaultValue("0") @QueryParam(Schema.ACCESS) int a_access,
+        @QueryParam(Schema.ACLUIDS) String a_acl_uids,
+        @QueryParam(Schema.ACLGIDS) String a_acl_gids )
     {
         JSONStringer output = new JSONStringer();
 
@@ -124,39 +98,25 @@ public class TagResource
         return output.toString();
     }
 
-    @Path("tag/{nodeid}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getTagByNID(
-        @DefaultValue("-1") @PathParam("nodeid") int a_nodeid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
-
-        if ( a_nodeid > -1 )
-            m_api.getObjectByNID( a_nodeid, a_properties, output );
-        else // ERROR
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-
+    /**
+     * @param a_nodeid
+     */
     @Path("tag/{nodeid}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public String deleteTagByNID(
+    public void deleteTagByNID(
         @DefaultValue("-1") @PathParam("nodeid") int a_nodeid )
     {
-        JSONStringer output = new JSONStringer();
-
         if ( a_nodeid > -1 )
             m_api.deleteObjectByNID( a_nodeid );
-        else // ERROR
+        else
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
     }
 
+    /**
+     * @param a_tag_nid
+     * @param a_obj_nid
+     */
     @Path("tag/{tag_nid}/link/{obj_nid}")
     @POST
     public void linkTagToNID(
@@ -165,7 +125,11 @@ public class TagResource
     {
         m_api.linkTagToNID( a_tag_nid, a_obj_nid );
     }
-    
+
+    /**
+     * @param a_tag_nid
+     * @param a_obj_nid 
+     */
     @Path("tag/{tag_nid}/link/{obj_nid}")
     @DELETE
     public void unlinkTagFromNID(
@@ -175,18 +139,29 @@ public class TagResource
         m_api.unlinkTagFromNID( a_tag_nid, a_obj_nid );
     }
 
+    /**
+     * @param a_uid
+     * @param a_tag_name
+     * @param a_owned
+     * @param a_shared
+     * @param a_shared_uids
+     * @param a_public
+     * @param a_public_uids
+     * @param a_nid
+     * @param a_properties
+     * @return JSON output payload
+     */
     @Path("tags")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getTags(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @QueryParam("tag") String a_tag_name,
+        @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
         @QueryParam("owned") String a_owned,
         @QueryParam("shared") String a_shared,
         @QueryParam("shared_uids") String a_shared_uids,
         @QueryParam("public") String a_public,
         @QueryParam("public_uids") String a_public_uids,
-        @DefaultValue("-1") @QueryParam("nid") int a_nid,
+        @DefaultValue("-1") @QueryParam(Schema.NID) int a_nid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
@@ -209,26 +184,6 @@ public class TagResource
 
         return output.toString();
     }
-
-    /*
-    @Path("tags/by-node")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getTagsByNode(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @DefaultValue("-1") @QueryParam("nid") int a_nid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
-
-        if ( a_uid > -1 && a_nid > -1 )
-            m_api.getTagsOnNID( a_nid, a_uid, a_properties, output );
-        else // ERROR
-            throw new WebApplicationException( Response.Status.BAD_REQUEST );
-
-        return output.toString();
-    }
-    */
 
 
     private final TitanAPI m_api = TitanAPI.getInstance();

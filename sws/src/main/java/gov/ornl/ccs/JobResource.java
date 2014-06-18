@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -23,44 +23,55 @@ import org.json.JSONStringer;
  * @author d3s
  */
 @Path("")
-public class NodeResource
+public class JobResource
 {
     /**
      * Creates a new instance of UserResource
      */
-    public NodeResource()
+    public JobResource()
     {
     }
 
-    @Path("node/{nodeid}")
+    /**
+     * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
+     * @param a_jid - Job id
+     * @param a_properties - Properties to retrieve
+     * @return JSON output payload
+     */
+    @Path("job")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getNodeByNID(
-        @DefaultValue("-1") @PathParam("nid") int a_nid,
+    public String getJob(
+        @DefaultValue("-1") @QueryParam(Schema.JID) int a_jid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_nid > -1 )
-            m_api.getObjectByNID( a_nid, a_properties, output );
+        if ( a_jid >= 0 )
+            m_api.getJobByJID( a_jid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
     }
 
-    @Path("nodes")
+
+    /**
+     * @param a_uid
+     * @param a_properties
+     * @return JSON output payload
+     */
+    @Path("jobs")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getTaggedNodes(
-        //@DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @DefaultValue("-1") @QueryParam("tag-nid") int a_tag_nid,
+    public String getJobs(
+        @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_tag_nid > -1 )
-            m_api.getNodesByTagNID( a_tag_nid, a_properties, output );
+        if ( a_uid >= 0 )
+            m_api.getJobs( a_uid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 

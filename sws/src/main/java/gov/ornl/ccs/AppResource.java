@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -43,38 +43,13 @@ public class AppResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getApp(
-        @DefaultValue("-1") @QueryParam("aid") int a_aid,
+        @DefaultValue("-1") @QueryParam(Schema.AID) int a_aid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
         if ( a_aid >= 0 )
             m_api.getAppByAID( a_aid, a_properties, output );
-        else
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-
-
-    /**
-     * @param a_nodeid - Node ID of application to retrieve
-     * @param a_properties - Properties to retrieve
-     * @return JSON output payload
-     * 
-     * Retrieves an application record by Node ID.
-     */
-    @Path("app/{nodeid}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getAppByNID(
-        @DefaultValue("-1") @PathParam("nodeid") int a_nodeid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
-
-        if ( a_nodeid > -1 )
-            m_api.getObjectByNID( a_nodeid, a_properties, output );
         else
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
@@ -93,7 +68,7 @@ public class AppResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getApps(
-        @DefaultValue("-1") @QueryParam("jid") int a_jid,
+        @DefaultValue("-1") @QueryParam(Schema.JID) int a_jid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();

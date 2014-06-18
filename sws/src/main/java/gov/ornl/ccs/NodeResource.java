@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -23,66 +23,54 @@ import org.json.JSONStringer;
  * @author d3s
  */
 @Path("")
-public class JobResource
+public class NodeResource
 {
     /**
      * Creates a new instance of UserResource
      */
-    public JobResource()
+    public NodeResource()
     {
     }
 
     /**
-     * Retrieves representation of an instance of gov.ornl.nccs.scientificworkspace.UserResource
-     * @param a_jid - Job id
-     * @param a_properties - Properties to retrieve
-     * @return an instance of java.lang.String
+     * @param a_nid
+     * @param a_properties
+     * @return JSON output payload
      */
-    @Path("job")
+    @Path("node/{nodeid}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getJob(
-        @DefaultValue("-1") @QueryParam("jid") int a_jid,
+    public String getNodeByNID(
+        @DefaultValue("-1") @PathParam("nodeid") int a_nid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_jid >= 0 )
-            m_api.getJobByJID( a_jid, a_properties, output );
+        if ( a_nid > -1 )
+            m_api.getObjectByNID( a_nid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
 
         return output.toString();
     }
 
-    @Path("job/{nodeid}")
+    /**
+     * @param a_tag_nid
+     * @param a_properties
+     * @return JSON output payload
+     */
+    @Path("nodes")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getJobByNID(
-        @DefaultValue("-1") @PathParam("nodeid") int a_nodeid,
+    public String getTaggedNodes(
+        //@DefaultValue("-1") @QueryParam("uid") int a_uid,
+        @DefaultValue("-1") @QueryParam("tag-nid") int a_tag_nid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
 
-        if ( a_nodeid > -1 )
-            m_api.getObjectByNID( a_nodeid, a_properties, output );
-        else // ERROR
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-
-    @Path("jobs")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getJobs(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
-
-        if ( a_uid >= 0 )
-            m_api.getJobs( a_uid, a_properties, output );
+        if ( a_tag_nid > -1 )
+            m_api.getNodesByTagNID( a_tag_nid, a_properties, output );
         else // ERROR
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
 

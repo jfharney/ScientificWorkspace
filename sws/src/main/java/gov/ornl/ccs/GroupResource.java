@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package gov.ornl.nccs.scientificworkspace;
+package gov.ornl.ccs;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -37,14 +37,14 @@ public class GroupResource
      * @param a_gid - Group id
      * @param a_gname - Group name
      * @param a_properties - Properties to retrieve
-     * @return an instance of java.lang.String
+     * @return JSON output payload
      */
     @Path("group")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getGroup(
-        @DefaultValue("-1") @QueryParam("gid") int a_gid,
-        @QueryParam("gname") String a_gname,
+        @DefaultValue("-1") @QueryParam(Schema.GID) int a_gid,
+        @QueryParam(Schema.GNAME) String a_gname,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
@@ -59,28 +59,17 @@ public class GroupResource
         return output.toString();
     }
 
-    @Path("group/{nodeid}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getGroupByNID(
-        @DefaultValue("-1") @PathParam("nid") int a_nid,
-        @QueryParam("retrieve") String a_properties )
-    {
-        JSONStringer output = new JSONStringer();
 
-        if ( a_nid > -1 )
-            m_api.getObjectByNID( a_nid, a_properties, output );
-        else // ERROR
-            throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
-
-        return output.toString();
-    }
-
+    /**
+     * @param a_uid
+     * @param a_properties
+     * @return JSON output payload
+     */
     @Path("groups")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getGroups(
-        @DefaultValue("-1") @QueryParam("uid") int a_uid,
+        @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
