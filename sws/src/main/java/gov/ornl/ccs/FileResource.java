@@ -44,7 +44,7 @@ public class FileResource
     @Produces(MediaType.APPLICATION_JSON)
     public String getFiles(
         @QueryParam("path") String a_path,
-        @DefaultValue("-1") @QueryParam(Schema.NID) int a_nid,
+        @DefaultValue("-1") @QueryParam(Schema.NID) long a_nid,
         @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
         @QueryParam("list") String a_list,
         @DefaultValue("-1") @QueryParam("off") int a_off,
@@ -71,7 +71,7 @@ public class FileResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String adminGetFiles(
-        @DefaultValue("-1") @QueryParam("nid") int a_nid,
+        @DefaultValue("-1") @QueryParam("nid") long a_nid,
         @QueryParam("root") String a_root )
     {
         // Check required parameter

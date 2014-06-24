@@ -81,7 +81,7 @@ public class TagResource
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public String putTag(
-        @DefaultValue("-1") @QueryParam(Schema.NID) int a_nid,
+        @DefaultValue("-1") @QueryParam(Schema.NID) long a_nid,
         @QueryParam(Schema.NAME) String a_name,
         @QueryParam(Schema.DESC) String a_desc,
         @DefaultValue("0") @QueryParam(Schema.ACCESS) int a_access,
@@ -105,7 +105,7 @@ public class TagResource
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public void deleteTagByNID(
-        @DefaultValue("-1") @PathParam("nodeid") int a_nodeid )
+        @DefaultValue("-1") @PathParam("nodeid") long a_nodeid )
     {
         if ( a_nodeid > -1 )
             m_api.deleteObjectByNID( a_nodeid );
@@ -120,10 +120,10 @@ public class TagResource
     @Path("tag/{tag_nid}/link/{obj_nid}")
     @POST
     public void linkTagToNID(
-        @PathParam("tag_nid") int a_tag_nid,
-        @PathParam("obj_nid") int a_obj_nid )
+        @PathParam("tag_nid") long a_tag_nid,
+        @PathParam("obj_nid") long a_obj_nid )
     {
-        m_api.linkTagToNID( a_tag_nid, a_obj_nid );
+        m_api.linkNodes( a_obj_nid, a_tag_nid, Schema.META );
     }
 
     /**
@@ -133,10 +133,10 @@ public class TagResource
     @Path("tag/{tag_nid}/link/{obj_nid}")
     @DELETE
     public void unlinkTagFromNID(
-        @PathParam("tag_nid") int a_tag_nid,
-        @PathParam("obj_nid") int a_obj_nid )
+        @PathParam("tag_nid") long a_tag_nid,
+        @PathParam("obj_nid") long a_obj_nid )
     {
-        m_api.unlinkTagFromNID( a_tag_nid, a_obj_nid );
+        m_api.unlinkNodes( a_obj_nid, a_tag_nid, Schema.META );
     }
 
     /**
@@ -161,7 +161,7 @@ public class TagResource
         @QueryParam("shared_uids") String a_shared_uids,
         @QueryParam("public") String a_public,
         @QueryParam("public_uids") String a_public_uids,
-        @DefaultValue("-1") @QueryParam(Schema.NID) int a_nid,
+        @DefaultValue("-1") @QueryParam(Schema.NID) long a_nid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();

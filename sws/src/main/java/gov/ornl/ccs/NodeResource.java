@@ -41,7 +41,7 @@ public class NodeResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getNodeByNID(
-        @DefaultValue("-1") @PathParam("nodeid") int a_nid,
+        @DefaultValue("-1") @PathParam("nodeid") long a_nid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();
@@ -63,8 +63,7 @@ public class NodeResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getTaggedNodes(
-        //@DefaultValue("-1") @QueryParam("uid") int a_uid,
-        @DefaultValue("-1") @QueryParam("tag-nid") int a_tag_nid,
+        @DefaultValue("-1") @QueryParam("tag-nid") long a_tag_nid,
         @QueryParam("retrieve") String a_properties )
     {
         JSONStringer output = new JSONStringer();

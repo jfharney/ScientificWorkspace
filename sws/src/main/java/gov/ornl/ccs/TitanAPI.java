@@ -5,11 +5,13 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.lang.Thread;
 import org.json.JSONStringer;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanIndexQuery.Result;
+import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.util.ElementHelper;
 import com.tinkerpop.blueprints.Vertex;
@@ -18,7 +20,6 @@ import com.tinkerpop.pipes.PipeFunction;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-
 
 public class TitanAPI
 {
@@ -55,6 +56,20 @@ public class TitanAPI
         return m_instance;
     }
 
+    public void shutdown()
+    {
+        try
+        {
+            System.out.print("shutting down...");
+            m_graph.shutdown();
+            m_graph = null;
+            Thread.sleep( 5000 );
+            System.out.println(" done.");
+        }
+        catch ( Exception e )
+        {}
+    }
+
     //=========== Node API ==========================================================================================
 
     /**
@@ -63,7 +78,7 @@ public class TitanAPI
      * @param a_output - JSON serialization object to receive output
      * Retrieves a graph object (vertex) by Node ID.
      */
-    public void getObjectByNID( int a_nid, String a_properties, JSONStringer a_output )
+    public void getObjectByNID( long a_nid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -80,7 +95,7 @@ public class TitanAPI
      * @param a_nid - Node ID of object to delete
      * Deletes a graph object (vertex) by Node ID.
      */
-    public void deleteObjectByNID( int a_nid )
+    public void deleteObjectByNID( long a_nid )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -103,7 +118,7 @@ public class TitanAPI
      * 
      * This method returns any nodes that are linked to the specified tag.
      */
-    public void getNodesByTagNID( int a_tag_nid, String a_properties, JSONStringer a_output )
+    public void getNodesByTagNID( long a_tag_nid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -331,6 +346,7 @@ public class TitanAPI
         }
     }
 
+    
     public void getAppsByJID( int a_jid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -358,7 +374,139 @@ public class TitanAPI
         a_output.endArray();
     }
 
-    //=========== FILES API ============================================================================================
+    //=========== ASSOCIATION API =====================================================================================
+
+    public void getAssoc( int a_uid, int a_status, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
+
+        m_graph.rollback();
+
+        UserInfo user = getUserInfo( a_uid );
+        Iterator<Edge> e;
+
+        if ( a_status > -1 )
+            e = m_graph.query().has(Schema.STATUS,Cmp.EQUAL,a_status).has(Schema.XUID,a_uid).edges().iterator();
+        else
+            e = m_graph.query().has(Schema.STATUS).has(Schema.XUID,a_uid).edges().iterator();
+
+        Edge edge;
+
+        a_output.array();
+
+        while( e.hasNext())
+        {
+            edge = e.next();
+            a_output.object();
+            a_output.key("type").value(edge.getLabel());
+            a_output.key("status").value(a_status);
+            a_output.key("out");
+            processVertexQueryResult( user, edge.getVertex(Direction.OUT), a_output );
+            a_output.key("in");
+            processVertexQueryResult( user, edge.getVertex(Direction.IN), a_output );
+            a_output.endObject();
+        }
+
+        a_output.endArray();
+    }
+
+    public void getAssocFromNode( int a_uid, long a_nid, int a_status, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
+
+        m_graph.rollback();
+
+        UserInfo user = getUserInfo( a_uid );
+        GremlinPipeline grem = new GremlinPipeline( m_graph.getVertex(a_nid)).bothE(Schema.CTXT);
+
+        if ( a_status > -1 )
+            grem = grem.has(Schema.STATUS,Cmp.EQUAL,a_status).has(Schema.XUID,a_uid);
+        else
+            grem = grem.has(Schema.STATUS).has(Schema.XUID,a_uid);
+
+        Iterator<Edge> e = grem.iterator();
+        Edge edge;
+
+        a_output.array();
+
+        while( e.hasNext())
+        {
+            edge = e.next();
+            a_output.object();
+            a_output.key("type").value(edge.getLabel());
+            a_output.key("status").value(a_status);
+            a_output.key("out");
+            processVertexQueryResult( user, edge.getVertex(Direction.OUT), a_output );
+            a_output.key("in");
+            processVertexQueryResult( user, edge.getVertex(Direction.IN), a_output );
+            a_output.endObject();
+        }
+
+        a_output.endArray();
+    }
+
+    public void putAssoc( int a_uid, int a_status, long a_out_nid, long a_in_nid, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
+
+        m_graph.rollback();
+
+        UserInfo user = getUserInfo( a_uid );
+        GremlinPipeline grem = new GremlinPipeline(m_graph.getVertex(a_out_nid)).outE(Schema.CTXT).has(Schema.STATUS).has(Schema.XUID,a_uid);
+        Edge e;
+
+        while ( grem.hasNext() )
+        {
+            e = (Edge)grem.next();
+            if ( a_in_nid == (long)e.getVertex(Direction.IN).getId() )
+            {
+                ElementHelper.setProperties( e, Schema.STATUS, a_status, Schema.UID, a_uid );
+                m_graph.commit();
+
+                a_output.object();
+                a_output.key("type").value(e.getLabel());
+                a_output.key("status").value(a_status);
+                a_output.key("out");
+                processVertexQueryResult( user, e.getVertex(Direction.OUT), a_output );
+                a_output.key("in");
+                processVertexQueryResult( user, e.getVertex(Direction.IN), a_output );
+                a_output.endObject();
+                return;
+            }
+        }
+        throw new WebApplicationException( Response.Status.NOT_FOUND ); 
+
+    }
+
+    public void deleteAssoc( int a_uid, long a_out_nid, long a_in_nid, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
+
+        m_graph.rollback();
+
+        GremlinPipeline grem = new GremlinPipeline(m_graph.getVertex(a_out_nid)).outE(Schema.CTXT).has(Schema.XUID,a_uid);
+        Edge e;
+
+        while ( grem.hasNext() )
+        {
+            e = (Edge)grem.next();
+            if ( a_in_nid == (long)e.getVertex(Direction.IN).getId() )
+            {
+                e.remove();
+                m_graph.commit();
+                return;
+            }
+        }
+
+        throw new WebApplicationException( Response.Status.NOT_FOUND ); 
+
+    }
+
+    //=========== FILES API ===========================================================================================
 
     /**
      * @param a_path - Absolute path (pipe-separated) to the file/directory to retrieve
@@ -420,7 +568,7 @@ public class TitanAPI
      * only for files in the directory when a listing is performed.) For large directory listings,
      * the "off" and "len" parameters may be used to page results as needed.
      */
-    public void getFilesByPath( int a_nid, int a_uid, Boolean a_list, String a_properties, int a_off, int a_len, JSONStringer a_output )
+    public void getFilesByPath( long a_nid, int a_uid, Boolean a_list, String a_properties, int a_off, int a_len, JSONStringer a_output )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -510,7 +658,7 @@ public class TitanAPI
         return processFileQuery( grem, vertices[0] );
     }
 
-    public String adminGetFiles( int a_nid )
+    public String adminGetFiles( long a_nid )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -716,7 +864,7 @@ public class TitanAPI
         a_output.endArray();
     }
 
-    public void getTagsFromNode( int a_nid, int a_uid, String a_properties, JSONStringer a_output )
+    public void getTagsFromNode( long a_nid, int a_uid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -840,7 +988,7 @@ public class TitanAPI
 
     // TODO - Need to prevent a tag name from being redefined as an already existing tag
 
-    public void putTag( int a_nid, String a_tag, String a_desc, int a_access, String a_acl_uids, String a_acl_gids, JSONStringer a_output )
+    public void putTag( long a_nid, String a_tag, String a_desc, int a_access, String a_acl_uids, String a_acl_gids, JSONStringer a_output )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -971,37 +1119,47 @@ public class TitanAPI
 
     //=========== LINKING METHODS ======================================================================================
 
-    public void linkTagToNID( int a_tag_id, int a_nid )
+    public void linkNodes( long a_src_nid, long a_dest_nid, String a_label )
     {
-        Vertex tag = m_graph.getVertex(a_tag_id);
-        Vertex node = m_graph.getVertex(a_nid);
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
 
-        if ( tag == null || node == null )
+        m_graph.rollback();
+
+        Vertex src = m_graph.getVertex(a_src_nid);
+        Vertex dest = m_graph.getVertex(a_dest_nid);
+
+        if ( src == null || dest == null )
             throw new WebApplicationException( Response.Status.NOT_FOUND ); 
 
         // Make sure there isn't a descriptor edge already
-        Iterator<Edge> it = node.getEdges(Direction.OUT, Schema.META).iterator();
+        Iterator<Edge> it = src.getEdges( Direction.OUT, a_label ).iterator();
         while ( it.hasNext() )
-            if ( it.next().getVertex(Direction.IN) == tag )
+            if ( it.next().getVertex(Direction.IN) == dest )
                 throw new WebApplicationException( Response.Status.CONFLICT ); 
 
-        node.addEdge(Schema.META, tag);
+        src.addEdge( a_label, dest );
         m_graph.commit();
     }
 
-    public void unlinkTagFromNID( int a_tag_id, int a_nid )
+    public void unlinkNodes( long a_src_nid, long a_dest_nid, String a_label )
     {
-        Vertex tag = m_graph.getVertex(a_tag_id);
-        Vertex node = m_graph.getVertex(a_nid);
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
 
-        if ( tag == null || node == null )
+        m_graph.rollback();
+
+        Vertex src = m_graph.getVertex(a_src_nid);
+        Vertex dest = m_graph.getVertex(a_dest_nid);
+
+        if ( src == null || dest == null )
             throw new WebApplicationException( Response.Status.NOT_FOUND ); 
 
-        Iterator<Edge> it = node.getEdges(Direction.OUT, Schema.META).iterator();
+        Iterator<Edge> it = src.getEdges(Direction.OUT, a_label ).iterator();
         while ( it.hasNext() )
         {
             Edge e = it.next();
-            if ( e.getVertex(Direction.IN) == tag )
+            if ( e.getVertex(Direction.IN) == dest )
             {
                 e.remove();
                 m_graph.commit();
@@ -1037,19 +1195,22 @@ public class TitanAPI
 
         a_output.array();
 
-        long startTime = System.nanoTime();
-        Integer len = 0;
+        //long startTime = System.nanoTime();
+        //Integer len = 0;
 
-        int type;
-        String path;
-        Iterator<Edge> e;
-        int uid;
-        Vertex node;
+        //int type;
+        //String path;
+        //Iterator<Edge> e;
+        //int uid;
+        //Vertex node;
 
         for ( Result<Vertex> res : results )
         {
-            ++len;
-            node = res.getElement();
+            //++len;
+            //node = res.getElement();
+            
+            processVertexQueryResult( user, res.getElement(), a_output );
+            /*
             type = node.getProperty(Schema.TYPE);
 
             if ( type == Schema.Type.FILE.toInt() || type == Schema.Type.DIR.toInt() )
@@ -1087,6 +1248,7 @@ public class TitanAPI
 
             convertVertexProperties( node, null, a_output, false );
             a_output.endObject();
+            */
         }
 
         a_output.endArray();
@@ -1215,6 +1377,8 @@ public class TitanAPI
                 Integer gid = parent.getProperty(Schema.XGID);
                 Integer mode = parent.getProperty(Schema.FMODE);
 
+                //System.out.println( a_file.getProperty(Schema.NAME) + "u: " + uid + ", g: " + gid + ", m: " + mode );
+
                 if ( uid != null && gid != null )
                 {
                     if ( uid.equals( a_user.m_uid ))
@@ -1237,6 +1401,105 @@ public class TitanAPI
                 return null;
         }
         else return ""; // Reached root - return true always
+    }
+
+    private void processVertexQueryResult( UserInfo a_user, Vertex a_vertex, JSONStringer a_output )
+    {
+        int type = a_vertex.getProperty( Schema.TYPE );
+
+        if ( type == Schema.Type.FILE.toInt() || type == Schema.Type.DIR.toInt() )
+        {
+            //System.out.println("Check file, uid: " + a_user.m_uid );
+            // Validate user has access to this file (by path)
+            String path = hasFileAccess( a_vertex, a_user );
+            if ( path == null )
+            {
+                System.out.println("Bad file access:");
+                return;
+            }
+
+            a_output.object();
+            a_output.key("path").value( path );
+        }
+        else if ( type == Schema.Type.JOB.toInt() )
+        {
+            Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.PROD).iterator();
+            if ( !e.hasNext() )
+            {
+                System.out.println("Bad job access (1):");
+                return;
+            }
+
+            int uid = e.next().getVertex(Direction.OUT).getProperty(Schema.UID);
+            if ( uid != a_user.m_uid )
+            {
+                System.out.println("Bad job access (2):");
+                return;
+            }
+
+            a_output.object();
+            a_output.key("user").value( uid );
+        }
+        else if ( type == Schema.Type.APP.toInt() )
+        {
+            Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.COMP).iterator();
+            if ( !e.hasNext() )
+            {
+                System.out.println("Bad app access (1):");
+                return;
+            }
+
+            Vertex job = e.next().getVertex(Direction.OUT);
+
+            e = job.getEdges(Direction.IN, Schema.PROD).iterator();
+            if ( !e.hasNext() )
+            {
+                System.out.println("Bad app access (2):");
+                return;
+            }
+            Vertex usr = e.next().getVertex(Direction.OUT);
+
+            if ( (int)usr.getProperty(Schema.UID) != a_user.m_uid )
+            {
+                System.out.println("Bad app access (3):");
+                return;
+            }
+
+            a_output.object();
+            a_output.key("job").value( job.getProperty( Schema.JID ));
+        }
+        else if ( type == Schema.Type.TAG.toInt() )
+        {
+            // Validate user has access to this file (by path)
+            if ( !hasTagAccess( a_vertex, a_user.m_uid ))
+            {
+                System.out.println("Bad tag access (1):");
+                return;
+            }
+
+
+            // Add owner and ACL info for tags
+            Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.ASSET).iterator();
+            if ( !e.hasNext() )
+            {
+                System.out.println("Bad tag access (2):");
+                return;
+            }
+
+            a_output.object();
+
+            int uid = e.next().getVertex(Direction.OUT).getProperty(Schema.UID);
+            a_output.key("owner").value( uid );
+
+            // Only add ACLs for owned tags
+            if ( uid == a_user.m_uid )
+                addTagACLs( a_vertex, true, true, a_output );
+        }
+        else
+            a_output.object();
+
+        convertVertexProperties( a_vertex, null, a_output, false );
+        a_output.endObject();
     }
 
 
