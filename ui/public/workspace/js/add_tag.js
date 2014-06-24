@@ -5,8 +5,8 @@ $(document).ready(function() {
     var host = 'localhost';
     var port = '1337';
 
-    var user_label = $('#user_info_id').html();
-    console.log(user_label.trim());
+    //var user_label = $('#user_info_id').html();
+    //console.log(user_label.trim());
               	  
     
     var tagged_files = new Array();
@@ -26,10 +26,10 @@ $(document).ready(function() {
     
     
     
-    /*
+    /******************************/
     
-    var uid = user_label.trim();
-              	  
+    //var uid = user_label.trim();
+    var uid = SW.current_user_username
     var tagname = $('#tag_name').val();
     var tagdescription = $('#tag_description').val();
     var tagged_items = new Array();
@@ -198,7 +198,7 @@ $(document).ready(function() {
     });		// End of ajax call. 
     
     
-    */
+    /**************************************/
     
   });		// End of $('#create_tag').click(function()
 	

@@ -1,64 +1,34 @@
 $(function() {
 	
-  var hostname = SW.hostname;
-  var port = SW.port;
-  var userNumber;
-	
   console.log('<><><>MAIN<><><>');
+  
+  /* We transfer the current user data values stored in the document object to the 
+   * SW object, defined in core.js.                                                              */
+  SW.current_user_uuid = $('#curUserUuid').html();
+  SW.current_user_email = $('#curUserEmail').html();
+  SW.current_user_name = $('#curUserName').html();
+  SW.current_user_number = $('#curUserNumber').html();
+  SW.current_user_username = $('#curUserUsername').html();
 	
-  // Get user info first (synchronous call needed by everyone else).
-  var userName = getUserFromModel();
-	
-  var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/' + userName;
-  console.log("The value of user is " + user);
-  var queryString = '';
-  var data = '';
-	
-  // This function, defined in jobinfo.js, indirectly initializes the jobs tree. 
-  //getJobInfo(userName);
-	
-  //callback hell ... need to include the userinfo in the model to avoid this particular ajax call
-  $.ajax({
-    url: url,
-    //global: false,
-	type: 'GET',
-	data: queryString,
-	success: function(user_data) {
-      var element = '#user_info';
-			
-	  // postUserData is defined in userinfo.js. 
-	  postUserData(user_data, element);
-			
-	  // Get the groups/collaborators here. Note we are passing the user number.
-	  // getCollaboratorInfo is defined in groupinfo.js. 
-	  getCollaboratorInfo(user_data['uid']);
-	  userNumber = user_data['uid']; // Value of userNumber is set here because user_data will go out of scope. 
-				
-	  // Get the file info here.
-	  // Type '1' is the hard coded file hierarchy.
-	  // Other types will be added later.
-	  var type = '1';
-	  getFileInfo(user_data['uid'],type);
-	  
-	  
-
-      getJobInfo(user_data['username']);
-
-	  console.log('<><><>END MAIN<><><>')
-    },
-	error: function() {
-	  console.log('error in getting user id');
-	  console.log('<><><>END MAIN<><><>')
-	}
-  });
-	
+  /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
+  getJobInfo(SW.current_user_number);
+  
+  /* This function is defined in ajax/groupinfo.js. */
+  getCollaboratorInfo(SW.current_user_number);
+  
+  /* This function is defined in ajax/userinfo.js. */
+  postUserData('#user_info');
+  
+  /* Don't know what the 1 means here. */
+  var type = '1';
+  //getFileInfo(SW.current_user_number, type);
 	
   /* Enables the list box in the top right to change the current user. */
   /* (This feature will be admin-only in final version.) */
   var host = 'http://localhost:1337/workspace/';
   $('.user_dropdown_list').click(function() {
     var userName = $(this).html();
-    location.href = host+userName;
+    location.href = host + userName;
   });
   
   /* Check cookies to see if each panel should be displayed (per user preference). */
@@ -123,21 +93,7 @@ $(function() {
     $("#jobs_tree").dynatree("getTree").reload();
     $("#jobsSearchPanel").slideToggle();
   });
-	  
   
-  /* Register a hover card for each Job tree node. */
-  /*$('a.dynatree-title').on('hover', function() {
-	  alert(this.title);
-  });*/
-  
-  var hoverHTMLDemoCallback = '<p style="z-index: 9999999">Here is the paragraph tag.</p>'; 
-  $('.dynatree-title').hovercard({
-    detailsHTML: hoverHTMLDemoCallback,
-    width: 300,
-    onHoverIn: function() {
-      console.log('hoverin over job element.');
-    }
-  });
 });
 
 /* This function sets the object visibilityObj to represent the values of the document cookie. 
@@ -158,69 +114,3 @@ function getVisibilityCookies(visibilityObj) {
   }
 }
 
-
-
-/*	  
-=======
-	var hostname = SW.hostname;
-	var port = SW.port;
-	
-	console.log('<><><>MAIN<><><>');
-	
-	//get user info first (synchronous call needed by everyone else)
-	var user = getUserFromModel();
-	
-	//var url = 'http://localhost:1337/userinfo/'+user;
-	var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/' + user;
-	
-	var queryString = '';
-	
-	var data = '';
-	
-	//callback hell ... need to include the userinfo in the model to avoid this particular ajax call
-	$.ajax({
-		url: url,
-		//global: false,
-		// "Whether to trigger global Ajax event handlers for this request. The default 
-		// is true. Set to false to prevent the global handlers like ajaxStart or ajaxStop 
-		// from being triggered. This can be used to control various Ajax Events."
-		type: 'GET',
-		data: queryString,
-		success: function(user_data) {
-			
-			var element = '#user_info';
-			
-			// Mark 5-22-14
-			SW.current_user_id = user_data['uid'];
-			console.log('SW.current_user_id is ' + SW.current_user_id);
-			
-			// postUserData is defined in userinfo.js. 
-			postUserData(user_data, element);
-			
-			
-			// Get the groups/collaborators here.
-			//getCollaboratorInfo(user_data['uid']);
-			
-			
-			//get the file info here
-			//type '1' is the hard coded file hierarchy
-			//other types will be added later
-			var type = '1';
-			getFileInfo(user_data['uid'],type);
-			
-			
-			//get the jobs info here
-			getJobInfo(user_data['username']);
-			
-			
-			
-			
-			console.log('<><><>END MAIN<><><>')
-			
-			
-		},
-		error: function() {
-			console.log('error in getting user id');
-			
->>>>>>> 3613f3e5d2bc1b9cf5aedf78430854aada13b5bd
-*/

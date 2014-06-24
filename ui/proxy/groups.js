@@ -2,19 +2,22 @@ console.log('Loading groups js');
 
 var express = require('express');
 var app = express();
-
 var firewallMode = false;
 var http = require('http');
 var url = require('url');
-var servicePort = 8080;
+var serviceHost = '160.91.210.32';
+var servicePort = '8080';
 
 var groupinfoHelper = function(request, response) {
+	
+  console.log('Inside groupinfoHelper in proxy/groups.js...');
   
-  var path = '/groups?uid='+request.params.uid;
+  var path = '/sws/groups?uid='+request.params.uid;
+  console.log('In groupinfoHelper, the value of request.params.uid is ' + request.params.uid);
 	
   // Query for all groups with the specified user number ('uid').
   var options = {
-	host: 'localhost',
+	host: serviceHost,
 	port: servicePort,
 	path: path,
 	method: 'GET'
@@ -64,94 +67,70 @@ function filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj) {
   var pattern = new RegExp(searchArg);
   
   for(var i in jsonObj['groups'])
-	if(pattern.test(jsonObj['groups'][i]['groupname'])) {
+	if(pattern.test(jsonObj['groups'][i]['gname'])) {
 	  filteredGroupsObj['groups'].push(jsonObj['groups'][i]);
-    }
+    }c
   return;
 }
 
+/* This function is called in frontend.js to GET requests of the form: 
+ * 		http://localhost:1337/groups/:gid
+ * Its purpose is to retrieve the constituents of a group when the group's 
+ * Dynatree node is activated. 
+ */
 var groupsHelper = function(request, response) {
 
+  var path = '/sws/users?gid=' + request.params.gid;
 
+  var options = {
+    host: serviceHost,
+    port: servicePort,
+    path: path,
+    method: 'GET'
+  };
 	
-	//make a call to http://localhost:8080/groups/<gid>
-	var path = '/groups/'+request.params.gid;
-	
-	//query the userlist service here
-	var options = {
-			host: 'localhost',
-			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
-			method: 'GET'
-		  };
-	
-	 var responseData = '';
-	
+  var responseData = '';
 	 
-	 var req = http.request(options, function(res) {
-		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
-		  res.on('data', function (chunk) {
-			  //console.log('\n\n\n\nchunk: ' + chunk);
-			  responseData += chunk;	
-				
-		  });
-		  res.on('end',function() {
-			  
-			  
-			  var jsonObj = JSON.parse(responseData);
-		      //response.send(jsonObj);
-			 
-			  var uidArr = new Array();
-			  
-			  var uidNameArr = new Array();
-			  
-			  //get all the users associated with this group
-			  for(var key in jsonObj) {
-				  for(var i=0;i<jsonObj[key].length;i++) {
-					  var uid = jsonObj[key][i]['uid'];
-					  var uidName = jsonObj[key][i]['username'];
-					  uidArr.push(uid);
-					  uidNameArr.push(uidName);
-				  }
-			  }
-			  
-			  
-			  var respArr = [];
-			  for(var i=0;i<uidArr.length;i++) {
-				  var respObj = {"title" : uidArr[i], "id" : uidArr[i] , 'username' : uidNameArr[i]};
-				  respArr.push(respObj);
-			  }
-			  
-			  
-				response.send(respArr);
-			  
-		  });
+  var req = http.request(options, function(res) {
+    res.on('data', function (chunk) {
+      responseData += chunk;	
+    });
 		  
-	  
-	 }).on('error', function(e) {
-		 
-		  console.log("Got error: " + e.message);
-	 
-		  var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
-			//respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
-			respText = '[{"title": "Jobs For eeendeve", "isFolder": true, "isLazy": true	, "type" : "jobs" } ]';
-									
-			response.send(respText);
+    res.on('end', function() {
+      //console.log("End of users per group call...");
+      //console.log(responseData);
+      var jsonObj = {};
+      jsonObj.members = JSON.parse(responseData);
+      var uidArr = new Array();
+      var unameArr = new Array();
 
+      /* Get all the users associated with this group. */
+      for(var key in jsonObj) {
+        for(var i = 0; i < jsonObj[key].length; i++) {
+          var uid = jsonObj[key][i]['uid'];
+          var uname = jsonObj[key][i]['uname'];
+          uidArr.push(uid);
+          unameArr.push(uname);
+        }
+      }
+      var respArr = [];
+      for(var i = 0; i < uidArr.length; i++) {
+        var respObj = {"title" : uidArr[i], "id" : uidArr[i] , 'username' : unameArr[i]};
+        respArr.push(respObj);
+      }
+
+      response.send(respArr);
+    });
 		  
-	 });
+  }).on('error', function(e) {
+    console.log("Got error: " + e.message);
+	var respText = '[{"title": "Jobs For eeendeve", "isFolder": true, "isLazy": true	, "type" : "jobs" } ]';
+    response.send(respText);
+  });
 	
-	
-
-	 req.end();
-	
+  req.end();
 
 };
 
 
 module.exports.groupsHelper = groupsHelper;
-
-
-
-

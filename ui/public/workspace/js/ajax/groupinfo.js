@@ -1,20 +1,26 @@
 function getCollaboratorInfo(userNumber, searchArg) {
-  var queryString = '';
+  //var queryString = '';
   var groupsArr = [];
   if(searchArg == undefined) searchArg = '';
-  var url = 'http://' + SW.hostname + ':' + SW.port + '/groupinfo/'+userNumber+ '?search=' + searchArg;
+  var url = 'http://'+SW.hostname+':'+SW.port+'/groupinfo/'+userNumber+'?search='+searchArg;
+  
+  console.log('Inside getCollaboratorInfo, calling ' + url);
   
   // Grab the group info for the user with uid (number).
   $.ajax({
     url: url,
     type: 'GET',
     success: function(data) {
-      groupsArr = data['groups'];
+      groupsArr = data;
+      console.log('Here is the array groupsArr:');
+      for(var i = 0; i < groupsArr.length; i++)
+    	for(var j in groupsArr[i])
+    	  console.log('['+i+']: ' + j + ': ' + groupsArr[i][j]);
 			
       // Create the initial children for the tree.
       var children = [];
       for(var i = 0; i < groupsArr.length; i++) {
-        var child = {title : groupsArr[i]['groupname'], 
+        var child = {title : groupsArr[i]['gname'], 
                      isFolder : true, 
                      isLazy : true, 
                      id : groupsArr[i]['gid']};
@@ -28,7 +34,7 @@ function getCollaboratorInfo(userNumber, searchArg) {
   });
 }
 
-function getGroupInfo(uid) {
+/*function getGroupInfo(uid) {
 	
 	alert('in get group info for uid: ' + uid);
 	
@@ -65,7 +71,7 @@ function getGroupInfo(uid) {
 	
 	return groupsArr;
 	
-}
+}*/
 
 
 
@@ -73,21 +79,22 @@ function getGroupInfo(uid) {
 
 // Populates the collaborator widget given the data returned (i.e. children)
 function buildCollaboratorTree(children) {
-	console.log("Here is the array children:");
-	for(i in children)
-	  for(j in children[i])
-		console.log(j + ': ' + children[j]);
+
   $("#collaborators_tree").dynatree({
     title: "Lazy loading sample",
 	fx: { height: "toggle", duration: 200 },
 	autoFocus: false, 
 	children: children,
     onActivate: function(node) {
+    	  console.log("Here is the node.data object: ");
+    	    for(var j in node)
+    	      console.log(j + ': ' + node.data[j]);
       var user_info_obj = '';
 	  var url = 'http://localhost:1337/userinfo/'+node.data.username;
 	  var queryString = '';
+	  console.log('onActivate is called.');
 	    	  
-	  $.ajax({
+	  /*$.ajax({
 	    url: url,
 	    type: 'GET',
 	    data: queryString,
@@ -111,12 +118,12 @@ function buildCollaboratorTree(children) {
         error: function() {
     	  console.log('error in getting user id');
         }
-      });
+      });*/
     },
     onLazyRead: function(node) {
 	  console.log('collaborators lazy read --> title: ' + node.data.title + ' id: ' + node.data.id);
       node.appendAjax({
-		url: 'http://localhost:1337/groups/' + node.data.id,	
+		url: 'http://localhost:1337/groups/' + node.data.id,
 		// We don't want the next line in production code:
 		debugLazyDelay: 50
       });

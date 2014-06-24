@@ -7,19 +7,22 @@ var firewallMode = false;
 
 var http = require('http');
 
-var servicePort = 8080;
+var serviceHost = '160.91.210.32';
+var servicePort = '8080';
 
-
+// Where/when is appsproxyHelper called? In frontend.js.
 var appsproxyHelper = function(request, response) 
 {
-  var path = '/apps?jobid='+request.query.jobid;
+  // The problem here is that request.query.jid is undefined.
+  var path = '/sws/apps?jid=' + request.query.jid;
+  
+  console.log('In apps.js, the value of path is ' + path);
 	
   //query the userlist service here
   var options = {
-    host: 'localhost',
+    host: serviceHost,
 	port: servicePort,
 	path: path,
-	//path: '/apps',
 	method: 'GET'
   };
 	
@@ -37,7 +40,9 @@ var appsproxyHelper = function(request, response)
 
     res.on('end', function() 
     {
-	  var jsonObj = JSON.parse(responseData);
+	  console.log(responseData);
+	  var jsonObj = {};
+	  jsonObj.apps = JSON.parse(responseData);
 
 	  var appsArr = new Array();
 	  var appuuidsArr = new Array();
@@ -45,8 +50,8 @@ var appsproxyHelper = function(request, response)
 	  for(var key in jsonObj) {
 	    // The value of jsonObj is an array.
 		for(var i = 0; i < jsonObj[key].length; i++) {
-		  var appid = jsonObj[key][i]['appid'];
-		  var appuuid = jsonObj[key][i]['uuid'];
+		  var appid = jsonObj[key][i]['aid'];
+		  var appuuid = jsonObj[key][i]['nid'];
 		  appsArr.push(appid);
 		  appuuidsArr.push(appuuid);
 		}
@@ -67,7 +72,7 @@ var appsproxyHelper = function(request, response)
 		  
   }).on('error', function(e) 
   {
-    console.log("Got error: " + e.message);
+    console.log("apps.js: Got error: " + e.message);
 	var respText =	'[ {"title": "Item 11"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';
 	var jsonObj = JSON.parse(respText);
 	response.send(jsonObj);
@@ -82,15 +87,13 @@ module.exports.appsproxyHelper = appsproxyHelper;
 
 var appsinfoHelper = function(request, response) {
 
-	//make a call to http://localhost:8080/users/<user_id>
-	var path = '/apps/'+request.params.app_id+"?jobid="+request.query.jobid;
+	var path = '/sws/app?aid='+request.params.app_id+"&jid="+request.query.jid;
 	
 	//query the userlist service here
 	var options = {
 			host: 'localhost',
 			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
+			path: path,
 			method: 'GET'
 		  };
 	
@@ -105,9 +108,9 @@ var appsinfoHelper = function(request, response) {
 				
 		  });
 		  res.on('end',function() {
-			  
-			  var jsonObj = JSON.parse(responseData);
-		      response.send(jsonObj);
+			  var jsonObj = {};
+			  jsonObj.apps = JSON.parse(responseData);
+		      response.send(jsonObj.apps);
 			 
 			  
 		  });

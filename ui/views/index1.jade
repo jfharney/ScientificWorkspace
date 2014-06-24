@@ -32,8 +32,8 @@ head
 html(lang="en")
   body
     
-    //DOI modal
-    // div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
+    // DOI modal
+    //div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
@@ -96,11 +96,11 @@ html(lang="en")
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="../settings/#{username}") #{username}
+                a(href="../settings/#{uname}") #{uname}
               li
-                a(href="../workspace/#{username}") Workspace
+                a(href="../workspace/#{uname}") Workspace
               li
-                a(href="../doi/#{username}") DOI
+                a(href="../doi/#{uname}") DOI
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
@@ -109,7 +109,7 @@ html(lang="en")
             ul.nav
               a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
                 i.icon-user
-                span.hidden-phone #{username}
+                span.hidden-phone #{uname}
                 span.caret
               ul.dropdown-menu
                 li
@@ -134,7 +134,7 @@ html(lang="en")
             ul.breadcrumb
               li
                 a(href="#")
-                  span#user_id_label #{username}
+                  span#user_id_label #{uname}
                 span.divider /
               li
                 a#tag_create(href="#") Workspace
@@ -143,11 +143,9 @@ html(lang="en")
           // This seems like as good a place as any to store the remainder of the user data in the document object.
           p#curUserUuid(style='display:none') #{uuid}
           p#curUserEmail(style='display:none') #{email}
-          p#curUserFirstname(style='display:none') #{firstname}
-          p#curUserLastname(style='display:none') #{lastname}
-          p#curUserMiddlename(style='display:none') #{middlename}
+          p#curUserName(style='display:none') #{name}
           p#curUserNumber(style='display:none') #{uid}
-          p#curUserUsername(style='display:none') #{username}
+          p#curUserUsername(style='display:none') #{uname}
                 
       div.row-fluid
         div.span12
@@ -333,5 +331,5 @@ html(lang="en")
     script(src="js/ajax/tagstable.js")
     script(src="js/ajax/tagclouds.js")
     script(src="js/add_tag.js")
-    // script(src="js/add_tag.js")
+    script(src="js/add_tag.js")
     script(src="js/add_doi.js")

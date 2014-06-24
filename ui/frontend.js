@@ -4,6 +4,7 @@ var firewallMode = false;
 var http = require('http');
 var url = require('url');
 //app.use(express.static(__dirname + 'public'));
+var serviceHost = '160.91.210.32';
 var servicePort = 8080;
 
 // Start Express
@@ -23,19 +24,12 @@ app.use(express.bodyParser());
 app.set("view engine", "jade");
 
 var users = require('./proxy/users.js');
-
 var groups = require('./proxy/groups.js');
-
 var files = require('./proxy/files.js');
-
 var jobs = require('./proxy/jobs.js');
-
 var apps = require('./proxy/apps.js');
-
 var associations = require('./proxy/associations.js');
-
 var tags = require('./proxy/tags.js');
-
 
 app.get("/", function(request, response) {
 	  response.redirect('/workspace/users/j1s');
@@ -48,8 +42,40 @@ app.get("/settings/:user_id", function(request, response) {
 });
 
 app.get("/workspace/:user_id", function(request, response) {
+  /* Original Version: */
+  //response.render("index1", { uid : request.params.user_id });
 	
-	  response.render("index1", { uid : request.params.user_id });
+  /* New Version:*/ 
+	  
+  var userObj = {};
+
+  /* Make a request to return all user data, based on the username.*/
+  var options = {
+    host: '160.91.210.32',
+    port: servicePort,
+    path: "/sws/user?uname=" + request.params.user_id,
+    method: 'GET'
+  };
+		
+  var req = http.request(options, function(resp) {
+		
+    var responseData = '';
+    resp.on('data', function(chunk) {
+      responseData += chunk;
+    });
+    
+    resp.on('end', function() {
+      var userObj = JSON.parse(responseData);
+      response.render("index1", userObj);
+    });
+			
+    resp.on('error', function(e) {
+      response.send('error: ' + e);
+    });
+  });
+		
+  req.end();
+  
 });
 
 app.get('/doi/:user_id',function(request,response) {
@@ -154,14 +180,13 @@ function isArray(what)
 
 app.get("/userinfo/:user_id", function(request, response) {
 	
-	//console.log('calling user info...' + request.params.user_id);
+	console.log('calling user info...' + request.params.user_id);
 
-	//make a call to http://localhost:8080/users/<user_id>
-	var path = '/users/' + request.params.user_id;
+	var path = '/sws/users/' + request.params.user_id;
 	
 	//query the userlist service here
 	var options = {
-			host: 'localhost',
+			host: serviceHost,
 			port: servicePort,
 			path: path,
 			method: 'GET'
@@ -175,15 +200,13 @@ app.get("/userinfo/:user_id", function(request, response) {
 		  //console.log("Got response: " + res.statusCode);
 		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
 		  res.on('data', function (chunk) {
-			  //console.log('\n\n\n\nchunk: ' + chunk);
-			  responseData += chunk;	
-				
+			responseData += chunk;		
 		  });
 		  res.on('end',function() {
 			  
-			  //console.log('ending user info...');
+			  console.log('ending user info...');
 			  
-			  //console.log('response data\n' + responseData);
+			  console.log('response data\n' + responseData);
 			  
 			  var jsonObj = JSON.parse(responseData);
 		      response.send(jsonObj);
@@ -204,33 +227,30 @@ app.get("/userinfo/:user_id", function(request, response) {
 
 
 /*************************************************************/
-//--------groups API----------//
+//--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
-
-	console.log ('calling group info...');
-
-	var res = groups.groupinfoHelper(request, response);
+  console.log ('calling group info...');
+  var res = groups.groupinfoHelper(request, response);
 });
 
 //groups on lazy read off of the tree
-app.get('/groups/:gid',function(request,response) {
-	//console.log('gid -> ' + request.params.gid);
-	
-	var res = groups.groupsHelper(request,response);
+app.get('/groups/:gid',function(request, response) {
+  console.log('gid -> ' + request.params.gid);
+  var res = groups.groupsHelper(request, response);
 });
 
 /*************************************************************/
 //--------Jobs API----------//
 
-app.get('/jobsproxy/:username', function(request, response) {
+app.get('/jobsproxy/:userNum', function(request, response) {
   // jobsproxyHelper is defined in the file proxy/jobs.js.
   jobs.jobsproxyHelper(request, response);
-  // We may reference :username with request.params.username.
+  // We may reference :userNum with request.params.userNum.
 });
 
 app.get("/jobinfo/:job_id", function(request, response) {
-  console.log ('calling jobs info...' + request.params.job_id);
+  console.log('calling jobs info with job_id ' + request.params.job_id);
   var res = jobs.jobsinfoHelper(request, response);
 });
 
@@ -242,29 +262,19 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 });
 
 /*************************************************************/
+//--------Apps API----------//
 
-app.get('/appsproxy', function(request,response) {
-
-	//console.log('in apps proxy');
-
+// Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
+app.get('/appsproxy', function(request, response) {
 	var res = apps.appsproxyHelper(request,response);
-	
 });
-
-
-
 
 app.get("/appinfo/:app_id", function(request, response) {
-	//console.log ('calling user info...' + request.params.app_id);
-
-	var res = apps.appsinfoHelper(request,response);
-
+	console.log(request.url);
+	var res = apps.appsinfoHelper(request, response);
 });
 
-
-
-
-//-------end jobs API-------//
+/*************************************************************/
 
 
 
@@ -298,13 +308,13 @@ app.get('/tags', function(request, response)
 	//console.log("The value of arguments is " + args['uid']);
 	
 	var options = {
-			host: 'localhost',
-			port: 8080,
-			path: "/tags?uid=" + args['uid'],
+			host: '160.91.210.32',
+			port: servicePort,
+			path: "sws/tags?uid=" + args['uid'],
 			method: 'GET'
 	};
 	
-	console.log('path-->' + options['path']);
+	//console.log('path-->' + options['path']);
 	
 	var req = http.request(options, function(resp) {
 		
@@ -314,7 +324,9 @@ app.get('/tags', function(request, response)
 		});
 		
 		resp.on('end', function() {
-			var jsonObj = JSON.parse(responseData);
+			//var jsonObj = JSON.parse(responseData);
+			var jsonObj = {};
+			jsonObj.tags = responseData;
 			response.send(jsonObj);
 		});
 		
