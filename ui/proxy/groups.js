@@ -10,10 +10,10 @@ var servicePort = '8080';
 
 var groupinfoHelper = function(request, response) {
 	
-  console.log('Inside groupinfoHelper in proxy/groups.js...');
+  //console.log('Inside groupinfoHelper in proxy/groups.js...');
   
   var path = '/sws/groups?uid='+request.params.uid;
-  console.log('In groupinfoHelper, the value of request.params.uid is ' + request.params.uid);
+  //console.log('In groupinfoHelper, the value of request.params.uid is ' + request.params.uid);
 	
   // Query for all groups with the specified user number ('uid').
   var options = {
@@ -69,7 +69,7 @@ function filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj) {
   for(var i in jsonObj['groups'])
 	if(pattern.test(jsonObj['groups'][i]['gname'])) {
 	  filteredGroupsObj['groups'].push(jsonObj['groups'][i]);
-    }c
+    }
   return;
 }
 

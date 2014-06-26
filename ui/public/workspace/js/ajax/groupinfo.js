@@ -1,10 +1,7 @@
 function getCollaboratorInfo(userNumber, searchArg) {
-  //var queryString = '';
   var groupsArr = [];
   if(searchArg == undefined) searchArg = '';
   var url = 'http://'+SW.hostname+':'+SW.port+'/groupinfo/'+userNumber+'?search='+searchArg;
-  
-  console.log('Inside getCollaboratorInfo, calling ' + url);
   
   // Grab the group info for the user with uid (number).
   $.ajax({
@@ -12,10 +9,6 @@ function getCollaboratorInfo(userNumber, searchArg) {
     type: 'GET',
     success: function(data) {
       groupsArr = data;
-      console.log('Here is the array groupsArr:');
-      for(var i = 0; i < groupsArr.length; i++)
-    	for(var j in groupsArr[i])
-    	  console.log('['+i+']: ' + j + ': ' + groupsArr[i][j]);
 			
       // Create the initial children for the tree.
       var children = [];

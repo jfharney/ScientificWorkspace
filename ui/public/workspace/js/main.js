@@ -19,9 +19,8 @@ $(function() {
   /* This function is defined in ajax/userinfo.js. */
   postUserData('#user_info');
   
-  /* Don't know what the 1 means here. */
-  var type = '1';
-  //getFileInfo(SW.current_user_number, type);
+  /* This function is defined in ajax/fileinfo.js. */
+  getFileInfo(SW.current_user_number);
 	
   /* Enables the list box in the top right to change the current user. */
   /* (This feature will be admin-only in final version.) */
@@ -78,7 +77,7 @@ $(function() {
 	  
   // Take a provided search term and update the Jobs tree accordingly. 
   $("#jobsSearchButton").on("click", function() {
-    getJobInfo(userName, $('#jobsSearchText').val());
+    getJobInfo(SW.current_user_number, $('#jobsSearchText').val());
     $("#jobs_tree").dynatree("getTree").reload();
     $("#jobsSearchPanel").slideToggle();
   });
@@ -89,7 +88,7 @@ $(function() {
      3. Hide the search box. */ 
   $("#clearJobsSearchTextButton").on("click", function() {
     $("#jobsSearchText").val('');
-    getJobInfo(userName);								/* See ajax/jobinfo.js for this function. */
+    getJobInfo(SW.current_user_number, '');					/* See ajax/jobinfo.js for this function. */
     $("#jobs_tree").dynatree("getTree").reload();
     $("#jobsSearchPanel").slideToggle();
   });

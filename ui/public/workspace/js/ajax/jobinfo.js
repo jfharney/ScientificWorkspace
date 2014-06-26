@@ -28,25 +28,29 @@ function getAppInfo(url) {
 
   var queryString = '';
   
+  console.log('In jobinfo.js, getAppInfo() has been passed the url ' + url);
+  
   $.ajax({
     url: url,
     type: 'GET',
     data: queryString,
     success: function(data) {
       console.log(jQuery.isEmptyObject(data));
+      console.log('Here is info_obj:');
       info_obj = data;
+      for(var i in info_obj)
+    	console.log(i + ': ' + info_obj[i]);
       var info_space = '#app_info';
       $(info_space).empty();
       if(!jQuery.isEmptyObject(info_obj)) {
-        $(info_space).append('<div>appid: ' + info_obj['apps'][0]['appid']+ '</div>');
-        $(info_space).append('<div>jobid: ' + info_obj['apps'][0]['jobid']+ '</div>');
-        $(info_space).append('<div>starttime: ' + info_obj['apps'][0]['starttime']+ '</div>');
-        $(info_space).append('<div>command: ' + info_obj['apps'][0]['command']+ '</div>');
-        $(info_space).append('<div>endtime: ' + info_obj['apps'][0]['endtime']+ '</div>');
-        $(info_space).append('<div>exitcode: ' + info_obj['apps'][0]['exitcode']+ '</div>');
-        $(info_space).append('<div>hostname: ' + info_obj['apps'][0]['hostname']+ '</div>');
-        $(info_space).append('<div>appuuid: ' + info_obj['apps'][0]['uuid']+ '</div>');
-        $(info_space).append('<div style="margin-bottom:10px">processors: ' + info_obj['apps'][0]['processors']+ '</div>');
+        $(info_space).append('<div>App ID: ' + info_obj['aid']+ '</div>');
+        $(info_space).append('<div>Job ID: ' + info_obj['job']+ '</div>');
+        $(info_space).append('<div>Start: ' + info_obj['start']+ '</div>');
+        $(info_space).append('<div>Command: ' + info_obj['cmd']+ '</div>');
+        $(info_space).append('<div>End: ' + info_obj['stop']+ '</div>');
+        $(info_space).append('<div>exitcode: ' + info_obj['err']+ '</div>');
+        $(info_space).append('<div>Host: ' + info_obj['host']+ '</div>');
+        $(info_space).append('<div>NID: ' + info_obj['nid']+ '</div>');
       } 
       else {
         $(user_info_space).append('<div>The user does not exist</div>');
@@ -107,28 +111,28 @@ function buildJobsTree(children) {
 		var url = 'http://' + SW.hostname + ':' + SW.port + '/jobinfo/' + node.data.jobid;
 		console.log('url is ' + url);
 		var info_space = '#job_info';
-		$(info_space).empty();    		  
+		$(info_space).empty();
+		
+		var queryString = '';
 		    		  
-		//var queryString = '';
-		    		  
-		/*$.ajax({
+		$.ajax({
 		  url: url,
           type: 'GET',
           data: queryString,
           success: function(data) {
             info_obj = data;
               if(!jQuery.isEmptyObject(info_obj)) {
-		    	$(info_space).append('<div>jobid: ' + info_obj['jobs'][0]['jobid']+ '</div>');
-		    	$(info_space).append('<div>starttime: ' + info_obj['jobs'][0]['starttime']+ '</div>');
-		    	$(info_space).append('<div>endtime: ' + info_obj['jobs'][0]['endtime']+ '</div>');
-		    	$(info_space).append('<div>groupname: ' + info_obj['jobs'][0]['groupname']+ '</div>');
-		    	$(info_space).append('<div>hostname: ' + info_obj['jobs'][0]['hostname']+ '</div>');
-		    	$(info_space).append('<div>joberr: ' + info_obj['jobs'][0]['joberr']+ '</div>');
-		    	$(info_space).append('<div>jobname: ' + info_obj['jobs'][0]['jobname']+ '</div>');
-                $(info_space).append('<div>jobuuid: ' + info_obj['jobs'][0]['uuid']+ '</div>');
-                $(info_space).append('<div>processors: ' + info_obj['jobs'][0]['processors']+ '</div>');
-                $(info_space).append('<div>username: ' + info_obj['jobs'][0]['username']+ '</div>');
-                $(info_space).append('<div style="margin-bottom:10px">walltime: ' + info_obj['jobs'][0]['walltime']+ '</div>');
+		    	$(info_space).append('<div>nid: ' + info_obj['nid'] + '</div>');
+		    	$(info_space).append('<div>nodes: ' + info_obj['nodes'] + '</div>');
+		    	$(info_space).append('<div>jid: ' + info_obj['jid'] + '</div>');
+		    	$(info_space).append('<div>err: ' + info_obj['err'] + '</div>');
+		    	$(info_space).append('<div>stop: ' + info_obj['stop'] + '</div>');
+		    	$(info_space).append('<div>host: ' + info_obj['host'] + '</div>');
+		    	$(info_space).append('<div>start: ' + info_obj['start'] + '</div>');
+                $(info_space).append('<div>name: ' + info_obj['name'] + '</div>');
+                $(info_space).append('<div>type: ' + info_obj['type'] + '</div>');
+                $(info_space).append('<div>wall: ' + info_obj['wall'] + '</div>');
+                $(info_space).append('<div style="margin-bottom:10px">user: ' + info_obj['user'] + '</div>');
               } 
               else {
 		    	$(user_info_space).append('<div>The job does not exist</div>');
@@ -137,11 +141,13 @@ function buildJobsTree(children) {
           error: function(e) {
         	console.log('jobinfo.js: Got error: ' + e);
           }
-        });*/
+        });
       } 
 	  else {
-        console.log('this is an app');
-        var url = 'http://' + SW.hostname + ':' + SW.port + '/appinfo/'+node.data.appid+'?jobid='+node.data.jobid;
+        console.log('This is an app.');
+        for(var i in node.data)
+          console.log(i + ': ' + node.data[i]);
+        var url = 'http://' + SW.hostname + ':' + SW.port + '/appinfo/'+node.data.appid; //+'?jobid='+node.data.jobid;
         console.log('Passing url '+url+' to getAppInfo.');
         /* getAppInfo is defined just above this function in the same file. */
         getAppInfo(url);

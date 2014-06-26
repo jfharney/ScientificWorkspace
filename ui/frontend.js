@@ -5,7 +5,7 @@ var http = require('http');
 var url = require('url');
 //app.use(express.static(__dirname + 'public'));
 var serviceHost = '160.91.210.32';
-var servicePort = 8080;
+var servicePort = '8080';
 
 // Start Express
 var express = require("express");
@@ -51,7 +51,7 @@ app.get("/workspace/:user_id", function(request, response) {
 
   /* Make a request to return all user data, based on the username.*/
   var options = {
-    host: '160.91.210.32',
+    host: serviceHost,
     port: servicePort,
     path: "/sws/user?uname=" + request.params.user_id,
     method: 'GET'
@@ -230,13 +230,13 @@ app.get("/userinfo/:user_id", function(request, response) {
 //--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
-  console.log ('calling group info...');
+  //console.log ('calling group info...');
   var res = groups.groupinfoHelper(request, response);
 });
 
 //groups on lazy read off of the tree
 app.get('/groups/:gid',function(request, response) {
-  console.log('gid -> ' + request.params.gid);
+  //console.log('gid -> ' + request.params.gid);
   var res = groups.groupsHelper(request, response);
 });
 
@@ -266,12 +266,7 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 
 // Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
 app.get('/appsproxy', function(request, response) {
-	var res = apps.appsproxyHelper(request,response);
-});
-
-app.get("/appinfo/:app_id", function(request, response) {
-	console.log(request.url);
-	var res = apps.appsinfoHelper(request, response);
+  var res = apps.appsproxyHelper(request,response);
 });
 
 /*************************************************************/
@@ -305,16 +300,12 @@ app.get('/tags', function(request, response)
 	  else
 		arguments += "&" + i + "=" + args[i];
 	
-	//console.log("The value of arguments is " + args['uid']);
-	
 	var options = {
 			host: '160.91.210.32',
 			port: servicePort,
 			path: "sws/tags?uid=" + args['uid'],
 			method: 'GET'
 	};
-	
-	//console.log('path-->' + options['path']);
 	
 	var req = http.request(options, function(resp) {
 		
@@ -378,30 +369,51 @@ app.get('/tags/:tag_name', function(request, response)
 //-----------End Tags-----------//
 
 
+//--------Files API---------//
 
-//-----------Associations-----------//
-
-app.post('/associationsproxy',function(request,response) {
-	//console.log('In associationsproxy');
-	var res = associations.associationsproxyHelper(request,response);
-});
-
-
-app.get('/associations', function(request, response) 
-{
-	//console.log('Received http://localhost:8001/associations');
-	var args = url.parse(request.url, true).query;
-	// query above is an object containing all the 
-	// arguments in the URL as key-value pairs. 
-	//console.log('args[edge]: ' + args['edge']);
-	var options = {
-			host: 'localhost',
-			port: 8080,
-			path: "/associations?edge=" + args['edge'],
-			method: 'GET'
-	};
+app.get('/files/:userNum', function(request, response) {
+  var args = url.parse(request.url, true).query;
+  var path = "/sws/files?uid=5112&path=|"; 			// + args['path'];
 	
-	var req = http.request(options, function(resp) {
+  // Query above is an object containing all the 
+  // arguments in the URL as key-value pairs. 
+  var options = {
+    host: serviceHost,
+	port: servicePort,
+	path: path,
+	method: 'GET'
+  };
+
+  /*var numPipes = (args['path'].split('|')).length - 1;
+
+  var respJSON = {};
+  respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+  respJSON['isFolder'] = true;
+  respJSON['isLazy'] = true;
+  respJSON['type'] = 'file';
+  respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+  respJSON['path'] = args['path']
+  respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+
+  var respArr = [];
+  respArr.push(respJSON);
+
+  for(var i = 0; i < numPipes; i++) {
+    respJSON = {};
+    respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
+    respJSON['isFolder'] = false;
+    respJSON['type'] = 'file';
+    respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+    respJSON['path'] = args['path']
+    respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
+    respArr.push(respJSON);
+  }
+	
+  // What does stringify do as opposed to parse? 
+  var respText = JSON.stringify(respArr);
+  response.send(respText);*/
+	
+  var req = http.request(options, function(resp) {
 		//console.log('Got response status code ' + resp.statusCode);
 		
 		var responseData = '';
@@ -410,9 +422,9 @@ app.get('/associations', function(request, response)
 		});
 		
 		resp.on('end', function() {
-			//console.log('in resp end for associations... ' + responseData);
+			//console.log('in resp end for files... ' + responseData);
 			var jsonObj = JSON.parse(responseData);
-			response.send(jsonObj);
+		response.send(jsonObj);
 		});
 		
 		resp.on('error', function(e) {
@@ -420,121 +432,7 @@ app.get('/associations', function(request, response)
 		});
 	});
 	
-	req.end();	
-});
-
-
-
-//-----------End Associations-----------//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//--------files API---------//
-
-//example
-app.get('/files1', function(request,response) {
-	
-	//console.log('Received http://localhost:8001/associations');
-	var args = url.parse(request.url, true).query;
-	console.log(args['path']);
-	
-	//console.log('before keys');
-	//for(var key in request.params) {
-	//	console.log('key: ' + key + ' value: ' + request.params[key]);
-	//}
-	var path = "/files?uid=0&gid=0&path=" + args['path'];
-	
-	
-	// query above is an object containing all the 
-	// arguments in the URL as key-value pairs. 
-	//console.log('args[edge]: ' + args['edge']);
-	var options = {
-			host: 'localhost',
-			port: 8080,
-			path: path,
-			method: 'GET'
-	};
-	
-	
-	
-	
-	//console.log('file request...' + options['path']);
-	
-	
-	
-	
-	var numPipes = (args['path'].split('|')).length - 1;
-	
-	var respJSON = {};
-	respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-	respJSON['isFolder'] = true;
-	respJSON['isLazy'] = true;
-	respJSON['type'] = 'file';
-	respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-	respJSON['path'] = args['path']
-	respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-	
-	var respArr = [];
-	respArr.push(respJSON);
-	
-	for(var i=0;i<numPipes;i++) {
-		respJSON = {};
-		respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
-		respJSON['isFolder'] = false;
-		respJSON['type'] = 'file';
-		respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-		respJSON['path'] = args['path']
-		respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
-		respArr.push(respJSON);
-	}
-	
-
-	
-	var respText = JSON.stringify(respArr);
-	
-	//console.log('respText: ' + respText);
-	
-	
-	
-	response.send(respText);
-	
-	/*
-	var req = http.request(options, function(resp) {
-		//console.log('Got response status code ' + resp.statusCode);
-		
-		var responseData = '';
-		resp.on('data', function(chunk) {
-			responseData += chunk;
-		});
-		
-		resp.on('end', function() {
-			console.log('in resp end for files... ' + responseData);
-			var jsonObj = JSON.parse(responseData);
-			
-			var title = jsonObj[];
-			
-			
-			response.send(jsonObj);
-		});
-		
-		resp.on('error', function(e) {
-			response.send('error: ' + e);
-		});
-	});
-	
-	req.end();	
-	*/
+	req.end();
 	
 	
 });
@@ -554,50 +452,6 @@ app.get('/initfilesdata',function(request,response) {
 
 });
 
-
-
-app.get('/userlist', function(request,response) {
-	
-	var path = '/users?retrieve=username';
-	
-	//query the userlist service here
-	var options = {
-			host: 'localhost',
-			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
-			method: 'GET'
-		  };
-	
-	 var responseData = '';
-	
-	 
-	 var req = http.request(options, function(res) {
-		  res.on('data', function (chunk) {
-			  responseData += chunk;	
-				
-		  });
-		  res.on('end',function() {
-			  
-			 
-			  var jsonObj = JSON.parse(responseData);
-		      response.send(jsonObj);
-			 
-			  
-		  });
-		  
-	  
-	 }).on('error', function(e) {
-		 
-		  console.log("Got error: " + e.message);
-	 
-	 });
-	 
-	 req.end();
-});
-
-
-
 //files proxy service
 app.get('/filesinfo',function(request,response) {
 	
@@ -608,21 +462,20 @@ app.get('/filesinfo',function(request,response) {
 	
 	var path = '/files?';
 	
-	for(var key in query) {
+	/*for(var key in query) {
 		if(key == 'path') {
 			filePath = query[key];
 		}
 		path += key + '=' + query[key] + '&';
-	}
+	}*/
 	
 	//console.log('filesproxyquery: ' + path);
 	
 	//query the file service here
 	var options = {
-			host: 'localhost',
+			host: serviceHost,
 			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
+			path: path,
 			method: 'GET'
 		  };
 	
@@ -699,11 +552,6 @@ app.get('/filesinfo',function(request,response) {
 	 
 });
 
-
-
-
-
-
 //files proxy service
 app.get('/files', function(request,response) {
 	
@@ -729,10 +577,9 @@ app.get('/files', function(request,response) {
 	
 	//query the file service here
 	var options = {
-			host: 'localhost',
+			host: serviceHost,
 			port: servicePort,
-			path: path,//'/files?path=widow1|proj|lgt006&uid=8038&gid=16854',
-			//path: '/apps',
+			path: path,
 			method: 'GET'
 		  };
 	
@@ -812,11 +659,6 @@ app.get('/files', function(request,response) {
 
 		 req.end();
 	 }
-	 
-	 
-	
-	
-
 
 });
 
@@ -828,7 +670,44 @@ app.get('/files', function(request,response) {
 
 
 
-
+app.get('/userlist', function(request,response) {
+	
+	var path = '/users?retrieve=username';
+	
+	//query the userlist service here
+	var options = {
+			host: serviceHost,
+			port: servicePort,
+			path: path,
+			method: 'GET'
+		  };
+	
+	 var responseData = '';
+	
+	 
+	 var req = http.request(options, function(res) {
+		  res.on('data', function (chunk) {
+			  responseData += chunk;	
+				
+		  });
+		  res.on('end',function() {
+			  
+			 
+			  var jsonObj = JSON.parse(responseData);
+		      response.send(jsonObj);
+			 
+			  
+		  });
+		  
+	  
+	 }).on('error', function(e) {
+		 
+		  console.log("Got error: " + e.message);
+	 
+	 });
+	 
+	 req.end();
+});
 
 
 
@@ -854,7 +733,7 @@ app.get('/initgroupsdata',function(request,response) {
 
 
 //sample- initial files data proxy service
-app.get('/initjobsdata',function(request,response) {
+/*app.get('/initjobsdata',function(request,response) {
 
 	//console.log('init jobs data');
 	var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
@@ -864,7 +743,7 @@ app.get('/initjobsdata',function(request,response) {
 	response.send(respText);
 
 
-});
+});*/
 
 
 
