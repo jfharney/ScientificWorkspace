@@ -63,6 +63,7 @@ public class TitanAPI
             System.out.print("shutting down...");
             m_graph.shutdown();
             m_graph = null;
+            System.gc();
             Thread.sleep( 5000 );
             System.out.println(" done.");
         }
@@ -201,6 +202,11 @@ public class TitanAPI
 
     //=========== GROUP API ============================================================================================
 
+    /**
+     * @param a_gid
+     * @param a_properties
+     * @param a_output 
+     */
     public void getGroupByGID( int a_gid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -215,6 +221,11 @@ public class TitanAPI
             convertVertexProperties( it.next(), props, a_output, true );
     }
 
+    /**
+     * @param a_gname
+     * @param a_properties
+     * @param a_output 
+     */
     public void getGroupByGname( String a_gname, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -229,6 +240,11 @@ public class TitanAPI
             convertVertexProperties( it.next(), props, a_output, true );
     }
 
+    /**
+     * @param a_uid
+     * @param a_properties
+     * @param a_output 
+     */
     public void getGroupsByUID( int a_uid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -248,6 +264,11 @@ public class TitanAPI
 
     //=========== JOBS API =============================================================================================
 
+    /**
+     * @param a_jid
+     * @param a_properties
+     * @param a_output 
+     */
     public void getJobByJID( int a_jid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -277,6 +298,11 @@ public class TitanAPI
         }
     }
 
+    /**
+     * @param a_uid
+     * @param a_properties
+     * @param a_output 
+     */
     public void getJobs( int a_uid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -316,6 +342,11 @@ public class TitanAPI
 
     //=========== APP API ==============================================================================================
 
+    /**
+     * @param a_aid
+     * @param a_properties
+     * @param a_output 
+     */
 	public void getAppByAID( int a_aid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -333,7 +364,7 @@ public class TitanAPI
             app = it.next();
             a_output.object();
 
-            convertVertexProperties( app, props, a_output, true );
+            convertVertexProperties( app, props, a_output, false );
 
             Iterator<Edge> e = app.getEdges(Direction.IN, Schema.COMP).iterator();
             if ( e.hasNext() )
@@ -346,7 +377,11 @@ public class TitanAPI
         }
     }
 
-    
+    /**
+     * @param a_jid
+     * @param a_properties
+     * @param a_output 
+     */
     public void getAppsByJID( int a_jid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -376,6 +411,11 @@ public class TitanAPI
 
     //=========== ASSOCIATION API =====================================================================================
 
+    /**
+     * @param a_uid
+     * @param a_status
+     * @param a_output 
+     */
     public void getAssoc( int a_uid, int a_status, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -411,6 +451,12 @@ public class TitanAPI
         a_output.endArray();
     }
 
+    /**
+     * @param a_uid
+     * @param a_nid
+     * @param a_status
+     * @param a_output 
+     */
     public void getAssocFromNode( int a_uid, long a_nid, int a_status, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -447,6 +493,13 @@ public class TitanAPI
         a_output.endArray();
     }
 
+    /**
+     * @param a_uid
+     * @param a_status
+     * @param a_out_nid
+     * @param a_in_nid
+     * @param a_output 
+     */
     public void putAssoc( int a_uid, int a_status, long a_out_nid, long a_in_nid, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -481,6 +534,12 @@ public class TitanAPI
 
     }
 
+    /**
+     * @param a_uid
+     * @param a_out_nid
+     * @param a_in_nid
+     * @param a_output 
+     */
     public void deleteAssoc( int a_uid, long a_out_nid, long a_in_nid, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -644,132 +703,18 @@ public class TitanAPI
         }
     }
 
-    public String adminGetRootFiles()
-    {
-        if ( m_graph == null )
-            throw new IllegalStateException("Graph not initialized");
-
-        m_graph.rollback();
-
-        Vertex[] vertices = {null};
-        GremlinPipeline grem = new GremlinPipeline( m_graph.getVertices( "fpath", "root" )).sideEffect( new VertexGrabber( vertices )).out(Schema.COMP);
-        grem.hasNext();
-
-        return processFileQuery( grem, vertices[0] );
-    }
-
-    public String adminGetFiles( long a_nid )
-    {
-        if ( m_graph == null )
-            throw new IllegalStateException("Graph not initialized");
-
-        m_graph.rollback();
-
-        GremlinPipeline grem = new GremlinPipeline( m_graph.getVertex( a_nid )).out(Schema.COMP);
-        grem.hasNext();
-
-        return processFileQuery( grem, null );
-    }
-
-    private String processFileQuery( GremlinPipeline a_grem, Vertex a_parent )
-    {
-        StringBuilder builder = new StringBuilder(4000);
-
-        if ( a_parent != null )
-        {
-            builder.append( a_parent.getId() );
-            builder.append( "," );
-            builder.append( a_parent.getProperty(Schema.NAME) );
-            builder.append( "," );
-
-            if ( a_parent.getProperty(Schema.TYPE) == Schema.Type.FILE.toInt())
-            {
-                builder.append( Schema.Type.FILE.toInt() );
-                //builder.append( "," );
-                //builder.append( a_parent.getProperty(Schema.FSIZE) );
-            }
-            else
-            {
-                builder.append( Schema.Type.DIR.toInt() );
-            }
-
-            builder.append( "," );
-            builder.append( a_parent.getProperty(Schema.XUID) );
-            builder.append( "," );
-            builder.append( a_parent.getProperty(Schema.XGID) );
-            builder.append( "," );
-            builder.append( a_parent.getProperty(Schema.FMODE) );
-            builder.append( "\n" );
-        }
-
-        Vertex v;
-        while ( a_grem.hasNext() )
-        {
-            v = (Vertex)a_grem.next();
-            builder.append( v.getId() );
-            builder.append( "," );
-            builder.append( v.getProperty(Schema.NAME) );
-            builder.append( "," );
-            if ( v.getProperty(Schema.TYPE) == Schema.Type.FILE.toInt())
-            {
-                builder.append( Schema.Type.FILE.toInt() );
-                //builder.append( "," );
-                //builder.append( v.getProperty("fsize") );
-            }
-            else
-            {
-                builder.append( Schema.Type.DIR.toInt() );
-            }
-            builder.append( "," );
-            builder.append( v.getProperty(Schema.XUID) );
-            builder.append( "," );
-            builder.append( v.getProperty(Schema.XGID) );
-            builder.append( "," );
-            builder.append( v.getProperty(Schema.FMODE) );
-            builder.append( "\n" );
-        }
-
-        return builder.toString();
-    }
-
-    public String adminFileTest()
-    {
-        if ( m_graph == null )
-            throw new IllegalStateException("Graph not initialized");
-
-        long startTime = System.nanoTime();
-        Integer count = 0;
-
-        m_graph.rollback();
-
-        Iterator<Vertex> iv = m_graph.getVertices( Schema.FPATH, "root" ).iterator();
-        if ( iv.hasNext() )
-        {
-            count++;
-            count += loadFileSystem( iv.next() );
-        }
-
-        long endTime = System.nanoTime();
-        double duration = (endTime - startTime)*1e-9;
-
-        return String.format( "Loaded %d vertices in %g sec, or %g vert/sec", count, duration, count/duration );
-    }
-
-    private int loadFileSystem( Vertex a_parent )
-    {
-        //System.out.print(a_parent.getId());
-        int count = 1;
-
-        Iterator<Edge> ie = a_parent.getEdges(Direction.OUT, Schema.COMP).iterator();
-        while ( ie.hasNext() )
-        {
-            count += loadFileSystem( ie.next().getVertex(Direction.IN) );
-        }
-        return count;
-    }
-
     //=========== TAG API ==============================================================================================
 
+    /**
+     * @param a_uid
+     * @param a_owned
+     * @param a_shared
+     * @param a_shared_uids
+     * @param a_public
+     * @param a_public_uids
+     * @param a_properties
+     * @param a_output 
+     */
     public void getTags( int a_uid, boolean a_owned, boolean a_shared, String a_shared_uids, boolean a_public, String a_public_uids, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -864,6 +809,12 @@ public class TitanAPI
         a_output.endArray();
     }
 
+    /**
+     * @param a_nid
+     * @param a_uid
+     * @param a_properties
+     * @param a_output 
+     */
     public void getTagsFromNode( long a_nid, int a_uid, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -896,7 +847,15 @@ public class TitanAPI
         a_output.endArray();
     }
 
-
+    /**
+     * @param a_uid
+     * @param a_tag
+     * @param a_desc
+     * @param a_access
+     * @param a_acl_uids
+     * @param a_acl_gids
+     * @param a_output 
+     */
     public void postTag( int a_uid, String a_tag, String a_desc, int a_access, String a_acl_uids, String a_acl_gids, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -988,6 +947,15 @@ public class TitanAPI
 
     // TODO - Need to prevent a tag name from being redefined as an already existing tag
 
+    /**
+     * @param a_nid
+     * @param a_tag
+     * @param a_desc
+     * @param a_access
+     * @param a_acl_uids
+     * @param a_acl_gids
+     * @param a_output 
+     */
     public void putTag( long a_nid, String a_tag, String a_desc, int a_access, String a_acl_uids, String a_acl_gids, JSONStringer a_output )
     {
         if ( m_graph == null )
@@ -1078,6 +1046,12 @@ public class TitanAPI
             throw new WebApplicationException( Response.Status.NOT_FOUND ); 
     }
 
+    /**
+     * @param a_tag
+     * @param a_add_uids
+     * @param a_add_gids
+     * @param a_output 
+     */
     private void addTagACLs( Vertex a_tag, boolean a_add_uids, boolean a_add_gids, JSONStringer a_output )
     {
         // Only shared tags hav ACLs
@@ -1119,6 +1093,11 @@ public class TitanAPI
 
     //=========== LINKING METHODS ======================================================================================
 
+    /**
+     * @param a_src_nid
+     * @param a_dest_nid
+     * @param a_label 
+     */
     public void linkNodes( long a_src_nid, long a_dest_nid, String a_label )
     {
         if ( m_graph == null )
@@ -1142,6 +1121,11 @@ public class TitanAPI
         m_graph.commit();
     }
 
+    /**
+     * @param a_src_nid
+     * @param a_dest_nid
+     * @param a_label 
+     */
     public void unlinkNodes( long a_src_nid, long a_dest_nid, String a_label )
     {
         if ( m_graph == null )
@@ -1198,57 +1182,10 @@ public class TitanAPI
         //long startTime = System.nanoTime();
         //Integer len = 0;
 
-        //int type;
-        //String path;
-        //Iterator<Edge> e;
-        //int uid;
-        //Vertex node;
-
         for ( Result<Vertex> res : results )
         {
             //++len;
-            //node = res.getElement();
-            
             processVertexQueryResult( user, res.getElement(), a_output );
-            /*
-            type = node.getProperty(Schema.TYPE);
-
-            if ( type == Schema.Type.FILE.toInt() || type == Schema.Type.DIR.toInt() )
-            {
-                // Validate user has access to this file (by path)
-                path = hasFileAccess( node, user );
-                if ( path == null )
-                    continue;
-
-                a_output.object();
-                a_output.key("path").value( path );
-            }
-            else if (  type == Schema.Type.TAG.toInt() )
-            {
-                // Validate user has access to this file (by path)
-                if ( !hasTagAccess( node, a_uid ))
-                    continue;
-
-                a_output.object();
-
-                // Add ACL for owned tags
-                e = node.getEdges(Direction.IN, Schema.ASSET).iterator();
-                if ( e.hasNext() )
-                {
-                    uid = e.next().getVertex(Direction.OUT).getProperty(Schema.UID);
-                    a_output.key("owner").value( uid );
-
-                    // Only add ACLs for owned tags
-                    if ( uid == a_uid )
-                        addTagACLs( node, true, true, a_output );
-                }
-            }
-            else
-                a_output.object();
-
-            convertVertexProperties( node, null, a_output, false );
-            a_output.endObject();
-            */
         }
 
         a_output.endArray();
@@ -1261,11 +1198,19 @@ public class TitanAPI
 
     //=========== UTILITY METHODS ======================================================================================
 
+    /**
+     * @param a_access
+     * @return 
+     */
     private Boolean invalidAccess( int a_access )
     {
         return a_access < 0 || a_access > 2;
     }
 
+    /**
+     * @param a_properties
+     * @return 
+     */
     private Set<String> parseRetrieveProperties( String a_properties )
     {
         if ( a_properties == null )
@@ -1280,6 +1225,10 @@ public class TitanAPI
             return null;
     }
 
+    /**
+     * @param a_list
+     * @return 
+     */
     private Integer[] parseIntegerCSV( String a_list )
     {
         try
@@ -1304,6 +1253,12 @@ public class TitanAPI
         return new Integer[0];
     }
 
+    /**
+     * @param a_vertex
+     * @param a_props
+     * @param a_output
+     * @param a_def_object 
+     */
     private void convertVertexProperties( Vertex a_vertex, Set<String> a_props, JSONStringer a_output, boolean a_def_object )
     {
         Set<String> keys = a_vertex.getPropertyKeys();
@@ -1322,6 +1277,10 @@ public class TitanAPI
             a_output.endObject();
     }
 
+    /**
+     * @param a_uid
+     * @return 
+     */
     private UserInfo getUserInfo( int a_uid )
     {
         UserInfo ui = new UserInfo();
@@ -1360,6 +1319,11 @@ public class TitanAPI
             return false;
     }
 
+    /**
+     * @param a_file
+     * @param a_user
+     * @return 
+     */
     private String hasFileAccess( Vertex a_file, UserInfo a_user ) // int a_uid, List<Integer> a_gids )
     {
         Iterator<Edge> e = a_file.getEdges(Direction.IN, Schema.COMP).iterator();
@@ -1403,6 +1367,11 @@ public class TitanAPI
         else return ""; // Reached root - return true always
     }
 
+    /**
+     * @param a_user
+     * @param a_vertex
+     * @param a_output 
+     */
     private void processVertexQueryResult( UserInfo a_user, Vertex a_vertex, JSONStringer a_output )
     {
         int type = a_vertex.getProperty( Schema.TYPE );
@@ -1505,6 +1474,9 @@ public class TitanAPI
 
     //=========== PIPE FUNCTIONS ==============================================
 
+    /**
+     * 
+     */
     private class VertexGrabber implements PipeFunction<Vertex, Vertex>
     {
         private final Vertex[] m_vertex;
@@ -1520,7 +1492,9 @@ public class TitanAPI
         }
     }
 
-
+    /**
+     * 
+     */
     private class DirectoryAccessFilter implements PipeFunction<Vertex, Boolean>
     {
         private final UserInfo m_user;

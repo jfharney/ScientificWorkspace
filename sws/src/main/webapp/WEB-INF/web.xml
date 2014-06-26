@@ -15,11 +15,44 @@
         <servlet-name>Scientific Workspace Service</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    <context-param>
-        <param-name>fu</param-name>
-        <param-value>bar</param-value>
-    </context-param>
     <listener>
         <listener-class>gov.ornl.ccs.ServerListener</listener-class>
     </listener>
+
+    <!-- login-config>
+        <auth-method>BASIC</auth-method>
+    </login-config -->
+
+    <!-- security-role>
+        <role-name>admin</role-name>
+        <description>Administrator</description>
+    </security-role>
+    <security-role>
+        <role-name>user</role-name>
+        <description>User</description>
+    </security-role -->
+    
+    <!-- security-constraint>
+       <web-resource-collection>
+           <url-pattern>/*</url-pattern>
+           <http-method>PUT</http-method>
+           <http-method>DELETE</http-method>
+           <http-method>GET</http-method>
+           <http-method>POST</http-method>           
+       </web-resource-collection>
+       <auth-constraint> 
+           <role-name>admin</role-name>
+           <role-name>user</role-name>
+       </auth-constraint>
+   </security-constraint -->
+       
+    <!-- security-constraint>
+       <web-resource-collection>
+           <url-pattern>/admin/*</url-pattern>
+           <http-method>GET</http-method>
+       </web-resource-collection>
+       <auth-constraint> 
+           <role-name>admin</role-name>
+       </auth-constraint>
+   </security-constraint -->
 </web-app>

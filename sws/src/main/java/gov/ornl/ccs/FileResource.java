@@ -67,30 +67,5 @@ public class FileResource
         return output.toString();
     }
 
-    @Path("admin/files")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String adminGetFiles(
-        @DefaultValue("-1") @QueryParam("nid") long a_nid,
-        @QueryParam("root") String a_root )
-    {
-        // Check required parameter
-        if ( a_nid < 0 && a_root == null )
-            throw new WebApplicationException( Response.Status.BAD_REQUEST );
-
-        if ( a_root != null )
-            return m_api.adminGetRootFiles();
-        else
-            return m_api.adminGetFiles( a_nid );
-    }
-
-    @Path("admin/filetest")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String adminFileTest()
-    {
-        return m_api.adminFileTest();
-    }
-
     private final TitanAPI m_api = TitanAPI.getInstance();
 }
