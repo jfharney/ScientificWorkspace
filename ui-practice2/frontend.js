@@ -8,11 +8,21 @@ var firewallMode = false;
 var http = require('http');
 var url = require('url');
 
+var associations = [];
+
+var association = {
+					'name' : 'association1', 
+					'source' : 'resource1',
+					'target' : 'resource2'
+				  };
+
+associations.push(association);
 
 app.use(express.static('public'));
 
 var servicePort = 8080;
 
+var counter = 0;
 
 // Start Express
 var express = require("express");
@@ -49,6 +59,43 @@ app.get('/sciworkspace1', function(request, response)
 	response.render("index3", jsonModel);
 });
 
+app.get('/sciworkspace2', function(request, response) 
+		{
+			console.log('in sciworkspace 1');
+			var jsonModel = {'a' : 'apple'};
+
+			response.render("index2", jsonModel);
+		});
+
+var counter = 0;
+
+app.get('/server1', function(request, response) {
+	
+	counter = counter + 1;
+	
+	console.log('output for server1 ' + counter + ' ' + (counter % 1000));
+	
+	if(counter > 10) {
+		counter = 0;
+		
+		var d = new Date();
+		var n = d.getMilliseconds(); 
+		
+		//get the associations
+		var returnedAssocations = associations;
+		
+		var association = {
+				'name' : 'association' + n, 
+				'source' : 'resource' + n,
+				'target' : 'resource' + n
+			  };
+
+		associations.push(association);
+		
+		response.send(returnedAssocations);
+	}
+	
+})
 
 app.get('/tags', function(request, response) 
 {

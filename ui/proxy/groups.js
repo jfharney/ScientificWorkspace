@@ -5,7 +5,7 @@ var app = express();
 var firewallMode = false;
 var http = require('http');
 var url = require('url');
-var serviceHost = '160.91.210.32';
+var serviceHost = 'techint-b117';//'160.91.210.32';
 var servicePort = '8080';
 
 var groupinfoHelper = function(request, response) {

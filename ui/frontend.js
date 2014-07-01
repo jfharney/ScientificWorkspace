@@ -31,6 +31,87 @@ var apps = require('./proxy/apps.js');
 var associations = require('./proxy/associations.js');
 var tags = require('./proxy/tags.js');
 
+var counter = 0;
+var counter2 = 0;
+
+var associations = [];
+
+var association = {
+					'name' : 'association1', 
+					'source' : 'resource1',
+					'target' : 'resource2'
+				  };
+
+associations.push(association);
+
+var associations2 = [];
+
+var association2 = {
+					'name' : 'association2', 
+					'source' : 'resource2',
+					'target' : 'resource2'
+				  };
+
+associations2.push(association2);
+
+app.get('/server1', function(request, response) {
+	
+	counter = counter + 1;
+	
+	console.log('output for server1 ' + counter + ' ' + (counter % 1000));
+	
+	if(counter > 10) {
+		counter = 0;
+		
+		var d = new Date();
+		var n = d.getMilliseconds(); 
+		
+		//get the associations
+		var returnedAssocations = associations;
+		
+		var association = {
+				'name' : 'association-1-' + n, 
+				'source' : 'resource-1-' + n,
+				'target' : 'resource-1-' + n
+			  };
+
+		associations.push(association);
+		
+		response.send(returnedAssocations);
+	}
+	
+});
+
+
+app.get('/server2', function(request, response) {
+	
+	counter2 = counter2 + 1;
+	
+	console.log('output for server2 ' + counter2 + ' ' + (counter2 % 1000));
+	
+	//if(counter2 > 10) {
+		counter2 = 0;
+		
+		var d = new Date();
+		var n = d.getMilliseconds(); 
+		
+		//get the associations
+		var returnedAssocations2 = associations2;
+		
+		var association2 = {
+				'name' : 'association-2-' + n, 
+				'source' : 'resource-2-' + n,
+				'target' : 'resource-2-' + n
+			  };
+
+		associations2.push(association2);
+		
+		response.send(returnedAssocations2);
+	//}
+	
+});
+
+
 app.get("/", function(request, response) {
 	  response.redirect('/workspace/users/j1s');
 });
@@ -43,13 +124,15 @@ app.get("/settings/:user_id", function(request, response) {
 
 app.get("/workspace/:user_id", function(request, response) {
   /* Original Version: */
-  //response.render("index1", { uid : request.params.user_id });
+  response.render("index1", { uid : request.params.user_id });
 	
   /* New Version:*/ 
 	  
   var userObj = {};
 
   /* Make a request to return all user data, based on the username.*/
+  
+  /*
   var options = {
     host: serviceHost,
     port: servicePort,
@@ -75,7 +158,7 @@ app.get("/workspace/:user_id", function(request, response) {
   });
 		
   req.end();
-  
+  */
 });
 
 app.get('/doi/:user_id',function(request,response) {
