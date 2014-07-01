@@ -1,10 +1,10 @@
 var express = require('express');
 var app = express();
-var firewallMode = false;
+var firewallMode = true;
 var http = require('http');
 var url = require('url');
 //app.use(express.static(__dirname + 'public'));
-var serviceHost = '160.91.210.32';
+var serviceHost = 'techint-b117';
 var servicePort = '8080';
 
 // Start Express
@@ -42,14 +42,32 @@ app.get("/settings/:user_id", function(request, response) {
 });
 
 app.get("/workspace/:user_id", function(request, response) {
-  /* Original Version: */
-  //response.render("index1", { uid : request.params.user_id });
+
+  /* Version for when server is NOT working: */
 	
-  /* New Version:*/ 
+	console.log('A GET for /workspace/:user_id has been issued.');
+	  
+	var options = {
+	  host: 'localhost',
+	  port: '1337',
+	  path: '/offline',
+	  method: 'GET'
+	};
+    var userObj = {"nid":39644,"uid":5112,"uname":"8xo","name":"John F. Harney","type":0,"email":"dillowda@ornl.gov"};
+
+    //var req = http.request(options, function(resp) {
+    if(firewallMode)
+      response.render("index1", userObj);
+      //console.log('The page has been rendered.');
+  });
+
+			
+	
+  /* Version for when server is working:
 	  
   var userObj = {};
 
-  /* Make a request to return all user data, based on the username.*/
+  // Make a request to return all user data, based on the username.
   var options = {
     host: serviceHost,
     port: servicePort,
@@ -68,14 +86,18 @@ app.get("/workspace/:user_id", function(request, response) {
       var userObj = JSON.parse(responseData);
       response.render("index1", userObj);
     });
-			
+
     resp.on('error', function(e) {
       response.send('error: ' + e);
     });
-  });
+  });*/
 		
-  req.end();
+  //req.end();
   
+//});
+
+app.get('/offline', function(request, response) {
+  response.send('');
 });
 
 app.get('/doi/:user_id',function(request,response) {
@@ -230,8 +252,36 @@ app.get("/userinfo/:user_id", function(request, response) {
 //--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
-  //console.log ('calling group info...');
-  var res = groups.groupinfoHelper(request, response);
+  if(firewallMode) {
+	var groupObjsArr = [];
+	
+	var groupObj1 = {};
+	groupObj1['nid'] = 54608;
+	groupObj1['gid'] = 2184;
+	groupObj1['gname'] = 'cli017dev';
+	groupObj1['type'] = 1;
+	groupObjsArr.push(groupObj1);
+	
+	var groupObj2 = {};
+	groupObj2['nid'] = 53928;
+	groupObj2['gid'] = 2058;
+	groupObj2['gname'] = 'cli017';
+	groupObj2['type'] = 1;
+	groupObjsArr.push(groupObj2);
+	
+	var groupObj3 = {};
+	groupObj3['nid'] = 54896;
+	groupObj3['gid'] = 18626;
+	groupObj3['gname'] = 'jamroz';
+	groupObj3['type'] = 1;
+	groupObjsArr.push(groupObj3);
+	
+	response.send(groupObjsArr);
+  }	
+  else {
+    var res = groups.groupinfoHelper(request, response);  
+  }
+  
 });
 
 //groups on lazy read off of the tree
@@ -244,9 +294,88 @@ app.get('/groups/:gid',function(request, response) {
 //--------Jobs API----------//
 
 app.get('/jobsproxy/:userNum', function(request, response) {
-  // jobsproxyHelper is defined in the file proxy/jobs.js.
-  jobs.jobsproxyHelper(request, response);
-  // We may reference :userNum with request.params.userNum.
+	if(firewallMode) {
+		var jobsObjArr = [];
+		var jobsObj1 = {};
+		jobsObj1['nid'] = 88388;
+		jobsObj1['nodes'] = 1;
+		jobsObj1['jid'] = 1722972;
+		jobsObj1['err'] = 0;
+		jobsObj1['stop'] = 1378024278;
+		jobsObj1['host'] = 'titan';
+		jobsObj1['start'] = 1378024199;
+		jobsObj1['name'] = 'swtc1';
+		jobsObj1['type'] = 2;
+		jobsObj1['wall'] = 0;
+		jobsObj1['user'] = 9238;
+		jobsObjArr.push(jobsObj1);
+
+		var jobsObj2 = {};
+		jobsObj2['nid'] = 88516;
+		jobsObj2['nodes'] = 1;
+		jobsObj2['jid'] = 1722981;
+		jobsObj2['err'] = 0;
+		jobsObj2['stop'] = 1378027579;
+		jobsObj2['host'] = 'titan';
+		jobsObj2['start'] = 1378027539;
+		jobsObj2['name'] = 'swtc1-dg';
+		jobsObj2['type'] = 2;
+		jobsObj2['wall'] = 0;
+		jobsObj2['user'] = 9238;
+		jobsObjArr.push(jobsObj2);
+		
+		var jobJidArr = [];
+		for(var i = 0; i < jobsObjArr.length; i++)
+		  jobJidArr.push(jobsObjArr[i]['jid']);
+		
+		var jobNidArr = [];
+		for(var i = 0; i < jobsObjArr.length; i++)
+		  jobNidArr.push(jobsObjArr[i]['nid']);
+
+		var jobNameArr = [];
+		for(var i = 0; i < jobsObjArr.length; i++)
+			jobNameArr.push(jobsObjArr[i]['name']);
+		
+		var respArr = [];
+        
+		for(var i = 0; i < 2; i++) {
+		  var respObj = {};
+			if(i == 0) {
+			  respObj['title'] = jobsObj1['name'];
+			  respObj['isFolder'] = true;
+			  respObj['type'] = 2;
+			  respObj['jobid'] = jobsObj1['jid'];
+			  respObj['tooltip'] = 'This is a tooltip.';
+			  respObj['nid'] = jobsObj1['nid'];
+				
+		  /*  respObj = {"title" : jobNameArr[i], 
+ 			   "isFolder" : true, 
+ 			   "isLazy" : true, 
+ 			   "type" : 2, 
+ 			   "jobid" : jobJidArr[i],
+ 			   "tooltip" : 'This is a tooltip.',
+ 			   "nid" : jobNidArr[i]};*/
+			}
+			else {
+				  respObj['title'] = jobsObj2['name'];
+				  respObj['isFolder'] = true;
+				  respObj['type'] = 2;
+				  respObj['jobid'] = jobsObj2['jid'];
+				  respObj['tooltip'] = 'This is a tooltip.';
+				  respObj['nid'] = jobsObj2['nid'];
+			}
+		  respArr.push(respObj);
+		}
+		
+		
+		response.send(respArr);
+	}
+  else {
+	  // jobsproxyHelper is defined in the file proxy/jobs.js.
+	  jobs.jobsproxyHelper(request, response);
+	  // We may reference :userNum with request.params.userNum.}
+		response.send(respObj);
+  }
 });
 
 app.get("/jobinfo/:job_id", function(request, response) {
@@ -267,6 +396,43 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 // Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
 app.get('/appsproxy', function(request, response) {
   var res = apps.appsproxyHelper(request,response);
+});
+
+app.get('/appinfo', function(request, response) {
+  if(firewallMode) {
+	  var appsObjArr = [];
+	  
+	  var appObj1 = {};
+	  appObj1['nid'] = 93636;
+	  appObj1['nodes'] = 1;
+	  appObj1['err'] = 0;
+	  appObj1['stop'] = 1378024273;
+	  appObj1['host'] = 'titan';
+	  appObj1['start'] = 1378024204;
+	  appObj1['cmd'] = '/usr/bin/aprun -n 16 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/test_execs/swtcA/swtcA';
+	  appObj1['type'] = 3;
+	  appObj1['aid'] = 3498899;
+	  appObj1['job'] = 1722972;
+	  ppsObjArr.push(appObj1);
+	  
+	  var appObj2 = {};
+	  appObj2['nid'] = 93656;
+	  appObj2['nodes'] = 1;
+	  appObj2['err'] = 0;
+	  appObj2['stop'] = 1378024274;
+	  appObj2['host'] = 'titan';
+	  appObj2['start'] = 1378024274;
+	  appObj2['cmd'] = '/usr/bin/aprun -n 1 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/utils/cprnc/bin/cprnc /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/tests/swtc1/movies/swtc11.nc /lustre/widow/scratch/jamroz/h';
+	  appObj2['type'] = 3;
+	  appObj2['aid'] = 3498904;
+	  appObj2['job'] = 1722972;
+	  appsObjArr.push(appObj2);
+	  
+	  response.send(appsObjArr);
+  }
+  else {
+    var res = apps.appsproxyHelper(request,response);
+  }
 });
 
 /*************************************************************/
@@ -301,7 +467,7 @@ app.get('/tags', function(request, response)
 		arguments += "&" + i + "=" + args[i];
 	
 	var options = {
-			host: '160.91.210.32',
+			host: serviceHost,
 			port: servicePort,
 			path: "sws/tags?uid=" + args['uid'],
 			method: 'GET'

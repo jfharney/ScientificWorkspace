@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 var firewallMode = false;
 var http = require('http');
-var serviceHost = '160.91.210.32';
+var serviceHost = 'techint-b117';
 var servicePort = '8080';
  
 /* This function is called when a single job node in the Jobs tree is "activated".
