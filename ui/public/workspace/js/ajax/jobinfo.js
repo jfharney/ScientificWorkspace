@@ -15,7 +15,9 @@ function getJobInfo(userNum, searchArg) {
 	async: false,
 	success: function(data) 
 	{
+		console.log('Here is the data object/array:');
       for(var i = 0; i < data.length; i++) {
+    	console.log(data[i]);
         children.push(data[i]);
       }
 	  buildJobsTree(children);			/* This function is defined below. */ 
@@ -103,7 +105,7 @@ function buildJobsTree(children) {
 	onActivate: function(node) {
 	  var info_obj = '';
 		    		
-	  if(node.data.type == 'job') {
+	  if(node.data.type == 2) {
 		console.log('this is a job');
 		for(var i in node.data)
 		  console.log(i + ': ' + node.data[i]);

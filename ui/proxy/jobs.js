@@ -5,7 +5,11 @@ var app = express();
 var firewallMode = false;
 var http = require('http');
 var url = require('url');
-var serviceHost = 'techint-b117';//'160.91.210.32';
+//<<<<<<< HEAD
+//var serviceHost = 'techint-b117';//'160.91.210.32';
+//=======
+var serviceHost = 'techint-b117';
+//>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
 var servicePort = '8080';
 
 // This function works with a URL containing or lacking a search parameter named "search". 
@@ -53,9 +57,9 @@ var jobsproxyHelper = function(request, response) {
         var respObj = {"title" : jobNameArr[i], 
         			   "isFolder" : true, 
         			   "isLazy" : true, 
-        			   "type" : "job", 
+        			   "type" : 2, 
         			   "jobid" : jobJidArr[i],
-        			   "tooltip" :  tooltip,
+        			   "tooltip" : tooltip,
         			   "nid" : jobNidArr[i]};
         respArr.push(respObj);
       }

@@ -13,7 +13,7 @@ app.use(express.static('public'));
 var servicePort = 8080;
 
 
-exports.doQueryFiles = function(responseData,filePath) {
+exports.doQueryFiles = function(responseData, filePath) {
 	
 	//translate Name : '<name>' -> title : '<name>' 
 	  // if isfile is false then isLazy is false and isfolder is false ... else isLazy is true and isFolder is true

@@ -6,9 +6,13 @@ var app = express();
 var firewallMode = false;
 
 var http = require('http');
+//<<<<<<< HEAD
 
-var serviceHost = 'techint-b117';//'160.91.210.32';
-var servicePort = '8080';
+//var serviceHost = 'techint-b117';//'160.91.210.32';
+//=======
+var serviceHost = 'techint-b117';
+//>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
+//var servicePort = '8080';
 
 // Where/when is appsproxyHelper called? In frontend.js.
 var appsproxyHelper = function(request, response) 
