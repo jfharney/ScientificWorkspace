@@ -442,6 +442,7 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 			if(i == 0) {
 			  respObj['title'] = jobsObj1['name'];
 			  respObj['isFolder'] = true;
+			  respObj['isLazy'] = true;
 			  respObj['type'] = 2;
 			  respObj['jobid'] = jobsObj1['jid'];
 			  respObj['tooltip'] = 'This is a tooltip.';
@@ -458,6 +459,7 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 			else {
 				  respObj['title'] = jobsObj2['name'];
 				  respObj['isFolder'] = true;
+				  respObj['isLazy'] = true;
 				  respObj['type'] = 2;
 				  respObj['jobid'] = jobsObj2['jid'];
 				  respObj['tooltip'] = 'This is a tooltip.';
@@ -494,11 +496,71 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 
 // Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
 app.get('/appsproxy', function(request, response) {
-  var res = apps.appsproxyHelper(request,response);
+	console.log('apps proxy?');
+	if(firewallMode) {
+		  var appsObjArr = [];
+		  
+		  var appObj1 = {};
+		  appObj1['nid'] = 93636;
+		  appObj1['nodes'] = 1;
+		  appObj1['err'] = 0;
+		  appObj1['stop'] = 1378024273;
+		  appObj1['host'] = 'titan';
+		  appObj1['start'] = 1378024204;
+		  appObj1['cmd'] = '/usr/bin/aprun -n 16 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/test_execs/swtcA/swtcA';
+		  appObj1['type'] = 3;
+		  appObj1['aid'] = 3498899;
+		  appObj1['job'] = 1722972;
+		  appsObjArr.push(appObj1);
+		  
+		  var appObj2 = {};
+		  appObj2['nid'] = 93656;
+		  appObj2['nodes'] = 1;
+		  appObj2['err'] = 0;
+		  appObj2['stop'] = 1378024274;
+		  appObj2['host'] = 'titan';
+		  appObj2['start'] = 1378024274;
+		  appObj2['cmd'] = '/usr/bin/aprun -n 1 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/utils/cprnc/bin/cprnc /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/tests/swtc1/movies/swtc11.nc /lustre/widow/scratch/jamroz/h';
+		  appObj2['type'] = 3;
+		  appObj2['aid'] = 3498904;
+		  appObj2['job'] = 1722972;
+		  appsObjArr.push(appObj2);
+		  
+
+		  var respArr = [];
+		  for(var i = 0; i < 2; i++) {
+			  var respObj = {};
+			  if(i == 0) {
+				  respObj['title'] = appObj1['aid'];
+				  respObj['type'] = appObj1['type'];
+				  respObj['jobid'] = appObj1['job'];
+				  respObj['uuid'] = appObj1['nid'];
+				  respObj['appid'] = appObj1['aid'];
+				  
+			  } else {
+				  respObj['title'] = appObj2['aid'];
+				  respObj['type'] = appObj2['type'];
+				  respObj['jobid'] = appObj2['job'];
+				  respObj['uuid'] = appObj2['nid'];
+				  respObj['appid'] = appObj2['aid'];
+			  }
+			
+	          respArr.push(respObj);
+		  }
+				  
+		  response.send(respArr);
+		  
+	  } else {
+
+		  var res = apps.appsproxyHelper(request,response);
+	  }
 });
 
 app.get('/appinfo', function(request, response) {
   if(firewallMode) {
+	  
+	  
+	  /*
 	  var appsObjArr = [];
 	  
 	  var appObj1 = {};
@@ -527,7 +589,28 @@ app.get('/appinfo', function(request, response) {
 	  appObj2['job'] = 1722972;
 	  appsObjArr.push(appObj2);
 	  
-	  response.send(appsObjArr);
+
+	  var respArr = [];
+	  for(var i = 0; i < appsArr.length; i++) {
+		  var respObj = {};
+		  if(i == 0) {
+			  respObj['title'] = appObj1['aid'];
+			  respObj['type'] = appObj1['type'];
+			  respObj['jobid'] = appObj1['job'];
+			  respObj['uuid'] = appObj1['nid'];
+			  
+		  } else {
+			  respObj['title'] = appObj2['aid'];
+			  respObj['type'] = appObj2['type'];
+			  respObj['jobid'] = appObj2['job'];
+			  respObj['uuid'] = appObj2['nid'];
+		  }
+		
+          respArr.push(respObj);
+	  }
+			  
+	  response.send(respArr);
+	  */
   }
   else {
     var res = apps.appsproxyHelper(request,response);

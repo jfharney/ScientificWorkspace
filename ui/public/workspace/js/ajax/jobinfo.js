@@ -73,6 +73,8 @@ function buildJobsTree(children) {
 	checkbox: true,
 	selectMode: 3,
 	onSelect: function(select, node) {
+		
+		/* 7-1
       var selNodes = node.tree.getSelectedNodes();
 
 	  var selUuids = $.map(selNodes, function(node) {
@@ -101,12 +103,14 @@ function buildJobsTree(children) {
       $('#resources_to_tag').append('<div>' + SW.selected_resource_items + '</div>')
       $('#resources_types_to_tag').empty();
       $('#resources_types_to_tag').append('<div>' + SW.selected_resource_types + '</div>')
+      */
 	},
 	onActivate: function(node) {
 	  var info_obj = '';
-		    		
+	  console.log('node type: ' + node.data.type);    		
 	  if(node.data.type == 2) {
 		console.log('this is a job');
+		/*
 		for(var i in node.data)
 		  console.log(i + ': ' + node.data[i]);
 		    		  
@@ -116,12 +120,15 @@ function buildJobsTree(children) {
 		$(info_space).empty();
 		
 		var queryString = '';
-		    		  
+		 */
+		
 		$.ajax({
 		  url: url,
           type: 'GET',
           data: queryString,
           success: function(data) {
+        	  
+        	  /* 7-1
             info_obj = data;
               if(!jQuery.isEmptyObject(info_obj)) {
 		    	$(info_space).append('<div>nid: ' + info_obj['nid'] + '</div>');
@@ -139,6 +146,7 @@ function buildJobsTree(children) {
               else {
 		    	$(user_info_space).append('<div>The job does not exist</div>');
               }
+              */
           },
           error: function(e) {
         	console.log('jobinfo.js: Got error: ' + e);
@@ -147,16 +155,20 @@ function buildJobsTree(children) {
       } 
 	  else {
         console.log('This is an app.');
+        
         for(var i in node.data)
           console.log(i + ': ' + node.data[i]);
         var url = 'http://' + SW.hostname + ':' + SW.port + '/appinfo/'+node.data.appid; //+'?jobid='+node.data.jobid;
         console.log('Passing url '+url+' to getAppInfo.');
-        /* getAppInfo is defined just above this function in the same file. */
+        // getAppInfo is defined just above this function in the same file. 
         getAppInfo(url);
+        
       }
     },
     onLazyRead: function(node) {
       console.log('lazy reading jobs tree for ' + node.data.jobid);
+      
+      
       var jid = node.data.jobid; 
       var url = 'http://' + SW.hostname + ':' + SW.port + '/appsproxy?jid='+jid;
       console.log(url);
@@ -165,6 +177,7 @@ function buildJobsTree(children) {
 	    // We don't want the next line in production code:
         debugLazyDelay: 50
       });
+      
     },
     // The following options are only required if we have more than one tree on one page:
     // initId: "treeData",
