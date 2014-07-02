@@ -33,14 +33,16 @@ html(lang="en")
   body
     
     // DOI modal
-    //div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
+    div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
           h4#myModalLabel.modal-title DOI 
+        
         div.modal-body
           div Add the following resources to DOI form?
           div#resources_to_doi(style="margin-bottom:10px")
+          
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
           button#create_doi_button.btn.btn-primary Create DOI form
@@ -69,7 +71,7 @@ html(lang="en")
           button#create_tag.btn.btn-primary Create Tag
       
       
-    div#tableModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+    //div#tableModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button", data-dismiss="modal", aria-hidden="true")
@@ -160,7 +162,8 @@ html(lang="en")
             ul.nav.nav-tabs.nav-stacked.main-menu
               li.nav-header.hidden-tablet Main
               li
-                a#create_doi_button(href="#")
+                //a#add_doi_button(href="#")
+                a#add_doi_button(data-toggle="modal", data-target="#doiModal", href="#")
                   span.hidden-tablet Create DOI
               li.nav-header.hidden-tablet Tags
               li
@@ -338,4 +341,4 @@ html(lang="en")
     // script(src="js/ajax/tagclouds.js")
     // script(src="js/add_tag.js")
     // script(src="js/add_tag.js")
-    // script(src="js/add_doi.js")
+    script(src="js/add_doi.js")

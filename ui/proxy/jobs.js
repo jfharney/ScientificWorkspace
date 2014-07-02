@@ -14,6 +14,7 @@ var servicePort = '8080';
 
 // This function works with a URL containing or lacking a search parameter named "search". 
 var jobsproxyHelper = function(request, response) {
+	console.log('usernum: ' + request.params.userNum);
   var path = '/sws/jobs?uid=' + request.params.userNum;
 
   var options = {

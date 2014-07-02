@@ -35,7 +35,7 @@ var appsproxyHelper = function(request, response)
 	 
   var req = http.request(options, function(res) 
   {
-    console.log("Got response: " + res.statusCode);
+    //console.log("Got response: " + res.statusCode);
 	//console.log('HEADERS: ' + JSON.stringify(res.headers));
 	res.on('data', function (chunk) 
 	{

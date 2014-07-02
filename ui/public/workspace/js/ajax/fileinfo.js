@@ -1,16 +1,57 @@
 function getFileInfo(uid) {
   console.log('in getFileInfo1 for uid: ' + uid);
   var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+uid;
+  url = url + '?path=|';
   var children = [];
 	
+  
   //create the initial children
   $.ajax({
     url: url,
     global: false,
 	type: 'GET',
 	success: function(data) {
-	  for(var i in data)
-		console.log(i + ': ' + data[i]);
+	  
+		//for(var i in data)
+		//	console.log(i + ': ' + data[i]);
+	  for(var i=0;i<data.length;i++) {
+		  
+		  var child = {};
+		  child['title'] = data[i]['title'];
+		  child['isFolder'] = data[i]['isFolder'];
+		  child['isLazy'] = data[i]['isLazy'];
+		  child['path'] = data[i]['path'];
+		  child['nid'] = data[i]['nid'];
+		  
+		  
+		  children.push(child);
+		  
+	  }
+		
+	  buildFileTree(children);
+	  
+		/*
+	  var filesArr = data['files'];
+	  
+	  for(var i=0;i<filesArr.length;i++) {
+		
+		  var file = filesArr[i];
+		  
+		  console.log('name->' + file['name']);
+		  
+		  var child = {};
+		  child['title'] = '|' + file['name'];
+		  child['isFolder'] = true;
+		  child['isLazy'] = true;
+		  child['path'] = '|' + file['name'];
+		  
+		  children.push(child);
+	  }
+	  
+	  buildFileTree(children);
+	  */
+	  
+	  /*
       var child = {	title: 'Root', 
        				isFolder: true, 
        				isLazy: true, 
@@ -27,104 +68,185 @@ function getFileInfo(uid) {
       else {
         buildFileTree(children);
       }
+      */
     },
     error: function() {
       console.log('error in getting files info');
     }
   });
+  
+  
+  
  }
 
 function buildFileTree(treeData) {
   console.log('Inside buildFileTree...');
+  
+  
+  
   $("#files_tree").dynatree({
-    checkbox: true,
-    selectMode: 2,			// "1:single, 2:multi, 3:multi-hier"
-    children: treeData,
-    onSelect: function(select, node) {
-	  // Display list of selected nodes
-	  var selNodes = node.tree.getSelectedNodes();
-	  // convert to title/key array
-	  var selKeys = $.map(selNodes, function(node) {
-	    //console.log('keys---> node.data: ' + node.data);
-	    //for(var key in node.data) {
-	      //  console.log('key : ' + key + ' node.data: ' + node.data[key]);
-	    //}
-	    //return "[" + node.data.key + "]: '" + node.data.title + "'";
-	    return node.data.key;
-	  });
-	        
-	        var selUuids = $.map(selNodes, function(node){
-	        	
-	        	  return node.data.uuid + "";
-	        });
-	        var selTypes = $.map(selNodes, function(node){
-	               //return "[" + node.data.uuid + "]: '" + node.data.title + "'";
-	        	  return node.data.type + "";
-	        });
-	          
-	        
-	        SW.selected_file_items = selUuids.join(", ");
-	        SW.selected_file_types = selTypes.join(", ");
-	        SW.selected_file_keys = selKeys.join(", ");
-
-	        console.log('selected_file_items: ' + SW.selected_file_items);
-	        console.log('selected_file_types: ' + SW.selected_file_types);
-	        console.log('selected_file_keys: ' + SW.selected_file_keys);
-
-            $('#files_to_tag').empty();
-            $('#files_to_tag').append('<div>' + SW.selected_file_items + '</div>');
-            
-	        $('#resources_to_doi').empty();
-	        $('#resources_to_doi').append('<div>' + SW.selected_file_items + '</div>');
-	        $('#resources_types_to_doi').empty();
-	        $('#resources_types_to_doi').append('<div>' + SW.selected_file_types + '</div>');
-	      },
-	      onClick: function(node, event) {
+	    checkbox: true,
+	    selectMode: 2,			// "1:single, 2:multi, 3:multi-hier"
+	    children: treeData,
+	    onSelect: function(select, node) {
+		  // Display list of selected nodes
+		  var selNodes = node.tree.getSelectedNodes();
+		  
+		  var selTitles = $.map(selNodes, function(node) {
+			  return node.data.title;
+		  });
+		  SW.selected_file_titles = selTitles.join(", ");
+		  console.log('selected_file_titles: ' + SW.selected_file_titles);
+		  
+		  var selNids = $.map(selNodes, function(node) {
+			  return node.data.nid;
+		  });
+		  SW.selected_file_nids = selNids.join(", ");
+		  console.log('selected_file_nids: ' + SW.selected_file_nids);
+		  
+		  $('#resources_to_doi').empty();
+		  $('#resources_to_doi').append('<div>' + SW.selected_file_titles + '</div>');
+		  
+		  //$('div.modal-body').empty();
+		  //$('div.modal-body').append('<div>' + SW.selected_file_titles + '</div>');
+		  
+		
+		  
+		  /*
+		  // convert to title/key array
+		  var selKeys = $.map(selNodes, function(node) {
+		    //console.log('keys---> node.data: ' + node.data);
+		    //for(var key in node.data) {
+		      //  console.log('key : ' + key + ' node.data: ' + node.data[key]);
+		    //}
+		    //return "[" + node.data.key + "]: '" + node.data.title + "'";
+		    return node.data.key;
+		  });
+		        
+		  var selUuids = $.map(selNodes, function(node){
+	    	
+	    	  return node.data.uuid + "";
+		  });
+		  var selTypes = $.map(selNodes, function(node){
+	           //return "[" + node.data.uuid + "]: '" + node.data.title + "'";
+	    	  return node.data.type + "";
+		  });
+	      
+		  SW.selected_file_items = selUuids.join(", ");
+		  SW.selected_file_types = selTypes.join(", ");
+		  SW.selected_file_keys = selKeys.join(", ");
+	
+		  console.log('selected_file_items: ' + SW.selected_file_items);
+		  console.log('selected_file_types: ' + SW.selected_file_types);
+		  console.log('selected_file_keys: ' + SW.selected_file_keys);
+	
+		  $('#files_to_tag').empty();
+		  $('#files_to_tag').append('<div>' + SW.selected_file_items + '</div>');
+	            
+		  $('#resources_to_doi').empty();
+		  $('#resources_to_doi').append('<div>' + SW.selected_file_items + '</div>');
+		  $('#resources_types_to_doi').empty();
+		  $('#resources_types_to_doi').append('<div>' + SW.selected_file_types + '</div>');
+		
+		  */
+		  
+		},
+		      
+		onClick: function(node, event) {
+			
+			/*
 	        // We should not toggle, if target was "checkbox", because this
 	        // would result in double-toggle (i.e. no toggle)
 	    	 // console.log('clicked...');
 	        if( node.getEventTargetType(event) == "title" )
 	          node.toggleSelect();
+	        */
 	      },
 	      
-	      onKeydown: function(node, event) {
+		onKeydown: function(node, event) {
 	        if( event.which == 32 ) {
 	          node.toggleSelect();
 	          return false;
 	        }
-	      },
-	      onLazyRead: function(node){
+		},
+		onLazyRead: function(node){
+			console.log('on lazy read');
+			
+			console.log('title ' + node.data.title);
+			
+			var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+SW.current_user_number;//'5112';
+			url = url + '?path=' + node.data.path;
+		     
+			console.log('url->'+url);
+			
+			
+			/*
+			console.log('isFolder ' + node.data.isFolder);
+			console.log('isLazy ' + node.data.isLazy);
+			console.log('path ' + node.data.path);
+			
+			
 
-	    	  
-	    	  //must change - start with the prefix
-	    	  if(node.data.path == undefined) {
-	    		  node.data.path = SW.fileScratchPrefix;
+			var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+uid;
+			url = url + '?path=' + node.data.path;
+		     
+			console.log('url->'+url);
+			*/
+			
+			//if(node.data.)
+			node.appendAjax({
+				url: url,
+				// We don't want the next line in production code:
+				debugLazyDelay: 50
+			});
+			
+			
+			
+			
+			
+			/*
+			//must change - start with the prefix
+			
+			var jid = node.data.jobid; 
+		      var url = 'http://' + SW.hostname + ':' + SW.port + '/appsproxy?jid='+jid;
+		      console.log(url);
+		      node.appendAjax({
+		        url:  url,
+			    // We don't want the next line in production code:
+		        debugLazyDelay: 50
+		      });
+			
+			
+			
+			if(node.data.path == undefined) {
+				node.data.path = SW.fileScratchPrefix;
 	    		  
-	    		  
-	    		  node.data.title = '|' + '8xo';//current user
-	    	  }
-
-	    	  console.log('node.data.title--->' + node.data.title);
-	    	  console.log('node.data.path--->' + node.data.path);
+				node.data.title = '|' + '8xo';//current user
+	    	}
+	
+			console.log('node.data.title--->' + node.data.title);
+			console.log('node.data.path--->' + node.data.path);
 	    	  
-	    	  var url = 'http://' + SW.hostname + ':' + SW.port + '/files1?path=' + (node.data.path + node.data.title);
+			var url = 'http://' + SW.hostname + ':' + SW.port + '/files1?path=' + (node.data.path + node.data.title);
 		    	 
-	    	  //alert(url);
-	    	  console.log('url->'+url);
-	          node.appendAjax({
-	        	  url: url,
-	        	  // We don't want the next line in production code:
-	          	  debugLazyDelay: 50
-	          });
-	          
+			//alert(url);
+			console.log('url->'+url);
+			node.appendAjax({
+				url: url,
+				// We don't want the next line in production code:
+				debugLazyDelay: 50
+			});
+	        */  
 	    	  
-	      },
-	      // The following options are only required, if we have more than one tree on one page:
-	      cookieId: "dynatree-Cb2",
-	      idPrefix: "dynatree-Cb2-"
-		
-		
-	    });
+		},
+		// The following options are only required, if we have more than one tree on one page:
+		cookieId: "dynatree-Cb2",
+		idPrefix: "dynatree-Cb2-"
+	
+	
+	});
+	    
+	    
 	
 	
 }

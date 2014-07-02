@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var firewallMode = true;
+var firewallMode = false;
 var http = require('http');
 var url = require('url');
 //app.use(express.static(__dirname + 'public'));
@@ -30,6 +30,9 @@ var jobs = require('./proxy/jobs.js');
 var apps = require('./proxy/apps.js');
 var associations = require('./proxy/associations.js');
 var tags = require('./proxy/tags.js');
+
+
+console.log('firewall: ' + jobs.firewallMode);
 
 var counter = 0;
 var counter2 = 0;
@@ -142,11 +145,41 @@ app.get("/workspace/:user_id", function(request, response) {
     var userObj = {"nid":39644,"uid":5112,"uname":"8xo","name":"John F. Harney","type":0,"email":"dillowda@ornl.gov"};
 
     //var req = http.request(options, function(resp) {
-    if(firewallMode)
-      response.render("index1", userObj);
-      //console.log('The page has been rendered.');
+    if(firewallMode) {
+        response.render("index1", userObj);
+        //console.log('The page has been rendered.');
+    } else {
+    	var options = {
+    		    host: serviceHost,
+    		    port: servicePort,
+    		    path: "/sws/user?uname=" + request.params.user_id,
+    		    method: 'GET'
+    		  };
+    	
+    	 var req = http.request(options, function(resp) {
+    			
+    		    var responseData = '';
+    		    resp.on('data', function(chunk) {
+    		      responseData += chunk;
+    		    });
+    		    
+    		    resp.on('end', function() {
+    		    	console.log('user responseData: ' + responseData);
+    		      var userObj = JSON.parse(responseData);
+    		      response.render("index1", userObj);
+    		    });
 
+    		    resp.on('error', function(e) {
+    		      response.send('error: ' + e);
+    		    });
+    		  });
+    	 
+    	 
+    	 req.end();
+    	 
+    }
 
+    
 });
 
 			
@@ -475,7 +508,7 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 	  // jobsproxyHelper is defined in the file proxy/jobs.js.
 	  jobs.jobsproxyHelper(request, response);
 	  // We may reference :userNum with request.params.userNum.}
-		response.send(respObj);
+	  //response.send(respObj);
   }
 });
 
@@ -720,9 +753,20 @@ app.get('/tags/:tag_name', function(request, response)
 //--------Files API---------//
 
 app.get('/files/:userNum', function(request, response) {
-  var args = url.parse(request.url, true).query;
-  var path = "/sws/files?uid=5112&path=|"; 			// + args['path'];
 	
+	
+  console.log('usernum: ' + request.params.userNum);
+  var usernum = request.params.userNum;
+  var queriedPath =	request.query.path;
+	
+  console.log('in get files for queriedPath ... ' + queriedPath);
+  var args = url.parse(request.url, true).query;
+  //var path = "/sws/files?uid=5112&path=|"; 			// + args['path'];
+	
+  var path = '/sws/files?uid=' + usernum + '&path=' + queriedPath;
+  
+  path = path + '&list=retrieve';
+  
   // Query above is an object containing all the 
   // arguments in the URL as key-value pairs. 
   var options = {
@@ -732,35 +776,9 @@ app.get('/files/:userNum', function(request, response) {
 	method: 'GET'
   };
 
-  /*var numPipes = (args['path'].split('|')).length - 1;
-
-  var respJSON = {};
-  respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-  respJSON['isFolder'] = true;
-  respJSON['isLazy'] = true;
-  respJSON['type'] = 'file';
-  respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-  respJSON['path'] = args['path']
-  respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-
-  var respArr = [];
-  respArr.push(respJSON);
-
-  for(var i = 0; i < numPipes; i++) {
-    respJSON = {};
-    respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
-    respJSON['isFolder'] = false;
-    respJSON['type'] = 'file';
-    respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
-    respJSON['path'] = args['path']
-    respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
-    respArr.push(respJSON);
-  }
-	
-  // What does stringify do as opposed to parse? 
-  var respText = JSON.stringify(respArr);
-  response.send(respText);*/
-	
+  console.log('path->' + path);
+  
+  
   var req = http.request(options, function(resp) {
 		//console.log('Got response status code ' + resp.statusCode);
 		
@@ -770,9 +788,75 @@ app.get('/files/:userNum', function(request, response) {
 		});
 		
 		resp.on('end', function() {
-			//console.log('in resp end for files... ' + responseData);
+			console.log('in resp end for files... ' + responseData);
 			var jsonObj = JSON.parse(responseData);
-		response.send(jsonObj);
+			
+			var files = jsonObj['files'];
+			
+			var dynatreeJSONArr = [];
+			
+			if(files != undefined) {
+				for(var i=0;i<files.length;i++) {
+					
+					var dynatreeJSONObj = {};
+					
+					console.log('i: ' + i + ' ' + files[i]);
+					var file = files[i];
+					
+					for(var key in file) {
+						console.log('key: ' + key + ' value: ' + file[key]);
+					}
+					
+					if(queriedPath == '|') {
+						dynatreeJSONObj['title'] = '|' + file['name'];
+						
+						//directory if type is 5 otherwise it is a file
+						if(file['type'] == 5) {
+							dynatreeJSONObj['isFolder'] = true;
+							dynatreeJSONObj['isLazy'] = true;
+						} else { 
+							dynatreeJSONObj['isFolder'] = false;
+							dynatreeJSONObj['isLazy'] = false;
+						}
+						
+						dynatreeJSONObj['path'] = '|' + file['name'];
+						dynatreeJSONObj['nid'] = file['nid'];
+					} else {
+						dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
+						if(file['type'] == 5) {
+							dynatreeJSONObj['isFolder'] = true;
+							dynatreeJSONObj['isLazy'] = true;
+						} else { 
+							dynatreeJSONObj['isFolder'] = false;
+							dynatreeJSONObj['isLazy'] = false;
+						}
+						dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
+						dynatreeJSONObj['nid'] = file['nid'];
+					}
+					
+					
+					dynatreeJSONArr.push(dynatreeJSONObj);
+					
+				}
+				
+			} else {
+				
+			}
+			
+			
+			/*
+			var filesArr = jsonObj['files'];
+			
+			for(var i=0;i<filesArr.length;i++) {
+				var file = filesArr[i];
+				
+				console.log('file path -> ' + file['path']);
+				
+			}
+			*/
+			
+			//response.send(jsonObj);
+			response.send(dynatreeJSONArr);
 		});
 		
 		resp.on('error', function(e) {
@@ -1098,3 +1182,34 @@ app.get('/initgroupsdata',function(request,response) {
 http.createServer(app).listen(1337);
 
 
+
+/* OLD
+ * var numPipes = (args['path'].split('|')).length - 1;
+
+var respJSON = {};
+respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+respJSON['isFolder'] = true;
+respJSON['isLazy'] = true;
+respJSON['type'] = 'file';
+respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+respJSON['path'] = args['path']
+respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+
+var respArr = [];
+respArr.push(respJSON);
+
+for(var i = 0; i < numPipes; i++) {
+  respJSON = {};
+  respJSON['title'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
+  respJSON['isFolder'] = false;
+  respJSON['type'] = 'file';
+  respJSON['uuid'] = args['path'] + '|' + '8xo' + 'level' + numPipes;
+  respJSON['path'] = args['path']
+  respJSON['key'] = args['path'] + '|' + '8xo' + 'level' + (numPipes-1) + 'file' + i + '.nc';
+  respArr.push(respJSON);
+}
+	
+// What does stringify do as opposed to parse? 
+var respText = JSON.stringify(respArr);
+response.send(respText);*/
+	

@@ -149,6 +149,66 @@ html
                     div.span12 
                       fieldset
                         legend DOI Submittal Form
+                  div.row-fluid
+                    div.span6 creator
+                    div.span6 
+                      input#text(name="creator_input")
+                  div.row-fluid
+                    div.span6 resource
+                    div.span6 
+                      input#text(name="resource_input")
+                  div.row-fluid
+                    div.span6 creator email
+                    div.span6 
+                      input#text(name="creator_email_input")
+                  div.row-fluid
+                    div.span6 related resource
+                    div.span6 
+                      input#text(name="related_resource_input")
+                  div.row-fluid
+                    div.span6 product nos
+                    div.span6 
+                      input#text(name="product_nos_input")
+                  div.row-fluid
+                    div.span6 contract nos
+                    div.span6 
+                      input#text(name="contract_nos_input")
+                  div.row-fluid
+                    div.span6 other identifying numbers
+                    div.span6 
+                      input#text(name="other_identifying_numbers_input")
+                  div.row-fluid
+                    div.span6 availability
+                    div.span6 
+                      input#text(name="availability_input")
+                  div.row-fluid
+                    div.span6 
+                      button#submitDOI
+                    div.span6 
+                      input#text(name="submitDOI")
+                  
+                  
+                  //class DOIData(models.Model):
+                       dataset_type = models.CharField(max_length=50, default="RecordType")
+                       title = models.CharField(max_length=200)
+                       creators = models.CharField(max_length=1024)
+                       creators_email = models.CharField(max_length=1024)
+                       related_resources = models.CharField(max_length=1024, default="", blank=True)
+                       product_nos = models.CharField(max_length=200, default="", blank=True)
+                       contract_nos = models.CharField(max_length=200, default="", blank=True)
+                       other_identifying_numbers = models.CharField(max_length=200, default="", blank=True)
+                       availability = models.CharField(max_length=2, default="", blank=True)
+                       contributor_organizations = models.CharField(max_length=200, default="", blank=True)
+                       publication_date = models.DateField()
+                       language = models.CharField(max_length=20, default="", blank=True)
+                       country = models.CharField(max_length=20, default="", blank=True)
+                       sponsor_org = models.CharField(max_length=200, default="", blank=True)
+                       keywords = models.CharField(max_length=400, default="", blank=True)
+                       description = models.TextField()
+                       site_url = models.URLField(default="http://olcf.ornl.gov/")
+                       doi = models.URLField(default="", blank=True)
+                       file_extension = models.TextField(max_length=10, default="", blank=True)
+                
                 
       
             

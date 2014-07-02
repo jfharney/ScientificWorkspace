@@ -2,12 +2,103 @@
 
   $(document).ready(function(){
 
+	  $('add_doi_button').click(function() {
+		 
+		  console.log('add doi');
+		  
+	  });
 	  
-	  $('#create_doi_button').click(function() {
+	  $('button#create_doi_button').click(function() {
 
 		  console.log('create doi');
 
 		  
+		  var user = SW.current_user_uuid;
+		  
+		  user = '5112';
+		  
+		  alert('user: ' + user);
+		  
+		  var selected_file_titles = SW.selected_file_titles;
+		  
+		  var input = '';
+	  	  //put the user data in the hidden input fields
+		  //input += addUserData(user_data);
+			
+		  //put the selected file keys in the hidden input fields
+		  input += addResources(selected_file_titles);
+			
+		  //put the selected apps/jobs in the hidden input fields
+		  //input += addJobs(selected_job_items);
+			
+			
+			
+			//put the selected collaborators in the hidden input fields (may be deprecated)
+			  
+			
+			//alert('input: ' + input);
+			
+			url = "http://" + "localhost" + ":" + "1337" + "/doi/" + user + "";
+			
+			//send request
+	        jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
+	        .appendTo('body').submit().remove();
+	    	
+		  
+		  /*
+		  var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/' + user;
+			
+		  var queryString = '';
+			
+		  var data = '';
+			
+		//callback hell ... need to include the userinfo in the model to avoid this particular ajax call
+			$.ajax({
+				url: url,
+				//global: false,
+				type: 'GET',
+				data: queryString,
+				success: function(user_data) {
+					
+
+					console.log('user_data: ' + user_data);
+					
+					var input = '';
+					//put the user data in the hidden input fields
+					input += addUserData(user_data);
+					
+					//put the selected file keys in the hidden input fields
+					input += addResources(selected_file_items);
+					
+					//put the selected apps/jobs in the hidden input fields
+					input += addJobs(selected_job_items);
+					
+					
+					
+					//put the selected collaborators in the hidden input fields (may be deprecated)
+					  
+					
+					//alert('input: ' + input);
+					
+					url = "http://" + "localhost" + ":" + "1337" + "/doi/" + user + "";
+					
+					//send request
+			        jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
+			        .appendTo('body').submit().remove();
+			    	
+					
+					
+					
+				},
+				error: function() {
+					
+				}
+			});
+		  */
+		  
+		  
+		  
+		  /*
           var selected_file_items = new Array();
           var selected_file_types = new Array();
           var selected_file_keys = new Array();
@@ -96,6 +187,7 @@
 				}
 			});
 			
+		  	*/
 		  
 	  });
 	  

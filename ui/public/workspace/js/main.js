@@ -1,5 +1,10 @@
 $(function() {
 	
+
+	//$('div#resources_to_doi').append('<div>' + 'hello' + '</div>');
+	//$('.modal-body').append('<div>' + 'hello' + '</div>');
+	
+	
   console.log('<><><>MAIN<><><>');
   
   /* We transfer the current user data values stored in the document object to the 
@@ -20,7 +25,7 @@ $(function() {
   //postUserData('#user_info');
   
   /* This function is defined in ajax/fileinfo.js. */
-  //getFileInfo(SW.current_user_number);
+  getFileInfo(SW.current_user_number);
 	
   /* Enables the list box in the top right to change the current user. */
   /* (This feature will be admin-only in final version.) */
