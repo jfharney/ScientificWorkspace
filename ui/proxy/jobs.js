@@ -2,19 +2,25 @@ console.log('Loading jobs js');
 
 var express = require('express');
 var app = express();
-var firewallMode = false;
+var firewallMode = true;
 var http = require('http');
 var url = require('url');
+var proxy = require('./proxyConfig.js');
 var serviceHost = 'techint-b117';
 var servicePort = '8080';
 
 // This function works with a URL containing or lacking a search parameter named "search". 
 var jobsproxyHelper = function(request, response) {
   var path = '/sws/jobs?uid=' + request.params.userNum;
+  console.log(proxy);
+  for(var key in proxy)
+	  console.log(key + ': ' + proxy[key]);
+  
+  console.log('jobs.js: Making a call to http://'+proxy.serviceHost+':'+proxy.servicePort+path);
 
   var options = {
-    host: serviceHost,
-	port: servicePort,
+    host: proxy.serviceHost,
+	port: proxy.servicePort,
 	path: path,
 	method: 'GET'
   };
@@ -24,6 +30,10 @@ var jobsproxyHelper = function(request, response) {
 
   var responseData = '';
   var req = http.request(options, function(res) {
+	  
+	res.on('header', function() {
+	  console.trace('HEADERS GOING TO BE WRITTEN');
+	});
 	res.on('data', function(chunk) {
 	  responseData += chunk;	
 	});
@@ -59,6 +69,9 @@ var jobsproxyHelper = function(request, response) {
         			   "nid" : jobNidArr[i]};
         respArr.push(respObj);
       }
+      console.log('respArr: ' + respArr);
+      for(var i = 0; i < respArr.length; i++)
+    	console.log(i + ': ' + respArr[i]);
 	  response.send(respArr);
     }); // End of res.on('end') callback.
 	

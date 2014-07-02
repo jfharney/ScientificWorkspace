@@ -5,6 +5,8 @@ function getJobInfo(userNum, searchArg) {
   
   var url = 'http://' + SW.hostname + ':' + SW.port + '/jobsproxy/'+userNum+'?search='+searchArg;
   
+  console.log('jobinfo.js: Making a call to ' + url);
+  
   var children = [];
 
   /* Create the initial children. */
@@ -15,7 +17,7 @@ function getJobInfo(userNum, searchArg) {
 	async: false,
 	success: function(data) 
 	{
-		console.log('Here is the data object/array:');
+	  console.log('Here is the data object/array:');
       for(var i = 0; i < data.length; i++) {
     	console.log(data[i]);
         children.push(data[i]);
