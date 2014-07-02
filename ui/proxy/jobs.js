@@ -15,7 +15,7 @@ var proxy = require('./proxyConfig.js');
 //>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
 //=======
 //var proxy = require('./proxyConfig.js');
->>>>>>> devel-practice-copy
+//>>>>>>> devel-practice-copy
 var serviceHost = 'techint-b117';
 //>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
 var servicePort = '8080';

@@ -60,7 +60,7 @@ var getMSG = function()
 };
 
 
-getMSG();  
+//getMSG();  
 
 /*
 (function poll(){

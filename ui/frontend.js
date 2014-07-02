@@ -8,9 +8,9 @@ var firewallMode = false;
 var http = require('http');
 var url = require('url');
 //app.use(express.static(__dirname + 'public'));
-var proxy = require('./proxyConfig.js');
-//var serviceHost = 'techint-b117';
-//var servicePort = '8080';
+//var proxy = require('./proxyConfig.js');
+var serviceHost = 'techint-b117';
+var servicePort = '8080';
 
 // Start Express
 var express = require("express");
