@@ -1,11 +1,12 @@
 var express = require('express');
 var app = express();
-var firewallMode = true;
+//var firewallMode = true;
 var http = require('http');
 var url = require('url');
 //app.use(express.static(__dirname + 'public'));
-var serviceHost = 'techint-b117';
-var servicePort = '8080';
+var proxy = require('./proxyConfig.js');
+//var serviceHost = 'techint-b117';
+//var servicePort = '8080';
 
 // Start Express
 var express = require("express");
@@ -252,7 +253,7 @@ app.get("/userinfo/:user_id", function(request, response) {
 //--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
-  if(firewallMode) {
+  if(proxy.firewallMode) {
 	var groupObjsArr = [];
 	
 	var groupObj1 = {};
@@ -294,7 +295,7 @@ app.get('/groups/:gid',function(request, response) {
 //--------Jobs API----------//
 
 app.get('/jobsproxy/:userNum', function(request, response) {
-	if(firewallMode) {
+	if(proxy.firewallMode) {
 		var jobsObjArr = [];
 		var jobsObj1 = {};
 		jobsObj1['nid'] = 88388;
