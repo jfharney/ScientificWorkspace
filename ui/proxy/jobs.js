@@ -2,12 +2,16 @@ console.log('Loading jobs js');
 
 var express = require('express');
 var app = express();
-var firewallMode = false;
+var firewallMode = true;
 var http = require('http');
 var url = require('url');
 //<<<<<<< HEAD
+//<<<<<<< HEAD
 //var serviceHost = 'techint-b117';//'160.91.210.32';
 //=======
+//=======
+var proxy = require('./proxyConfig.js');
+//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
 var serviceHost = 'techint-b117';
 //>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
 var servicePort = '8080';
@@ -16,10 +20,15 @@ var servicePort = '8080';
 var jobsproxyHelper = function(request, response) {
 	console.log('usernum: ' + request.params.userNum);
   var path = '/sws/jobs?uid=' + request.params.userNum;
+  console.log(proxy);
+  for(var key in proxy)
+	  console.log(key + ': ' + proxy[key]);
+  
+  console.log('jobs.js: Making a call to http://'+proxy.serviceHost+':'+proxy.servicePort+path);
 
   var options = {
-    host: serviceHost,
-	port: servicePort,
+    host: proxy.serviceHost,
+	port: proxy.servicePort,
 	path: path,
 	method: 'GET'
   };
@@ -29,6 +38,10 @@ var jobsproxyHelper = function(request, response) {
 
   var responseData = '';
   var req = http.request(options, function(res) {
+	  
+	res.on('header', function() {
+	  console.trace('HEADERS GOING TO BE WRITTEN');
+	});
 	res.on('data', function(chunk) {
 	  responseData += chunk;	
 	});
@@ -64,6 +77,9 @@ var jobsproxyHelper = function(request, response) {
         			   "nid" : jobNidArr[i]};
         respArr.push(respObj);
       }
+      console.log('respArr: ' + respArr);
+      for(var i = 0; i < respArr.length; i++)
+    	console.log(i + ': ' + respArr[i]);
 	  response.send(respArr);
     }); // End of res.on('end') callback.
 	

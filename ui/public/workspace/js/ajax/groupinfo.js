@@ -9,6 +9,10 @@ function getCollaboratorInfo(userNumber, searchArg) {
     type: 'GET',
     success: function(data) {
       groupsArr = data;
+      console.log('Here is groupsArr:');
+      for(var i = 0; i < groupsArr.length; i++)
+    	for(var j in groupsArr[i])
+    	  console.log(j + ': ' + groupsArr[i][j]);
 			
       // Create the initial children for the tree.
       var children = [];
@@ -27,7 +31,7 @@ function getCollaboratorInfo(userNumber, searchArg) {
   });
 }
 
-/*function getGroupInfo(uid) {
+function getGroupInfo(uid) {
 	
 	alert('in get group info for uid: ' + uid);
 	
@@ -64,7 +68,7 @@ function getCollaboratorInfo(userNumber, searchArg) {
 	
 	return groupsArr;
 	
-}*/
+}
 
 
 
@@ -72,6 +76,11 @@ function getCollaboratorInfo(userNumber, searchArg) {
 
 // Populates the collaborator widget given the data returned (i.e. children)
 function buildCollaboratorTree(children) {
+	
+  console.log('Inside buildCollaboratorTree, here is the children array:');
+  for(var i = 0; i < children.length; i++)
+	for(var j in children[i])
+	  console.log(j + ': ' + children[i][j]);
 
   $("#collaborators_tree").dynatree({
     title: "Lazy loading sample",

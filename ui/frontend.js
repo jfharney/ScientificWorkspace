@@ -116,13 +116,12 @@ app.get('/server2', function(request, response) {
 
 
 app.get("/", function(request, response) {
-	  response.redirect('/workspace/users/j1s');
+  response.redirect('/workspace/users/j1s');
 });
 
 app.get("/settings/:user_id", function(request, response) {
-	  console.log('\n\n---------in settings proxy for ' + request.params.user_id + '----------');
-	
-	  response.render("settings", { uid : request.params.user_id });
+  console.log('\n\n---------in settings proxy for ' + request.params.user_id + '----------');
+  response.render("settings", { uid : request.params.user_id });
 });
 
 app.get("/workspace/:user_id", function(request, response) {
@@ -132,6 +131,7 @@ app.get("/workspace/:user_id", function(request, response) {
 //=======
 
   /* Version for when server is NOT working: */
+//<<<<<<< HEAD
 //>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
 	
 	console.log('A GET for /workspace/:user_id has been issued.');
@@ -181,14 +181,20 @@ app.get("/workspace/:user_id", function(request, response) {
 
     
 });
+//=======
+//  var userObj = {"nid":39644,"uid":5112,"uname":"8xo","name":"John F. Harney","type":0,"email":"harneyjf@ornl.gov"};
 
-			
-	
-  /* Version for when server is working:
+//  if(firewallMode)
+//    response.render("index1", userObj);
+//  else {
+//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
+
+    /* Version for when server is working. */
 	  
-  var userObj = {};
+//<<<<<<< HEAD
+//  var userObj = {};
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
   /* Make a request to return all user data, based on the username.*/
   
   /*
@@ -201,24 +207,38 @@ app.get("/workspace/:user_id", function(request, response) {
     path: "/sws/user?uname=" + request.params.user_id,
     method: 'GET'
   };
-		
-  var req = http.request(options, function(resp) {
-		
-    var responseData = '';
-    resp.on('data', function(chunk) {
-      responseData += chunk;
-    });
-    
-    resp.on('end', function() {
-      var userObj = JSON.parse(responseData);
-      response.render("index1", userObj);
-    });
+=======
+	console.log('Making a call to http://' + serviceHost + ':' + servicePort + '/sws/user?uname=' + request.params.user_id);
 
-    resp.on('error', function(e) {
-      response.send('error: ' + e);
-    });
-  });*/
+    // Make a request to return all user data, based on the username.
+    var options = {
+      host: serviceHost,
+      port: servicePort,
+      path: "/sws/user?uname=" + request.params.user_id,
+      method: 'GET'
+    };
+>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
 		
+    var req = http.request(options, function(resp) {
+		
+      var responseData = '';
+      resp.on('data', function(chunk) {
+        responseData += chunk;
+      });
+    
+      resp.on('end', function() {
+        var userObj = JSON.parse(responseData);
+        for(var i in userObj)
+          console.log(i + ': ' + userObj[i]);
+        response.render("index1", userObj);
+      });
+
+      resp.on('error', function(e) {
+        response.send('error: ' + e);
+      });
+    });
+		
+<<<<<<< HEAD
 //<<<<<<< HEAD
 //  req.end();
   
@@ -230,12 +250,15 @@ app.get("/workspace/:user_id", function(request, response) {
 app.get('/offline', function(request, response) {
   response.send('');
 //>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
+=======
+    req.end(); 
+  }
+>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
 });
 
 app.get('/doi/:user_id',function(request,response) {
-	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
-
-	response.render("index2", { uid : request.params.user_id });
+  console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
+  response.render("index2", { uid : request.params.user_id });
 });
 
 app.post('/doi/:user_id',function(request,response) {
@@ -331,7 +354,6 @@ function isArray(what)
 }
 
 
-
 app.get("/userinfo/:user_id", function(request, response) {
 	
 	console.log('calling user info...' + request.params.user_id);
@@ -381,6 +403,7 @@ app.get("/userinfo/:user_id", function(request, response) {
 
 
 /*************************************************************/
+
 //--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
@@ -408,7 +431,50 @@ app.get("/groupinfo/:uid", function(request, response) {
 	groupObj3['type'] = 1;
 	groupObjsArr.push(groupObj3);
 	
-	response.send(groupObjsArr);
+	var groupGidArr = [];
+	for(var i = 0; i < groupObjsArr.length; i++)
+	  groupGidArr.push(groupObjsArr[i]['gid']);
+	
+	var groupNidArr = [];
+	for(var i = 0; i < groupObjsArr.length; i++)
+	  groupNidArr.push(groupObjsArr[i]['nid']);
+
+	var groupNameArr = [];
+	for(var i = 0; i < groupObjsArr.length; i++)
+	  groupNameArr.push(groupObjsArr[i]['gname']);
+	
+	var respArr = [];
+    
+	for(var i = 0; i < 3; i++) {
+	  var respObj = {};
+		if(i == 0) {
+		  respObj['title'] = groupObj1['gname'];
+		  respObj['isFolder'] = true;
+		  respObj['type'] = 2;
+		  respObj['gid'] = groupObj1['gid'];
+		  respObj['tooltip'] = 'This is a tooltip.';
+		  respObj['nid'] = groupObj1['nid'];
+		}
+		else if(i == 1) {
+		  respObj['title'] = groupObj2['gname'];
+		  respObj['isFolder'] = true;
+		  respObj['type'] = 2;
+		  respObj['gid'] = groupObj2['gid'];
+		  respObj['tooltip'] = 'This is a tooltip.';
+		  respObj['nid'] = groupObj2['nid'];
+		}
+		else {
+		  respObj['title'] = groupObj3['gname'];
+		  respObj['isFolder'] = true;
+		  respObj['type'] = 2;
+		  respObj['gid'] = groupObj3['gid'];
+		  respObj['tooltip'] = 'This is a tooltip.';
+		  respObj['nid'] = groupObj3['nid'];			
+		}
+	  respArr.push(respObj);
+	}
+	
+	response.send(respArr);
   }	
   else {
     var res = groups.groupinfoHelper(request, response);  
@@ -423,51 +489,84 @@ app.get('/groups/:gid',function(request, response) {
 });
 
 /*************************************************************/
+
 //--------Jobs API----------//
 
 app.get('/jobsproxy/:userNum', function(request, response) {
-	if(firewallMode) {
-		var jobsObjArr = [];
-		var jobsObj1 = {};
-		jobsObj1['nid'] = 88388;
-		jobsObj1['nodes'] = 1;
-		jobsObj1['jid'] = 1722972;
-		jobsObj1['err'] = 0;
-		jobsObj1['stop'] = 1378024278;
-		jobsObj1['host'] = 'titan';
-		jobsObj1['start'] = 1378024199;
-		jobsObj1['name'] = 'swtc1';
-		jobsObj1['type'] = 2;
-		jobsObj1['wall'] = 0;
-		jobsObj1['user'] = 9238;
-		jobsObjArr.push(jobsObj1);
+  if(firewallMode) {
+	var jobsObjArr = [];
+		  
+	var jobsObj1 = {};
+	jobsObj1['nid'] = 88388;
+	jobsObj1['nodes'] = 1;
+	jobsObj1['jid'] = 1722972;
+	jobsObj1['err'] = 0;
+	jobsObj1['stop'] = 1378024278;
+	jobsObj1['host'] = 'titan';
+	jobsObj1['start'] = 1378024199;
+	jobsObj1['name'] = 'swtc1';
+	jobsObj1['type'] = 2;
+	jobsObj1['wall'] = 0;
+	jobsObj1['user'] = 9238;
+	jobsObjArr.push(jobsObj1);
+	
+	var jobsObj2 = {};
+	jobsObj2['nid'] = 88516;
+	jobsObj2['nodes'] = 1;
+	jobsObj2['jid'] = 1722981;
+	jobsObj2['err'] = 0;
+	jobsObj2['stop'] = 1378027579;
+	jobsObj2['host'] = 'titan';
+	jobsObj2['start'] = 1378027539;
+	jobsObj2['name'] = 'swtc1-dg';
+	jobsObj2['type'] = 2;
+	jobsObj2['wall'] = 0;
+	jobsObj2['user'] = 9238;
+	jobsObjArr.push(jobsObj2);
+    
+	for(var i = 0; i < 2; i++) {
+	  var respObj = {};
+		if(i == 0) {
+		  respObj['title'] = jobsObj1['name'];
+		  respObj['isFolder'] = true;
+		  respObj['isLazy'] = true;
+		  respObj['type'] = 2;
+		  respObj['jobid'] = jobsObj1['jid'];
+		  respObj['tooltip'] = 'This is a tooltip.';
+		  respObj['nid'] = jobsObj1['nid'];
+			
+		}
+		else {
+		  respObj['title'] = jobsObj2['name'];
+		  respObj['isFolder'] = true;
+		  respObj['isLazy'] = true;
+		  respObj['type'] = 2;
+		  respObj['jobid'] = jobsObj2['jid'];
+		  respObj['tooltip'] = 'This is a tooltip.';
+		  respObj['nid'] = jobsObj2['nid'];
+		}
+	    respArr.push(respObj);
+	}
+	response.send(respArr);
+    
+  } else {
+	jobs.jobsproxyHelper(request, response);
+  }
+    
+    /*
+    var jobJidArr = [];
+    for(var i = 0; i < jobsObjArr.length; i++)
+      jobJidArr.push(jobsObjArr[i]['jid']);
+		
+    var jobNidArr = [];
+    for(var i = 0; i < jobsObjArr.length; i++)
+	  jobNidArr.push(jobsObjArr[i]['nid']);
 
-		var jobsObj2 = {};
-		jobsObj2['nid'] = 88516;
-		jobsObj2['nodes'] = 1;
-		jobsObj2['jid'] = 1722981;
-		jobsObj2['err'] = 0;
-		jobsObj2['stop'] = 1378027579;
-		jobsObj2['host'] = 'titan';
-		jobsObj2['start'] = 1378027539;
-		jobsObj2['name'] = 'swtc1-dg';
-		jobsObj2['type'] = 2;
-		jobsObj2['wall'] = 0;
-		jobsObj2['user'] = 9238;
-		jobsObjArr.push(jobsObj2);
+	var jobNameArr = [];
+	for(var i = 0; i < jobsObjArr.length; i++)
+	  jobNameArr.push(jobsObjArr[i]['name']);
 		
-		var jobJidArr = [];
-		for(var i = 0; i < jobsObjArr.length; i++)
-		  jobJidArr.push(jobsObjArr[i]['jid']);
-		
-		var jobNidArr = [];
-		for(var i = 0; i < jobsObjArr.length; i++)
-		  jobNidArr.push(jobsObjArr[i]['nid']);
-
-		var jobNameArr = [];
-		for(var i = 0; i < jobsObjArr.length; i++)
-			jobNameArr.push(jobsObjArr[i]['name']);
-		
+//<<<<<<< HEAD
 		var respArr = [];
         
 		for(var i = 0; i < 2; i++) {
@@ -481,13 +580,6 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 			  respObj['tooltip'] = 'This is a tooltip.';
 			  respObj['nid'] = jobsObj1['nid'];
 				
-		  /*  respObj = {"title" : jobNameArr[i], 
- 			   "isFolder" : true, 
- 			   "isLazy" : true, 
- 			   "type" : 2, 
- 			   "jobid" : jobJidArr[i],
- 			   "tooltip" : 'This is a tooltip.',
- 			   "nid" : jobNidArr[i]};*/
 			}
 			else {
 				  respObj['title'] = jobsObj2['name'];
@@ -499,17 +591,48 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 				  respObj['nid'] = jobsObj2['nid'];
 			}
 		  respArr.push(respObj);
+//=======
+	var respArr = [];
+       
+	for(var i = 0; i < 2; i++) {
+	  var respObj = {};
+		if(i == 0) {
+		  respObj['title'] = jobsObj1['name'];
+		  respObj['isFolder'] = true;
+		  respObj['type'] = 2;
+		  respObj['jobid'] = jobsObj1['jid'];
+		  respObj['tooltip'] = 'This is a tooltip.';
+		  respObj['nid'] = jobsObj1['nid'];
+//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
 		}
-		
-		
-		response.send(respArr);
+		else {
+		  respObj['title'] = jobsObj2['name'];
+		  respObj['isFolder'] = true;
+		  respObj['type'] = 2;
+		  respObj['jobid'] = jobsObj2['jid'];
+		  respObj['tooltip'] = 'This is a tooltip.';
+		  respObj['nid'] = jobsObj2['nid'];
+		}
+	  respArr.push(respObj);
 	}
+		
+		
+	response.send(respArr);
+  }
   else {
+//<<<<<<< HEAD
 	  // jobsproxyHelper is defined in the file proxy/jobs.js.
 	  jobs.jobsproxyHelper(request, response);
 	  // We may reference :userNum with request.params.userNum.}
 	  //response.send(respObj);
+//=======
+	// jobsproxyHelper is defined in the file proxy/jobs.js.
+//	jobs.jobsproxyHelper(request, response);
+	// We may reference :userNum with request.params.userNum.}
+    //response.send(respObj);
+//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
   }
+  */
 });
 
 app.get("/jobinfo/:job_id", function(request, response) {
@@ -525,6 +648,7 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 });
 
 /*************************************************************/
+
 //--------Apps API----------//
 
 // Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
@@ -652,10 +776,6 @@ app.get('/appinfo', function(request, response) {
 
 /*************************************************************/
 
-
-
-
-
 //-----------Tags-----------//
 
 app.post('/tagproxy', function(request, response) {
@@ -663,8 +783,6 @@ app.post('/tagproxy', function(request, response) {
 	
 	var res = tags.tagsproxyHelper(request, response);
 });
-
-
 
 app.get('/tags', function(request, response) 
 {	
@@ -872,7 +990,7 @@ app.get('/files/:userNum', function(request, response) {
 
 
 //sample- initial files data proxy service
-app.get('/initfilesdata',function(request,response) {
+app.get('/initfilesdata', function(request,response) {
 
 	//console.log('init files data');
 	
@@ -885,7 +1003,7 @@ app.get('/initfilesdata',function(request,response) {
 });
 
 //files proxy service
-app.get('/filesinfo',function(request,response) {
+app.get('/filesinfo', function(request,response) {
 	
 	
 	//grab the different components of the url

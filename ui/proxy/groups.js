@@ -5,7 +5,11 @@ var app = express();
 var firewallMode = false;
 var http = require('http');
 var url = require('url');
-var serviceHost = 'techint-b117';//'160.91.210.32';
+//<<<<<<< HEAD
+//var serviceHost = 'techint-b117';//'160.91.210.32';
+//=======
+var serviceHost = 'techint-b117';
+//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
 var servicePort = '8080';
 
 var groupinfoHelper = function(request, response) {
@@ -14,6 +18,8 @@ var groupinfoHelper = function(request, response) {
   
   var path = '/sws/groups?uid='+request.params.uid;
   //console.log('In groupinfoHelper, the value of request.params.uid is ' + request.params.uid);
+  
+  console.log('groups.js: Making a call to http://'+serviceHost+':'+servicePort+path);
 	
   // Query for all groups with the specified user number ('uid').
   var options = {
@@ -28,6 +34,9 @@ var groupinfoHelper = function(request, response) {
   var responseData = '';
 	
   var req = http.request(options, function(res) {
+	res.on('header', function() {
+	  console.trace('HEADERS GOING TO BE WRITTEN');
+	});
     res.on('data', function (chunk) {
       responseData += chunk;	
     });
