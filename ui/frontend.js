@@ -1,11 +1,16 @@
 var express = require('express');
 var app = express();
+//<<<<<<< HEAD
 var firewallMode = false;
+//=======
+//var firewallMode = true;
+//>>>>>>> devel-practice-copy
 var http = require('http');
 var url = require('url');
 //app.use(express.static(__dirname + 'public'));
-var serviceHost = 'techint-b117';
-var servicePort = '8080';
+var proxy = require('./proxyConfig.js');
+//var serviceHost = 'techint-b117';
+//var servicePort = '8080';
 
 // Start Express
 var express = require("express");
@@ -407,7 +412,7 @@ app.get("/userinfo/:user_id", function(request, response) {
 //--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
-  if(firewallMode) {
+  if(proxy.firewallMode) {
 	var groupObjsArr = [];
 	
 	var groupObj1 = {};
@@ -493,6 +498,7 @@ app.get('/groups/:gid',function(request, response) {
 //--------Jobs API----------//
 
 app.get('/jobsproxy/:userNum', function(request, response) {
+//<<<<<<< HEAD
   if(firewallMode) {
 	var jobsObjArr = [];
 		  
@@ -557,6 +563,41 @@ app.get('/jobsproxy/:userNum', function(request, response) {
     var jobJidArr = [];
     for(var i = 0; i < jobsObjArr.length; i++)
       jobJidArr.push(jobsObjArr[i]['jid']);
+=======
+	if(proxy.firewallMode) {
+		var jobsObjArr = [];
+		var jobsObj1 = {};
+		jobsObj1['nid'] = 88388;
+		jobsObj1['nodes'] = 1;
+		jobsObj1['jid'] = 1722972;
+		jobsObj1['err'] = 0;
+		jobsObj1['stop'] = 1378024278;
+		jobsObj1['host'] = 'titan';
+		jobsObj1['start'] = 1378024199;
+		jobsObj1['name'] = 'swtc1';
+		jobsObj1['type'] = 2;
+		jobsObj1['wall'] = 0;
+		jobsObj1['user'] = 9238;
+		jobsObjArr.push(jobsObj1);
+
+		var jobsObj2 = {};
+		jobsObj2['nid'] = 88516;
+		jobsObj2['nodes'] = 1;
+		jobsObj2['jid'] = 1722981;
+		jobsObj2['err'] = 0;
+		jobsObj2['stop'] = 1378027579;
+		jobsObj2['host'] = 'titan';
+		jobsObj2['start'] = 1378027539;
+		jobsObj2['name'] = 'swtc1-dg';
+		jobsObj2['type'] = 2;
+		jobsObj2['wall'] = 0;
+		jobsObj2['user'] = 9238;
+		jobsObjArr.push(jobsObj2);
+		
+		var jobJidArr = [];
+		for(var i = 0; i < jobsObjArr.length; i++)
+		  jobJidArr.push(jobsObjArr[i]['jid']);
+>>>>>>> devel-practice-copy
 		
     var jobNidArr = [];
     for(var i = 0; i < jobsObjArr.length; i++)
