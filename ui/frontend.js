@@ -401,6 +401,17 @@ app.get('/groups/:gid',function(request, response) {
 
 app.get('/jobsproxy/:userNum', function(request, response) {
   if(proxy.firewallMode) {
+	  
+	  
+/*
+	  
+	  var temp = data.jobsObjArr;
+	  
+	  for (var key in temp) {
+		  console.log('key: ' + key + ' value: ' + temp[key]);
+	  }
+*/	  
+	  
 	var jobsObjArr = [];
 		  
 	var jobsObj1 = {};
