@@ -2,6 +2,7 @@
 console.log('in feed.js');
 
 
+/*
 setInterval(function(){
     $.ajax({ 
         type: "GET",  
@@ -19,6 +20,7 @@ setInterval(function(){
         }  
     });
 }, 5000);
+*/
 
 
 var getMSG = function()  

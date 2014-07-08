@@ -820,9 +820,11 @@ app.get('/appinfo', function(request, response) {
 //-----------Tags-----------//
 
 app.post('/tagproxy', function(request, response) {
-	//console.log('\n\n---------in tag proxy----------');
+	console.log('\n\n---------in tag proxy----------');
 	
 	var res = tags.tagsproxyHelper(request, response);
+	
+	
 });
 
 app.get('/tags', function(request, response) 

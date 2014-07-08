@@ -1,14 +1,49 @@
 $(document).ready(function() {
 	
   $('#create_tag').click(function() {
-    console.log('SW.tagged_items: ' + SW.tagged_items);
-    var host = 'localhost';
-    var port = '1337';
+
+	  console.log('In create tag');
+	  console.log('selected file nids: ' + SW.selected_file_nids);
+	  console.log('selected file titles: ' + SW.selected_file_titles);  
+	  
+	  var host = 'localhost';
+	  var port = '1337';
 
     //var user_label = $('#user_info_id').html();
     //console.log(user_label.trim());
-              	  
+
+	  var uid = SW.current_user_username;
     
+	  console.log('uid: ' + uid);
+    
+	  var url = 'http://' + host + ':' + port + '/tagproxy';
+
+	 
+	  var tagname = $('#tag_name').val();
+	  var tagdescription = $('#tag_description').val();
+	  
+	  if(tagname == '' || tagname == undefined) {
+		  alert('please enter a tag name');
+	  } else {
+		var input_data = {
+
+			  'uid' : uid,
+			  'tag_name' : tag_name,
+			  'tag_description' : tag_description
+		}
+		
+		url = url + '?uid=' + uid + '&tag_name=' + tag_name + '&tag_description=' + tag_description;
+		
+		console.log('url: ' + url);
+
+	  }
+	  
+	  
+	  
+	  
+	  
+	  
+    /*
     var tagged_files = new Array();
     var tagged_files_keys = new Array();
 
@@ -26,7 +61,7 @@ $(document).ready(function() {
     
     
     
-    /******************************/
+    
     
     //var uid = user_label.trim();
     var uid = SW.current_user_username
@@ -196,7 +231,7 @@ $(document).ready(function() {
         console.log('error in associations');
       }
     });		// End of ajax call. 
-    
+    */
     
     /**************************************/
     
