@@ -2,15 +2,31 @@ $(document).ready(function() {
 
   var uid = SW.current_user_number;
   
-  var t_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/sws/tags?';
-  //var a_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/associations?';
+  var t_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
+  var a_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/associations?';
 	
   $.ajax({
     type: "GET",
 	url: t_url_prefix + 'uid=' + uid,
 	success: function(data) 
 	{
-      $.each(data, function(key, value) {
+	  // In data, we are receiving an array of objects. The objects contain only primitives.
+      $.each(data, function(index, element) {
+        // We want to know three things: 
+        // 1. a tag's nid (for the hyperlink)
+        // 2. a tag's name
+        // 3. how many objects the tag references (for its font size)
+        var tagName = element['name']; 
+        var tagNid = element['nid'];
+        
+        var linkCount;		// We need to do an Ajax call to get this info.
+        $.ajax({
+          type: "GET",
+          
+        });
+      });
+
+      /*$.each(data, function(key, value) {
         $.each(value, function(index, arVal) {
 	      var tag_uuid = arVal['uuid'];
 		  var tag_name = arVal['tagname'];
@@ -40,36 +56,36 @@ $(document).ready(function() {
 					var resType = associations_data['associations'][i]['type'];
 					var resUuid = associations_data['associations'][i]['uuid'];
 					if(resType == 'job') {
-						$.ajax({
-							type: "GET", 
-							//url: "http://localhost:1337/jobUuid/" + associations_data['associations'][i]['uuid'],
-							url: 'http://' + SW.hostname + ':' + SW.port + "/jobUuid/" + associations_data['associations'][i]['uuid'],
-							async: false,
-							success: function(resourceData) 
-							{
-								var jobName = resourceData['jobs'][0]['jobname'];
-								var jobId = resourceData['jobs'][0]['jobid'];
-								var jobGroupName =  resourceData['jobs'][0]['groupname'];
-								var jobUuid = resourceData['jobs'][0]['uuid'];
-								var jobStartDate = resourceData['jobs'][0]['starttime'];
-								var fJobStartDate = formatDate(jobStartDate);		// formatDate is defined below in this file.
-								$lessLink = $('<span id="lessTagInfoSpan_'+jobUuid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+jobId+'<br />&nbsp;&nbsp;&nbsp;Group: '+jobGroupName+'<br />&nbsp;&nbsp;&nbsp;Started: '+fJobStartDate+'</span>').on("click", function() {
-									$('#moreTagInfoLink_'+jobUuid).css('display', 'inline'); 
-									$(this).hide();
-								});
-								$moreLink = $('<a id="moreTagInfoLink_'+jobUuid+'" style="cursor:pointer">more</a>').on("click", function() {
-									$('#lessTagInfoSpan_'+jobUuid).css('display', 'inline'); 
-									$(this).hide();
-								});
-								$('#cloud_info').append('<li id="tagResource_'+jobUuid+'"><b>' + jobName + '</b> (job)&nbsp;</li><hr>');
-								$('#tagResource_'+jobUuid).append($lessLink);
-								$('#tagResource_'+jobUuid).append($moreLink);
-							}, 
-							error: function(e) {console.log('jobUuidHelper query failed.');}
-						});
+                      $.ajax({
+                        type: "GET", 
+                        url: 'http://' + SW.hostname + ':' + SW.port + "/jobUuid/" + associations_data['associations'][i]['uuid'],
+                        async: false,
+                        success: function(resourceData) {
+                          var jobName = resourceData['jobs'][0]['jobname'];
+                          var jobId = resourceData['jobs'][0]['jobid'];
+                          var jobGroupName =  resourceData['jobs'][0]['groupname'];
+                          var jobUuid = resourceData['jobs'][0]['uuid'];
+                          var jobStartDate = resourceData['jobs'][0]['starttime'];
+                          var fJobStartDate = formatDate(jobStartDate);		// formatDate is defined below in this file.
+                          $lessLink = $('<span id="lessTagInfoSpan_'+jobUuid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+jobId+'<br />&nbsp;&nbsp;&nbsp;Group: '+jobGroupName+'<br />&nbsp;&nbsp;&nbsp;Started: '+fJobStartDate+'</span>')
+                          			  .on("click", function() {
+                                        $('#moreTagInfoLink_'+jobUuid).css('display', 'inline'); 
+                                        $(this).hide();
+                                      });
+                          $moreLink = $('<a id="moreTagInfoLink_'+jobUuid+'" style="cursor:pointer">more</a>')
+                          			  .on("click", function() {
+                                        $('#lessTagInfoSpan_'+jobUuid).css('display', 'inline'); 
+                                        $(this).hide();
+                                      });
+                          $('#cloud_info').append('<li id="tagResource_'+jobUuid+'"><b>' + jobName + '</b> (job)&nbsp;</li><hr>');
+                          $('#tagResource_'+jobUuid).append($lessLink);
+                          $('#tagResource_'+jobUuid).append($moreLink);
+                        }, 
+                        error: function(e) {console.log('jobUuidHelper query failed.');}
+                      });
 				  	}
 					else if(resType == 'app') {
-						$('#cloud_info').append('<li>' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</li><hr>');
+                      $('#cloud_info').append('<li>' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</li><hr>');
 				  	}
 				  }
 				  $('#cloud_info').append('</ul>');
@@ -93,7 +109,7 @@ $(document).ready(function() {
 	 
 	  
 	  
-	  }); //end $.each(data, function(key, value) 
+	  }); //end $.each(data, function(key, value)*/ 
 	  
 	  
 	},

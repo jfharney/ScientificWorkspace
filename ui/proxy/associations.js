@@ -2,19 +2,13 @@ console.log('Loading associations js');
 
 var express = require('express');
 var app = express();
-
-var firewallMode = false;
 var http = require('http');
-var servicePort = 8080;
-
 
 var associationsproxyHelper = function(request, response) {
 	
-
-	var request_obj = request['query'];
-	
-	var obj_uuid = request_obj['tagged_item'];
-	var obj_type = request_obj['tagged_type'];
+  var request_obj = request['query'];
+  var obj_uuid = request_obj['tagged_item'];
+  var obj_type = request_obj['tagged_type'];
 	var tag_uuid = request_obj['tag_uuid'];
 	
 	var associations_api_responseData = '';

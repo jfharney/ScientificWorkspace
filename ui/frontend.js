@@ -427,10 +427,7 @@ app.get('/tags', function(request, response)
 		});
 		
 		resp.on('end', function() {
-			//var jsonObj = JSON.parse(responseData);
-			var jsonObj = {};
-			jsonObj.tags = responseData;
-			response.send(jsonObj);
+			response.send(responseData);
 		});
 		
 		resp.on('error', function(e) {
@@ -474,6 +471,10 @@ app.get('/tags/:tag_name', function(request, response)
 	});
 	
 	req.end();	
+});
+
+app.get('/tags/links/:tag_nid', function(request, response) {
+  var res = tags.tagLinksProxHelper(request, response);
 });
 
 
