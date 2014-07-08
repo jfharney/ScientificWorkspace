@@ -28,6 +28,9 @@ var apps = require('./proxy/apps.js');
 var associations = require('./proxy/associations.js');
 var tags = require('./proxy/tags.js');
 
+
+var data = require('./data/firewall_sources.js');
+
 if(proxy.firewallMode)
   console.log('firewall: ' + proxy.firewallMode);
 
@@ -724,110 +727,168 @@ app.get('/files/:userNum', function(request, response) {
   console.log('path->' + path);
   
   
-  var req = http.request(options, function(resp) {
-		//console.log('Got response status code ' + resp.statusCode);
-		
-		var responseData = '';
-		resp.on('data', function(chunk) {
-			responseData += chunk;
-		});
-		
-		resp.on('end', function() {
-			console.log('in resp end for files... ' + responseData);
-			var jsonObj = JSON.parse(responseData);
+  if(proxy.firewallMode) {
+	  
+	  
+	  //the source
+
+	  
+	  //{"nid":200004,"xuid":0,"xgid":2329,"name":"stf008","fmode":493,"ctime":1380646733,"type":5,"mtime":1380646733,"files":
+      // [{"nid":200008,"xuid":0,"xgid":2329,"name":"proj-shared","fmode":504,"ctime":1386265998,"type":5,"mtime":1386265998},
+	  //  {"nid":200016,"xuid":0,"xgid":2329,"name":"world-shared","fmode":509,"ctime":1396888768,"type":5,"mtime":1396888768}
+	  // ]
+	  //}
+	  
+	  var temp = data.jsonFileResponse;
+	  
+	  for (var key in temp) {
+		  console.log('key: ' + key + ' value: ' + temp[key]);
+	  }
+	  
+	  
+	  //var files = jsonFileResponse['files'];
+	  
+	  var files = data.jsonFileResponse['files'];
+	  
+	  var dynatreeJSONArr = [];
+	  
+	  for(var i=0;i<files.length;i++) {
 			
-			var files = jsonObj['files'];
+			var dynatreeJSONObj = {};
 			
-			var dynatreeJSONArr = [];
 			
-			if(files != undefined) {
-				for(var i=0;i<files.length;i++) {
-					
-					var dynatreeJSONObj = {};
-					
-					console.log('i: ' + i + ' ' + files[i]);
-					var file = files[i];
-					
-					for(var key in file) {
-						console.log('key: ' + key + ' value: ' + file[key]);
-					}
-					
-					if(queriedPath == '|') {
-						dynatreeJSONObj['title'] = '|' + file['name'];
+			//console.log('i: ' + i + ' ' + files[i]);
+			var file = files[i];
+			
+			for(var key in file) {
+				console.log('key: ' + key + ' value: ' + file[key]);
+			}
+			
+			if(queriedPath == '|') {
+				dynatreeJSONObj['title'] = '|' + file['name'];
+				
+				//directory if type is 5 otherwise it is a file
+				if(file['type'] == 5) {
+					dynatreeJSONObj['isFolder'] = false;
+					dynatreeJSONObj['isLazy'] = false;
+				} else { 
+					dynatreeJSONObj['isFolder'] = false;
+					dynatreeJSONObj['isLazy'] = false;
+				}
+				
+				dynatreeJSONObj['path'] = '|' + file['name'];
+				dynatreeJSONObj['nid'] = file['nid'];
+			} else {
+				dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
+				if(file['type'] == 5) {
+					dynatreeJSONObj['isFolder'] = true;
+					dynatreeJSONObj['isLazy'] = true;
+				} else { 
+					dynatreeJSONObj['isFolder'] = false;
+					dynatreeJSONObj['isLazy'] = false;
+				}
+				dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
+				dynatreeJSONObj['nid'] = file['nid'];
+			}
+			
+			//console.log('dynatreeJSONObj: ' + dynatreeJSONObj);
+			
+			dynatreeJSONArr.push(dynatreeJSONObj);
+			
+			
+		}
+	  
+
+		response.send(dynatreeJSONArr);
+	  
+  } else {
+	  
+	  
+	  var req = http.request(options, function(resp) {
+			//console.log('Got response status code ' + resp.statusCode);
+			
+			var responseData = '';
+			resp.on('data', function(chunk) {
+				responseData += chunk;
+			});
+			
+			resp.on('end', function() {
+				console.log('in resp end for files... ' + responseData);
+				var jsonObj = JSON.parse(responseData);
+				
+				var files = jsonObj['files'];
+				
+				var dynatreeJSONArr = [];
+				
+				if(files != undefined) {
+					for(var i=0;i<files.length;i++) {
 						
-						//directory if type is 5 otherwise it is a file
-						if(file['type'] == 5) {
-							dynatreeJSONObj['isFolder'] = true;
-							dynatreeJSONObj['isLazy'] = true;
-						} else { 
-							dynatreeJSONObj['isFolder'] = false;
-							dynatreeJSONObj['isLazy'] = false;
+						var dynatreeJSONObj = {};
+						
+						//console.log('i: ' + i + ' ' + files[i]);
+						var file = files[i];
+						
+						for(var key in file) {
+							//console.log('key: ' + key + ' value: ' + file[key]);
 						}
 						
-						dynatreeJSONObj['path'] = '|' + file['name'];
-						dynatreeJSONObj['nid'] = file['nid'];
-					} else {
-						dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
-						if(file['type'] == 5) {
-							dynatreeJSONObj['isFolder'] = true;
-							dynatreeJSONObj['isLazy'] = true;
-						} else { 
-							dynatreeJSONObj['isFolder'] = false;
-							dynatreeJSONObj['isLazy'] = false;
+						if(queriedPath == '|') {
+							dynatreeJSONObj['title'] = '|' + file['name'];
+							
+							//directory if type is 5 otherwise it is a file
+							if(file['type'] == 5) {
+								dynatreeJSONObj['isFolder'] = true;
+								dynatreeJSONObj['isLazy'] = true;
+							} else { 
+								dynatreeJSONObj['isFolder'] = false;
+								dynatreeJSONObj['isLazy'] = false;
+							}
+							
+							dynatreeJSONObj['path'] = '|' + file['name'];
+							dynatreeJSONObj['nid'] = file['nid'];
+						} else {
+							dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
+							if(file['type'] == 5) {
+								dynatreeJSONObj['isFolder'] = true;
+								dynatreeJSONObj['isLazy'] = true;
+							} else { 
+								dynatreeJSONObj['isFolder'] = false;
+								dynatreeJSONObj['isLazy'] = false;
+							}
+							dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
+							dynatreeJSONObj['nid'] = file['nid'];
 						}
-						dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
-						dynatreeJSONObj['nid'] = file['nid'];
+						
+						
+						dynatreeJSONArr.push(dynatreeJSONObj);
+						
 					}
 					
-					
-					dynatreeJSONArr.push(dynatreeJSONObj);
+				} else {
 					
 				}
 				
-			} else {
 				
-			}
+				//response.send(jsonObj);
+				response.send(dynatreeJSONArr);
+			});
 			
-			
-			/*
-			var filesArr = jsonObj['files'];
-			
-			for(var i=0;i<filesArr.length;i++) {
-				var file = filesArr[i];
-				
-				console.log('file path -> ' + file['path']);
-				
-			}
-			*/
-			
-			//response.send(jsonObj);
-			response.send(dynatreeJSONArr);
+			resp.on('error', function(e) {
+				response.send('error: ' + e);
+			});
 		});
 		
-		resp.on('error', function(e) {
-			response.send('error: ' + e);
-		});
-	});
-	
-	req.end();
-	
+		req.end();
+
+	  
+	  
+  }
+  
+  	
 	
 });
 
 
-
-//sample- initial files data proxy service
-app.get('/initfilesdata', function(request,response) {
-
-	//console.log('init files data');
-	
-	var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
-	respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
-								
-	response.send(respText);
-
-
-});
 
 //files proxy service
 app.get('/filesinfo', function(request,response) {
@@ -1158,3 +1219,43 @@ for(var i = 0; i < numPipes; i++) {
 var respText = JSON.stringify(respArr);
 response.send(respText);*/
 	
+
+
+
+/*
+//appsObjArr
+var jsonFileResponse = {};
+
+jsonFileResponse['nid'] = 200004;
+jsonFileResponse['xuid'] = 0;
+jsonFileResponse['xgid'] = 2329;
+jsonFileResponse['name'] = 'stf008';
+jsonFileResponse['ctime'] = 1380646733;
+jsonFileResponse['type'] = 5;
+jsonFileResponse['mtime'] = 1380646733;
+jsonFileResponse['files'] = [];
+
+var file1 = {};
+file1['nid'] = 200008;
+file1['xuid'] = 0;
+file1['xgid'] = 2329;
+file1['name'] = 'proj-shared1';
+file1['fmode'] = 504;
+file1['ctime'] = 1386265998;
+file1['mtime'] = 1386265998;
+
+var file2 = {};
+file2['nid'] = 200008;
+file2['xuid'] = 0;
+file2['xgid'] = 2329;
+file2['name'] = 'proj-shared2';
+file2['fmode'] = 504;
+file2['ctime'] = 1386265998;
+file2['mtime'] = 1386265998;
+
+jsonFileResponse['files'].push(file1);
+jsonFileResponse['files'].push(file2);
+*/
+
+
+
