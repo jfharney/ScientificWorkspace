@@ -1,21 +1,18 @@
 // postUserData is called in main.js, where element is the string '#user_info'.
 // This function populates the User Info section of the Info pane at bottom of main page.
 function postUserData(element) {
-	var user_info_space = element;
-	
-	$(user_info_space).empty();
-	
-	if(SW != undefined) {
-		$(user_info_space).append('<div>username: ' + SW.current_user_username + '</div>');
-		$(user_info_space).append('<div>uid: <span id="user_info_id">' + SW.current_user_number + '</span></div>');
-		$(user_info_space).append('<div>email: ' + SW.current_user_email + '</div>');
-		$(user_info_space).append('<div>firstname: ' + SW.current_user_firstname + '</div>');
-		$(user_info_space).append('<div>middlename: ' + SW.current_user_middlename + '</div>');
-		$(user_info_space).append('<div style="margin-bottom:10px">lastname: ' + SW.current_user_lastname + '</div>');
-	} 
-	else {
-		$(user_info_space).append('<div>The user does not exist</div>');
-	}
+  var user_info_space = element;
+  $(user_info_space).empty();
+
+  if(SW != undefined) {
+	  $(user_info_space).append('<div>Name: ' + SW.current_user_name + '</div>');
+	$(user_info_space).append('<div>Username: ' + SW.current_user_username + '</div>');
+	$(user_info_space).append('<div>Uid: <span id="user_info_id">' + SW.current_user_number + '</span></div>');
+	$(user_info_space).append('<div>Email: ' + SW.current_user_email + '</div>');
+  } 
+  else {
+    $(user_info_space).append('<div>The user does not exist</div>');
+  }
 }
 
 

@@ -2,6 +2,7 @@ function getCollaboratorInfo(userNumber, searchArg) {
   var groupsArr = [];
   if(searchArg == undefined) searchArg = '';
   var url = 'http://'+SW.hostname+':'+SW.port+'/groupinfo/'+userNumber+'?search='+searchArg;
+  console.log('We are inside getCollaboratorInfo().');
   
   // Grab the group info for the user with uid (number).
   $.ajax({
@@ -17,10 +18,12 @@ function getCollaboratorInfo(userNumber, searchArg) {
       // Create the initial children for the tree.
       var children = [];
       for(var i = 0; i < groupsArr.length; i++) {
-        var child = {title : groupsArr[i]['gname'], 
-                     isFolder : true, 
-                     isLazy : true, 
-                     id : groupsArr[i]['gid']};
+        var child = {	
+        				title : groupsArr[i]['gname'], 
+                     	isFolder : true, 
+                     	isLazy : true, 
+                     	id : groupsArr[i]['gid']
+        			};
         children.push(child);
       }
       buildCollaboratorTree(children);
