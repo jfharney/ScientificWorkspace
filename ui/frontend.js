@@ -1,16 +1,8 @@
 var express = require('express');
 var app = express();
-//<<<<<<< HEAD
-var firewallMode = false;
-//=======
-//var firewallMode = true;
-//>>>>>>> devel-practice-copy
 var http = require('http');
 var url = require('url');
-//app.use(express.static(__dirname + 'public'));
-//var proxy = require('./proxyConfig.js');
-var serviceHost = 'techint-b117';
-var servicePort = '8080';
+var proxy = require('./proxy/proxyConfig.js');
 
 // Start Express
 var express = require("express");
@@ -36,8 +28,8 @@ var apps = require('./proxy/apps.js');
 var associations = require('./proxy/associations.js');
 var tags = require('./proxy/tags.js');
 
-
-console.log('firewall: ' + jobs.firewallMode);
+if(proxy.firewallMode)
+  console.log('firewall: ' + proxy.firewallMode);
 
 var counter = 0;
 var counter2 = 0;
@@ -130,135 +122,43 @@ app.get("/settings/:user_id", function(request, response) {
 });
 
 app.get("/workspace/:user_id", function(request, response) {
-//<<<<<<< HEAD
-  /* Original Version: */
-  //response.render("index1", { uid : request.params.user_id });
-//=======
-
-  /* Version for when server is NOT working: */
-//<<<<<<< HEAD
-//>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
 	
-	console.log('A GET for /workspace/:user_id has been issued.');
-	  
-	var options = {
-	  host: 'localhost',
-	  port: '1337',
-	  path: '/offline',
-	  method: 'GET'
-	};
-    var userObj = {"nid":39644,"uid":5112,"uname":"8xo","name":"John F. Harney","type":0,"email":"dillowda@ornl.gov"};
-
-    //var req = http.request(options, function(resp) {
-    if(firewallMode) {
-        response.render("index1", userObj);
-        //console.log('The page has been rendered.');
-    } else {
-    	var options = {
-    		    host: serviceHost,
-    		    port: servicePort,
-    		    path: "/sws/user?uname=" + request.params.user_id,
-    		    method: 'GET'
-    		  };
-    	
-    	 var req = http.request(options, function(resp) {
-    			
-    		    var responseData = '';
-    		    resp.on('data', function(chunk) {
-    		      responseData += chunk;
-    		    });
-    		    
-    		    resp.on('end', function() {
-    		    	console.log('user responseData: ' + responseData);
-    		      var userObj = JSON.parse(responseData);
-    		      response.render("index1", userObj);
-    		    });
-
-    		    resp.on('error', function(e) {
-    		      response.send('error: ' + e);
-    		    });
-    		  });
-    	 
-    	 
-    	 req.end();
-    	 
-    }
-
-    
-});
-//=======
-//  var userObj = {"nid":39644,"uid":5112,"uname":"8xo","name":"John F. Harney","type":0,"email":"harneyjf@ornl.gov"};
-
-//  if(firewallMode)
-//    response.render("index1", userObj);
-//  else {
-//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
-
-    /* Version for when server is working. */
-	  
-//<<<<<<< HEAD
-//  var userObj = {};
-
-//<<<<<<< HEAD
-  /* Make a request to return all user data, based on the username.*/
+  console.log('A GET for /workspace/:user_id has been issued.');
   
-  /*
-=======
-  // Make a request to return all user data, based on the username.
->>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
-  var options = {
-    host: serviceHost,
-    port: servicePort,
-    path: "/sws/user?uname=" + request.params.user_id,
-    method: 'GET'
-  };
-=======
-	console.log('Making a call to http://' + serviceHost + ':' + servicePort + '/sws/user?uname=' + request.params.user_id);
+  var userObj = {"nid":39644,"uid":5112,"uname":"8xo","name":"John F. Harney","type":0,"email":"harneyjf@ornl.gov"};
 
-    // Make a request to return all user data, based on the username.
+  if(proxy.firewallMode) {
+    response.render("index1", userObj);
+  } 
+  else {
     var options = {
-      host: serviceHost,
-      port: servicePort,
+      host: proxy.serviceHost,
+      port: proxy.servicePort,
       path: "/sws/user?uname=" + request.params.user_id,
       method: 'GET'
     };
->>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
-		
+
     var req = http.request(options, function(resp) {
-		
+    
       var responseData = '';
       resp.on('data', function(chunk) {
         responseData += chunk;
       });
-    
+
       resp.on('end', function() {
         var userObj = JSON.parse(responseData);
-        for(var i in userObj)
-          console.log(i + ': ' + userObj[i]);
         response.render("index1", userObj);
       });
 
       resp.on('error', function(e) {
         response.send('error: ' + e);
       });
+      
     });
-		
-<<<<<<< HEAD
-//<<<<<<< HEAD
-//  req.end();
-  
-//=======
-  //req.end();
-  
-//});
-
-app.get('/offline', function(request, response) {
-  response.send('');
-//>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
-=======
-    req.end(); 
-  }
->>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
+    	 
+    req.end();
+    	 
+  }  
 });
 
 app.get('/doi/:user_id',function(request,response) {
@@ -367,8 +267,8 @@ app.get("/userinfo/:user_id", function(request, response) {
 	
 	//query the userlist service here
 	var options = {
-			host: serviceHost,
-			port: servicePort,
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
 			path: path,
 			method: 'GET'
 		  };
@@ -453,7 +353,7 @@ app.get("/groupinfo/:uid", function(request, response) {
 	for(var i = 0; i < 3; i++) {
 	  var respObj = {};
 		if(i == 0) {
-		  respObj['title'] = groupObj1['gname'];
+		  respObj['gname'] = groupObj1['gname'];
 		  respObj['isFolder'] = true;
 		  respObj['type'] = 2;
 		  respObj['gid'] = groupObj1['gid'];
@@ -461,7 +361,7 @@ app.get("/groupinfo/:uid", function(request, response) {
 		  respObj['nid'] = groupObj1['nid'];
 		}
 		else if(i == 1) {
-		  respObj['title'] = groupObj2['gname'];
+		  respObj['gname'] = groupObj2['gname'];
 		  respObj['isFolder'] = true;
 		  respObj['type'] = 2;
 		  respObj['gid'] = groupObj2['gid'];
@@ -469,7 +369,7 @@ app.get("/groupinfo/:uid", function(request, response) {
 		  respObj['nid'] = groupObj2['nid'];
 		}
 		else {
-		  respObj['title'] = groupObj3['gname'];
+		  respObj['gname'] = groupObj3['gname'];
 		  respObj['isFolder'] = true;
 		  respObj['type'] = 2;
 		  respObj['gid'] = groupObj3['gid'];
@@ -478,7 +378,6 @@ app.get("/groupinfo/:uid", function(request, response) {
 		}
 	  respArr.push(respObj);
 	}
-	
 	response.send(respArr);
   }	
   else {
@@ -498,8 +397,7 @@ app.get('/groups/:gid',function(request, response) {
 //--------Jobs API----------//
 
 app.get('/jobsproxy/:userNum', function(request, response) {
-//<<<<<<< HEAD
-  if(firewallMode) {
+  if(proxy.firewallMode) {
 	var jobsObjArr = [];
 		  
 	var jobsObj1 = {};
@@ -529,6 +427,8 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 	jobsObj2['wall'] = 0;
 	jobsObj2['user'] = 9238;
 	jobsObjArr.push(jobsObj2);
+
+	var respArr = [];
     
 	for(var i = 0; i < 2; i++) {
 	  var respObj = {};
@@ -558,122 +458,6 @@ app.get('/jobsproxy/:userNum', function(request, response) {
   } else {
 	jobs.jobsproxyHelper(request, response);
   }
-    
-    /*
-    var jobJidArr = [];
-    for(var i = 0; i < jobsObjArr.length; i++)
-      jobJidArr.push(jobsObjArr[i]['jid']);
-=======
-	if(proxy.firewallMode) {
-		var jobsObjArr = [];
-		var jobsObj1 = {};
-		jobsObj1['nid'] = 88388;
-		jobsObj1['nodes'] = 1;
-		jobsObj1['jid'] = 1722972;
-		jobsObj1['err'] = 0;
-		jobsObj1['stop'] = 1378024278;
-		jobsObj1['host'] = 'titan';
-		jobsObj1['start'] = 1378024199;
-		jobsObj1['name'] = 'swtc1';
-		jobsObj1['type'] = 2;
-		jobsObj1['wall'] = 0;
-		jobsObj1['user'] = 9238;
-		jobsObjArr.push(jobsObj1);
-
-		var jobsObj2 = {};
-		jobsObj2['nid'] = 88516;
-		jobsObj2['nodes'] = 1;
-		jobsObj2['jid'] = 1722981;
-		jobsObj2['err'] = 0;
-		jobsObj2['stop'] = 1378027579;
-		jobsObj2['host'] = 'titan';
-		jobsObj2['start'] = 1378027539;
-		jobsObj2['name'] = 'swtc1-dg';
-		jobsObj2['type'] = 2;
-		jobsObj2['wall'] = 0;
-		jobsObj2['user'] = 9238;
-		jobsObjArr.push(jobsObj2);
-		
-		var jobJidArr = [];
-		for(var i = 0; i < jobsObjArr.length; i++)
-		  jobJidArr.push(jobsObjArr[i]['jid']);
->>>>>>> devel-practice-copy
-		
-    var jobNidArr = [];
-    for(var i = 0; i < jobsObjArr.length; i++)
-	  jobNidArr.push(jobsObjArr[i]['nid']);
-
-	var jobNameArr = [];
-	for(var i = 0; i < jobsObjArr.length; i++)
-	  jobNameArr.push(jobsObjArr[i]['name']);
-		
-//<<<<<<< HEAD
-		var respArr = [];
-        
-		for(var i = 0; i < 2; i++) {
-		  var respObj = {};
-			if(i == 0) {
-			  respObj['title'] = jobsObj1['name'];
-			  respObj['isFolder'] = true;
-			  respObj['isLazy'] = true;
-			  respObj['type'] = 2;
-			  respObj['jobid'] = jobsObj1['jid'];
-			  respObj['tooltip'] = 'This is a tooltip.';
-			  respObj['nid'] = jobsObj1['nid'];
-				
-			}
-			else {
-				  respObj['title'] = jobsObj2['name'];
-				  respObj['isFolder'] = true;
-				  respObj['isLazy'] = true;
-				  respObj['type'] = 2;
-				  respObj['jobid'] = jobsObj2['jid'];
-				  respObj['tooltip'] = 'This is a tooltip.';
-				  respObj['nid'] = jobsObj2['nid'];
-			}
-		  respArr.push(respObj);
-//=======
-	var respArr = [];
-       
-	for(var i = 0; i < 2; i++) {
-	  var respObj = {};
-		if(i == 0) {
-		  respObj['title'] = jobsObj1['name'];
-		  respObj['isFolder'] = true;
-		  respObj['type'] = 2;
-		  respObj['jobid'] = jobsObj1['jid'];
-		  respObj['tooltip'] = 'This is a tooltip.';
-		  respObj['nid'] = jobsObj1['nid'];
-//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
-		}
-		else {
-		  respObj['title'] = jobsObj2['name'];
-		  respObj['isFolder'] = true;
-		  respObj['type'] = 2;
-		  respObj['jobid'] = jobsObj2['jid'];
-		  respObj['tooltip'] = 'This is a tooltip.';
-		  respObj['nid'] = jobsObj2['nid'];
-		}
-	  respArr.push(respObj);
-	}
-		
-		
-	response.send(respArr);
-  }
-  else {
-//<<<<<<< HEAD
-	  // jobsproxyHelper is defined in the file proxy/jobs.js.
-	  jobs.jobsproxyHelper(request, response);
-	  // We may reference :userNum with request.params.userNum.}
-	  //response.send(respObj);
-//=======
-	// jobsproxyHelper is defined in the file proxy/jobs.js.
-//	jobs.jobsproxyHelper(request, response);
-	// We may reference :userNum with request.params.userNum.}
-    //response.send(respObj);
-//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
-  }
-  */
 });
 
 app.get("/jobinfo/:job_id", function(request, response) {
@@ -695,7 +479,7 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 // Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
 app.get('/appsproxy', function(request, response) {
 	console.log('apps proxy?');
-	if(firewallMode) {
+	if(proxy.firewallMode) {
 		  var appsObjArr = [];
 		  
 		  var appObj1 = {};
@@ -755,7 +539,7 @@ app.get('/appsproxy', function(request, response) {
 });
 
 app.get('/appinfo', function(request, response) {
-  if(firewallMode) {
+  if(proxy.firewallMode) {
 	  
 	  
 	  /*
@@ -843,9 +627,9 @@ app.get('/tags', function(request, response)
 		arguments += "&" + i + "=" + args[i];
 	
 	var options = {
-			host: serviceHost,
-			port: servicePort,
-			path: "sws/tags?uid=" + args['uid'],
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
+			path: "/sws/tags?uid=" + args['uid'],
 			method: 'GET'
 	};
 	
@@ -931,8 +715,8 @@ app.get('/files/:userNum', function(request, response) {
   // Query above is an object containing all the 
   // arguments in the URL as key-value pairs. 
   var options = {
-    host: serviceHost,
-	port: servicePort,
+    host: proxy.serviceHost,
+	port: proxy.servicePort,
 	path: path,
 	method: 'GET'
   };
@@ -1066,8 +850,8 @@ app.get('/filesinfo', function(request,response) {
 	
 	//query the file service here
 	var options = {
-			host: serviceHost,
-			port: servicePort,
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
 			path: path,
 			method: 'GET'
 		  };

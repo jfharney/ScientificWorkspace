@@ -1,45 +1,24 @@
-$(document).ready(function() 
-{
-  var host = 'localhost';
-  var port = '1337';
+$(document).ready(function() {
 
-  /*
-  var user_label = $('#user_info_id').html();
-  var uid = user_label.trim();
-  */
-  //need to get the uid here
-  //var uid = getUserFromModel();
-  //MUST FIX!!!!
+  var uid = SW.current_user_number;
   
-  
-  
-  var uid = '9328';
-  
-  var t_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
-  var a_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/associations?';
+  var t_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/sws/tags?';
+  //var a_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/associations?';
 	
   $.ajax({
     type: "GET",
 	url: t_url_prefix + 'uid=' + uid,
 	success: function(data) 
 	{
-		
-	  $.each(data, function(key, value) {
-		  
-		  
-		  
-		  
-	    $.each(value, function(index, arVal) {
-	    	
-		  var tag_uuid = arVal['uuid'];
+      $.each(data, function(key, value) {
+        $.each(value, function(index, arVal) {
+	      var tag_uuid = arVal['uuid'];
 		  var tag_name = arVal['tagname'];
 		  		
 		  $.ajax({
 		    type: "GET",
-			url: a_url_prefix + 'edge=' + tag_uuid,
+            url: a_url_prefix + 'edge=' + tag_uuid,
 			success: function(associations_data) {
-				
-			
 			  var associations_length = associations_data['associations'].length;
 			  if(associations_length > 0) { 
 			    var fontsize = 8;
@@ -49,8 +28,7 @@ $(document).ready(function()
 					  		(fontsize + associations_length) + 
 					  		'px; cursor:pointer">' + 
 					  		tag_name + 
-					  		'</a> <span> </span>').on( "click", function()   
-			    {  
+					  		'</a> <span> </span>').on( "click", function() {  
 			      $('div#tagCloudInfo').empty();
 			      $('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: ' + $( this ).text() + "</div>");
 			      $('#cloud_info').append('<div># Objects: ' + associations_length + '</div>');

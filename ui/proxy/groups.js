@@ -2,29 +2,18 @@ console.log('Loading groups js');
 
 var express = require('express');
 var app = express();
-var firewallMode = false;
 var http = require('http');
 var url = require('url');
-//<<<<<<< HEAD
-//var serviceHost = 'techint-b117';//'160.91.210.32';
-//=======
-var serviceHost = 'techint-b117';
-//>>>>>>> 5961245948184b06164fe18559bfd42fd5bd98c2
-var servicePort = '8080';
+var proxy = require('./proxyConfig.js');
 
 var groupinfoHelper = function(request, response) {
 	
-  //console.log('Inside groupinfoHelper in proxy/groups.js...');
-  
   var path = '/sws/groups?uid='+request.params.uid;
-  //console.log('In groupinfoHelper, the value of request.params.uid is ' + request.params.uid);
   
-  console.log('groups.js: Making a call to http://'+serviceHost+':'+servicePort+path);
-	
   // Query for all groups with the specified user number ('uid').
   var options = {
-	host: serviceHost,
-	port: servicePort,
+	host: proxy.serviceHost,
+	port: proxy.servicePort,
 	path: path,
 	method: 'GET'
   };
@@ -34,24 +23,23 @@ var groupinfoHelper = function(request, response) {
   var responseData = '';
 	
   var req = http.request(options, function(res) {
-	res.on('header', function() {
-	  console.trace('HEADERS GOING TO BE WRITTEN');
-	});
     res.on('data', function (chunk) {
       responseData += chunk;	
     });
     res.on('end', function() {
       try {
 	    var jsonObj = JSON.parse(responseData);
-	    var filteredGroupsObj = {'groups' : []};
+
+	    //var filteredGroupsObj = {'groups' : []};
+	    var filteredGroupsObj = {};
 	    
 		// Modularize the search refinement.
 	    if(searchArg != undefined && searchArg != '') {
 		  filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj);
-	      response.send(filteredGroupsObj);
 	    }
-	    else
+	    else {
           response.send(jsonObj);
+	    }
       } 
       catch (e) {
         var emptyReturnObj = { groups : [] };		
@@ -92,8 +80,8 @@ var groupsHelper = function(request, response) {
   var path = '/sws/users?gid=' + request.params.gid;
 
   var options = {
-    host: serviceHost,
-    port: servicePort,
+    host: proxy.serviceHost,
+    port: proxy.servicePort,
     path: path,
     method: 'GET'
   };
@@ -106,8 +94,6 @@ var groupsHelper = function(request, response) {
     });
 		  
     res.on('end', function() {
-      //console.log("End of users per group call...");
-      //console.log(responseData);
       var jsonObj = {};
       jsonObj.members = JSON.parse(responseData);
       var uidArr = new Array();
@@ -133,7 +119,7 @@ var groupsHelper = function(request, response) {
 		  
   }).on('error', function(e) {
     console.log("Got error: " + e.message);
-	var respText = '[{"title": "Jobs For eeendeve", "isFolder": true, "isLazy": true	, "type" : "jobs" } ]';
+	var respText = '[{"title": "Jobs For eeendeve", "isFolder": true, "isLazy": true, "type" : "jobs" }]';
     response.send(respText);
   });
 	

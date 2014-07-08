@@ -1,10 +1,4 @@
 $(function() {
-	
-
-	//$('div#resources_to_doi').append('<div>' + 'hello' + '</div>');
-	//$('.modal-body').append('<div>' + 'hello' + '</div>');
-	
-	
   console.log('<><><>MAIN<><><>');
   
   /* We transfer the current user data values stored in the document object to the 
@@ -19,10 +13,10 @@ $(function() {
   getJobInfo(SW.current_user_number);
   
   /* This function is defined in ajax/groupinfo.js. */
-  //getCollaboratorInfo(SW.current_user_number);
+  getCollaboratorInfo(SW.current_user_number);
   
   /* This function is defined in ajax/userinfo.js. */
-  //postUserData('#user_info');
+  postUserData('#user_info');
   
   /* This function is defined in ajax/fileinfo.js. */
   getFileInfo(SW.current_user_number);
@@ -97,11 +91,7 @@ $(function() {
     $("#jobs_tree").dynatree("getTree").reload();
     $("#jobsSearchPanel").slideToggle();
   });
-  
-  
-  
-  
-  
+
 });
 
 /* This function sets the object visibilityObj to represent the values of the document cookie. 
