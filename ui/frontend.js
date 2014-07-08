@@ -26,6 +26,7 @@ var files = require('./proxy/files.js');
 var jobs = require('./proxy/jobs.js');
 var apps = require('./proxy/apps.js');
 var associations = require('./proxy/associations.js');
+var associationsfeed = require('./proxy/associationsfeed.js');
 var tags = require('./proxy/tags.js');
 
 
@@ -34,140 +35,13 @@ var data = require('./data/firewall_sources.js');
 if(proxy.firewallMode)
   console.log('firewall: ' + proxy.firewallMode);
 
-var counter = 0;
-var counter2 = 0;
 
-var associations = [];
-
-var association = {
-					'name' : 'association1', 
-					'source' : 'resource1',
-					'target' : 'resource2'
-				  };
-
-associations.push(association);
-
-var associations2 = [];
-
-var association2 = {
-					'name' : 'association2', 
-					'source' : 'resource2',
-					'target' : 'resource2'
-				  };
-
-associations2.push(association2);
-
-app.get('/server1', function(request, response) {
-	
-	counter = counter + 1;
-	
-	console.log('output for server1 ' + counter + ' ' + (counter % 1000));
-	
-	if(counter > 10) {
-		counter = 0;
-		
-		var d = new Date();
-		var n = d.getMilliseconds(); 
-		
-		//get the associations
-		var returnedAssocations = associations;
-		
-		var association = {
-				'name' : 'association-1-' + n, 
-				'source' : 'resource-1-' + n,
-				'target' : 'resource-1-' + n
-			  };
-
-		associations.push(association);
-		
-		response.send(returnedAssocations);
-	}
-	
-});
-
-
-app.get('/server2', function(request, response) {
-	
-	counter2 = counter2 + 1;
-	
-	console.log('output for server2 ' + counter2 + ' ' + (counter2 % 1000));
-	
-	//if(counter2 > 10) {
-		counter2 = 0;
-		
-		var d = new Date();
-		var n = d.getMilliseconds(); 
-		
-		//get the associations
-		var returnedAssocations2 = associations2;
-		
-		var association2 = {
-				'name' : 'association-2-' + n, 
-				'source' : 'resource-2-' + n,
-				'target' : 'resource-2-' + n
-			  };
-
-		associations2.push(association2);
-		
-		response.send(returnedAssocations2);
-	//}
-	
-});
-
-
-app.get("/", function(request, response) {
-  response.redirect('/workspace/users/j1s');
-});
-
-app.get("/settings/:user_id", function(request, response) {
-  console.log('\n\n---------in settings proxy for ' + request.params.user_id + '----------');
-  response.render("settings", { uid : request.params.user_id });
-});
-
-app.get("/workspace/:user_id", function(request, response) {
-	
-  console.log('A GET for /workspace/:user_id has been issued.');
-  
-  var userObj = {"nid":39644,"uid":5112,"uname":"8xo","name":"John F. Harney","type":0,"email":"harneyjf@ornl.gov"};
-
-  if(proxy.firewallMode) {
-    response.render("index1", userObj);
-  } 
-  else {
-    var options = {
-      host: proxy.serviceHost,
-      port: proxy.servicePort,
-      path: "/sws/user?uname=" + request.params.user_id,
-      method: 'GET'
-    };
-
-    var req = http.request(options, function(resp) {
-    
-      var responseData = '';
-      resp.on('data', function(chunk) {
-        responseData += chunk;
-      });
-
-      resp.on('end', function() {
-        var userObj = JSON.parse(responseData);
-        response.render("index1", userObj);
-      });
-
-      resp.on('error', function(e) {
-        response.send('error: ' + e);
-      });
-      
-    });
-    	 
-    req.end();
-    	 
-  }  
-});
+/*************************************************************/
 
 app.get('/doi/:user_id',function(request,response) {
-  console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
-  response.render("index2", { uid : request.params.user_id });
-});
+	  console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
+	  response.render("index2", { uid : request.params.user_id });
+	});
 
 app.post('/doi/:user_id',function(request,response) {
 	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
@@ -186,11 +60,43 @@ app.post('/doi/:user_id',function(request,response) {
 	response.render("index2", { uid : request.params.user_id });
 });
 
+/*************************************************************/
 
-function isArray(what) 
-{
-    return Object.prototype.toString.call(what) === '[object Array]';
-}
+app.get("/settings/:user_id", function(request, response) {
+	  console.log('\n\n---------in settings proxy for ' + request.params.user_id + '----------');
+	  response.render("settings", { uid : request.params.user_id });
+});
+
+
+/*************************************************************/
+
+app.get("/", function(request, response) {
+  response.redirect('/workspace/users/j1s');
+});
+
+
+app.get("/workspace/:user_id", function(request, response) {
+	
+  console.log('A GET for /workspace/:user_id has been issued.');
+  
+  
+  if(proxy.firewallMode) {
+	  
+	var userObj = data.userObj;
+    response.render("index1", userObj);
+    
+  } 
+  else {
+	  
+	var res = users.userHelper(request, response);  
+	
+  }  
+});
+
+
+/*************************************************************/
+
+
 
 
 app.get("/userinfo/:user_id", function(request, response) {
@@ -237,6 +143,35 @@ app.get("/userinfo/:user_id", function(request, response) {
 	 });
 	 
 	 req.end();
+	
+});
+
+
+/*************************************************************/
+
+
+//information feeds
+app.get('/server1', function(request, response) {
+	
+	
+	if(proxy.firewallMode) {
+		var res = associationsfeed.feed1(request, response);
+	} else {
+		var res = associationsfeed.feed1(request, response);
+	}
+	
+	
+});
+
+
+app.get('/server2', function(request, response) {
+	
+	if(proxy.firewallMode) {
+		var res = associationsfeed.feed2(request, response);
+	} else {
+		var res = associationsfeed.feed2(request, response);
+	}
+	
 	
 });
 
@@ -297,14 +232,18 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 
 app.get("/jobinfo/:job_id", function(request, response) {
   console.log('calling jobs info with job_id ' + request.params.job_id);
+  
   var res = jobs.jobsinfoHelper(request, response);
+
 });
 
 // This method has been added to solve the problem of finding a job name
 // given its UUID (from the associations table). 
 app.get("/jobUuid/:job_uuid", function(request, response) {	
   //console.log ('Calling jobUuid on ' + request.params.job_uuid);	
+
   var res = jobs.jobsUuidHelper(request, response);
+
 });
 
 /*************************************************************/
@@ -324,64 +263,16 @@ app.get('/appsproxy', function(request, response) {
 	
 });
 
-app.get('/appinfo', function(request, response) {
+app.get('/appinfo/:appnum', function(request, response) {
   if(proxy.firewallMode) {
 	  
+	var res = apps.appsinfoHelperFirewall(request,response);
 	  
-	  /*
-	  var appsObjArr = [];
-	  
-	  var appObj1 = {};
-	  appObj1['nid'] = 93636;
-	  appObj1['nodes'] = 1;
-	  appObj1['err'] = 0;
-	  appObj1['stop'] = 1378024273;
-	  appObj1['host'] = 'titan';
-	  appObj1['start'] = 1378024204;
-	  appObj1['cmd'] = '/usr/bin/aprun -n 16 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/test_execs/swtcA/swtcA';
-	  appObj1['type'] = 3;
-	  appObj1['aid'] = 3498899;
-	  appObj1['job'] = 1722972;
-	  ppsObjArr.push(appObj1);
-	  
-	  var appObj2 = {};
-	  appObj2['nid'] = 93656;
-	  appObj2['nodes'] = 1;
-	  appObj2['err'] = 0;
-	  appObj2['stop'] = 1378024274;
-	  appObj2['host'] = 'titan';
-	  appObj2['start'] = 1378024274;
-	  appObj2['cmd'] = '/usr/bin/aprun -n 1 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/utils/cprnc/bin/cprnc /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/tests/swtc1/movies/swtc11.nc /lustre/widow/scratch/jamroz/h';
-	  appObj2['type'] = 3;
-	  appObj2['aid'] = 3498904;
-	  appObj2['job'] = 1722972;
-	  appsObjArr.push(appObj2);
-	  
-
-	  var respArr = [];
-	  for(var i = 0; i < appsArr.length; i++) {
-		  var respObj = {};
-		  if(i == 0) {
-			  respObj['title'] = appObj1['aid'];
-			  respObj['type'] = appObj1['type'];
-			  respObj['jobid'] = appObj1['job'];
-			  respObj['uuid'] = appObj1['nid'];
-			  
-		  } else {
-			  respObj['title'] = appObj2['aid'];
-			  respObj['type'] = appObj2['type'];
-			  respObj['jobid'] = appObj2['job'];
-			  respObj['uuid'] = appObj2['nid'];
-		  }
-		
-          respArr.push(respObj);
-	  }
-			  
-	  response.send(respArr);
-	  */
   }
   else {
-    var res = apps.appsproxyHelper(request,response);
+    
+	  var res = apps.appsinfoHelper(request,response);
+    
   }
 });
 
@@ -484,6 +375,7 @@ app.get('/tags/links/:tag_nid', function(request, response) {
 
 //-----------End Tags-----------//
 
+/*************************************************************/
 
 //--------Files API---------//
 
@@ -516,141 +408,11 @@ app.get('/files/:userNum', function(request, response) {
   
   if(proxy.firewallMode) {
 	  
-	  
-	  //the source
-	  var files = data.jsonFileResponse['files'];
-	  
-	  var dynatreeJSONArr = [];
-	  
-	  for(var i=0;i<files.length;i++) {
-			
-			var dynatreeJSONObj = {};
-			
-			
-			//console.log('i: ' + i + ' ' + files[i]);
-			var file = files[i];
-			
-			for(var key in file) {
-				console.log('key: ' + key + ' value: ' + file[key]);
-			}
-			
-			if(queriedPath == '|') {
-				dynatreeJSONObj['title'] = '|' + file['name'];
-				
-				//directory if type is 5 otherwise it is a file
-				if(file['type'] == 5) {
-					dynatreeJSONObj['isFolder'] = false;
-					dynatreeJSONObj['isLazy'] = false;
-				} else { 
-					dynatreeJSONObj['isFolder'] = false;
-					dynatreeJSONObj['isLazy'] = false;
-				}
-				
-				dynatreeJSONObj['path'] = '|' + file['name'];
-				dynatreeJSONObj['nid'] = file['nid'];
-			} else {
-				dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
-				if(file['type'] == 5) {
-					dynatreeJSONObj['isFolder'] = true;
-					dynatreeJSONObj['isLazy'] = true;
-				} else { 
-					dynatreeJSONObj['isFolder'] = false;
-					dynatreeJSONObj['isLazy'] = false;
-				}
-				dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
-				dynatreeJSONObj['nid'] = file['nid'];
-			}
-			
-			//console.log('dynatreeJSONObj: ' + dynatreeJSONObj);
-			
-			dynatreeJSONArr.push(dynatreeJSONObj);
-			
-			
-		}
-	  
-
-		response.send(dynatreeJSONArr);
+	  var res = files.filesproxyHelperFirewall(request, response);
 	  
   } else {
-	  
-	  
-	  var req = http.request(options, function(resp) {
-			//console.log('Got response status code ' + resp.statusCode);
-			
-			var responseData = '';
-			resp.on('data', function(chunk) {
-				responseData += chunk;
-			});
-			
-			resp.on('end', function() {
-				console.log('in resp end for files... ' + responseData);
-				var jsonObj = JSON.parse(responseData);
-				
-				var files = jsonObj['files'];
-				
-				var dynatreeJSONArr = [];
-				
-				if(files != undefined) {
-					for(var i=0;i<files.length;i++) {
-						
-						var dynatreeJSONObj = {};
-						
-						//console.log('i: ' + i + ' ' + files[i]);
-						var file = files[i];
-						
-						for(var key in file) {
-							//console.log('key: ' + key + ' value: ' + file[key]);
-						}
-						
-						if(queriedPath == '|') {
-							dynatreeJSONObj['title'] = '|' + file['name'];
-							
-							//directory if type is 5 otherwise it is a file
-							if(file['type'] == 5) {
-								dynatreeJSONObj['isFolder'] = true;
-								dynatreeJSONObj['isLazy'] = true;
-							} else { 
-								dynatreeJSONObj['isFolder'] = false;
-								dynatreeJSONObj['isLazy'] = false;
-							}
-							
-							dynatreeJSONObj['path'] = '|' + file['name'];
-							dynatreeJSONObj['nid'] = file['nid'];
-						} else {
-							dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
-							if(file['type'] == 5) {
-								dynatreeJSONObj['isFolder'] = true;
-								dynatreeJSONObj['isLazy'] = true;
-							} else { 
-								dynatreeJSONObj['isFolder'] = false;
-								dynatreeJSONObj['isLazy'] = false;
-							}
-							dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
-							dynatreeJSONObj['nid'] = file['nid'];
-						}
-						
-						
-						dynatreeJSONArr.push(dynatreeJSONObj);
-						
-					}
-					
-				} else {
-					
-				}
-				
-				
-				//response.send(jsonObj);
-				response.send(dynatreeJSONArr);
-			});
-			
-			resp.on('error', function(e) {
-				response.send('error: ' + e);
-			});
-		});
-		
-		req.end();
 
-	  
+	  var res = files.filesproxyHelper(request, response);
 	  
   }
   
@@ -659,263 +421,13 @@ app.get('/files/:userNum', function(request, response) {
 });
 
 
+/*************************************************************/
 
-//files proxy service
-app.get('/filesinfo', function(request,response) {
-	
-	
-	//grab the different components of the url
-	var url_parts = url.parse(request.url, true);
-	var query = url_parts.query;
-	
-	var path = '/files?';
-	
-	/*for(var key in query) {
-		if(key == 'path') {
-			filePath = query[key];
-		}
-		path += key + '=' + query[key] + '&';
-	}*/
-	
-	//console.log('filesproxyquery: ' + path);
-	
-	//query the file service here
-	var options = {
-			host: proxy.serviceHost,
-			port: proxy.servicePort,
-			path: path,
-			method: 'GET'
-		  };
-	
-	 var responseData = '';
-	
-	 
-	 if(!firewallMode) {
-		 var req = http.request(options, function(res) {
-			  res.on('data', function (chunk) {
-				  //console.log('\n\n\n\nchunk: ' + chunk);
-				  responseData += chunk;	
-					
-			  });
-			  res.on('end',function() {
-				  
-				  console.log('ending filesproxy...');
-				 
-				  var jsonObj = JSON.parse(responseData);
-			      response.send(jsonObj);
-				 
-				  
-			  });
-			  
-		  
-		 }).on('error', function(e) {
-			 
-			  console.log("Got error: " + e.message);
-		 
-		 });
-		 
-		 req.end();
-	 }
-	 else {
-		 console.log('firewall mode on in file info');
-		 
-		 var fileResponseJSONStr = '{ ' + 
-			'"name" : "lgt006" , ' +
-			'"uid" : 0 , ' + 
-			'"gid" : 16854 , ' +
-			'"filecount" : 203350 , ' +
-			'"isFile" : false , ' + 
-			'"files" : [ ' +
-			'  {' + 
-			'    "name" : "ChromaBuilds1",' +
-			'    "uid" : 63015,' +
-			'    "gid" : 16854,' +
-			'    "filecount" : 196168,' +
-			'    "isfile" : false' +
-			'  },' +
-			'  {' + 
-			'    "name" : "ChromaBuilds2",' +
-			'    "uid" : 63015,' +
-			'    "gid" : 16854,' +
-			'    "filecount" : 196168,' +
-			'    "isfile" : false' +
-			'  }' +
-			//'  {' + 
-			//'  }' +
-			']' +
-			'}';
-		 
-		 //get the file response string here
-		 //var jsonStr = files.doQueryFiles(fileResponseJSONStr);
-		 var jsonStr = fileResponseJSONStr;
-		 
-		 //var jsonObj = JSON.parse(jsonStr);
-	  
-		 var respText = jsonStr; 
-		 response.send(respText);
-		 
-	 }
-	 
-	 
-	 
-});
+function isArray(what) 
+{
+    return Object.prototype.toString.call(what) === '[object Array]';
+}
 
-//files proxy service
-app.get('/files', function(request,response) {
-	
-	
-	console.log ('calling files...\n\n\n\n\n\n\n');
-	var url_parts = url.parse(request.url, true);
-	var query = url_parts.query;
-	
-	var path = '/files?';
-	
-	var filePath = '';
-	
-	for(var key in query) {
-		//console.log('key: ' + key + ' value: ' + query[key]);
-		if(key == 'path') {
-			filePath = query[key];
-		}
-		path += key + '=' + query[key] + '&';
-		console.log('path: ' + path);
-	}
-	
-	console.log('files query: ' + path);
-	
-	//query the file service here
-	var options = {
-			host: serviceHost,
-			port: servicePort,
-			path: path,
-			method: 'GET'
-		  };
-	
-	 var responseData = '';
-	
-	 if(firewallMode) {
-		//use hard coded values
-		 
-		 //console.log('\n\nfirewall mode for file --> off\n\n')
-		 
-		 var fileResponseJSONStr = '{ ' + 
-			'"name" : "lgt006" , ' +
-			'"uid" : 0 , ' + 
-			'"gid" : 16854 , ' +
-			'"filecount" : 203350 , ' +
-			'"isFile" : false , ' + 
-			'"files" : [ ' +
-			'  {' + 
-			'    "name" : "ChromaBuilds1",' +
-			'    "uid" : 63015,' +
-			'    "gid" : 16854,' +
-			'    "filecount" : 196168,' +
-			'    "isfile" : false' +
-			'  },' +
-			'  {' + 
-			'    "name" : "ChromaBuilds2",' +
-			'    "uid" : 63015,' +
-			'    "gid" : 16854,' +
-			'    "filecount" : 196168,' +
-			'    "isfile" : false' +
-			'  }' +
-			//'  {' + 
-			//'  }' +
-			']' +
-			'}';
-		 
-		 
-		 var jsonStr = files.doQueryFiles(fileResponseJSONStr);
-	  
-	  
-		 var respText = jsonStr; //'[ {"title": "SubItem 1", "isLazy": true }, 	{"title": "SubFolder 2", "isFolder": true, "isLazy": true } ]';
-		 response.send(respText);
-		 //response.send('returning message');
-		 
-		 
-	 } 
-	 //call the service for the data
-	 else {
-		 
-		 //console.log('\n\nfirewall mode for file --> off\n\n')
-		 
-		 var req = http.request(options, function(res) {
-			  //console.log("Got response: " + res.statusCode);
-			  //console.log('HEADERS: ' + JSON.stringify(res.headers));
-			  res.on('data', function (chunk) {
-				  //console.log('\n\n\n\nchunk: ' + chunk);
-				  responseData += chunk;	
-				  
-				  
-		    	
-			  });
-			  res.on('end',function() {
-				 
-				  var jsonStr = files.doQueryFiles(responseData,filePath);
-		    	  
-				 var respText = jsonStr; //'[ {"title": "SubItem 1", "isLazy": true }, 	{"title": "SubFolder 2", "isFolder": true, "isLazy": true } ]';
-		    	  response.send(respText);
-				  
-			  });
-			  
-	   	  
-		 }).on('error', function(e) {
-			 
-			  console.log("Got error: " + e.message);
-		 
-		 });
-
-		 req.end();
-	 }
-
-});
-
-
-
-
-
-//--------End files API---------//
-
-
-
-app.get('/userlist', function(request,response) {
-	
-	var path = '/users?retrieve=username';
-	
-	//query the userlist service here
-	var options = {
-			host: serviceHost,
-			port: servicePort,
-			path: path,
-			method: 'GET'
-		  };
-	
-	 var responseData = '';
-	
-	 
-	 var req = http.request(options, function(res) {
-		  res.on('data', function (chunk) {
-			  responseData += chunk;	
-				
-		  });
-		  res.on('end',function() {
-			  
-			 
-			  var jsonObj = JSON.parse(responseData);
-		      response.send(jsonObj);
-			 
-			  
-		  });
-		  
-	  
-	 }).on('error', function(e) {
-		 
-		  console.log("Got error: " + e.message);
-	 
-	 });
-	 
-	 req.end();
-});
 
 
 
@@ -929,6 +441,14 @@ http.createServer(app).listen(1337);
 
 
 
+
+
+
+
+
+
+
+//--- items removed but not deleted yet ---//
 
 
 /*
@@ -1318,5 +838,395 @@ var groupNameArr = [];
 for(var i = 0; i < groupObjsArr.length; i++)
   groupNameArr.push(groupObjsArr[i]['gname']);
 */
+
+
+/*
+//the source
+var files = data.jsonFileResponse['files'];
+
+var dynatreeJSONArr = [];
+
+for(var i=0;i<files.length;i++) {
+		
+		var dynatreeJSONObj = {};
+		
+		
+		//console.log('i: ' + i + ' ' + files[i]);
+		var file = files[i];
+		
+		for(var key in file) {
+			console.log('key: ' + key + ' value: ' + file[key]);
+		}
+		
+		if(queriedPath == '|') {
+			dynatreeJSONObj['title'] = '|' + file['name'];
+			
+			//directory if type is 5 otherwise it is a file
+			if(file['type'] == 5) {
+				dynatreeJSONObj['isFolder'] = false;
+				dynatreeJSONObj['isLazy'] = false;
+			} else { 
+				dynatreeJSONObj['isFolder'] = false;
+				dynatreeJSONObj['isLazy'] = false;
+			}
+			
+			dynatreeJSONObj['path'] = '|' + file['name'];
+			dynatreeJSONObj['nid'] = file['nid'];
+		} else {
+			dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
+			if(file['type'] == 5) {
+				dynatreeJSONObj['isFolder'] = true;
+				dynatreeJSONObj['isLazy'] = true;
+			} else { 
+				dynatreeJSONObj['isFolder'] = false;
+				dynatreeJSONObj['isLazy'] = false;
+			}
+			dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
+			dynatreeJSONObj['nid'] = file['nid'];
+		}
+		
+		//console.log('dynatreeJSONObj: ' + dynatreeJSONObj);
+		
+		dynatreeJSONArr.push(dynatreeJSONObj);
+		
+		
+	}
+
+
+	response.send(dynatreeJSONArr);
+*/
+
+
+
+/*
+var req = http.request(options, function(resp) {
+		//console.log('Got response status code ' + resp.statusCode);
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			console.log('in resp end for files... ' + responseData);
+			var jsonObj = JSON.parse(responseData);
+			
+			var files = jsonObj['files'];
+			
+			var dynatreeJSONArr = [];
+			
+			if(files != undefined) {
+				for(var i=0;i<files.length;i++) {
+					
+					var dynatreeJSONObj = {};
+					
+					//console.log('i: ' + i + ' ' + files[i]);
+					var file = files[i];
+					
+					for(var key in file) {
+						//console.log('key: ' + key + ' value: ' + file[key]);
+					}
+					
+					if(queriedPath == '|') {
+						dynatreeJSONObj['title'] = '|' + file['name'];
+						
+						//directory if type is 5 otherwise it is a file
+						if(file['type'] == 5) {
+							dynatreeJSONObj['isFolder'] = true;
+							dynatreeJSONObj['isLazy'] = true;
+						} else { 
+							dynatreeJSONObj['isFolder'] = false;
+							dynatreeJSONObj['isLazy'] = false;
+						}
+						
+						dynatreeJSONObj['path'] = '|' + file['name'];
+						dynatreeJSONObj['nid'] = file['nid'];
+					} else {
+						dynatreeJSONObj['title'] = queriedPath + '|' + file['name'];
+						if(file['type'] == 5) {
+							dynatreeJSONObj['isFolder'] = true;
+							dynatreeJSONObj['isLazy'] = true;
+						} else { 
+							dynatreeJSONObj['isFolder'] = false;
+							dynatreeJSONObj['isLazy'] = false;
+						}
+						dynatreeJSONObj['path'] = queriedPath + '|' + file['name'];
+						dynatreeJSONObj['nid'] = file['nid'];
+					}
+					
+					
+					dynatreeJSONArr.push(dynatreeJSONObj);
+					
+				}
+				
+			} else {
+				
+			}
+			
+			
+			//response.send(jsonObj);
+			response.send(dynatreeJSONArr);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+	*/
+
+
+
+/* removed 7-8
+//files proxy service
+app.get('/files', function(request,response) {
+	
+	
+	console.log ('calling files...\n\n\n\n\n\n\n');
+	var url_parts = url.parse(request.url, true);
+	var query = url_parts.query;
+	
+	var path = '/files?';
+	
+	var filePath = '';
+	
+	for(var key in query) {
+		//console.log('key: ' + key + ' value: ' + query[key]);
+		if(key == 'path') {
+			filePath = query[key];
+		}
+		path += key + '=' + query[key] + '&';
+		console.log('path: ' + path);
+	}
+	
+	console.log('files query: ' + path);
+	
+	//query the file service here
+	var options = {
+			host: serviceHost,
+			port: servicePort,
+			path: path,
+			method: 'GET'
+		  };
+	
+	 var responseData = '';
+	
+	 if(firewallMode) {
+		//use hard coded values
+		 
+		 //console.log('\n\nfirewall mode for file --> off\n\n')
+		 
+		 var fileResponseJSONStr = '{ ' + 
+			'"name" : "lgt006" , ' +
+			'"uid" : 0 , ' + 
+			'"gid" : 16854 , ' +
+			'"filecount" : 203350 , ' +
+			'"isFile" : false , ' + 
+			'"files" : [ ' +
+			'  {' + 
+			'    "name" : "ChromaBuilds1",' +
+			'    "uid" : 63015,' +
+			'    "gid" : 16854,' +
+			'    "filecount" : 196168,' +
+			'    "isfile" : false' +
+			'  },' +
+			'  {' + 
+			'    "name" : "ChromaBuilds2",' +
+			'    "uid" : 63015,' +
+			'    "gid" : 16854,' +
+			'    "filecount" : 196168,' +
+			'    "isfile" : false' +
+			'  }' +
+			//'  {' + 
+			//'  }' +
+			']' +
+			'}';
+		 
+		 
+		 var jsonStr = files.doQueryFiles(fileResponseJSONStr);
+	  
+	  
+		 var respText = jsonStr; //'[ {"title": "SubItem 1", "isLazy": true }, 	{"title": "SubFolder 2", "isFolder": true, "isLazy": true } ]';
+		 response.send(respText);
+		 //response.send('returning message');
+		 
+		 
+	 } 
+	 //call the service for the data
+	 else {
+		 
+		 //console.log('\n\nfirewall mode for file --> off\n\n')
+		 
+		 var req = http.request(options, function(res) {
+			  //console.log("Got response: " + res.statusCode);
+			  //console.log('HEADERS: ' + JSON.stringify(res.headers));
+			  res.on('data', function (chunk) {
+				  //console.log('\n\n\n\nchunk: ' + chunk);
+				  responseData += chunk;	
+				  
+				  
+		    	
+			  });
+			  res.on('end',function() {
+				 
+				  var jsonStr = files.doQueryFiles(responseData,filePath);
+		    	  
+				 var respText = jsonStr; //'[ {"title": "SubItem 1", "isLazy": true }, 	{"title": "SubFolder 2", "isFolder": true, "isLazy": true } ]';
+		    	  response.send(respText);
+				  
+			  });
+			  
+	   	  
+		 }).on('error', function(e) {
+			 
+			  console.log("Got error: " + e.message);
+		 
+		 });
+
+		 req.end();
+	 }
+
+});
+*/
+
+
+/* removed 7-8
+//files proxy service
+app.get('/filesinfo', function(request,response) {
+	
+	
+	//grab the different components of the url
+	var url_parts = url.parse(request.url, true);
+	var query = url_parts.query;
+	
+	var path = '/files?';
+	
+	
+	
+	//query the file service here
+	var options = {
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
+			path: path,
+			method: 'GET'
+		  };
+	
+	 var responseData = '';
+	
+	 
+	 if(!firewallMode) {
+		 var req = http.request(options, function(res) {
+			  res.on('data', function (chunk) {
+				  //console.log('\n\n\n\nchunk: ' + chunk);
+				  responseData += chunk;	
+					
+			  });
+			  res.on('end',function() {
+				  
+				  console.log('ending filesproxy...');
+				 
+				  var jsonObj = JSON.parse(responseData);
+			      response.send(jsonObj);
+				 
+				  
+			  });
+			  
+		  
+		 }).on('error', function(e) {
+			 
+			  console.log("Got error: " + e.message);
+		 
+		 });
+		 
+		 req.end();
+	 }
+	 else {
+		 console.log('firewall mode on in file info');
+		 
+		 var fileResponseJSONStr = '{ ' + 
+			'"name" : "lgt006" , ' +
+			'"uid" : 0 , ' + 
+			'"gid" : 16854 , ' +
+			'"filecount" : 203350 , ' +
+			'"isFile" : false , ' + 
+			'"files" : [ ' +
+			'  {' + 
+			'    "name" : "ChromaBuilds1",' +
+			'    "uid" : 63015,' +
+			'    "gid" : 16854,' +
+			'    "filecount" : 196168,' +
+			'    "isfile" : false' +
+			'  },' +
+			'  {' + 
+			'    "name" : "ChromaBuilds2",' +
+			'    "uid" : 63015,' +
+			'    "gid" : 16854,' +
+			'    "filecount" : 196168,' +
+			'    "isfile" : false' +
+			'  }' +
+			//'  {' + 
+			//'  }' +
+			']' +
+			'}';
+		 
+		 //get the file response string here
+		 //var jsonStr = files.doQueryFiles(fileResponseJSONStr);
+		 var jsonStr = fileResponseJSONStr;
+		 
+		 //var jsonObj = JSON.parse(jsonStr);
+	  
+		 var respText = jsonStr; 
+		 response.send(respText);
+		 
+	 }
+	 
+	 
+	 
+});
+*/
+
+
+/* removed 7-8
+app.get('/userlist', function(request,response) {
+	
+	var path = '/users?retrieve=username';
+	
+	//query the userlist service here
+	var options = {
+			host: serviceHost,
+			port: servicePort,
+			path: path,
+			method: 'GET'
+		  };
+	
+	 var responseData = '';
+	
+	 
+	 var req = http.request(options, function(res) {
+		  res.on('data', function (chunk) {
+			  responseData += chunk;	
+				
+		  });
+		  res.on('end',function() {
+			  
+			 
+			  var jsonObj = JSON.parse(responseData);
+		      response.send(jsonObj);
+			 
+			  
+		  });
+		  
+	  
+	 }).on('error', function(e) {
+		 
+		  console.log("Got error: " + e.message);
+	 
+	 });
+	 
+	 req.end();
+});
+*/
+
 
 

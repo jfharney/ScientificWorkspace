@@ -1,5 +1,6 @@
 
 //jobs object
+//used in app.get('/jobsproxy/:userNum')
 var jobsObjArr = [];
 		  
 var jobsObj1 = {};
@@ -34,6 +35,7 @@ exports.jobsObjArr = jobsObjArr;
 
 
 //apps object
+//used in app.get('/appsproxy')
 var appsObjArr = [];
 
 var appObj1 = {};
@@ -64,7 +66,59 @@ appsObjArr.push(appObj2);
 
 exports.appsObjArr = appsObjArr;
 
+//apps info object
+//used in app.get('/appinfo/:appnum')
+
+/*
+[
+ { 
+   "nid":93636,
+   "nodes":1,
+   "err":0,
+   "stop":1378024273,
+   "host":"titan",
+   "start":1378024204,
+   "cmd":"/usr/bin/aprun -n 16 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/test_execs/swtcA/swtcA",
+   "type":3,
+   "aid":3498899,
+   "job":1722972
+  },
+  {
+   "nid":93656,
+   "nodes":1,
+   "err":0,
+   "stop":1378024274,
+   "host":"titan",
+   "start":1378024274,
+   "cmd":"/usr/bin/aprun -n 1 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/utils/cprnc/bin/cprnc /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/tests/swtc1/movies/swtc11.nc /lustre/widow/scratch/jamroz/h",
+   "type":3,
+   "aid":3498904,
+   "job":1722972
+  }
+]
+*/
+//var appsinfoObjArr = [];
+
+//var appsinfoObj1 = {};
+/*
+var appObj1 = {};
+appObj1['nid'] = 93636;
+appObj1['nodes'] = 1;
+appObj1['err'] = 0;
+appObj1['stop'] = 1378024273;
+appObj1['host'] = 'titan';
+appObj1['start'] = 1378024204;
+appObj1['cmd'] = '/usr/bin/aprun -n 16 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/test_execs/swtcA/swtcA';
+appObj1['type'] = 3;
+appObj1['aid'] = 3498899;
+appObj1['job'] = 1722972;
+ppsObjArr.push(appObj1);
+
+*/
+
+
 //files object
+//used in app.get('/files/:userNum')
 var jsonFileResponse = {};
 
 jsonFileResponse['nid'] = 200004;
@@ -101,8 +155,8 @@ exports.jsonFileResponse = jsonFileResponse;
 
 
 
-//groupinfo object
-
+//groupinfo object - NEEDS A BETTER NAME!!!!!!
+//used in app.get("/groupinfo/:uid")
 var groupinfoObjsArr = [];
 
 var groupinfoObj1 = {};
@@ -131,7 +185,10 @@ exports.groupinfoObjsArr = groupinfoObjsArr;
 
 
 
+
+
 //group object - NEEDS A BETTER NAME!!!!!!
+//used in app.get('/groups/:gid')
 var groupObjsArr = [];
 
 var groupObj1 = {};
@@ -174,6 +231,17 @@ exports.groupObjsArr = groupObjsArr;
 
 
 
+//user object - used in app.get("/workspace/:user_id")
+var userObj = {
+		"nid":39644,
+		"uid":5112,
+		"uname":"8xo",
+		"name":"John F. Harney",
+		"type":0,
+		"email":"harneyjf@ornl.gov"
+		};
+
+exports.userObj = userObj;
 
 
 

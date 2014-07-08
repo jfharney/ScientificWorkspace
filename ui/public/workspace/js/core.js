@@ -34,3 +34,6 @@ SW.current_user_username = '';
 
 SW.fileScratchPrefix = 'widow1|scratch';
 SW.fileProjPrefix = 'widow1|proj';
+
+
+SW.feedOn = false;

@@ -116,6 +116,8 @@ var appsinfoHelper = function(request, response) {
 
 	var path = '/sws/app?aid='+request.params.app_id+"&jid="+request.query.jid;
 	
+	console.log('app path: ' + path);
+	
 	//query the userlist service here
 	var options = {
 			host: 'localhost',
@@ -155,4 +157,38 @@ var appsinfoHelper = function(request, response) {
 };
 
 module.exports.appsinfoHelper = appsinfoHelper;
+
+
+
+var appsinfoHelperFirewall = function(request, response) {
+
+/*
+  var respArr = [];
+  for(var i = 0; i < appsArr.length; i++) {
+	  var respObj = {};
+	  if(i == 0) {
+		  respObj['title'] = appObj1['aid'];
+		  respObj['type'] = appObj1['type'];
+		  respObj['jobid'] = appObj1['job'];
+		  respObj['uuid'] = appObj1['nid'];
+		  
+	  } else {
+		  respObj['title'] = appObj2['aid'];
+		  respObj['type'] = appObj2['type'];
+		  respObj['jobid'] = appObj2['job'];
+		  respObj['uuid'] = appObj2['nid'];
+	  }
+	
+    respArr.push(respObj);
+  }
+		  
+  response.send(respArr);
+*/
+	
+  response.send("hello");
+	
+	
+};
+
+module.exports.appsinfoHelperFirewall = appsinfoHelperFirewall;
 

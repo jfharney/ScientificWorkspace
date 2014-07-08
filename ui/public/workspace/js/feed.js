@@ -2,25 +2,27 @@
 console.log('in feed.js');
 
 
-/*
-setInterval(function(){
-    $.ajax({ 
-        type: "GET",  
-    	url: "http://localhost:1337/server2",  
-    	success: function(data){
-    		//Update your dashboard gauge
-    		//salesGauge.setValue(data.value);
-    		console.log('adding data to the feed 2');
-    		$('#feed2').prepend('<div>' + data[data.length-1]['name'] + '</div>')
-    	}, 
-    	error: function(XMLHttpRequest, textStatus, errorThrown){  
-            console.log('error '+ textStatus + " (" + errorThrown + ")");  
-        	//console.log('timeout');
-            //getMSG();  
-        }  
-    });
-}, 5000);
-*/
+if(SW.feedOn) {
+	setInterval(function(){
+	    $.ajax({ 
+	        type: "GET",  
+	    	url: "http://localhost:1337/server2",  
+	    	success: function(data){
+	    		//Update your dashboard gauge
+	    		//salesGauge.setValue(data.value);
+	    		console.log('adding data to the feed 2');
+	    		$('#feed2').prepend('<div>' + data[data.length-1]['name'] + '</div>')
+	    	}, 
+	    	error: function(XMLHttpRequest, textStatus, errorThrown){  
+	            console.log('error '+ textStatus + " (" + errorThrown + ")");  
+	        	//console.log('timeout');
+	            //getMSG();  
+	        }  
+	    });
+	}, 5000);
+
+}
+
 
 
 var getMSG = function()  
