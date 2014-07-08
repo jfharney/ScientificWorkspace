@@ -186,75 +186,6 @@ app.post('/doi/:user_id',function(request,response) {
 	response.render("index2", { uid : request.params.user_id });
 });
 
-/*
-app.get("/doi/:user_id", function(request, response) {
-	  console.log('in /:user_id');
-	  
-	  
-	  //for(var key in request.params) {
-	  //	  console.log('key: ' + key + ' value: ' + request.params[key]);
-	  //}
-
-	  var model = {};
-	  var request_obj = request['query'];
-	  
-	  var resources = request_obj['resource'];
-	  model['resources'] = [];
-	  if(resources != undefined) {
-		  //this is called if there is only one
-		  if(!isArray(resources)) {
-
-			  model['resources'] = [ resources ];
-		  } else {
-			  model['resources'] = resources;
-		  }
-	  }
-	  
-	  
-	  var creators = request_obj['creator'];
-	  model['creators'] = [];
-	  if(creators != undefined) {
-		  console.log('typeof: ' + isArray(creators));
-		  //this is called if there is only one
-		  if(!isArray(creators)) {
-
-			  model['creators'] = [ creators ];
-		  } else {
-			  model['creators'] = creators;
-		  }
-	  } 
-	  
-	  var creators_email = request_obj['creator_email'];
-	  model['creators_email'] = [];
-	  if(creators_email != undefined) {
-		  console.log('typeof: ' + isArray(creators_email));
-		  //this is called if there is only one
-		  if(!isArray(creators_email)) {
-
-			  model['creators_email'] = [ creators_email ];
-		  } else {
-			  model['creators_email'] = creators_email;
-		  }
-	  } 
-	  
-	  if(model['creators_email'].length != model['creators'].length) {
-
-		  model['creators_email'] = [];
-		  model['creators'] = [];
-		  
-	  }
-
-	  
-	  
-	  model['default_title'] = 'doi_' + (new String(new Date().getTime()));
-	  
-	  model['uid'] = request.params.user_id;
-	  //model['creators'] = ['a','b','c'];
-	  //response.render("index2", { uid : request.params.user_id });
-	  response.render("index2", model);
-	});
-
-*/
 
 function isArray(what) 
 {
@@ -316,84 +247,37 @@ app.get("/userinfo/:user_id", function(request, response) {
 
 app.get("/groupinfo/:uid", function(request, response) {
   if(proxy.firewallMode) {
-	var groupObjsArr = [];
+	  
+	var res = groups.groupinfoHelperFirewall(request, response);  
 	
-	var groupObj1 = {};
-	groupObj1['nid'] = 54608;
-	groupObj1['gid'] = 2184;
-	groupObj1['gname'] = 'cli017dev';
-	groupObj1['type'] = 1;
-	groupObjsArr.push(groupObj1);
-	
-	var groupObj2 = {};
-	groupObj2['nid'] = 53928;
-	groupObj2['gid'] = 2058;
-	groupObj2['gname'] = 'cli017';
-	groupObj2['type'] = 1;
-	groupObjsArr.push(groupObj2);
-	
-	var groupObj3 = {};
-	groupObj3['nid'] = 54896;
-	groupObj3['gid'] = 18626;
-	groupObj3['gname'] = 'jamroz';
-	groupObj3['type'] = 1;
-	groupObjsArr.push(groupObj3);
-	
-	var groupGidArr = [];
-	for(var i = 0; i < groupObjsArr.length; i++)
-	  groupGidArr.push(groupObjsArr[i]['gid']);
-	
-	var groupNidArr = [];
-	for(var i = 0; i < groupObjsArr.length; i++)
-	  groupNidArr.push(groupObjsArr[i]['nid']);
-
-	var groupNameArr = [];
-	for(var i = 0; i < groupObjsArr.length; i++)
-	  groupNameArr.push(groupObjsArr[i]['gname']);
-	
-	var respArr = [];
-    
-	for(var i = 0; i < 3; i++) {
-	  var respObj = {};
-		if(i == 0) {
-		  respObj['gname'] = groupObj1['gname'];
-		  respObj['isFolder'] = true;
-		  respObj['type'] = 2;
-		  respObj['gid'] = groupObj1['gid'];
-		  respObj['tooltip'] = 'This is a tooltip.';
-		  respObj['nid'] = groupObj1['nid'];
-		}
-		else if(i == 1) {
-		  respObj['gname'] = groupObj2['gname'];
-		  respObj['isFolder'] = true;
-		  respObj['type'] = 2;
-		  respObj['gid'] = groupObj2['gid'];
-		  respObj['tooltip'] = 'This is a tooltip.';
-		  respObj['nid'] = groupObj2['nid'];
-		}
-		else {
-		  respObj['gname'] = groupObj3['gname'];
-		  respObj['isFolder'] = true;
-		  respObj['type'] = 2;
-		  respObj['gid'] = groupObj3['gid'];
-		  respObj['tooltip'] = 'This is a tooltip.';
-		  respObj['nid'] = groupObj3['nid'];			
-		}
-	  respArr.push(respObj);
-	}
-	response.send(respArr);
   }	
   else {
+	  
     var res = groups.groupinfoHelper(request, response);  
+    
   }
   
 });
 
 //groups on lazy read off of the tree
 app.get('/groups/:gid',function(request, response) {
-  //console.log('gid -> ' + request.params.gid);
-  var res = groups.groupsHelper(request, response);
+  console.log('gid -> ' + request.params.gid);
+
+  if(proxy.firewallMode) {
+	  
+	  var res = groups.groupsHelperFirewall(request, response);
+
+  } else {
+	  
+	  var res = groups.groupsHelper(request, response);
+	  
+  }
+  
+  
+
 });
+
+
 
 /*************************************************************/
 
@@ -401,76 +285,13 @@ app.get('/groups/:gid',function(request, response) {
 
 app.get('/jobsproxy/:userNum', function(request, response) {
   if(proxy.firewallMode) {
-	  
-	  
-/*
-	  
-	  var temp = data.jobsObjArr;
-	  
-	  for (var key in temp) {
-		  console.log('key: ' + key + ' value: ' + temp[key]);
-	  }
-*/	  
-	  
-	var jobsObjArr = [];
-		  
-	var jobsObj1 = {};
-	jobsObj1['nid'] = 88388;
-	jobsObj1['nodes'] = 1;
-	jobsObj1['jid'] = 1722972;
-	jobsObj1['err'] = 0;
-	jobsObj1['stop'] = 1378024278;
-	jobsObj1['host'] = 'titan';
-	jobsObj1['start'] = 1378024199;
-	jobsObj1['name'] = 'swtc1';
-	jobsObj1['type'] = 2;
-	jobsObj1['wall'] = 0;
-	jobsObj1['user'] = 9238;
-	jobsObjArr.push(jobsObj1);
 	
-	var jobsObj2 = {};
-	jobsObj2['nid'] = 88516;
-	jobsObj2['nodes'] = 1;
-	jobsObj2['jid'] = 1722981;
-	jobsObj2['err'] = 0;
-	jobsObj2['stop'] = 1378027579;
-	jobsObj2['host'] = 'titan';
-	jobsObj2['start'] = 1378027539;
-	jobsObj2['name'] = 'swtc1-dg';
-	jobsObj2['type'] = 2;
-	jobsObj2['wall'] = 0;
-	jobsObj2['user'] = 9238;
-	jobsObjArr.push(jobsObj2);
-
-	var respArr = [];
-    
-	for(var i = 0; i < 2; i++) {
-	  var respObj = {};
-		if(i == 0) {
-		  respObj['title'] = jobsObj1['name'];
-		  respObj['isFolder'] = true;
-		  respObj['isLazy'] = true;
-		  respObj['type'] = 2;
-		  respObj['jobid'] = jobsObj1['jid'];
-		  respObj['tooltip'] = 'This is a tooltip.';
-		  respObj['nid'] = jobsObj1['nid'];
-			
-		}
-		else {
-		  respObj['title'] = jobsObj2['name'];
-		  respObj['isFolder'] = true;
-		  respObj['isLazy'] = true;
-		  respObj['type'] = 2;
-		  respObj['jobid'] = jobsObj2['jid'];
-		  respObj['tooltip'] = 'This is a tooltip.';
-		  respObj['nid'] = jobsObj2['nid'];
-		}
-	    respArr.push(respObj);
-	}
-	response.send(respArr);
-    
+	jobs.jobsproxyHelperFirewall(request, response);
+	
   } else {
+	  
 	jobs.jobsproxyHelper(request, response);
+	
   }
 });
 
@@ -492,64 +313,15 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 
 // Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
 app.get('/appsproxy', function(request, response) {
-	console.log('apps proxy?');
 	if(proxy.firewallMode) {
-		  var appsObjArr = [];
-		  
-		  var appObj1 = {};
-		  appObj1['nid'] = 93636;
-		  appObj1['nodes'] = 1;
-		  appObj1['err'] = 0;
-		  appObj1['stop'] = 1378024273;
-		  appObj1['host'] = 'titan';
-		  appObj1['start'] = 1378024204;
-		  appObj1['cmd'] = '/usr/bin/aprun -n 16 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/test_execs/swtcA/swtcA';
-		  appObj1['type'] = 3;
-		  appObj1['aid'] = 3498899;
-		  appObj1['job'] = 1722972;
-		  appsObjArr.push(appObj1);
-		  
-		  var appObj2 = {};
-		  appObj2['nid'] = 93656;
-		  appObj2['nodes'] = 1;
-		  appObj2['err'] = 0;
-		  appObj2['stop'] = 1378024274;
-		  appObj2['host'] = 'titan';
-		  appObj2['start'] = 1378024274;
-		  appObj2['cmd'] = '/usr/bin/aprun -n 1 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/utils/cprnc/bin/cprnc /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/tests/swtc1/movies/swtc11.nc /lustre/widow/scratch/jamroz/h';
-		  appObj2['type'] = 3;
-		  appObj2['aid'] = 3498904;
-		  appObj2['job'] = 1722972;
-		  appsObjArr.push(appObj2);
-		  
+		
+	  var res = apps.appsproxyHelperFirewall(request,response);
+	  
+	} else {
 
-		  var respArr = [];
-		  for(var i = 0; i < 2; i++) {
-			  var respObj = {};
-			  if(i == 0) {
-				  respObj['title'] = appObj1['aid'];
-				  respObj['type'] = appObj1['type'];
-				  respObj['jobid'] = appObj1['job'];
-				  respObj['uuid'] = appObj1['nid'];
-				  respObj['appid'] = appObj1['aid'];
-				  
-			  } else {
-				  respObj['title'] = appObj2['aid'];
-				  respObj['type'] = appObj2['type'];
-				  respObj['jobid'] = appObj2['job'];
-				  respObj['uuid'] = appObj2['nid'];
-				  respObj['appid'] = appObj2['aid'];
-			  }
-			
-	          respArr.push(respObj);
-		  }
-				  
-		  response.send(respArr);
-		  
-	  } else {
-
-		  var res = apps.appsproxyHelper(request,response);
-	  }
+	  var res = apps.appsproxyHelper(request,response);
+	}
+	
 });
 
 app.get('/appinfo', function(request, response) {
@@ -742,23 +514,6 @@ app.get('/files/:userNum', function(request, response) {
 	  
 	  
 	  //the source
-
-	  
-	  //{"nid":200004,"xuid":0,"xgid":2329,"name":"stf008","fmode":493,"ctime":1380646733,"type":5,"mtime":1380646733,"files":
-      // [{"nid":200008,"xuid":0,"xgid":2329,"name":"proj-shared","fmode":504,"ctime":1386265998,"type":5,"mtime":1386265998},
-	  //  {"nid":200016,"xuid":0,"xgid":2329,"name":"world-shared","fmode":509,"ctime":1396888768,"type":5,"mtime":1396888768}
-	  // ]
-	  //}
-	  
-	  var temp = data.jsonFileResponse;
-	  
-	  for (var key in temp) {
-		  console.log('key: ' + key + ' value: ' + temp[key]);
-	  }
-	  
-	  
-	  //var files = jsonFileResponse['files'];
-	  
 	  var files = data.jsonFileResponse['files'];
 	  
 	  var dynatreeJSONArr = [];
@@ -1160,43 +915,91 @@ app.get('/userlist', function(request,response) {
 
 
 
-//sample- initial files data proxy service
-app.get('/initgroupsdata',function(request,response) {
-
-	//console.log('init groups data');
-	for(var key in request) {
-	//	console.log('key: ' + key);
-	}
-	
-	//console.log(request['query']);
-	
-	
-	var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
-	//respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
-	respText = '[{"title": "Jobs For eeendeve", "isFolder": true, "isLazy": true	, "type" : "jobs" } ]';
-							
-	response.send(respText);
-
-	
-});
-
-
-//sample- initial files data proxy service
-/*app.get('/initjobsdata',function(request,response) {
-
-	//console.log('init jobs data');
-	var respText =	'[ {"title": "Item 1"}, {"title": "Folder 2", "isFolder": true, "key": "folder2", "expand": true, "children": [				{"title": "Sub-item 2.1",		"children": [								{"title": "Sub-item 2.1.1",									"children": [												{"title": "Sub-item 2.1.1.1"},												{"title": "Sub-item 2.1.2.2"},												{"title": "Sub-item 2.1.1.3"},						{"title": "Sub-item 2.1.2.4"}											]},								{"title": "Sub-item 2.1.2"},								{"title": "Sub-item 2.1.3"},{"title": "Sub-item 2.1.4"}							]					},				{"title": "Sub-item 2.2"},				{"title": "Sub-item 2.3 (lazy)", "isLazy": true }			]		},		{"title": "Folder 3", "isFolder": true, "key": "folder3",			"children": [				{"title": "Sub-item 3.1",					"children": [								{"title": "Sub-item 3.1.1"},								{"title": "Sub-item 3.1.2"},								{"title": "Sub-item 3.1.3"},								{"title": "Sub-item 3.1.4"}							]					},{"title": "Sub-item 3.2"},{"title": "Sub-item 3.3"},				{"title": "Sub-item 3.4"}			]},		{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true, "key": "folder4"},{"title": "Item 5"}]';										
-	//respText = '[{"title": "widow1|proj|lgt006", "isFolder": true, "isLazy": true	, "path" : "widow1|proj|lgt006" } ]';
-	respText = '[{"title": "Jobs For eendeve", "isFolder": true, "isLazy": true	, "type" : "jobs" } ]';
-							
-	response.send(respText);
-
-
-});*/
-
 
 
 http.createServer(app).listen(1337);
+
+
+
+
+
+
+
+
+
+/*
+app.get("/doi/:user_id", function(request, response) {
+	  console.log('in /:user_id');
+	  
+	  
+	  //for(var key in request.params) {
+	  //	  console.log('key: ' + key + ' value: ' + request.params[key]);
+	  //}
+
+	  var model = {};
+	  var request_obj = request['query'];
+	  
+	  var resources = request_obj['resource'];
+	  model['resources'] = [];
+	  if(resources != undefined) {
+		  //this is called if there is only one
+		  if(!isArray(resources)) {
+
+			  model['resources'] = [ resources ];
+		  } else {
+			  model['resources'] = resources;
+		  }
+	  }
+	  
+	  
+	  var creators = request_obj['creator'];
+	  model['creators'] = [];
+	  if(creators != undefined) {
+		  console.log('typeof: ' + isArray(creators));
+		  //this is called if there is only one
+		  if(!isArray(creators)) {
+
+			  model['creators'] = [ creators ];
+		  } else {
+			  model['creators'] = creators;
+		  }
+	  } 
+	  
+	  var creators_email = request_obj['creator_email'];
+	  model['creators_email'] = [];
+	  if(creators_email != undefined) {
+		  console.log('typeof: ' + isArray(creators_email));
+		  //this is called if there is only one
+		  if(!isArray(creators_email)) {
+
+			  model['creators_email'] = [ creators_email ];
+		  } else {
+			  model['creators_email'] = creators_email;
+		  }
+	  } 
+	  
+	  if(model['creators_email'].length != model['creators'].length) {
+
+		  model['creators_email'] = [];
+		  model['creators'] = [];
+		  
+	  }
+
+	  
+	  
+	  model['default_title'] = 'doi_' + (new String(new Date().getTime()));
+	  
+	  model['uid'] = request.params.user_id;
+	  //model['creators'] = ['a','b','c'];
+	  //response.render("index2", { uid : request.params.user_id });
+	  response.render("index2", model);
+	});
+
+*/
+
+
+
+
 
 
 
@@ -1228,10 +1031,19 @@ for(var i = 0; i < numPipes; i++) {
 	
 // What does stringify do as opposed to parse? 
 var respText = JSON.stringify(respArr);
-response.send(respText);*/
+response.send(respText);
+
+
+
+
+
+*/
 	
 
 
+
+
+//--removed on 7-7
 
 /*
 //appsObjArr
@@ -1268,5 +1080,239 @@ jsonFileResponse['files'].push(file1);
 jsonFileResponse['files'].push(file2);
 */
 
+
+
+/*
+var jobsObj1 = {};
+jobsObj1['nid'] = 88388;
+jobsObj1['nodes'] = 1;
+jobsObj1['jid'] = 1722972;
+jobsObj1['err'] = 0;
+jobsObj1['stop'] = 1378024278;
+jobsObj1['host'] = 'titan';
+jobsObj1['start'] = 1378024199;
+jobsObj1['name'] = 'swtc1';
+jobsObj1['type'] = 2;
+jobsObj1['wall'] = 0;
+jobsObj1['user'] = 9238;
+jobsObjArr.push(jobsObj1);
+
+var jobsObj2 = {};
+jobsObj2['nid'] = 88516;
+jobsObj2['nodes'] = 1;
+jobsObj2['jid'] = 1722981;
+jobsObj2['err'] = 0;
+jobsObj2['stop'] = 1378027579;
+jobsObj2['host'] = 'titan';
+jobsObj2['start'] = 1378027539;
+jobsObj2['name'] = 'swtc1-dg';
+jobsObj2['type'] = 2;
+jobsObj2['wall'] = 0;
+jobsObj2['user'] = 9238;
+jobsObjArr.push(jobsObj2);
+
+if(i == 0) {
+  respObj['title'] = jobsObj1['name'];
+  respObj['isFolder'] = true;
+  respObj['isLazy'] = true;
+  respObj['type'] = 2;
+  respObj['jobid'] = jobsObj1['jid'];
+  respObj['tooltip'] = 'This is a tooltip.';
+  respObj['nid'] = jobsObj1['nid'];
+	
+}
+else {
+  respObj['title'] = jobsObj2['name'];
+  respObj['isFolder'] = true;
+  respObj['isLazy'] = true;
+  respObj['type'] = 2;
+  respObj['jobid'] = jobsObj2['jid'];
+  respObj['tooltip'] = 'This is a tooltip.';
+  respObj['nid'] = jobsObj2['nid'];
+}
+*/
+
+
+
+/*
+for(var i = 0; i < 2; i++) {
+	  var respObj = {};
+	  if(i == 0) {
+		  respObj['title'] = appObj1['aid'];
+		  respObj['type'] = appObj1['type'];
+		  respObj['jobid'] = appObj1['job'];
+		  respObj['uuid'] = appObj1['nid'];
+		  respObj['appid'] = appObj1['aid'];
+		  
+	  } else {
+		  respObj['title'] = appObj2['aid'];
+		  respObj['type'] = appObj2['type'];
+		  respObj['jobid'] = appObj2['job'];
+		  respObj['uuid'] = appObj2['nid'];
+		  respObj['appid'] = appObj2['aid'];
+	  }
+	
+    respArr.push(respObj);
+}
+*/
+
+
+/*
+var appObj1 = {};
+appObj1['nid'] = 93636;
+appObj1['nodes'] = 1;
+appObj1['err'] = 0;
+appObj1['stop'] = 1378024273;
+appObj1['host'] = 'titan';
+appObj1['start'] = 1378024204;
+appObj1['cmd'] = '/usr/bin/aprun -n 16 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/test_execs/swtcA/swtcA';
+appObj1['type'] = 3;
+appObj1['aid'] = 3498899;
+appObj1['job'] = 1722972;
+appsObjArr.push(appObj1);
+
+var appObj2 = {};
+appObj2['nid'] = 93656;
+appObj2['nodes'] = 1;
+appObj2['err'] = 0;
+appObj2['stop'] = 1378024274;
+appObj2['host'] = 'titan';
+appObj2['start'] = 1378024274;
+appObj2['cmd'] = '/usr/bin/aprun -n 1 /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/utils/cprnc/bin/cprnc /lustre/widow3/scratch/jamroz/builds/testing/nightly/homme-trunk-nightly-gnu/tests/swtc1/movies/swtc11.nc /lustre/widow/scratch/jamroz/h';
+appObj2['type'] = 3;
+appObj2['aid'] = 3498904;
+appObj2['job'] = 1722972;
+appsObjArr.push(appObj2);
+*/
+
+//appsObjArr = data.appsObjArr;
+
+/*
+for(var i=0;i<temp.length;i++) {
+	  for (var key in temp[i]) {
+		  if(key == 'nid')
+		  console.log('nid: ' + temp[i]['nid']);
+	  }  
+}
+*/
+
+/*
+var jobsObjArr = data.jobsObjArr;
+
+for(var i=0;i<jobsObjArr.length;i++) {
+	  
+	  var job = jobsObjArr[i];
+	  console.log('i: ' + i + ' temp[i]: ' + jobsObjArr[i]);
+	  for(var key in job) {
+		  console.log('key: ' + key + ' value: ' + job[key]);
+	  }
+	  
+	  var nid = jobsObjArr[i]['nid'];
+	  console.log('nid: ' + nid);
+  }
+
+var respArr = [];
+
+for(var i = 0; i < 2; i++) {
+  var respObj = {};
+  respObj['title'] = jobsObjArr[i]['name'];
+  respObj['isFolder'] = true;
+  respObj['isLazy'] = true;
+  respObj['type'] = 2;
+  respObj['jobid'] = jobsObjArr[i]['jid'];
+  respObj['tooltip'] = 'This is a tooltip.';
+  respObj['nid'] = jobsObjArr[i]['nid'];
+  
+    respArr.push(respObj);
+}
+
+
+response.send(respArr);
+*/
+
+/*
+var appsObjArr = data.appsObjArr;
+
+
+
+var respArr = [];
+for(var i=0;i<appsObjArr.length;i++) {
+	  var respObj = {};
+
+	  respObj['title'] = appsObjArr[i]['aid'];
+	  respObj['type'] = appsObjArr[i]['type'];
+	  respObj['jobid'] = appsObjArr[i]['job'];
+	  respObj['uuid'] = appsObjArr[i]['nid'];
+	  respObj['appid'] = appsObjArr[i]['aid'];
+	  respArr.push(respObj);
+}
+
+		  
+response.send(respArr);
+*/
+
+/*
+if(i == 0) {
+  respObj['gname'] = groupObj1['gname'];
+  respObj['isFolder'] = true;
+  respObj['type'] = 2;
+  respObj['gid'] = groupObj1['gid'];
+  respObj['tooltip'] = 'This is a tooltip.';
+  respObj['nid'] = groupObj1['nid'];
+}
+else if(i == 1) {
+  respObj['gname'] = groupObj2['gname'];
+  respObj['isFolder'] = true;
+  respObj['type'] = 2;
+  respObj['gid'] = groupObj2['gid'];
+  respObj['tooltip'] = 'This is a tooltip.';
+  respObj['nid'] = groupObj2['nid'];
+}
+else {
+  respObj['gname'] = groupObj3['gname'];
+  respObj['isFolder'] = true;
+  respObj['type'] = 2;
+  respObj['gid'] = groupObj3['gid'];
+  respObj['tooltip'] = 'This is a tooltip.';
+  respObj['nid'] = groupObj3['nid'];			
+}
+*/
+
+/*
+var groupObj1 = {};
+groupObj1['nid'] = 54608;
+groupObj1['gid'] = 2184;
+groupObj1['gname'] = 'cli017dev';
+groupObj1['type'] = 1;
+groupObjsArr.push(groupObj1);
+
+var groupObj2 = {};
+groupObj2['nid'] = 53928;
+groupObj2['gid'] = 2058;
+groupObj2['gname'] = 'cli017';
+groupObj2['type'] = 1;
+groupObjsArr.push(groupObj2);
+
+var groupObj3 = {};
+groupObj3['nid'] = 54896;
+groupObj3['gid'] = 18626;
+groupObj3['gname'] = 'jamroz';
+groupObj3['type'] = 1;
+groupObjsArr.push(groupObj3);
+*/
+
+/*
+var groupGidArr = [];
+for(var i = 0; i < groupObjsArr.length; i++)
+  groupGidArr.push(groupObjsArr[i]['gid']);
+
+var groupNidArr = [];
+for(var i = 0; i < groupObjsArr.length; i++)
+  groupNidArr.push(groupObjsArr[i]['nid']);
+
+var groupNameArr = [];
+for(var i = 0; i < groupObjsArr.length; i++)
+  groupNameArr.push(groupObjsArr[i]['gname']);
+*/
 
 

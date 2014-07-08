@@ -6,6 +6,8 @@ var http = require('http');
 var url = require('url');
 var proxy = require('./proxyConfig.js');
 
+var data = require('../data/firewall_sources.js');
+
 //var firewallMode = true;
 //var serviceHost = 'techint-b117';
 //var servicePort = '8080';
@@ -77,6 +79,49 @@ var jobsproxyHelper = function(request, response) {
 };
 
 module.exports.jobsproxyHelper = jobsproxyHelper;
+
+
+
+//This function works with a URL containing or lacking a search parameter named "search". 
+var jobsproxyHelperFirewall = function(request, response) {
+
+	var jobsObjArr = data.jobsObjArr;
+	
+	for(var i=0;i<jobsObjArr.length;i++) {
+		  
+	  var job = jobsObjArr[i];
+	  console.log('i: ' + i + ' temp[i]: ' + jobsObjArr[i]);
+	  for(var key in job) {
+		  console.log('key: ' + key + ' value: ' + job[key]);
+	  }
+	  
+	  var nid = jobsObjArr[i]['nid'];
+	  console.log('nid: ' + nid);
+	}
+	
+	var respArr = [];
+    
+	for(var i = 0; i < 2; i++) {
+	  var respObj = {};
+	  respObj['title'] = jobsObjArr[i]['name'];
+	  respObj['isFolder'] = true;
+	  respObj['isLazy'] = true;
+	  respObj['type'] = 2;
+	  respObj['jobid'] = jobsObjArr[i]['jid'];
+	  respObj['tooltip'] = 'This is a tooltip.';
+	  respObj['nid'] = jobsObjArr[i]['nid'];
+	  
+	    respArr.push(respObj);
+	}
+	
+	
+	response.send(respArr);
+	
+};
+
+module.exports.jobsproxyHelperFirewall = jobsproxyHelperFirewall;
+
+
 
 /* We want to take a time like this: 
  * 		2014-02-05T17:56:23.000Z

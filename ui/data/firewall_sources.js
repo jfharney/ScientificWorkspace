@@ -101,3 +101,80 @@ exports.jsonFileResponse = jsonFileResponse;
 
 
 
+//groupinfo object
+
+var groupinfoObjsArr = [];
+
+var groupinfoObj1 = {};
+groupinfoObj1['nid'] = 54608;
+groupinfoObj1['gid'] = 2184;
+groupinfoObj1['gname'] = 'cli017dev';
+groupinfoObj1['type'] = 1;
+groupinfoObjsArr.push(groupinfoObj1);
+
+var groupinfoObj2 = {};
+groupinfoObj2['nid'] = 53928;
+groupinfoObj2['gid'] = 2058;
+groupinfoObj2['gname'] = 'cli017';
+groupinfoObj2['type'] = 1;
+groupinfoObjsArr.push(groupinfoObj2);
+
+var groupinfoObj3 = {};
+groupinfoObj3['nid'] = 54896;
+groupinfoObj3['gid'] = 18626;
+groupinfoObj3['gname'] = 'jamroz';
+groupinfoObj3['type'] = 1;
+groupinfoObjsArr.push(groupinfoObj3);
+
+
+exports.groupinfoObjsArr = groupinfoObjsArr;
+
+
+
+//group object - NEEDS A BETTER NAME!!!!!!
+var groupObjsArr = [];
+
+var groupObj1 = {};
+groupObj1['nid'] = 3472;
+groupObj1['uid'] = 1913;
+groupObj1['uname'] = 'efischer';
+groupObj1['name'] = 'Erich Fischer';
+groupObj1['type'] = 0;
+groupObj1['email'] = "erich.fischer@env.ethz.ch";
+groupObjsArr.push(groupObj1);
+
+var groupObj2 = {};
+groupObj2['nid'] = 20172;
+groupObj2['uid'] = 6023;
+groupObj2['uname'] = 'caldwep';
+groupObj2['name'] = 'Peter M. Caldwell';
+groupObj2['type'] = 0;
+groupObj2['email'] = "caldwell19@llnl.gov";
+groupObjsArr.push(groupObj2);
+
+var groupObj3 = {};
+groupObj3['nid'] = 33036;
+groupObj3['uid'] = 58176;
+groupObj3['uname'] = 'lipscomb';
+groupObj3['name'] = 'William H. Lipscomb';
+groupObj3['type'] = 0;
+groupObj3['email'] = "Lipscomb@lanl.gov";
+groupObjsArr.push(groupObj3);
+
+var groupObj4 = {};
+groupObj4['nid'] = 3148;
+groupObj4['uid'] = 1834;
+groupObj4['uname'] = 'mickelso';
+groupObj4['name'] = 'Sheri Mickelson';
+groupObj4['type'] = 0;
+groupObj4['email'] = "mickelso@mcs.anl.gov";
+groupObjsArr.push(groupObj4);
+
+exports.groupObjsArr = groupObjsArr;
+
+
+
+
+
+
+

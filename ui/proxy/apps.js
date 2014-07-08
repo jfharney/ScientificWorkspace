@@ -6,13 +6,11 @@ var app = express();
 var firewallMode = false;
 
 var http = require('http');
-//<<<<<<< HEAD
-
-//var serviceHost = 'techint-b117';//'160.91.210.32';
-//=======
 var serviceHost = 'techint-b117';
-//>>>>>>> 841c13079f4f626160c44a7e7b1624687ffa4ec2
 var servicePort = '8080';
+
+var data = require('../data/firewall_sources.js');
+
 
 // Where/when is appsproxyHelper called? In frontend.js.
 var appsproxyHelper = function(request, response) 
@@ -87,6 +85,31 @@ var appsproxyHelper = function(request, response)
 
 
 module.exports.appsproxyHelper = appsproxyHelper;
+
+
+var appsproxyHelperFirewall = function(request, response) {
+	
+	var appsObjArr = data.appsObjArr;
+	  
+	var respArr = [];
+	for(var i=0;i<appsObjArr.length;i++) {
+	  var respObj = {};
+
+	  respObj['title'] = appsObjArr[i]['aid'];
+	  respObj['type'] = appsObjArr[i]['type'];
+	  respObj['jobid'] = appsObjArr[i]['job'];
+	  respObj['uuid'] = appsObjArr[i]['nid'];
+	  respObj['appid'] = appsObjArr[i]['aid'];
+	  respArr.push(respObj);
+	}
+	  
+	response.send(respArr);
+	
+};
+
+
+module.exports.appsproxyHelperFirewall = appsproxyHelperFirewall;
+
 
 
 var appsinfoHelper = function(request, response) {
