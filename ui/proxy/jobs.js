@@ -6,10 +6,6 @@ var http = require('http');
 var url = require('url');
 var proxy = require('./proxyConfig.js');
 
-//var firewallMode = true;
-//var serviceHost = 'techint-b117';
-//var servicePort = '8080';
-
 // This function works with a URL containing or lacking a search parameter named "search". 
 var jobsproxyHelper = function(request, response) {
   var path = '/sws/jobs?uid=' + request.params.userNum;
