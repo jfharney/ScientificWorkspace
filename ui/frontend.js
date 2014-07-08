@@ -474,7 +474,10 @@ app.get('/tags/:tag_name', function(request, response)
 });
 
 app.get('/tags/links/:tag_nid', function(request, response) {
-  var res = tags.tagLinksProxHelper(request, response);
+  
+	var res = tags.tagLinksProxHelper(request, response);
+	
+		
 });
 
 

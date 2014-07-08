@@ -86,41 +86,78 @@ var tagsproxyHelper = function(request,response) {
 
 module.exports.tagsproxyHelper = tagsproxyHelper;
 
+/*
 var tagLinksProxHelper = function(request, response) {
-  console.log('The value of request.params.tag_nid is ' + request.params.tag_nid);
 
-  var path = '/sws/nodes?tag-nid=' + request.params.tag_nid;
-  
-  console.log('In tags.js, The value of path is ' + path);
-  console.log('proxy.serviceHost is ' + proxy.serviceHost + ', proxy.servicePort is ' + proxy.servicePort);
 	
-  //query the userlist service here
-  var options = {
-	host: proxy.servicePort,
-	port: proxy.servicePort,
-	path: path,
-	method: 'GET'
-  };
-  
-  var req = http.request(options, function(resp) {
-    var responseData = '';
-    resp.on('data', function(chunk) {
-      console.log(responseData);
-	  responseData += chunk;
-    });
-		
-    resp.on('end', function() {
-      console.log(responseData);
-      response.send(responseData);
-    });
-		
-    resp.on('error', function(e) {
-      response.send('error: ' + e);
-    });
-  });
 	
-  req.end();
+});
+*/
+
+
+var tagLinksProxHelper = function(request, response) {
+	
+	//console.log('The value of request.params.tag_nid is ' + request.params.tag_nid);
+
+	var path = '/sws/nodes?tag-nid=' + request.params.tag_nid;
+	  
+	//console.log('In tags.js, The value of path is ' + path);
+	//console.log('proxy.serviceHost is ' + proxy.serviceHost + ', proxy.servicePort is ' + proxy.servicePort);
+	
+	
+	//query the userlist service here
+	var options = {
+		host: proxy.servicePort,
+		port: proxy.servicePort,
+		path: path,
+		method: 'GET'
+	};
+	  
+	//console.log('path->' + options.path);
+	  
+
+	
+	//query the userlist service here
+	var options = {
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
+			path: path,
+			method: 'GET'
+		  };
+	
+	 var responseData = '';
+
+	 
+	 var req = http.request(options, function(res) {
+		  //console.log("Got response: " + res.statusCode);
+		  //console.log('HEADERS: ' + JSON.stringify(res.headers));
+		 
+		 res.on('data', function(chunk) {
+		   //console.log(responseData);
+		   responseData += chunk;
+		 });
+				
+	     res.on('end', function() {
+	       //console.log(responseData);
+	       response.send(responseData);
+	     });
+			
+	     res.on('error', function(e) {
+	       response.send('error: ' + e);
+	     });
+		 
+		 
+	  
+	 }).on('error', function(e) {
+		 
+		  console.log("Got error: " + e.message);
+	 
+	 });
+	 
+	 req.end();
+	
   
-}
+};
+
 
 module.exports.tagLinksProxHelper = tagLinksProxHelper;
