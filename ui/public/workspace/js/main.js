@@ -10,7 +10,7 @@ $(function() {
   SW.current_user_username = $('#curUserUsername').html();
 	
   /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
-  //getJobInfo(SW.current_user_number);
+  getJobInfo(SW.current_user_number);
   
   /* This function is defined in ajax/groupinfo.js. */
   //getCollaboratorInfo(SW.current_user_number);
@@ -19,7 +19,7 @@ $(function() {
   postUserData('#user_info');
   
   /* This function is defined in ajax/fileinfo.js. */
-  getFileInfo(SW.current_user_number);
+  //getFileInfo(SW.current_user_number);
 	
   /* Enables the list box in the top right to change the current user. */
   /* (This feature will be admin-only in final version.) */
