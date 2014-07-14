@@ -5,12 +5,7 @@ var app = express();
 var http = require('http');
 var url = require('url');
 var proxy = require('./proxyConfig.js');
-
 var data = require('../data/firewall_sources.js');
-
-//var firewallMode = true;
-//var serviceHost = 'techint-b117';
-//var servicePort = '8080';
 
 // This function works with a URL containing or lacking a search parameter named "search". 
 var jobsproxyHelper = function(request, response) {
@@ -123,13 +118,8 @@ module.exports.jobsproxyHelperFirewall = jobsproxyHelperFirewall;
 
 
 
-/* We want to take a time like this: 
- * 		2014-02-05T17:56:23.000Z
- * and turn it into: 
- * 		2014-02-05 17:56:23
- */
+/* Taken from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript */
 function formatTimestamp(UNIX_timestamp) {
-  /* Taken from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript */
    var a = new Date(UNIX_timestamp * 1000);
    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
    var year = a.getFullYear();

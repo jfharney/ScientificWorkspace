@@ -10,10 +10,10 @@ $(function() {
   SW.current_user_username = $('#curUserUsername').html();
 	
   /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
-  //getJobInfo(SW.current_user_number);
+  getJobInfo(SW.current_user_number);
   
   /* This function is defined in ajax/groupinfo.js. */
-  //getCollaboratorInfo(SW.current_user_number);
+  getCollaboratorInfo(SW.current_user_number);
   
   /* This function is defined in ajax/userinfo.js. */
   postUserData('#user_info');

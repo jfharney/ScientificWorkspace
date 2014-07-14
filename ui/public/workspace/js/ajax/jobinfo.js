@@ -5,8 +5,6 @@ function getJobInfo(userNum, searchArg) {
   
   var url = 'http://' + SW.hostname + ':' + SW.port + '/jobsproxy/'+userNum+'?search='+searchArg;
   
-  console.log('jobinfo.js: Making a call to ' + url);
-  
   var children = [];
 
   /* Create the initial children. */
@@ -17,9 +15,7 @@ function getJobInfo(userNum, searchArg) {
 	async: false,
 	success: function(data) 
 	{
-	  console.log('Here is the data object/array:');
       for(var i = 0; i < data.length; i++) {
-    	console.log(data[i]);
         children.push(data[i]);
       }
 	  buildJobsTree(children);			/* This function is defined below. */ 
@@ -32,18 +28,18 @@ function getAppInfo(url) {
 
   var queryString = '';
   
-  console.log('In jobinfo.js, getAppInfo() has been passed the url ' + url);
+  //console.log('In jobinfo.js, getAppInfo() has been passed the url ' + url);
   
   $.ajax({
     url: url,
     type: 'GET',
     data: queryString,
     success: function(data) {
-      console.log(jQuery.isEmptyObject(data));
-      console.log('Here is info_obj:');
+      //console.log(jQuery.isEmptyObject(data));
+      //console.log('Here is info_obj:');
       info_obj = data;
-      for(var i in info_obj)
-    	console.log(i + ': ' + info_obj[i]);
+      //for(var i in info_obj)
+    	//console.log(i + ': ' + info_obj[i]);
       var info_space = '#app_info';
       $(info_space).empty();
       if(!jQuery.isEmptyObject(info_obj)) {
@@ -109,9 +105,9 @@ function buildJobsTree(children) {
 	},
 	onActivate: function(node) {
 	  var info_obj = '';
-	  console.log('node type: ' + node.data.type);    		
+	  //console.log('node type: ' + node.data.type);    		
 	  if(node.data.type == 2) {
-		console.log('this is a job');
+		//console.log('this is a job');
 		/*
 		for(var i in node.data)
 		  console.log(i + ': ' + node.data[i]);

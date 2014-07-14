@@ -177,7 +177,7 @@ function buildFileTree(treeData) {
 			var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+SW.current_user_number;//'5112';
 			url = url + '?path=' + node.data.path;
 		     
-			console.log('url->'+url);
+			//console.log('url->'+url);
 			
 			
 			/*
@@ -254,7 +254,7 @@ function buildFileTree(treeData) {
 
 function getFileInfo2(uid) {
 
-	console.log('in getFileInfo2 for uid: ' + uid);
+	//console.log('in getFileInfo2 for uid: ' + uid);
 	
 	var url = 'http://' + SW.hostname + ':' + SW.port + '/groupinfo/'+uid;
 	
@@ -283,7 +283,7 @@ function getFileInfo2(uid) {
 			//console.log('success');
 			
 			groupsArr = data['groups'];
-			console.log('groupsArr: ' + groupsArr);
+			//console.log('groupsArr: ' + groupsArr);
 			
 			for(var i=0;i<groupsArr.length;i++) {
 				var title = 'widow1|proj|' + groupsArr[i]['groupname'];

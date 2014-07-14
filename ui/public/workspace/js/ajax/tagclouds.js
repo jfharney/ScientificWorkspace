@@ -1,31 +1,118 @@
 $(document).ready(function() {
+  console.log('Inside the ready event in tagclouds.js.');
 
   var uid = SW.current_user_number;
   
-  var t_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
-  var a_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/associations?';
+  var tags_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
+  var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
 	
+  // First we get an array of all the tags owned by the current user. 
   $.ajax({
     type: "GET",
-	url: t_url_prefix + 'uid=' + uid,
-	success: function(data) 
-	{
-	  // In data, we are receiving an array of objects. The objects contain only primitives.
-      $.each(data, function(index, element) {
-        // We want to know three things: 
-        // 1. a tag's nid (for the hyperlink)
-        // 2. a tag's name
-        // 3. how many objects the tag references (for its font size)
-        var tagName = element['name']; 
-        var tagNid = element['nid'];
-        
-        var linkCount;		// We need to do an Ajax call to get this info.
-        $.ajax({
-          type: "GET",
-          
-        });
+	url: tags_url_prefix + 'uid=' + uid,
+	success: function(data) {
+      var tagsArr = [];
+      tagsArr = JSON.parse(data);
+      
+      $.each(tagsArr, function(index, element) {
+    	var tagName = element['name']
+    	var tagNid = element['nid'];
+    	
+  	    // Then, for each tag nid in the given array, we query its links. To start with, we need only a count of the links.
+    	$.ajax({
+    	  type: "GET",
+    	  url: tagLinks_url_prefix + tagNid,
+    	  success: function(data) {
+    		var linksArr = [];
+    		linksArr = JSON.parse(data);
+    		var linkCount = linksArr.length;
+    		//console.log(index + ': ' + tagName + '('+tagNid+') has length ' + linkCount);
+    		
+    		if(linkCount > 0) {
+    		  var fontSize = 8;
+    		  var $tagcloud = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer">'+tagName+'</a><span> </span>')
+    		  /* Up to this point, we're good... */
+    		  
+    		    .on('click', function() {
+                  $('div#tagCloudInfo').empty();
+  			      $('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+"</div>");
+			      $('#cloud_info').append('<div># Objects: '+linkCount+'</div>');
+			      $('#cloud_info').append('<ul id="tagContentsList">');
+			      for(var i = 0; i < linkCount; i++) {
+			    	var resName;
+			    	var resNid = linksArr[i]['nid'];;
+			    	var resType; 
+			    	if(linksArr[i]['type'] == 2) {
+			    	  resName = linksArr[i]['name'];
+			    	  resType = 'job';
+                      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+linksArr[i]['jid']+'<br />&nbsp;&nbsp;&nbsp;Started: '+formatTimestamp(linksArr[i]['start'])+'<br />&nbsp;&nbsp;&nbsp;Ended: '+formatTimestamp(linksArr[i]['stop'])+'</span>')
+          			  .on("click", function() {
+              			var pos = $(this).attr('id').indexOf('_');			// This line and the following aren't pretty, but are needed to get the correct resNid value.
+              			resNid = $(this).attr('id').substring(pos+1);		// All they do is pull the nid value off the end of the element id. 
+                        $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
+                        $(this).hide();
+                      });
+                      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
+          			  .on("click", function() {
+            			var pos = $(this).attr('id').indexOf('_');
+              			resNid = $(this).attr('id').substring(pos+1);
+                        $('#lessTagInfoSpan_'+resNid).css('display', 'inline'); 
+                        $(this).hide();
+			    	  });
+  					  $('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
+                      $('#tagResource_'+resNid).append($lessLink);
+                      $('#tagResource_'+resNid).append($moreLink);
+			    	}
+			    	else if(linksArr[i]['type'] == 3) {
+			    	  resName = linksArr[i]['nid'];		// Apps don't actually have names. 
+			    	  resType = 'app';
+                      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;App ID: '+linksArr[i]['aid']+'<br />&nbsp;&nbsp;&nbsp;Started: '+formatTimestamp(linksArr[i]['start'])+'<br />&nbsp;&nbsp;&nbsp;Ended: '+formatTimestamp(linksArr[i]['stop'])+'</span>')
+          			  .on("click", function() {
+              			var pos = $(this).attr('id').indexOf('_');
+              			resNid = $(this).attr('id').substring(pos+1); 
+                        $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
+                        $(this).hide();
+                      });
+                      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
+          			  .on("click", function() {
+            			var pos = $(this).attr('id').indexOf('_');
+              			resNid = $(this).attr('id').substring(pos+1);
+                        $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
+                        $(this).hide();
+          			  });
+					  $('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
+                      $('#tagResource_'+resNid).append($lessLink);
+                      $('#tagResource_'+resNid).append($moreLink);
+			    	}
+			    	else if(linksArr[i]['type'] == 4) {
+			    	  resName = linksArr[i]['name'];
+				      resType = 'file';
+			    	}
+			    	else {
+			    	  resName = linksArr[i]['nid'];
+			    	  resType = 'other';
+			    	}
+					//console.log('resName: ' + resName + ', resType: ' + resType + ', resNid: ' + resNid);
+			      }
+    		    });
+    		  
+    		    
+    		  
+    		  
+    		  
+    		  
+    		  $('#tagClouds').append($tagcloud);
+    		}
+    	  },
+    	  error: function() {}
+    	});
       });
+	},		// End of success.
+	error: function() {}
+  });
+            
 
+});
       /*$.each(data, function(key, value) {
         $.each(value, function(index, arVal) {
 	      var tag_uuid = arVal['uuid'];
@@ -110,14 +197,10 @@ $(document).ready(function() {
 	  
 	  
 	  }); //end $.each(data, function(key, value)*/ 
-	  
-	  
-	},
-	error: function() {}
-  });
+
   
   //$("#moreTagInfoLink").on("click", function() {alert("more was clicked!");});	Doesn't work.
-});
+//});
 
 
 function getReducedArr(tag_name_arr) 
@@ -177,10 +260,29 @@ function getCountsArr(tag_name_arr)
 }
 
 // Takes a string like 2014-02-05T17:56:23.000Z and returns 2014-02-05.  
-function formatDate(jobStartDate)
+/*function formatDate(jobStartDate)
 {
 	var n = jobStartDate.indexOf('T');
 	if(n != -1)
 	  jobStartDate = jobStartDate.substring(0, n);
 	return jobStartDate;
+}*/
+
+/* Taken from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript */
+function formatTimestamp(UNIX_timestamp) {
+   var a = new Date(UNIX_timestamp * 1000);
+   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+   var year = a.getFullYear();
+   var month = months[a.getMonth()];
+   var date = a.getDate();
+   var hour = a.getHours();
+   var min = a.getMinutes();
+   if(min.toString().length == 1)
+	 min = '0'+min;
+   var sec = a.getSeconds();
+   if(sec.toString().length == 1)
+     sec = '0'+sec;
+   var time = month + ' ' + date + ', ' + year + '&nbsp;&nbsp;' + hour + ':' + min + ':' + sec ;
+   
+   return time;
 }
