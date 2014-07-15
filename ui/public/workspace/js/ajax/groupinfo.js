@@ -14,6 +14,7 @@ function getCollaboratorInfo(userNumber, searchArg) {
     type: 'GET',
     success: function(data) {
       groupsArr = data;
+//<<<<<<< HEAD
       console.log('Here is groupsArr:');
 
       var children = data;
@@ -24,9 +25,12 @@ function getCollaboratorInfo(userNumber, searchArg) {
       gid: 2184 
       gname: cli017
       type: 1 
+=======
+      //console.log('Here is groupsArr:');
+>>>>>>> cc6f0385beb04a5b5456d114d3704358bc577a73
       for(var i = 0; i < groupsArr.length; i++)
     	for(var j in groupsArr[i])
-    	  console.log(j + ': ' + groupsArr[i][j]);
+      //	  console.log(j + ': ' + groupsArr[i][j]);
 			
 	  */
       
@@ -98,10 +102,10 @@ function getGroupInfo(uid) {
 // Populates the collaborator widget given the data returned (i.e. children)
 function buildCollaboratorTree(children) {
 	
-  console.log('Inside buildCollaboratorTree, here is the children array:');
+  /*console.log('Inside buildCollaboratorTree, here is the children array:');
   for(var i = 0; i < children.length; i++)
 	for(var j in children[i])
-	  console.log(j + ': ' + children[i][j]);
+	  console.log(j + ': ' + children[i][j]);*/
 
   $("#collaborators_tree").dynatree({
     //title: "Lazy loading sample",

@@ -12,7 +12,7 @@ var data = require('../data/firewall_sources.js');
 
 var filesproxyHelper = function(request, response) {
 
-	console.log('usernum: ' + request.params.userNum);
+	//console.log('usernum: ' + request.params.userNum);
 	  var usernum = request.params.userNum;
 	  var queriedPath =	request.query.path;
 		
@@ -122,7 +122,7 @@ module.exports.filesproxyHelper = filesproxyHelper;
 var filesproxyHelperFirewall = function(request, response) {
 
 
-	  console.log('usernum: ' + request.params.userNum);
+	  //console.log('usernum: ' + request.params.userNum);
 	  var usernum = request.params.userNum;
 	  var queriedPath =	request.query.path;
 	
@@ -139,9 +139,9 @@ var filesproxyHelperFirewall = function(request, response) {
 		//console.log('i: ' + i + ' ' + files[i]);
 		var file = files[i];
 		
-		for(var key in file) {
-			console.log('key: ' + key + ' value: ' + file[key]);
-		}
+		//for(var key in file) {
+			//console.log('key: ' + key + ' value: ' + file[key]);
+		//}
 		
 		if(queriedPath == '|') {
 			dynatreeJSONObj['title'] = '|' + file['name'];
