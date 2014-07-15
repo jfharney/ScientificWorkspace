@@ -71,7 +71,7 @@ html(lang="en")
           button#create_tag.btn.btn-primary Create Tag
       
       
-    //div#tableModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+    div#tableModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button", data-dismiss="modal", aria-hidden="true")
@@ -81,13 +81,12 @@ html(lang="en")
           table#tagsTable.display.dataTable
             thead
               tr
+                th nid
+                th access
+                th name
                 th type
-                th uuid
-                th tagdesc
-                th tagname
-                th uid
-                th visibility
-                th wtime
+                th desc
+                th owner
             tbody
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
@@ -340,7 +339,7 @@ html(lang="en")
     // script(src="js/ajax/jobs_widget.js")
     
     // script(src="js/ajax/tagTree.js")
-    // script(src="js/ajax/tagstable.js")
+    script(src="js/ajax/tagstable.js")
     script(src="js/ajax/tagclouds.js")
     script(src="js/add_tag.js")
     script(src="js/add_doi.js")

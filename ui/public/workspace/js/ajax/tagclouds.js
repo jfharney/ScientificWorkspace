@@ -17,6 +17,7 @@ $(document).ready(function() {
       $.each(tagsArr, function(index, element) {
     	var tagName = element['name']
     	var tagNid = element['nid'];
+    	var tagDesc = element['desc'];
     	
   	    // Then, for each tag nid in the given array, we query its links. To start with, we need only a count of the links.
     	$.ajax({
@@ -26,21 +27,19 @@ $(document).ready(function() {
     		var linksArr = [];
     		linksArr = JSON.parse(data);
     		var linkCount = linksArr.length;
-    		//console.log(index + ': ' + tagName + '('+tagNid+') has length ' + linkCount);
     		
     		if(linkCount > 0) {
     		  var fontSize = 8;
-    		  var $tagcloud = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer">'+tagName+'</a><span> </span>')
-    		  /* Up to this point, we're good... */
-    		  
+    		  var $tagcloud = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
     		    .on('click', function() {
                   $('div#tagCloudInfo').empty();
   			      $('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+"</div>");
 			      $('#cloud_info').append('<div># Objects: '+linkCount+'</div>');
+			      $('#cloud_info').append('<div>Description: '+tagDesc+'</div>');
 			      $('#cloud_info').append('<ul id="tagContentsList">');
 			      for(var i = 0; i < linkCount; i++) {
 			    	var resName;
-			    	var resNid = linksArr[i]['nid'];;
+			    	var resNid = linksArr[i]['nid'];
 			    	var resType; 
 			    	if(linksArr[i]['type'] == 2) {
 			    	  resName = linksArr[i]['name'];
@@ -87,19 +86,30 @@ $(document).ready(function() {
 			    	else if(linksArr[i]['type'] == 4) {
 			    	  resName = linksArr[i]['name'];
 				      resType = 'file';
+                      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
+          			  .on("click", function() {
+              			var pos = $(this).attr('id').indexOf('_');
+              			resNid = $(this).attr('id').substring(pos+1); 
+                        $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
+                        $(this).hide();
+                      });
+                      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
+          			  .on("click", function() {
+            			var pos = $(this).attr('id').indexOf('_');
+              			resNid = $(this).attr('id').substring(pos+1);
+                        $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
+                        $(this).hide();
+          			  });
+				      $('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
+                      $('#tagResource_'+resNid).append($lessLink);
+                      $('#tagResource_'+resNid).append($moreLink);
 			    	}
 			    	else {
 			    	  resName = linksArr[i]['nid'];
 			    	  resType = 'other';
 			    	}
-					//console.log('resName: ' + resName + ', resType: ' + resType + ', resNid: ' + resNid);
 			      }
     		    });
-    		  
-    		    
-    		  
-    		  
-    		  
     		  
     		  $('#tagClouds').append($tagcloud);
     		}
@@ -113,95 +123,6 @@ $(document).ready(function() {
             
 
 });
-      /*$.each(data, function(key, value) {
-        $.each(value, function(index, arVal) {
-	      var tag_uuid = arVal['uuid'];
-		  var tag_name = arVal['tagname'];
-		  		
-		  $.ajax({
-		    type: "GET",
-            url: a_url_prefix + 'edge=' + tag_uuid,
-			success: function(associations_data) {
-			  var associations_length = associations_data['associations'].length;
-			  if(associations_length > 0) { 
-			    var fontsize = 8;
-			    $tagcloud = $('<a class="tagcloud" id="' + 
-					  		tag_uuid + 
-					  		'" style="font-size:' + 
-					  		(fontsize + associations_length) + 
-					  		'px; cursor:pointer">' + 
-					  		tag_name + 
-					  		'</a> <span> </span>').on( "click", function() {  
-			      $('div#tagCloudInfo').empty();
-			      $('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: ' + $( this ).text() + "</div>");
-			      $('#cloud_info').append('<div># Objects: ' + associations_length + '</div>');
-			      $('#cloud_info').append('<ul id="tagContentsList">');
-
-				  // Get the various resources here.
-				  for(var i = 0; i < associations_length; i++) {
-					// Get the name of the resource, according to its type.
-					var resType = associations_data['associations'][i]['type'];
-					var resUuid = associations_data['associations'][i]['uuid'];
-					if(resType == 'job') {
-                      $.ajax({
-                        type: "GET", 
-                        url: 'http://' + SW.hostname + ':' + SW.port + "/jobUuid/" + associations_data['associations'][i]['uuid'],
-                        async: false,
-                        success: function(resourceData) {
-                          var jobName = resourceData['jobs'][0]['jobname'];
-                          var jobId = resourceData['jobs'][0]['jobid'];
-                          var jobGroupName =  resourceData['jobs'][0]['groupname'];
-                          var jobUuid = resourceData['jobs'][0]['uuid'];
-                          var jobStartDate = resourceData['jobs'][0]['starttime'];
-                          var fJobStartDate = formatDate(jobStartDate);		// formatDate is defined below in this file.
-                          $lessLink = $('<span id="lessTagInfoSpan_'+jobUuid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+jobId+'<br />&nbsp;&nbsp;&nbsp;Group: '+jobGroupName+'<br />&nbsp;&nbsp;&nbsp;Started: '+fJobStartDate+'</span>')
-                          			  .on("click", function() {
-                                        $('#moreTagInfoLink_'+jobUuid).css('display', 'inline'); 
-                                        $(this).hide();
-                                      });
-                          $moreLink = $('<a id="moreTagInfoLink_'+jobUuid+'" style="cursor:pointer">more</a>')
-                          			  .on("click", function() {
-                                        $('#lessTagInfoSpan_'+jobUuid).css('display', 'inline'); 
-                                        $(this).hide();
-                                      });
-                          $('#cloud_info').append('<li id="tagResource_'+jobUuid+'"><b>' + jobName + '</b> (job)&nbsp;</li><hr>');
-                          $('#tagResource_'+jobUuid).append($lessLink);
-                          $('#tagResource_'+jobUuid).append($moreLink);
-                        }, 
-                        error: function(e) {console.log('jobUuidHelper query failed.');}
-                      });
-				  	}
-					else if(resType == 'app') {
-                      $('#cloud_info').append('<li>' + associations_data['associations'][i]['uuid'] + ' (' + associations_data['associations'][i]['type'] + ')</li><hr>');
-				  	}
-				  }
-				  $('#cloud_info').append('</ul>');
-				  console.log($(this).text());
-			    }); // End of the onClick for tag cloud elements.
-			    $('#tagClouds').append($tagcloud);
-			    
-			  }
-			  
-			  
-			  
-			},
-			error: function() {}
-			
-		  }); //end ajax
-		 
-		  
-	    
-	    }); //$.each(value, function(index, arVal) 
-	  
-	 
-	  
-	  
-	  }); //end $.each(data, function(key, value)*/ 
-
-  
-  //$("#moreTagInfoLink").on("click", function() {alert("more was clicked!");});	Doesn't work.
-//});
-
 
 function getReducedArr(tag_name_arr) 
 {
