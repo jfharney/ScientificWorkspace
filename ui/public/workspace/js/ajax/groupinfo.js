@@ -207,6 +207,7 @@ function buildCollaboratorTree(children) {
       var user_info_obj = '';
       
       
+      /*
 	  var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/'+node.data.username;
 	  var queryString = '';
 	  console.log('onActivate is called.');
@@ -236,6 +237,8 @@ function buildCollaboratorTree(children) {
     	  console.log('error in getting user id');
         }
       });
+      */
+      
     },
     onLazyRead: function(node) {
 	  console.log('collaborators lazy read --> title: ' + node.data.title + ' id: ' + node.data.id);
