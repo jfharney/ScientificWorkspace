@@ -37,9 +37,20 @@ $(document).ready(function() {
 			      $('#cloud_info').append('<div># Objects: '+linkCount+'</div>');
 			      $('#cloud_info').append('<div>Description: '+tagDesc+'</div>');
 			      $('#cloud_info').append('<ul id="tagContentsList">');
+			      
+			      
+			      
 			      for(var i = 0; i < linkCount; i++) {
+			    	  
 			    	var resName;
 			    	var resNid = linksArr[i]['nid'];
+			    	
+			    	/*
+			    	for(var key in linksArr[i]) {
+			    		console.log('key: ' + key + ' value: ' + linksArr[i][key]);
+			    	}
+			    	*/
+			    	
 			    	var resType; 
 			    	if(linksArr[i]['type'] == 2) {
 			    	  resName = linksArr[i]['name'];

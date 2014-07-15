@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 	
-	$('#create_tag').click(function() {
+	$('#create_tag1').click(function() {
 
 		createTag();
 	  
@@ -29,7 +29,7 @@ function createTag() {
 	
 	  //alert('SW.selected_file_titles: ' + SW.selected_file_titles);
 	  
-	  
+	  alert('input#tag_name: ' + $('input#tag_name').val() + ' textarea#tag_description: ' + $('textarea#tag_description').val());
 	  
 	  //quick tagging name convention
 	  var timeStamp = new Date().getTime();
@@ -98,7 +98,7 @@ function createTag() {
 
 function addTagToPage() {
 	
-	location.href='http://' + SW.hostname + ':' + SW.port + '/workspace/' + SW.current_user_username;
+	//location.href='http://' + SW.hostname + ':' + SW.port + '/workspace/' + SW.current_user_username;
 	
 }
 
