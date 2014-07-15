@@ -2,6 +2,50 @@
 console.log('in feed.js');
 
 
+/* Server side "push events"
+$.ajax({ 
+    type: "GET",  
+	url: "http://localhost:1337/server3",  
+	success: function(data){
+		//Update your dashboard gauge
+		//salesGauge.setValue(data.value);
+		console.log('adding data to the feed 2');
+		$('#feed2').prepend('<div>' + data + '</div>')
+	}, 
+	error: function(XMLHttpRequest, textStatus, errorThrown){  
+        console.log('error '+ textStatus + " (" + errorThrown + ")");  
+    	//console.log('timeout');
+        //getMSG();  
+    }  
+});
+
+
+//check for browser support
+if(typeof(EventSource)!=="undefined") {
+	//create an object, passing it the name and location of the server side script
+	var eSource = new EventSource("http://localhost:1337/server3");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		//write the received data to the page
+		//document.getElementById("serverData").innerHTML = event.data;
+		//console.log('in feed 3);')
+		//$('#feed3').prepend('<div>' + event.data + '</div>')
+	};
+	eSource.onerror = function(event) {
+		//write the received data to the page
+		//document.getElementById("serverData").innerHTML = event.data;
+		console.log('error ' + event.data);
+		for (var key in event) {
+			//console.log('key: ' + key);
+		}
+	};
+}
+else {
+	document.getElementById("serverData").innerHTML="Whoops! Your browser doesn't receive server-sent events.";
+}
+*/
+
+
 if(SW.feedOn) {
 	setInterval(function(){
 	    $.ajax({ 

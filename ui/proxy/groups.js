@@ -32,19 +32,57 @@ var groupinfoHelper = function(request, response) {
       responseData += chunk;	
     });
     res.on('end', function() {
-      try {
-	    var jsonObj = JSON.parse(responseData);
+    	try {
+		    //var jsonObj = JSON.parse(responseData);
+	
+    		console.log('groups.js responseData: ' + responseData);
+		    var groupObjsArr = [];
+			groupObjsArr = JSON.parse(responseData);
 
-	    //var filteredGroupsObj = {'groups' : []};
-	    var filteredGroupsObj = {};
-	    
-		// Modularize the search refinement.
-	    if(searchArg != undefined && searchArg != '') {
-		  filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj);
-	    }
-	    else {
-          response.send(jsonObj);
-	    }
+			//console.log('length: ' + groupObjsArr.length);
+			
+			var respArr = [];
+			for(var i=0;i<groupObjsArr.length;i++) {
+				
+				/* fill in the tooltip
+				var tooltip = 'Job ID: '+ jobJidArr[i] + 
+	              '\nJob Name: ' + jobNameArr[i] + 
+	              '\nStart Time: ' + formatTimestamp(jobStartArr[i]) + 
+	              '\nEnd Time: ' + formatTimestamp(jobStopArr[i]) + 
+	              '\nHost Name: ' + jobHostArr[i] + 
+	              '\nWall Time: ' + jobWallArr[i];
+				*/
+				
+			    var child = {};
+			    child['title'] = groupObjsArr[i]['gname'];
+			    child['nid'] = groupObjsArr[i]['nid'];
+			    child['isFolder'] = true;
+			    child['type'] = 2;
+			    child['isLazy'] = true;
+				child['tooltip'] = 'This is a tooltip.';
+			    child['id'] = groupObjsArr[i]['gid'];
+			     
+			    respArr.push(child);
+			      
+			}
+			
+			
+		    //var filteredGroupsObj = {'groups' : []};
+		    var filteredGroupsObj = {};
+		    
+			// Modularize the search refinement.
+		    /*
+		    if(searchArg != undefined && searchArg != '') {
+			  filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj);
+		    }
+		    else {
+		      console.log('Jobs jsonObj: ' + jsobObj);
+	          response.send(jsonObj);
+		    }
+		    */
+		    
+			response.send(respArr);
+	      
       } 
       catch (e) {
         var emptyReturnObj = { groups : [] };		
@@ -102,7 +140,7 @@ var groupsHelper = function(request, response) {
 
   var path = '/sws/users?gid=' + request.params.gid;
 
-  console.log('group path --> ' + path);
+  //console.log('group path --> ' + path);
   
   var options = {
     host: proxy.serviceHost,
@@ -124,6 +162,8 @@ var groupsHelper = function(request, response) {
       var uidArr = new Array();
       var unameArr = new Array();
 
+      //console.log('users: ' + responseData);
+      
       /* Get all the users associated with this group. */
       for(var key in jsonObj) {
         for(var i = 0; i < jsonObj[key].length; i++) {
@@ -133,11 +173,35 @@ var groupsHelper = function(request, response) {
           unameArr.push(uname);
         }
       }
-      var respArr = [];
-      for(var i = 0; i < uidArr.length; i++) {
-        var respObj = {"title" : uidArr[i], "id" : uidArr[i] , 'username' : unameArr[i]};
-        respArr.push(respObj);
-      }
+      
+      var groupmemberObjsArr = [];
+	  groupmemberObjsArr = JSON.parse(responseData);
+
+	  var respArr = [];
+		for(var i=0;i<groupmemberObjsArr.length;i++) {
+			
+			/* fill in the tooltip
+			var tooltip = 'Job ID: '+ jobJidArr[i] + 
+            '\nJob Name: ' + jobNameArr[i] + 
+            '\nStart Time: ' + formatTimestamp(jobStartArr[i]) + 
+            '\nEnd Time: ' + formatTimestamp(jobStopArr[i]) + 
+            '\nHost Name: ' + jobHostArr[i] + 
+            '\nWall Time: ' + jobWallArr[i];
+			*/
+			
+		    var child = {};
+		    child['title'] = groupmemberObjsArr[i]['uname'];
+		    child['isFolder'] = false;
+		    child['type'] = 0;
+		    child['isLazy'] = false;
+			child['tooltip'] = 'This is a tooltip.';
+		    child['id'] = groupmemberObjsArr[i]['uid'];
+		     
+		    respArr.push(child);
+		      
+		}
+		
+      
 
       response.send(respArr);
     });
@@ -161,7 +225,7 @@ var groupsHelperFirewall = function(request, response) {
 	
 	var path = '/sws/users?gid=' + request.params.gid;
 
-	console.log('group path --> ' + path);
+	//console.log('group path --> ' + path);
 	  
 	var options = {
 	    host: proxy.serviceHost,
@@ -198,7 +262,7 @@ var groupsHelperFirewall = function(request, response) {
 	        respArr.push(respObj);
 	      }
 	
-	      console.log('respArr[0]: ' + respArr[0]);
+	      //console.log('respArr[0]: ' + respArr[0]);
 	      response.send(respArr);
 	   });
 		  

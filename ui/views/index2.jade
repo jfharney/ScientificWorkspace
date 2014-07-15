@@ -26,6 +26,36 @@ head
 html
   body
     
+    div UID: #{uid}
+    div UID: #{creator_uuid}
+    div Creator Email: #{creator_email}
+    div Creator Name: #{creator_name}
+    div Creator Number: #{creator_number}
+    div Creator Username: #{creator_username}
+    div Resource: #{resource.length} 
+    - if (typeof(resource) !== 'undefined') {
+      - each r in resource
+        div Resource: #{r} 
+    - }
+    
+    - if (typeof(job) !== 'undefined'){ 
+      - each j in job
+        if j != 'job1'
+          div Job: #{j}   
+    - }  
+    
+    - if (typeof(group) !== 'undefined'){ 
+      - each g in group
+        if g != 'group1'
+          div Group: #{g}
+    - }
+    - if (typeof(user) !== 'undefined'){ 
+      - each u in user
+        if u != 'user1'
+          div User: #{u} 
+    - }
+      
+    
     
     //div Selected Uuids:
     //  span#echoSelectionUuids3
@@ -125,9 +155,17 @@ html
                   span.hidden-tablet Add DOI
               li
                 a.ajax-link(href="#")
-                  span.hidden-tablet Remove DOI
+                  span.hidden-tablet Update DOI
+              li
+                a.ajax-link(href="#")
+                  span.hidden-tablet Search DOIs
           //  button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal",data-target="#myModal",style="margin-bottom:50px") Add Tag
           // <i class="icon-home"></i><span class="hidden-tablet"> Dashboard</span>
+        
+        
+        
+        
+        
         
         //main content
         div.span8     
@@ -149,43 +187,148 @@ html
                     div.span12 
                       fieldset
                         legend DOI Submittal Form
+                  
+                  
+                  div.row-fluid(style="margin-bottom:20px") 
+                    div.span12
+                      h3 Creator Information
                   div.row-fluid
-                    div.span6 creator
+                    div.span4 creator
                     div.span6 
-                      input#text(name="creator_input")
+                      input#text(name="creator_input",value="#{creator_name}")
                   div.row-fluid
-                    div.span6 resource
+                    div.span4 creator email
                     div.span6 
-                      input#text(name="resource_input")
+                      input#text(name="creator_input",value="#{creator_email}")
+                      
+                  
+                  div.row-fluid#add_creator_row
+                    div.span6 
+                      button#add_creator_button Add Creator
+                  
+                  hr    
+                      
+                  div.row-fluid(style="margin-bottom:20px,margin-top:20px;")
+                    div.span12  
+                      h3 Resources
+                      
+                      
+                  - if (typeof(resource) !== 'undefined') {
+                  - for (var i=0; i<resource.length; i++)
+                      //div= arr[i]
+                      div.row-fluid
+                        div.span4 Resource
+                        div.span6 
+                          input#text(name="resource_input",value="#{resource[i]}")
+                        div.span2
+                          a.metadata(href="#") metadata
+                    //- each r in resource
+                      div.row-fluid
+                        div.span4 resource
+                        div.span6 
+                          input#text(name="resource_input",value="#{r}")
+                        div.span2
+                          a.metadata(href="#") metadata
+                  -}
+                  - else
+                    div.row-fluid
+                        div.span4 resource
+                        div.span6 
+                          input#text(name="resource_input",value="")
+                        div.span2
+                          a.metadata(href="#") metadata
+                  
+                  div.row-fluid#add_resouce_row
+                    div.span6 
+                      button#add_resource_button Add Resource
+                  
+                  
+                  hr
+                  
+                  div.row-fluid(style="margin-bottom:20px")
+                    div.span12
+                      h3 Keywords
+                   
                   div.row-fluid
-                    div.span6 creator email
+                    div.span4 Keyword
                     div.span6 
-                      input#text(name="creator_email_input")
+                      input#text(name="keyword_input",value="")
+                  
+                  div.row-fluid#add_keyword_row
+                    div.span6 
+                      button#add_keyword_button Add Keyword
+                  
+                    
+                  hr
+                  
+                  div.row-fluid(style="margin-bottom:20px")
+                    div.span12
+                      h3 Miscellaneous
+                  
                   div.row-fluid
-                    div.span6 related resource
+                    div.span4 Language
                     div.span6 
-                      input#text(name="related_resource_input")
+                      input#text(name="language",value="English")
+                  
                   div.row-fluid
-                    div.span6 product nos
+                    div.span4 Country
                     div.span6 
-                      input#text(name="product_nos_input")
+                      input#text(name="country",value="USA")
+                  
                   div.row-fluid
-                    div.span6 contract nos
+                    div.span4 Sponsor Organization
                     div.span6 
-                      input#text(name="contract_nos_input")
+                      input#text(name="sponsor_org",value="Oak Ridge National Laboratory")
+                  
                   div.row-fluid
-                    div.span6 other identifying numbers
+                    div.span4 Miscellaneous Metadata
                     div.span6 
-                      input#text(name="other_identifying_numbers_input")
+                      textarea Jobs: #{job}
+                    
+                      
+                  
+                  
+                  hr
+                  
                   div.row-fluid
-                    div.span6 availability
                     div.span6 
-                      input#text(name="availability_input")
-                  div.row-fluid
-                    div.span6 
-                      button#submitDOI
-                    div.span6 
-                      input#text(name="submitDOI")
+                      button#submit_doi_request Submit DOI Request
+                      button#cancel Cancel
+                      button#return Return to Workspace
+                  
+                  
+                  
+                  
+                  //
+                    div.row-fluid
+                      div.span6 resource
+                      div.span6 
+                        input#text(name="resource_input")
+                    div.row-fluid
+                      div.span6 creator email
+                      div.span6 
+                        input#text(name="creator_email_input")
+                    div.row-fluid
+                      div.span6 related resource
+                      div.span6 
+                        input#text(name="related_resource_input")
+                    div.row-fluid
+                      div.span6 product nos
+                      div.span6 
+                        input#text(name="product_nos_input")
+                    div.row-fluid
+                      div.span6 contract nos
+                      div.span6 
+                        input#text(name="contract_nos_input")
+                    div.row-fluid
+                      div.span6 other identifying numbers
+                      div.span6 
+                        input#text(name="other_identifying_numbers_input")
+                    div.row-fluid
+                      div.span6 availability
+                      div.span6 
+                        input#text(name="availability_input")
+             
                   
                   
                   //class DOIData(models.Model):

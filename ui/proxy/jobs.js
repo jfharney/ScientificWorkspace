@@ -8,9 +8,6 @@ var proxy = require('./proxyConfig.js');
 
 var data = require('../data/firewall_sources.js');
 
-//var firewallMode = true;
-//var serviceHost = 'techint-b117';
-//var servicePort = '8080';
 
 // This function works with a URL containing or lacking a search parameter named "search". 
 var jobsproxyHelper = function(request, response) {
@@ -55,13 +52,16 @@ var jobsproxyHelper = function(request, response) {
     	              '\nEnd Time: ' + formatTimestamp(jobStopArr[i]) + 
     	              '\nHost Name: ' + jobHostArr[i] + 
     	              '\nWall Time: ' + jobWallArr[i];
-        var respObj = {"title" : jobNameArr[i], 
-        			   "isFolder" : true, 
-        			   "isLazy" : true, 
-        			   "type" : 2, 
-        			   "jobid" : jobJidArr[i],
-        			   "tooltip" : tooltip,
-        			   "nid" : jobNidArr[i]};
+    	
+        var respObj = {
+        		"title" : jobNameArr[i], 
+        		"isFolder" : true, 
+        		"isLazy" : true, 
+        		"type" : 2, 
+        		"jobid" : jobJidArr[i],
+        		"tooltip" : tooltip,
+        		"nid" : jobNidArr[i]
+        };
         respArr.push(respObj);
       }
 	  response.send(respArr);
@@ -212,6 +212,7 @@ var jobsinfoHelper = function(request, response)
 	
 	 var responseData = '';
 
+	 console.log('path-> ' + path);
 	 
 	 var req = http.request(options, function(res) {
 		  res.on('data', function (chunk) {

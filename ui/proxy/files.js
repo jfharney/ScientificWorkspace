@@ -16,7 +16,7 @@ var filesproxyHelper = function(request, response) {
 	  var usernum = request.params.userNum;
 	  var queriedPath =	request.query.path;
 		
-	  console.log('in get files for queriedPath ... ' + queriedPath);
+	  //console.log('in get files for queriedPath ... ' + queriedPath);
 	  var args = url.parse(request.url, true).query;
 	  //var path = "/sws/files?uid=5112&path=|"; 			// + args['path'];
 		
@@ -33,7 +33,7 @@ var filesproxyHelper = function(request, response) {
 		method: 'GET'
 	  };
 
-	  console.log('path->' + path);
+	  //console.log('path->' + path);
 	
 
 	var req = http.request(options, function(resp) {
@@ -45,7 +45,7 @@ var filesproxyHelper = function(request, response) {
 		  });
 		
 		  resp.on('end', function() {
-			  console.log('in resp end for files... ' + responseData);
+			  //console.log('in resp end for files... ' + responseData);
 			  var jsonObj = JSON.parse(responseData);
 				
 			  var files = jsonObj['files'];

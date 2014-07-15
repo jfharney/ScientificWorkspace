@@ -14,19 +14,24 @@ function getJobInfo(userNum, searchArg) {
     url: url,
     global: false,
     type: 'GET',
-	async: false,
+	//async: false,
 	success: function(data) 
 	{
+	
 	  console.log('Here is the data object/array:');
       for(var i = 0; i < data.length; i++) {
     	console.log(data[i]);
         children.push(data[i]);
       }
-	  buildJobsTree(children);			/* This function is defined below. */ 
+	  buildJobsTree(children);			
+	  
+	  /* This function is defined below. */ 
     },
     error: function() { console.log('error in getting job info'); }
   });
 }
+
+
 
 function getAppInfo(url) {
 
@@ -68,7 +73,7 @@ function getAppInfo(url) {
 
 function buildJobsTree(children) {
   $("#jobs_tree").dynatree({
-	title: "Lazy loading sample",
+	//title: "Lazy loading sample",
 	fx: { height: "toggle", duration: 200 },
 	autoFocus: false, 
 	children: children,
@@ -76,36 +81,71 @@ function buildJobsTree(children) {
 	selectMode: 3,
 	onSelect: function(select, node) {
 		
-		/* 7-1
-      var selNodes = node.tree.getSelectedNodes();
+		//alert('node type: ' + node.data.type);
+		
+		if(node.data.type == '2') {
+			
+			SW.selected_job_titles = [];
+			SW.selected_job_nids = [];
+			
+			// Display list of selected nodes
+			var selNodes = node.tree.getSelectedNodes();
+			  
+			var selTitles = $.map(selNodes, function(node) {
+				  return node.data.title;
+			});
+			SW.selected_job_titles.push(selTitles.join(", "));
+			console.log('selected_job_titles: ' + SW.selected_job_titles);
+			
+			var selNids = $.map(selNodes, function(node) {
+				return node.data.nid;
+			});
+			  
+			
+			var nid_arr = new Array();
+			for(var i=0;i<selNids.length;i++) {
+			  //console.log('i: ' + i + ' ' + selNids[i] + ' ');
+			  nid_arr.push(selNids[i]);
+			}
+			//console.log('---------->lengtj: ' + selNids.length);
+		  
+			//SW.selected_file_nids = selNids.join(", ");
+			SW.selected_job_nids = selNids;
+			 
+		} else {
 
-	  var selUuids = $.map(selNodes, function(node) {
-        return node.data.uuid + "";
-	  });
-	  var selTypes = $.map(selNodes, function(node) {
-	    return node.data.type + "";
-	  });
-	          
-	  var selRootNodes = node.tree.getSelectedNodes(true);
-
-	  SW.tagged_items = selUuids.join(", ");
-	  SW.tagged_types = selTypes.join(", ");
-      SW.selected_resource_items = selUuids.join(", ");
-      SW.selected_resource_types = selTypes.join(", ");
-      SW.selected_resource_keys = selUuids.join(", ");
-
-      //console.log('selected_resource_items: ' + SW.selected_resource_items);
-      //console.log('selected_resource_types: ' + SW.selected_resource_types);
-      //console.log('selected_resource_keys: ' + SW.selected_resource_keys);
-		        
-	  $("#echoSelectionUuids3").text(selUuids.join(", "));
-	  $("#echoSelectionTypes3").text(selTypes.join(", "));
-	          
-      $('#resources_to_tag').empty();
-      $('#resources_to_tag').append('<div>' + SW.selected_resource_items + '</div>')
-      $('#resources_types_to_tag').empty();
-      $('#resources_types_to_tag').append('<div>' + SW.selected_resource_types + '</div>')
-      */
+			SW.selected_app_titles = [];
+			SW.selected_app_nids = [];
+			
+			// Display list of selected nodes
+			var selNodes = node.tree.getSelectedNodes();
+			  
+			var selTitles = $.map(selNodes, function(node) {
+				  return node.data.title;
+			});
+			SW.selected_app_titles.push(selTitles.join(", "));
+			console.log('selected_app_titles: ' + SW.selected_app_titles);
+			
+			var selNids = $.map(selNodes, function(node) {
+				return node.data.nid;
+			});
+			  
+			
+			var nid_arr = new Array();
+			for(var i=0;i<selNids.length;i++) {
+			  //console.log('i: ' + i + ' ' + selNids[i] + ' ');
+			  nid_arr.push(selNids[i]);
+			}
+			//console.log('---------->lengtj: ' + selNids.length);
+		  
+			//SW.selected_file_nids = selNids.join(", ");
+			SW.selected_app_nids = nid_arr;//?selNids;
+			
+			console.log('selected_app_nids: ' + SW.selected_app_nids + ' length: ' + SW.selected_app_nids.length);
+			
+		}
+		
+		
 	},
 	onActivate: function(node) {
 	  var info_obj = '';

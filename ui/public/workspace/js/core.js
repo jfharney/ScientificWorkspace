@@ -7,12 +7,21 @@ SW.tagged_types = '';
 SW.selected_file_items = '';
 SW.selected_file_types = '';
 SW.selected_file_keys = '';
-SW.selected_file_nids = '';
-SW.selected_file_titles = '';
+SW.selected_file_nids = [];
+SW.selected_file_titles = [];
 
 SW.selected_job_items = '';
 SW.selected_job_types = '';
 SW.selected_job_keys = '';
+SW.selected_job_titles = [];
+SW.selected_job_nids = [];
+
+SW.selected_group_titles = [];
+SW.selected_user_titles = [];
+SW.selected_group_nids = [];
+SW.selected_user_nids = [];
+
+SW.selected_collaborator_titles = [];
 
 SW.selected_resource_items = '';
 SW.selected_resource_types = '';

@@ -8,18 +8,24 @@ $(function() {
   SW.current_user_name = $('#curUserName').html();
   SW.current_user_number = $('#curUserNumber').html();
   SW.current_user_username = $('#curUserUsername').html();
-	
+
+  console.log('SW.current_user_uuid: ' + SW.current_user_uuid);
+  console.log('SW.current_user_email: ' + SW.current_user_email);
+  console.log('SW.current_user_name: ' + SW.current_user_name);
+  console.log('SW.current_user_number: ' + SW.current_user_number);
+  console.log('SW.current_user_username: ' + SW.current_user_username);
+  
   /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
   getJobInfo(SW.current_user_number);
   
   /* This function is defined in ajax/groupinfo.js. */
-  //getCollaboratorInfo(SW.current_user_number);
+  getCollaboratorInfo(SW.current_user_number);
   
   /* This function is defined in ajax/userinfo.js. */
   postUserData('#user_info');
   
   /* This function is defined in ajax/fileinfo.js. */
-  //getFileInfo(SW.current_user_number);
+  getFileInfo(SW.current_user_number);
 	
   /* Enables the list box in the top right to change the current user. */
   /* (This feature will be admin-only in final version.) */

@@ -10,6 +10,7 @@ var data = require('../data/firewall_sources.js');
 
 var counter = 0;
 var counter2 = 0;
+var counter3 = 0;
 
 var associations = [];
 
@@ -90,3 +91,45 @@ var feed2 = function(request, response) {
 };
 
 module.exports.feed2 = feed2;
+
+var feed3 = function(request, response) {
+
+	for (var key in response) {
+		//console.log('key: ' + key + ' value: ' + response[key]);
+	}
+	
+	console.log('in feed3');
+	
+	response.setHeader('content-type', 'text/event-stream');
+	response.setHeader('cache-control', 'no-cache');
+	response.send("data:hello");
+	//response.send(JSON.parse('\n'));
+	/*
+	counter2 = counter2 + 1;
+	
+	console.log('output for server2 ' + counter2 + ' ' + (counter2 % 1000));
+	
+	//if(counter2 > 10) {
+		counter2 = 0;
+		
+		var d = new Date();
+		var n = d.getMilliseconds(); 
+		
+		//get the associations
+		var returnedAssocations2 = associations2;
+		
+		var association2 = {
+				'name' : 'association-2-' + n, 
+				'source' : 'resource-2-' + n,
+				'target' : 'resource-2-' + n
+			  };
+
+		associations2.push(association2);
+		
+		response.send(returnedAssocations2);
+	//}
+	*/
+};
+
+module.exports.feed3 = feed3;
+

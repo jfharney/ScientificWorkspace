@@ -89,20 +89,31 @@ function buildFileTree(treeData) {
 	    selectMode: 2,			// "1:single, 2:multi, 3:multi-hier"
 	    children: treeData,
 	    onSelect: function(select, node) {
+		      SW.selected_file_titles = [];
+		      SW.selected_file_nids = [];
 		  // Display list of selected nodes
 		  var selNodes = node.tree.getSelectedNodes();
 		  
 		  var selTitles = $.map(selNodes, function(node) {
 			  return node.data.title;
 		  });
-		  SW.selected_file_titles = selTitles.join(", ");
+		  SW.selected_file_titles.push(selTitles.join(", "));
 		  console.log('selected_file_titles: ' + SW.selected_file_titles);
 		  
 		  var selNids = $.map(selNodes, function(node) {
 			  return node.data.nid;
 		  });
-		  SW.selected_file_nids = selNids.join(", ");
-		  console.log('selected_file_nids: ' + SW.selected_file_nids);
+		  
+		  var nid_arr = new Array();
+		  for(var i=0;i<selNids.length;i++) {
+			  //console.log('i: ' + i + ' ' + selNids[i] + ' ');
+			  nid_arr.push(selNids[i]);
+		  }
+		  //console.log('---------->lengtj: ' + selNids.length);
+		  
+		  //SW.selected_file_nids = selNids.join(", ");
+		  SW.selected_file_nids = selNids;
+		  //console.log('selected_file_nids: ' + SW.selected_file_nids + ' selected_file_nids:' + SW.selected_file_nids.length);
 		  
 		  $('#resources_to_doi').empty();
 		  $('#resources_to_doi').append('<div>' + SW.selected_file_titles + '</div>');

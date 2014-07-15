@@ -1,7 +1,272 @@
+function createTag() {
+	
+	var user = SW.current_user_uuid;
+	  
+	  //user = '5112';
+
+	  var username = SW.current_user_username;
+	  var usernumber = SW.current_user_number;
+	  
+	  console.log('username: ' + username + ' usernumber: ' + usernumber + ' file node ids: ' + SW.selected_file_nids);
+	  
+	  var selected_file_titles = SW.selected_file_titles;
+	  
+	  var input = '';
+	  //put the user data in the hidden input fields
+	  //input += addUserData(user_data);
+	
+	  //alert('SW.selected_file_titles: ' + SW.selected_file_titles);
+	  
+	  var timeStamp = new Date().getTime();
+	  
+	  var tagName = 'tag' + timeStamp;
+	  
+	  console.log('url for creating a tag -> ' + 'http://160.91.210.19:8080/sws/tag?name='+tagName+'&uid=5112');
+	  
+
+	  var tagDescription = 'tagdesc' + timeStamp;
+	  
+	  //var url = 'http://' + SW.hostname + ':' + SW.port + '/tagproxy/'+usernumber;
+	  var url = 'http://' + SW.hostname + ':' + SW.port + '/tagproxy/'+usernumber + '?name=' + tagName + '&description=' + tagDescription;
+	  
+	  //url = url + '?path=|';
+	  //var children = [];
+	  //alert('url: ' + url);
+	  
+	  $.ajax({
+		    url: url,
+		    global: false,
+			type: 'POST',
+			success: function(data) {
+				
+				console.log('success in creating tag ');
+				
+				 var tag_nid = data['nid'];
+				  
+				 //associate tag to selected files
+				 if(SW.selected_file_nids != undefined) {
+					 console.log('selected_file_nids: ' + SW.selected_file_nids + ' selected_file_nids.length ' + SW.selected_file_nids.length + ' [0]: ' + SW.selected_file_nids[0]);
+					 
+					 for(var i=0;i<SW.selected_file_nids.length;i++) {
+						  
+						 //console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_file_nids[i]); //?name='+tagName+'&uid=5112');
+						  
+						 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + usernumber;
+						 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_file_nids[i] + '&type=' + 'file';
+							 
+						 
+						 $.ajax({
+							    url: association_url,
+							    global: false,
+								type: 'POST',
+								success: function(data) {
+
+									for(var key in data) {
+										console.log('file key: ' + key + ' value: ' + data[key]);
+									}
+									
+									console.log('assoc files success');
+								},
+								error: function() {
+									console.log('assoc files error');
+								}
+						 });
+						 
+					 }
+				 }
+				 
+				//associate tag to groups
+				 if(SW.selected_group_nids != undefined) {
+					 console.log('selected_group_nids: ' + SW.selected_group_nids + ' selected_group_nids.length ' + SW.selected_group_nids.length + ' [0]: ' + SW.selected_group_nids[0]);
+					 
+					 for(var i=0;i<SW.selected_group_nids.length;i++) {
+						  
+						 //console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_group_nids[i]); //?name='+tagName+'&uid=5112');
+						  
+						 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + usernumber;
+						 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_group_nids[i] + '&type=' + 'group';
+						 	
+						 
+						 //alert('association_url: ' + association_url);
+						 $.ajax({
+							    url: association_url,
+							    global: false,
+								type: 'POST',
+								success: function(data) {
+									
+									for(var key in data) {
+										console.log('group key: ' + key + ' value: ' + data[key]);
+									}
+									
+									console.log('assoc files success');
+								},
+								error: function() {
+									console.log('assoc files error');
+								}
+						 });
+						 
+						  
+					 }
+				 }
+				 
+
+				 //associate tag to selected jobs
+				 if(SW.selected_job_nids != undefined) {
+						
+					 for(var i=0;i<SW.selected_job_nids.length;i++) {
+						  
+						  //console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_job_nids[i]); //?name='+tagName+'&uid=5112');
+						  
+						  var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + usernumber;
+						  association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_job_nids[i] + '&type=' + 'job';
+							 
+						  //alert('association_url: ' + association_url);
+						  $.ajax({
+							    url: association_url,
+							    global: false,
+								type: 'POST',
+								success: function(data) {
+
+									for(var key in data) {
+										console.log('job key: ' + key + ' value: ' + data[key]);
+									}
+									
+									
+									console.log('assoc jobs success');
+								},
+								error: function() {
+									console.log('assoc jobs error');
+								}
+						 });
+					 
+					 }
+				 }
+				 
+
+				 //associate tag to selected users
+				 if(SW.selected_user_nids != undefined) {
+						
+					 for(var i=0;i<SW.selected_user_nids.length;i++) {
+						  
+						  //console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_user_nids[i]); //?name='+tagName+'&uid=5112');
+						  
+						  var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + usernumber;
+						  association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_user_nids[i] + '&type=' + 'user';
+							 
+						  //alert('association_url: ' + association_url);
+						  $.ajax({
+							    url: association_url,
+							    global: false,
+								type: 'POST',
+								success: function(data) {
+
+									for(var key in data) {
+										console.log('user key: ' + key + ' value: ' + data[key]);
+									}
+									
+									console.log('assoc users success');
+								},
+								error: function() {
+									console.log('assoc users error');
+								}
+						 });
+					 
+					 }
+				 }
+				 
+
+				 //associate tag to selected apps
+				 if(SW.selected_app_nids != undefined) {
+						
+					 for(var i=0;i<SW.selected_app_nids.length;i++) {
+						  
+						  console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_app_nids[i]); //?name='+tagName+'&uid=5112');
+						  
+						  console.log('nids ' + i + ' ' + SW.selected_app_nids[i]);
+						 
+						  var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + usernumber;
+						  association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_app_nids[i] + '&type=' + 'app';
+							 
+						  //alert('association_url: ' + association_url);
+						  $.ajax({
+							    url: association_url,
+							    global: false,
+								type: 'POST',
+								success: function(data) {
+									console.log('assoc apps success');
+								},
+								error: function() {
+									console.log('assoc apps error');
+								}
+						 });
+					 
+					 }
+				 }
+				 
+				
+				
+				
+				
+			},
+			error: function() {
+				
+				alert('error');
+				
+			}
+	  });
+			
+	  
+	 
+	  
+	//curl -X POST 'http://160.91.210.19:8080/sws/tag?name=tag11&uid=5112'
+	  
+	  //POST [base URI]/tag/{tag_nid}/link/{obj_nid}
+	  //curl -X POST http://techint-b117:8080/sws/tag/600012/link/88388
+	  
+	  
+	  /*
+	  input += addCreator();
+	  
+	  //put the selected file keys in the hidden input fields
+	  input += addResources(SW.selected_file_titles);
+		
+	  //put the selected apps/jobs in the hidden input fields
+	  input += addJobs(SW.selected_job_titles);
+		
+	  //put the selected apps/jobs in the hidden input fields
+	  input += addGroups(SW.selected_group_titles);
+		
+	  //put the selected apps/jobs in the hidden input fields
+	  input += addUsers(SW.selected_user_titles);
+		
+	
+		
+	  //put the selected collaborators in the hidden input fields (may be deprecated)
+		  
+	  url = "http://" + "localhost" + ":" + "1337" + "/doispace/" + username + "";
+		
+	  console.log('input: ' + input + ' url: ' + url);
+	  */
+	  
+	  
+	  //send request
+	  //jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
+      // .appendTo('body').submit().remove();
+	
+		
+		
+	
+}
+
 $(document).ready(function() {
 	
   $('#create_tag').click(function() {
 
+	  
+	  
+	  createTag();
+	  
+	  /*
 	  console.log('In create tag');
 	  console.log('selected file nids: ' + SW.selected_file_nids);
 	  console.log('selected file titles: ' + SW.selected_file_titles);  
@@ -38,6 +303,7 @@ $(document).ready(function() {
 
 	  }
 	  
+	  */
 	  
 	  
 	  
@@ -233,11 +499,10 @@ $(document).ready(function() {
     });		// End of ajax call. 
     */
     
-    /**************************************/
     
   });		// End of $('#create_tag').click(function()
 	
-  var num_tags_returned = 3;
+  //var num_tags_returned = 3;
 
   
 

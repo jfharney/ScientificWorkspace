@@ -38,26 +38,51 @@ if(proxy.firewallMode)
 
 /*************************************************************/
 
+app.post('/doi/:user_id',function(request,response) {
+	  console.log('\n\n---------in doi_send proxy get for ' + request.params.user_id + '----------');
+	  response.render("index2", { uid : request.params.user_id });
+});
+
 app.get('/doi/:user_id',function(request,response) {
-	  console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
+	  console.log('\n\n---------in doi_send proxy get for ' + request.params.user_id + '----------');
 	  response.render("index2", { uid : request.params.user_id });
 	});
 
-app.post('/doi/:user_id',function(request,response) {
-	console.log('\n\n---------in doi_send proxy for ' + request.params.user_id + '----------');
+app.post('/doispace/:user_id',function(request,response) {
+	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
 	//console.log('rendering index2.jade');
 	//response.render("index2", { uid : request.params.user_id });
 	
 	var model = {};
+	model['uid'] = request.params.user_id;
 	for(var key in request['body']) {
-		console.log('key: ' + key + ' value: ' + request['body'][key]);
-		model[key] = request['body'][key];
+		console.log('key: ' + key + ' value: ' + request['body'][key] + ' length: ' + request['body'][key].length + ' isArr: ' + isArray(request['body'][key]));
+		
+		if(key == 'resource' || key == 'group' || key == 'job') {
+			var arr = request['body'][key].split(',');
+			console.log('length: ' + arr.length);
+			request['body'][key] = arr;
+		} 
+		
+		if(isArray(request['body'][key])) {
+			model[key] = request['body'][key];
+		} else {
+			var arr = new Array();
+			arr.push(request['body'][key]);
+			model[key] = arr;
+			//console.log('arr: ' + arr);
+		}
+		console.log('key: ' + key + ' value: ' + request['body'][key] + ' length: ' + request['body'][key].length + ' model[] ' + model[key] + ' isArr: ' + isArray(model[key]));
+		
 	}
 	
-	//response.redirect('/doi/'+ request.params.user_id,model);
-	//response.send("doi_send");
-	response.render("index2", { uid : request.params.user_id });
+	//console.log('Returning modell...');
+	for(var key in model) {
+		console.log('key: ' + key + ' model: ' + model[key]);
+	}
+	
+	response.render("index2", model);
 });
 
 /*************************************************************/
@@ -174,6 +199,16 @@ app.get('/server2', function(request, response) {
 	
 	
 });
+app.get('/server3', function(request, response) {
+	
+	if(proxy.firewallMode) {
+		var res = associationsfeed.feed3(request, response);
+	} else {
+		var res = associationsfeed.feed3(request, response);
+	}
+	
+	
+});
 
 
 /*************************************************************/
@@ -181,6 +216,7 @@ app.get('/server2', function(request, response) {
 //--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
+	console.log('in groupinfo...');
   if(proxy.firewallMode) {
 	  
 	var res = groups.groupinfoHelperFirewall(request, response);  
@@ -219,6 +255,8 @@ app.get('/groups/:gid',function(request, response) {
 //--------Jobs API----------//
 
 app.get('/jobsproxy/:userNum', function(request, response) {
+
+	console.log('in jobsproxy');
   if(proxy.firewallMode) {
 	
 	jobs.jobsproxyHelperFirewall(request, response);
@@ -280,12 +318,123 @@ app.get('/appinfo/:appnum', function(request, response) {
 
 //-----------Tags-----------//
 
-app.post('/tagproxy', function(request, response) {
+app.get('/tag1/:user_id', function(request, response) 
+{
+	console.log('\n\n---------in tag proxy 1----------');
+	response.send("response");
+});
+
+
+app.post('/tagproxy/:user_id', function(request, response) {
 	console.log('\n\n---------in tag proxy----------');
+	console.log('Adding tag');
 	
-	var res = tags.tagsproxyHelper(request, response);
+	var args = url.parse(request.url, true).query;
+	
+	for (var key in args) {
+		console.log('key: ' + key + ' value: ' + args[key]);
+	}
+	
+	var user_id = request.params.user_id;
+	var name = args['name'];
+	var description = args['description'];
+	
+	console.log('user_id: ' + user_id);
+	
+	var options = {
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
+			path: "/sws/tag?uid=" + user_id + '&name='+name+'&description='+description,
+			method: 'POST'
+	};
+	
+	//curl -X POST 'http://160.91.210.19:8080/sws/tag?name=tag11&uid=5112'
+	
+	var req = http.request(options, function(resp) {
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			//response.send(responseData);
+			console.log('tag post responseData: ' + responseData);
+			
+
+		    var jsonObj = JSON.parse(responseData);
+			
+			response.send(jsonObj);
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
 	
 	
+	
+	
+	//var res = tags.tagsproxyHelper(request, response);
+	
+	
+});
+
+app.post('/associationproxy/:user_id',function(request,response){
+	console.log('\n\n---------in association proxy----------');
+	var user_id = request.params.user_id;
+	
+	var args = url.parse(request.url, true).query;
+	
+	var tag_nid = args['tag_nid'];
+	var resource_nid = args['resource_nid'];
+	var type = args['type'];
+	
+	
+	console.log('Adding association for user_id: ' + user_id + ' for type: ' + type);
+	console.log('Connecting tag: ' + tag_nid + ' to resouce: ' + resource_nid);
+	
+	console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + resource_nid); //?name='+tagName+'&uid=5112');
+	 
+	
+	var options = {
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
+			//path: "/sws/tags?uid=" + args['uid'],
+			path: '/sws/tag/' + tag_nid + '/link/' + resource_nid,
+			method: 'POST'
+	};
+	
+	console.log('path -> ' + options['path']);
+	
+	
+	var req = http.request(options, function(resp) {
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			console.log('associations proxy response data: ' + responseData);
+
+		    //var jsonObj = JSON.parse(responseData);
+		    
+			//response.send(jsonObj);
+			response.send("response");
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+	
+
+	//response.send("Response");
 });
 
 app.get('/tags', function(request, response) 

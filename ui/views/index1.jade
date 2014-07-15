@@ -33,7 +33,7 @@ html(lang="en")
   body
     
     // DOI modal
-    div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
+    //div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
@@ -48,7 +48,7 @@ html(lang="en")
           button#create_doi_button.btn.btn-primary Create DOI form
        
     
-    div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
+    //div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
@@ -102,7 +102,7 @@ html(lang="en")
               li
                 a(href="../workspace/#{uname}") Workspace
               li
-                a(href="../doi/#{uname}") DOI
+                a(href="../doispace/#{uname}") DOI
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
@@ -167,7 +167,8 @@ html(lang="en")
                   span.hidden-tablet Create DOI
               li.nav-header.hidden-tablet Tags
               li
-                a#add_tag_button.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
+                //a#add_tag_button.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
+                a#create_tag.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
                   span.hidden-tablet Add Tag
               li
                 a.ajax-link(href="#")
@@ -276,6 +277,8 @@ html(lang="en")
           div#feed1 
             div feed 1 beginning
           div#feed2 
+            div feed 2 beginning
+          div#feed3 
             div feed 2 beginning
           
       
