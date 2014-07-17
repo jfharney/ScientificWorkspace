@@ -3,7 +3,6 @@ function getCollaboratorInfo(userNumber, searchArg) {
   if(searchArg == undefined) searchArg = '';
   
   var url = 'http://'+SW.hostname+':'+SW.port+'/groupinfo/'+userNumber+'?search='+searchArg;
-  //console.log('We are inside getCollaboratorInfo().');
   
   console.log('get Collaborator Info: ' + url);
   
@@ -14,40 +13,10 @@ function getCollaboratorInfo(userNumber, searchArg) {
     type: 'GET',
     success: function(data) {
       groupsArr = data;
-//<<<<<<< HEAD
       console.log('Here is groupsArr:');
 
       var children = data;
       buildCollaboratorTree(children);
-      
-      /*
-      nid: 54608 
-      gid: 2184 
-      gname: cli017
-      type: 1 
-=======
-      //console.log('Here is groupsArr:');
->>>>>>> cc6f0385beb04a5b5456d114d3704358bc577a73
-      for(var i = 0; i < groupsArr.length; i++)
-    	for(var j in groupsArr[i])
-      //	  console.log(j + ': ' + groupsArr[i][j]);
-			
-	  */
-      
-      
-      // Create the initial children for the tree.
-      /*
-      var children = [];
-      for(var i = 0; i < groupsArr.length; i++) {
-        var child = {	
-        				title : groupsArr[i]['gname'], 
-                     	isFolder : true, 
-                     	isLazy : true, 
-                     	id : groupsArr[i]['gid']
-        			};
-        children.push(child);
-      }
-      */
     },
     error: function() {
       console.log('error in getting group info');
@@ -60,7 +29,6 @@ function getGroupInfo(uid) {
 	
 	alert('in get group info for uid: ' + uid);
 	
-	//groupinfo
 	var url = 'http://' + SW.hostname + ':' + SW.port + '/groupinfo/'+uid;
 	var queryString = '';
 	
