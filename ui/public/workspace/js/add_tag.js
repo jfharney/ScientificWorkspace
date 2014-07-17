@@ -29,12 +29,28 @@ function createTag() {
 	
 	  //alert('SW.selected_file_titles: ' + SW.selected_file_titles);
 	  
-	  alert('input#tag_name: ' + $('input#tag_name').val() + ' textarea#tag_description: ' + $('textarea#tag_description').val());
+	  //alert('input#tag_name: ' + $('input#tag_name').val() + ' textarea#tag_description: ' + $('textarea#tag_description').val());
 	  
+
 	  //quick tagging name convention
 	  var timeStamp = new Date().getTime();
-	  var tagName = 'tag' + timeStamp;
+	  
+	  var tagName = '';
+	  if($('input#tag_name').val() != null ||
+		 $('input#tag_name').val() != '' ||
+		 $('input#tag_name').val() != undefined ||
+		 $('input#tag_name').val() != ' ') {
+		  tagName = $('input#tag_name').val();
+	  } else {
+		  tagName = 'tag' + timeStamp;
+	  }
+
+		  
+	  
+	  //replace with real description
 	  var tagDescription = 'tagdesc' + timeStamp;
+	  //var tagDescription = $('textarea#tag_description').val();
+	  
 	  
 	  console.log('url for creating a tag -> ' + 'http://160.91.210.19:8080/sws/tag?name='+tagName+'&uid=5112');
 	  

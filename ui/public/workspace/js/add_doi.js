@@ -210,7 +210,7 @@ function createDOI() {
 		
 	  //put the selected collaborators in the hidden input fields (may be deprecated)
 		  
-	  url = "http://" + "localhost" + ":" + "1337" + "/doispace/" + username + "";
+	  url = "http://" + "localhost" + ":" + "1337" + "/doi/" + username + "";
 		
 	  console.log('input: ' + input + ' url: ' + url);
 		

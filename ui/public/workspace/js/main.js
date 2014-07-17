@@ -97,6 +97,29 @@ $(function() {
     $("#jobs_tree").dynatree("getTree").reload();
     $("#jobsSearchPanel").slideToggle();
   });
+  
+  
+
+  //put the selected collaborators in the hidden input fields (may be deprecated)
+  $('#search_view').click(function() {
+
+	  var username = SW.current_user_username;
+	  
+	  var url = "http://" + "localhost" + ":" + "1337" + "/search/" + username + "";
+		
+	  alert(' url: ' + url);
+		
+	  var input = '';
+	  
+	  //send request
+	  jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
+	     .appendTo('body').submit().remove();
+  }) ;
+  
+  
+	
+	
+  
 
 });
 

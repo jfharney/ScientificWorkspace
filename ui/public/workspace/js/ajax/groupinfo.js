@@ -17,6 +17,12 @@ function getCollaboratorInfo(userNumber, searchArg) {
 
       var children = data;
       buildCollaboratorTree(children);
+<<<<<<< HEAD
+=======
+      
+     
+     
+>>>>>>> 6b4bbf82e7e2920ffd6a6034d25dcc57dc22cc50
     },
     error: function() {
       console.log('error in getting group info');
@@ -109,9 +115,6 @@ function buildCollaboratorTree(children) {
 			  console.log('i: ' + i + ' ' + selNids[i] + ' ');
 			  nid_arr.push(selNids[i]);
 			}
-			//console.log('---------->lengtj: ' + selNids.length);
-		  
-			//SW.selected_file_nids = selNids.join(", ");
 			SW.selected_user_nids = selNids;
 			
 			SW.selected_user_titles.push(selTitles.join(", "));
@@ -141,9 +144,7 @@ function buildCollaboratorTree(children) {
 			  console.log('i: ' + i + ' ' + selNids[i] + ' ');
 			  nid_arr.push(selNids[i]);
 			}
-			//console.log('---------->lengtj: ' + selNids.length);
-		  
-			//SW.selected_file_nids = selNids.join(", ");
+			
 			SW.selected_group_nids = selNids;
 			
 			
@@ -152,21 +153,7 @@ function buildCollaboratorTree(children) {
 			console.log('selected_job_titles: ' + SW.selected_group_titles);
 			
 			
-			
-			
-			
 		}
-		/*
-		SW.selected_job_titles = [];
-		// Display list of selected nodes
-		var selNodes = node.tree.getSelectedNodes();
-		  
-		var selTitles = $.map(selNodes, function(node) {
-			  return node.data.title;
-		});
-		SW.selected_job_titles.push(selTitles.join(", "));
-		console.log('selected_job_titles: ' + SW.selected_job_titles);
-		*/
 	},
 	onActivate: function(node) {
     	  console.log("Here is the node.data object: ");
@@ -175,6 +162,7 @@ function buildCollaboratorTree(children) {
       var user_info_obj = '';
       
       
+      /*
 	  var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/'+node.data.username;
 	  var queryString = '';
 	  console.log('onActivate is called.');
@@ -204,6 +192,8 @@ function buildCollaboratorTree(children) {
     	  console.log('error in getting user id');
         }
       });
+      */
+      
     },
     onLazyRead: function(node) {
 	  console.log('collaborators lazy read --> title: ' + node.data.title + ' id: ' + node.data.id);
