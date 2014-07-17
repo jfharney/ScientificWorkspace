@@ -109,6 +109,71 @@ app.post('/doi/:user_id',function(request,response) {
 
 /*************************************************************/
 
+app.get("/search_results/:user_id", function(request, response) {
+	  console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
+	  //curl -X GET 'http://techint-b117:8080/sws/search?uid=5112&query=v.name:tag*'
+	  var request_obj = request['query'];
+	  
+	  
+	  for(var key in request_obj) {
+		  console.log('key: ' + key);
+	  }
+	  var text = request_obj['text'];
+	  
+	  //var path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:tag*';
+	
+	  var path = '';
+	  
+	  if(text == '*') {
+		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:tag*';
+			
+	  } else {
+		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text + '*';
+	  }
+	  
+		//query the userlist service here
+		var options = {
+				host: proxy.serviceHost,
+				port: proxy.servicePort,
+				path: path,
+				method: 'GET'
+			  };
+		
+		 var responseData = '';
+
+		 
+		 var req = http.request(options, function(res) {
+			  res.on('data', function (chunk) {
+				responseData += chunk;		
+			  });
+			  res.on('end',function() {
+				  
+				  
+				  console.log('search results response data\n' + responseData);
+				  
+				  var jsonObj = JSON.parse(responseData);
+			      response.send(jsonObj);
+				 
+				  
+			  });
+			  
+		  
+		 }).on('error', function(e) {
+			 
+			  console.log("Got error: " + e.message);
+		 
+		 });
+		 
+		 req.end();
+	  
+	  
+	  
+	  //response.render("settings", { uid : request.params.user_id });
+});
+
+
+/*************************************************************/
+
 app.get("/settings/:user_id", function(request, response) {
 	  console.log('\n\n---------in settings proxy for ' + request.params.user_id + '----------');
 	  response.render("settings", { uid : request.params.user_id });

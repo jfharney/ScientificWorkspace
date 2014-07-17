@@ -140,8 +140,8 @@ html
                             div.control-group
                               label.control-label Text
                               div.controls
-                                input.input-xlarge.focused#focusedInput(type="text",value="")
-                            div.control-group
+                                input.input-xlarge.focused#search_text(type="text",value="")
+                            //div.control-group
                               label.control-label Tag
                               div.controls
                                 input.input-xlarge.focused#focusedInput(type="text",value="")
@@ -154,7 +154,30 @@ html
                               div.controls
                                 input.input-xlarge.datepicker#date02(type="text",value="")
                       div.span6
-                        div Insert Facets here
+                        div.row-fluid
+                          div.span12  
+                            div.control-group
+                              label.control-label Search Over:
+                              div.controls
+                                labels.checkbox.inline Users
+                                  input#Users(type="checkbox",value="Users",checked) 
+                                labels.checkbox.inline Groups
+                                  input#Groups(type="checkbox",value="Groups",checked) 
+                                labels.checkbox.inline Files
+                                  input#Files(type="checkbox",value="Files",checked) 
+                                labels.checkbox.inline Directories
+                                  input#Directories(type="checkbox",value="Directories",checked) 
+                                labels.checkbox.inline Jobs
+                                  input#Jobs(type="checkbox",value="Jobs",checked) 
+                                labels.checkbox.inline Apps
+                                  input#Apps(type="checkbox",value="Apps",checked) 
+                                labels.checkbox.inline Tags
+                                  input#Tags(type="checkbox",value="Tags",checked) 
+                                   
+                                 
+                        div.row-fluid
+                          div.span12  
+                            div Insert Facets here
                     div.span12
                       hr
                     div.span12
@@ -176,103 +199,71 @@ html
                       i.icon-chevron-up
                     a.btn.btn-close.btn-round(href="#")
                       i.icon-remove
-                div.box-content
+                div.box-content#results
                   div.row-fluid
                     div.span12 
                       fieldset Live search results
                       
                   
-                  div.row-fluid
+                  //div.row-fluid
                     div.span12 
                        div record 1
                        div Name: 
                        div Type
-                  hr
-                  div.row-fluid
+                  
+                  //div.row-fluid
                     div.span12 
                        div record 2
                        div Name: 
                        div Type
-                  hr 
-                  div.row-fluid
-                    div.span12 
-                       div record 3
-                       div Name: 
-                       div Type
                   
-                  hr
-                  div.row-fluid
-                    div.span12 
-                       div record 2
-                       div Name: 
-                       div Type
-                  hr 
-                  div.row-fluid
-                    div.span12 
-                       div record 3
-                       div Name: 
-                       div Type
                   
-                  hr
-                  div.row-fluid
-                    div.span12 
-                       div record 2
-                       div Name: 
-                       div Type
-                  hr 
-                  div.row-fluid
-                    div.span12 
-                       div record 3
-                       div Name: 
-                       div Type
-                  
-                       
                  
                  
                   
                  
       
             
-    script(src="/doi/js/jquery/jquery-1.7.2.min.js")
-    script(src="/doi/js/jquery/jquery-ui-1.8.21.custom.min.js")
-    script(src="/doi/js/bootstrap/bootstrap-transition.js")
-    script(src="/doi/js/bootstrap/bootstrap-alert.js")
-    script(src="/doi/js/bootstrap/bootstrap-modal.js")
-    script(src="/doi/js/bootstrap/bootstrap-dropdown.js")
-    script(src="/doi/js/bootstrap/bootstrap-scrollspy.js")
-    script(src="/doi/js/bootstrap/bootstrap-tab.js")
-    script(src="/doi/js/bootstrap/bootstrap-tooltip.js")
-    script(src="/doi/js/bootstrap/bootstrap-popover.js")
-    script(src="/doi/js/bootstrap/bootstrap-button.js")
-    script(src="/doi/js/bootstrap/bootstrap-collapse.js")
-    script(src="/doi/js/bootstrap/bootstrap-carousel.js")
-    script(src="/doi/js/bootstrap/bootstrap-typeahead.js")
-    script(src="/doi/js/bootstrap/bootstrap-tour.js")
-    script(src="/doi/js/jquery/jquery.cookie.js")
-    script(src="/doi/js/fullcalendar.min.js")
-    script(src="/doi/js/jquery/jquery.dataTables.min.js")
-    script(src="/doi/js/excanvas.js")
-    script(src="/doi/js/jquery/jquery.flot.min.js")
-    script(src="/doi/js/jquery/jquery.flot.pie.min.js")
-    script(src="/doi/js/jquery/jquery.dataTables.min.js")
-    script(src="/doi/js/jquery/jquery.flot.stack.js")
-    script(src="/doi/js/jquery/jquery.flot.resize.min.js")
-    script(src="/doi/js/jquery/jquery.chosen.min.js")
-    script(src="/doi/js/jquery/jquery.uniform.min.js")
-    script(src="/doi/js/jquery/jquery.colorbox.min.js")
-    script(src="/doi/js/jquery/jquery.cleditor.min.js")
-    script(src="/doi/js/jquery/jquery.noty.js")
-    script(src="/doi/js/jquery/jquery.elfinder.min.js")
-    script(src="/doi/js/jquery/jquery.raty.min.js")
-    script(src="/doi/js/jquery/jquery.iphone.toggle.js")
-    script(src="/doi/js/jquery/jquery.autogrow-textarea.js")
-    script(src="/doi/js/jquery/jquery.uploadify-3.1.min.js")
-    script(src="/doi/js/jquery/jquery.history.js")
-    script(src='/doi/js/tablesorter-master/js/jquery.tablesorter.js')
-    script(src="/doi/js/charisma.js")
-    script(src="/doi/js/jquery/jquery.dynatree.min.js")
-    script(src="/doi/js/main.js")
-    script(src="/doi/js/ajax/doi.js")
+    script(src="/search/js/jquery/jquery-1.7.2.min.js")
+    script(src="/search/js/jquery/jquery-ui-1.8.21.custom.min.js")
+    script(src="/search/js/bootstrap/bootstrap-transition.js")
+    script(src="/search/js/bootstrap/bootstrap-alert.js")
+    script(src="/search/js/bootstrap/bootstrap-modal.js")
+    script(src="/search/js/bootstrap/bootstrap-dropdown.js")
+    script(src="/search/js/bootstrap/bootstrap-scrollspy.js")
+    script(src="/search/js/bootstrap/bootstrap-tab.js")
+    script(src="/search/js/bootstrap/bootstrap-tooltip.js")
+    script(src="/search/js/bootstrap/bootstrap-popover.js")
+    script(src="/search/js/bootstrap/bootstrap-button.js")
+    script(src="/search/js/bootstrap/bootstrap-collapse.js")
+    script(src="/search/js/bootstrap/bootstrap-carousel.js")
+    script(src="/search/js/bootstrap/bootstrap-typeahead.js")
+    script(src="/search/js/bootstrap/bootstrap-tour.js")
+    script(src="/search/js/jquery/jquery.cookie.js")
+    script(src="/search/js/fullcalendar.min.js")
+    script(src="/search/js/jquery/jquery.dataTables.min.js")
+    script(src="/search/js/excanvas.js")
+    script(src="/search/js/jquery/jquery.flot.min.js")
+    script(src="/search/js/jquery/jquery.flot.pie.min.js")
+    script(src="/search/js/jquery/jquery.dataTables.min.js")
+    script(src="/search/js/jquery/jquery.flot.stack.js")
+    script(src="/search/js/jquery/jquery.flot.resize.min.js")
+    script(src="/search/js/jquery/jquery.chosen.min.js")
+    script(src="/search/js/jquery/jquery.uniform.min.js")
+    script(src="/search/js/jquery/jquery.colorbox.min.js")
+    script(src="/search/js/jquery/jquery.cleditor.min.js")
+    script(src="/search/js/jquery/jquery.noty.js")
+    script(src="/search/js/jquery/jquery.elfinder.min.js")
+    script(src="/search/js/jquery/jquery.raty.min.js")
+    script(src="/search/js/jquery/jquery.iphone.toggle.js")
+    script(src="/search/js/jquery/jquery.autogrow-textarea.js")
+    script(src="/search/js/jquery/jquery.uploadify-3.1.min.js")
+    script(src="/search/js/jquery/jquery.history.js")
+    script(src='/search/js/tablesorter-master/js/jquery.tablesorter.js')
+    script(src="/search/js/charisma.js")
+    script(src="/search/js/jquery/jquery.dynatree.min.js")
+    script(src="/search/js/main.js")
+    script(src="/search/js/ajax/doi.js")
     // script(src="js/ajax/jobtree.js")
     // script(src="js/ajax/filetree.js")
     // script(src="js/ajax/jobs_widget.js")
