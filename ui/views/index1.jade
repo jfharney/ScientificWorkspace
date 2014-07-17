@@ -70,23 +70,22 @@ html(lang="en")
           button.btn.btn-default(data-dismiss="modal") Cancel
           button#create_tag1.btn.btn-primary Create Tag
       
-      
+    // TAGS TABLE MODAL  
     div#tableModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button", data-dismiss="modal", aria-hidden="true")
           h4#tableModalLabel.modal-title Tags Table
         
-        div.modal-body.box-content#tagsTableContainer(style="margin-top:10px; max-height:550px; width:750px; overflow:auto")
+        div.modal-body.box-content#tagsTableContainer(style="margin-top:10px; max-height:550px; width:500px; overflow:auto")
           table#tagsTable.display.dataTable
             thead
               tr
-                th nid
-                th access
-                th name
-                th type
-                th desc
-                th owner
+                th Name
+                th Description
+                th Link Count
+                th Links
+                th Access
             tbody
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel

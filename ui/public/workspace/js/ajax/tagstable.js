@@ -1,15 +1,13 @@
 $('#show_table_button').click(function() {
 	
   $("#tagsTable").dataTable({
-    sAjaxSource: "http://localhost:1337/tags?uid=" + SW.current_user_number,
+    sAjaxSource: 'http://localhost:1337/tagsTable/' + SW.current_user_number,
     sAjaxDataProp: "",
 	bDestroy: true,
-	aoColumns: [{ mData: "nid" 		},
-	            { mData: "access" 	},
-	            { mData: "name" 	},
-	            { mData: "type" 	},
-	            { mData: "desc" 	},
-	            { mData: "owner" 	}], 
+	aoColumns: [{ mData: "name" },
+	            { mData: "desc" },
+	            //{ mData: "linkCount" },
+	            { mData: "access" }], 
     sPaginationType: "full_numbers", 
 	//sDom: "C<'clear'>lfrtip", 
 	oColVis: {

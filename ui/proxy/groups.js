@@ -109,7 +109,7 @@ var groupinfoHelperFirewall = function(request, response) {
 	for(var i = 0; i < groupObjsArr.length; i++) {
 	  var respObj = {};
 	  
-	  respObj['gname'] = groupObjsArr[i]['gname'];
+	  respObj['title'] = groupObjsArr[i]['gname'];
 	  respObj['isFolder'] = true;
 	  respObj['type'] = 2;
 	  respObj['gid'] = groupObjsArr[i]['gid'];
@@ -225,7 +225,7 @@ var groupsHelperFirewall = function(request, response) {
 	
 	var path = '/sws/users?gid=' + request.params.gid;
 
-	//console.log('group path --> ' + path);
+	console.log('group path --> ' + path);
 	  
 	var options = {
 	    host: proxy.serviceHost,

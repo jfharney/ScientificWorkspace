@@ -51,7 +51,28 @@ $(document).ready(function() {
 			    	}
 			    	*/
 			    	
-			    	var resType; 
+			    	var resType;
+			    	if(linksArr[i]['type'] == 0) {
+				      resName = linksArr[i]['name'];
+				      resType = 'user';
+	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Email: '+linksArr[i]['email']+'<br />&nbsp;&nbsp;&nbsp;Uid: '+linksArr[i]['email']+'</span>')
+	          			.on("click", function() {
+	              		  var pos = $(this).attr('id').indexOf('_');			// This line and the following aren't pretty, but are needed to get the correct resNid value.
+	              		  resNid = $(this).attr('id').substring(pos+1);		// All they do is pull the nid value off the end of the element id. 
+	                      $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
+	                      $(this).hide();
+	                    });
+	                    $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
+	          			  .on("click", function() {
+	            		    var pos = $(this).attr('id').indexOf('_');
+	              		    resNid = $(this).attr('id').substring(pos+1);
+	                        $('#lessTagInfoSpan_'+resNid).css('display', 'inline'); 
+	                        $(this).hide();
+				    	  });
+	  					$('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
+	                    $('#tagResource_'+resNid).append($lessLink);
+	                    $('#tagResource_'+resNid).append($moreLink);
+				    }
 			    	if(linksArr[i]['type'] == 2) {
 			    	  resName = linksArr[i]['name'];
 			    	  resType = 'job';
@@ -115,6 +136,27 @@ $(document).ready(function() {
                       $('#tagResource_'+resNid).append($lessLink);
                       $('#tagResource_'+resNid).append($moreLink);
 			    	}
+			    	else if(linksArr[i]['type'] == 5) {
+				      resName = linksArr[i]['name'];
+					  resType = 'directory';
+	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
+	          			.on("click", function() {
+	              		  var pos = $(this).attr('id').indexOf('_');
+	              	      resNid = $(this).attr('id').substring(pos+1); 
+	                      $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
+	                      $(this).hide();
+	                    });
+	                  $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
+	          			.on("click", function() {
+	            		  var pos = $(this).attr('id').indexOf('_');
+	              		  resNid = $(this).attr('id').substring(pos+1);
+	                      $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
+	                      $(this).hide();
+	          		  });
+					  $('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
+	                  $('#tagResource_'+resNid).append($lessLink);
+	                  $('#tagResource_'+resNid).append($moreLink);
+				    }
 			    	else {
 			    	  resName = linksArr[i]['nid'];
 			    	  resType = 'other';
