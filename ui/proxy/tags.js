@@ -124,3 +124,89 @@ var tagLinksProxHelper = function(request, response) {
 
 
 module.exports.tagLinksProxHelper = tagLinksProxHelper;
+
+
+var tagsTableProxy = function(request, response) {
+
+  var path = '/sws/tags?uid=' + request.params.uid;
+
+  var options = {
+	host: proxy.serviceHost,
+	port: proxy.servicePort,
+	path: path,
+	method: 'GET'
+  };
+		
+  var responseData = '';
+
+  var req = http.request(options, function(res) {		 
+    res.on('data', function(chunk) {
+      responseData += chunk;
+    });
+					
+    res.on('end', function() {
+    	// Now that we have the response data, we want to create a new response object that will contain additional data. 
+    	
+      var jsonObjArr = JSON.parse(responseData);
+      var respObjArr = [];
+      for(var i = 0; i < jsonObjArr.length; i++) {
+        var retObj = {};
+        retObj.name = jsonObjArr[i]['name'];
+        retObj.desc = jsonObjArr[i]['desc'];
+        retObj.access = jsonObjArr[i]['access'];
+        
+        console.log(retObj);
+        respObjArr.push(retObj);
+      }
+      
+      response.send(respObjArr);
+    });
+
+    res.on('error', function(e) {
+      response.send('error: ' + e);
+    });
+		  
+  })
+  .on('error', function(e) {
+    console.log("Got error: " + e.message);
+  });
+		 
+  req.end();
+
+};
+
+
+module.exports.tagsTableProxy = tagsTableProxy;
+
+
+/****************************************
+
+var tagNid = jsonObjArr[i]['nid'];
+
+var options2 = {
+  host: proxy.serviceHost,
+  port: proxy.servicePort,
+  path: '/sws/nodes?tag-nid='+tagNid,
+  method: 'GET'
+};
+
+var linkData = '';
+var req2 = http.request(options2, function(res2) {
+  res2.on('data', function(chunk) {
+	linkData += chunk;  
+  });
+  res2.on('end', function() {
+	var jsonObjArr2 = JSON.parse(linkData);
+	retObj.linkCount = jsonObjArr2.length;
+	// Now the hard part. We need to create a multiline listing of the tag's "constituents". 
+	
+  });
+  res2.on('error', function(e) {
+    console.log("Got error: " + e.message);
+    res2.send('Server Error in tags.js.');
+  });
+});
+			 
+req2.end();
+
+/****************************************/
