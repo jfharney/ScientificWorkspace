@@ -176,6 +176,12 @@ html(lang="en")
                 a#show_table_button.ajax-link(data-toggle="modal", data-target="#tableModal", style="margin-bottom:50px", href="#")
                   span.hidden-tablet Review Tags
                   
+              li.nav-header.hidden-tablet Search 
+              li
+                //a#add_doi_button(href="#")
+                a#search_view
+                  span.hidden-tablet Search Workspace
+              
         //main content
         div.span8
           div.row-fluid.sortable
@@ -339,7 +345,7 @@ html(lang="en")
     // script(src="js/ajax/jobs_widget.js")
     
     // script(src="js/ajax/tagTree.js")
-    script(src="js/ajax/tagstable.js")
-    script(src="js/ajax/tagclouds.js")
+    // script(src="js/ajax/tagstable.js")
+    // script(src="js/ajax/tagclouds.js")
     script(src="js/add_tag.js")
     script(src="js/add_doi.js")

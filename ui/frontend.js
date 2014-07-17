@@ -38,17 +38,39 @@ if(proxy.firewallMode)
 
 /*************************************************************/
 
+app.post('/search/:user_id',function(request,response) {
+	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
+	
+	//console.log('rendering index2.jade');
+	//response.render("index2", { uid : request.params.user_id });
+	
+	var model = {};
+	model['uid'] = request.params.user_id;
+	
+	
+	//console.log('Returning modell...');
+	for(var key in model) {
+		console.log('key: ' + key + ' model: ' + model[key]);
+	}
+	
+	response.render("index3", model);
+});
+
+
+/*************************************************************/
+/*
 app.post('/doi/:user_id',function(request,response) {
 	  console.log('\n\n---------in doi_send proxy get for ' + request.params.user_id + '----------');
 	  response.render("index2", { uid : request.params.user_id });
 });
+*/
 
 app.get('/doi/:user_id',function(request,response) {
 	  console.log('\n\n---------in doi_send proxy get for ' + request.params.user_id + '----------');
 	  response.render("index2", { uid : request.params.user_id });
 	});
 
-app.post('/doispace/:user_id',function(request,response) {
+app.post('/doi/:user_id',function(request,response) {
 	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
 	//console.log('rendering index2.jade');
@@ -469,6 +491,7 @@ app.get('/tags', function(request, response)
 		});
 		
 		resp.on('end', function() {
+			console.log('tag responseData: \n' + responseData);
 			response.send(responseData);
 		});
 		
