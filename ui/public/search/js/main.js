@@ -95,44 +95,59 @@ $(function(){
 
 function processResults(data,search_arr) {
 	
+	// (0=user,1=group,2=job,3=app,4=file,5=dir,6=tag)
+	
 	console.log('search_arr: ' + search_arr);
 	$('#results').empty();
+	
+	console.log('process results data length----> ' + data.length);
+	
 	for(var i=0;i<data.length;i++) {
-		for(var key in data[i]) {
-			//console.log('key: ' + key + ' value: ' + data[i][key]);
-			var type = data[i]['type'];
+		
+		var type = data[i]['type'];
+		
+		if(search_arr[type] == 1) {
+			
+			var html = '<div class="row-fluid">';
+			
+			html += '<div class="span10" style="margin-left: 10px">';
+
+			
+			html += '<div>Type: ' + SW.type_str[type];
+			html += '</div>';
+
 			var nid = data[i]['nid'];
-			//console.log('type: ' + type);
+			html += '<div>Node id: ' + nid;
+			html += '</div>';
 			
 			
 			
-			
-			
-			if(search_arr[type] == 1) {
-				//console.log('add to results')
-
-				
-				var html = '<div class="row-fluid">';
-				
-				html += '<div class="span10" style="margin-left: 10px">';
-
-				html += '<div>Type: ' + type;
+			for(var key in data[i]) {
+				html += '<div>' + key + ': ' + data[i][key];
 				html += '</div>';
+			}
+			
+			html += '</div>';
+			html += '</div>';
+			
+			html += '<hr>';
 
-				html += '<div>Node id: ' + nid;
-				html += '</div>';
+			$('#results').append(html);
+			
+			/*
+			for(var key in data[i]) {
+				//console.log('key: ' + key + ' value: ' + data[i][key]);
+			
 				
-				html += '</div>';
-				html += '</div>';
-				
-				html += '<hr>';
-
-				$('#results').append(html);
+			
+			
+			
 				
 				
 				
 				
 			} 
+			*/
 		}
 	}
 	

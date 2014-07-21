@@ -117,7 +117,7 @@ html
               div.box.span12
                 div.box-header.well
                   h2 Search parameters
-                    i.icon-user
+                    //i.icon-user
                   div.box-icon
                     a.btn.btn-minimize.btn-round(href="#")
                       i.icon-chevron-up
@@ -138,18 +138,14 @@ html
                         form
                           fieldset
                             div.control-group
-                              label.control-label Text
+                              label.control-label Search:
                               div.controls
                                 input.input-xlarge.focused#search_text(type="text",value="")
                             //div.control-group
-                              label.control-label Tag
-                              div.controls
-                                input.input-xlarge.focused#focusedInput(type="text",value="")
-                            div.control-group
                               label.control-label From
                               div.controls
                                 input.input-xlarge.datepicker#date01(type="text",value="")
-                            div.control-group
+                            //div.control-group
                               label.control-label To
                               div.controls
                                 input.input-xlarge.datepicker#date02(type="text",value="")
@@ -157,7 +153,7 @@ html
                         div.row-fluid
                           div.span12  
                             div.control-group
-                              label.control-label Search Over:
+                              label.control-label Resource Type(s):
                               div.controls
                                 labels.checkbox.inline Users
                                   input#Users(type="checkbox",value="Users",checked) 
@@ -175,9 +171,8 @@ html
                                   input#Tags(type="checkbox",value="Tags",checked) 
                                    
                                  
-                        div.row-fluid
-                          div.span12  
-                            div Insert Facets here
+                    div.span12
+                      a(style="cursor:pointer") Advanced Search
                     div.span12
                       hr
                     div.span12
@@ -193,7 +188,7 @@ html
               div.box.span12
                 div.box-header.well
                   h2 Search results
-                    i.icon-user
+                    //i.icon-user
                   div.box-icon
                     a.btn.btn-minimize.btn-round(href="#")
                       i.icon-chevron-up

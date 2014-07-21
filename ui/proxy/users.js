@@ -26,7 +26,7 @@ var userHelper = function(request, response) {
 	resp.on('end', function() {
 		console.log('users responseData: ' + responseData);
         var userObj = JSON.parse(responseData);
-        response.render("index1", userObj);
+        response.render("workspace", userObj);
 	});
 
 	resp.on('error', function(e) {

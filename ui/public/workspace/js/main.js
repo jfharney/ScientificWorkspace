@@ -107,7 +107,6 @@ $(function() {
 	  
 	  var url = "http://" + "localhost" + ":" + "1337" + "/search/" + username + "";
 		
-	  alert(' url: ' + url);
 		
 	  var input = '';
 	  
