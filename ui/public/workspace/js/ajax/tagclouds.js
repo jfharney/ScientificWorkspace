@@ -38,26 +38,18 @@ $(document).ready(function() {
 			      $('#cloud_info').append('<div>Description: '+tagDesc+'</div>');
 			      $('#cloud_info').append('<ul id="tagContentsList">');
 			      
-			      
-			      
 			      for(var i = 0; i < linkCount; i++) {
 			    	  
 			    	var resName;
 			    	var resNid = linksArr[i]['nid'];
 			    	
-			    	/*
-			    	for(var key in linksArr[i]) {
-			    		console.log('key: ' + key + ' value: ' + linksArr[i][key]);
-			    	}
-			    	*/
-			    	
 			    	var resType;
 			    	if(linksArr[i]['type'] == 0) {
 				      resName = linksArr[i]['name'];
 				      resType = 'user';
-	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Email: '+linksArr[i]['email']+'<br />&nbsp;&nbsp;&nbsp;Uid: '+linksArr[i]['email']+'</span>')
+	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Email: '+linksArr[i]['email']+'<br />&nbsp;&nbsp;&nbsp;Uid: '+linksArr[i]['uid']+'</span>')
 	          			.on("click", function() {
-	              		  var pos = $(this).attr('id').indexOf('_');			// This line and the following aren't pretty, but are needed to get the correct resNid value.
+	              		  var pos = $(this).attr('id').indexOf('_');		// This line and the following aren't pretty, but are needed to get the correct resNid value.
 	              		  resNid = $(this).attr('id').substring(pos+1);		// All they do is pull the nid value off the end of the element id. 
 	                      $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
 	                      $(this).hide();
@@ -73,6 +65,11 @@ $(document).ready(function() {
 	                    $('#tagResource_'+resNid).append($lessLink);
 	                    $('#tagResource_'+resNid).append($moreLink);
 				    }
+			    	if(linksArr[i]['type'] == 1) {
+					  resName = linksArr[i]['gname'];
+					  resType = 'group';
+		  			  $('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
+					}
 			    	if(linksArr[i]['type'] == 2) {
 			    	  resName = linksArr[i]['name'];
 			    	  resType = 'job';
@@ -161,10 +158,14 @@ $(document).ready(function() {
 			    	  resName = linksArr[i]['nid'];
 			    	  resType = 'other';
 			    	}
-			      }
+			      }		// End of for loop.
+			      $('#tagCloudButtons').empty();
+			      $('#tagCloudButtons').append('<button>Obtain DOI</button>');
+			      $('#tagCloudButtons').append('<button>Delete Tag</button>');
     		    });
     		  
     		  $('#tagClouds').append($tagcloud);
+
     		}
     	  },
     	  error: function() {}

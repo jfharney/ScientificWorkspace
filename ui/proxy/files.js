@@ -36,34 +36,24 @@ var filesproxyHelper = function(request, response) {
 	  //console.log('path->' + path);
 	
 
-	var req = http.request(options, function(resp) {
-			//console.log('Got response status code ' + resp.statusCode);
+  var req = http.request(options, function(resp) {
 			
-		  var responseData = '';
-		  resp.on('data', function(chunk) {
-			  responseData += chunk;
-		  });
+	var responseData = '';
+	  resp.on('data', function(chunk) {
+	  responseData += chunk;
+	});
 		
-		  resp.on('end', function() {
-			  //console.log('in resp end for files... ' + responseData);
-			  var jsonObj = JSON.parse(responseData);
-				
-			  var files = jsonObj['files'];
-				
-				var dynatreeJSONArr = [];
+	resp.on('end', function() {
+	  var jsonObj = JSON.parse(responseData);
+	  var files = jsonObj['files'];
+	  var dynatreeJSONArr = [];
 				
 				if(files != undefined) {
-					for(var i=0;i<files.length;i++) {
+					for(var i = 0; i < files.length; i++) {
 						
 						var dynatreeJSONObj = {};
 						
-						//console.log('i: ' + i + ' ' + files[i]);
 						var file = files[i];
-						
-						for(var key in file) {
-							//console.log('key: ' + key + ' value: ' + file[key]);
-						}
-						
 						if(queriedPath == '|') {
 							dynatreeJSONObj['title'] = '|' + file['name'];
 							
