@@ -17,12 +17,6 @@ function getCollaboratorInfo(userNumber, searchArg) {
 
       var children = data;
       buildCollaboratorTree(children);
-<<<<<<< HEAD
-=======
-      
-     
-     
->>>>>>> 6b4bbf82e7e2920ffd6a6034d25dcc57dc22cc50
     },
     error: function() {
       console.log('error in getting group info');

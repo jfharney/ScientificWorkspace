@@ -5,9 +5,7 @@ $('#show_table_button').click(function() {
     sAjaxDataProp: "",
 	bDestroy: true,
 	aoColumns: [{ mData: "name" },
-	            { mData: "desc" },
-	            //{ mData: "linkCount" },
-	            { mData: "access" }], 
+	            { mData: "desc" }], 
     sPaginationType: "full_numbers", 
 	//sDom: "C<'clear'>lfrtip", 
 	oColVis: {
