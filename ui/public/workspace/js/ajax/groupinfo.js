@@ -3,7 +3,6 @@ function getCollaboratorInfo(userNumber, searchArg) {
   if(searchArg == undefined) searchArg = '';
   
   var url = 'http://'+SW.hostname+':'+SW.port+'/groupinfo/'+userNumber+'?search='+searchArg;
-  //console.log('We are inside getCollaboratorInfo().');
   
   console.log('get Collaborator Info: ' + url);
   
@@ -18,9 +17,6 @@ function getCollaboratorInfo(userNumber, searchArg) {
 
       var children = data;
       buildCollaboratorTree(children);
-      
-     
-     
     },
     error: function() {
       console.log('error in getting group info');
@@ -33,7 +29,6 @@ function getGroupInfo(uid) {
 	
 	alert('in get group info for uid: ' + uid);
 	
-	//groupinfo
 	var url = 'http://' + SW.hostname + ':' + SW.port + '/groupinfo/'+uid;
 	var queryString = '';
 	

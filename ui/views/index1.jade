@@ -48,6 +48,7 @@ html(lang="en")
           button#create_doi_button.btn.btn-primary Create DOI form
        
     
+    // ADD TAG MODAL
     div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
@@ -83,9 +84,6 @@ html(lang="en")
               tr
                 th Name
                 th Description
-                th Link Count
-                th Links
-                th Access
             tbody
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
@@ -344,7 +342,7 @@ html(lang="en")
     // script(src="js/ajax/jobs_widget.js")
     
     // script(src="js/ajax/tagTree.js")
-    // script(src="js/ajax/tagstable.js")
-    // script(src="js/ajax/tagclouds.js")
+    script(src="js/ajax/tagstable.js")
+    script(src="js/ajax/tagclouds.js")
     script(src="js/add_tag.js")
     script(src="js/add_doi.js")

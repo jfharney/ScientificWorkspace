@@ -1,49 +1,50 @@
-
 $(document).ready(function() {
 	
-	$('#create_tag1').click(function() {
+  $('#create_tag1').click(function() {
 
-		createTag();
+    createTag();
 	  
-	});		
-	
+  });
 
 });
 
 function createTag() {
 	
-	var user = SW.current_user_uuid;
-	  
-	  //user = '5112';
+  var user = SW.current_user_uuid;
 
-	  var username = SW.current_user_username;
-	  var usernumber = SW.current_user_number;
+  var username = SW.current_user_username;
+  var usernumber = SW.current_user_number;
 	  
-	  console.log('username: ' + username + ' usernumber: ' + usernumber + ' file node ids: ' + SW.selected_file_nids);
+  console.log('username: ' + username + ' usernumber: ' + usernumber + ' file node ids: ' + SW.selected_file_nids);
 	  
-	  var selected_file_titles = SW.selected_file_titles;
+  //var selected_file_titles = SW.selected_file_titles;
 	  
-	  var input = '';
-	  //put the user data in the hidden input fields
-	  //input += addUserData(user_data);
+  var input = '';
+  //put the user data in the hidden input fields
+  //input += addUserData(user_data);
+  //console.log('In add_tag.js, input is: '+input);
 	
-	  //alert('SW.selected_file_titles: ' + SW.selected_file_titles);
+  // The global SW.selected_file_titles is set in the onSelect field of the dynatree constructor 
+  // in the function buildFileTree in the file ajax/fileinfo.js. It is a string which is a comma
+  // separated list. 
+  console.log('SW.selected_file_titles: ' + SW.selected_file_titles);
 	  
-	  //alert('input#tag_name: ' + $('input#tag_name').val() + ' textarea#tag_description: ' + $('textarea#tag_description').val());
+  //alert('input#tag_name: ' + $('input#tag_name').val() + ' textarea#tag_description: ' + $('textarea#tag_description').val());
 	  
 
-	  //quick tagging name convention
-	  var timeStamp = new Date().getTime();
+  //quick tagging name convention
+  var timeStamp = new Date().getTime();
 	  
-	  var tagName = '';
-	  if($('input#tag_name').val() != null ||
-		 $('input#tag_name').val() != '' ||
-		 $('input#tag_name').val() != undefined ||
-		 $('input#tag_name').val() != ' ') {
-		  tagName = $('input#tag_name').val();
-	  } else {
-		  tagName = 'tag' + timeStamp;
-	  }
+  var tagName = '';
+  if($('input#tag_name').val() != null ||
+     $('input#tag_name').val() != '' ||
+	 $('input#tag_name').val() != undefined ||
+	 $('input#tag_name').val() != ' ') {
+    tagName = $('input#tag_name').val();
+  } 
+  else {
+    tagName = 'tag' + timeStamp;
+  }
 
 		  
 	  
@@ -195,10 +196,9 @@ function associateUsers(tag_nid) {
 
 function associateFiles(tag_nid) {
 	
-	if(SW.selected_file_nids != undefined) {
-		 console.log('selected_file_nids: ' + SW.selected_file_nids + ' selected_file_nids.length ' + SW.selected_file_nids.length + ' [0]: ' + SW.selected_file_nids[0]);
-		 
-		 for(var i=0;i<SW.selected_file_nids.length;i++) {
+  if(SW.selected_file_nids != undefined) {
+    console.log('selected_file_nids: ' + SW.selected_file_nids + ' selected_file_nids.length ' + SW.selected_file_nids.length + ' [0]: ' + SW.selected_file_nids[0]);
+    for(var i = 0; i < SW.selected_file_nids.length; i++) {
 			  
 			 //console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_file_nids[i]); //?name='+tagName+'&uid=5112');
 			  

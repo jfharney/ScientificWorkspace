@@ -611,7 +611,7 @@ app.get('/tags/links/:tag_nid', function(request, response) {
 });
 
 app.get('/tagsTable/:uid', function(request, response) {
-  console.log('The HTTP request /tagsTable/:uid has been caught in frontend.js.');
+  /* tagsTableProxy is defined in the file proxy/tags.js. */
   var res = tags.tagsTableProxy(request, response);
 });
 
