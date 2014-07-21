@@ -370,7 +370,7 @@ app.post('/tagproxy/:user_id', function(request, response) {
 			method: 'POST'
 	};
 	
-	console.log('')
+	console.log('here');
 	
 	//curl -X POST 'http://160.91.210.19:8080/sws/tag?name=tag11&uid=5112'
 	
@@ -392,7 +392,7 @@ app.post('/tagproxy/:user_id', function(request, response) {
 		});
 		
 		resp.on('error', function(e) {
-			response.send('error: ' + e);
+		  response.send('error in app.post: (/tagproxy/:user_id' + e);
 		});
 	});
 	
