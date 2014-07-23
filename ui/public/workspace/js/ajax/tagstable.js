@@ -5,7 +5,9 @@ $('#show_table_button').click(function() {
     sAjaxDataProp: "",
 	bDestroy: true,
 	aoColumns: [{ mData: "name" },
-	            { mData: "desc" }], 
+	            { mData: "desc" }],
+	            //{ mData: "access"},
+	           // { mData: "resources"}], 
     sPaginationType: "full_numbers", 
 	//sDom: "C<'clear'>lfrtip", 
 	oColVis: {

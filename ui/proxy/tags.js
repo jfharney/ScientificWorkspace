@@ -133,10 +133,11 @@ var tagsTableProxy = function(request, response) {
   var options = {
 	host: proxy.serviceHost,
 	port: proxy.servicePort,
+	//async: false,
 	path: path,
 	method: 'GET'
   };
-		
+  console.log('\n*******\n\n\n\nouter path: '+options.path);
   var responseData = '';
 
   var req = http.request(options, function(res) {		 
@@ -147,21 +148,22 @@ var tagsTableProxy = function(request, response) {
     res.on('end', function() {
       // Now that we have the response data, we want to create a new response object 
       // that will contain additional data. 
-    	
+      var tagCounter = 0;
+      
       var jsonObjArr = JSON.parse(responseData);
       var respObjArr = [];
       
-      console.log('jsonObjArr.length is ' + jsonObjArr.length);
       for(var i = 0; i < jsonObjArr.length; i++) {
         var retObj = {};
+        
         retObj.name = jsonObjArr[i]['name'];
         retObj.desc = jsonObjArr[i]['desc'];
         retObj.access = jsonObjArr[i]['access'];
+        //retObj.resources = '';
         
         /******************************************/
         
-        /* Now, for each tag, we want to get a count of the number of links. 
-        // The following doesn't work, due probably to the asynchronicity of the calls.
+        /* Now, for each tag, we want to get a count of the number of links. */
         
         var tagNid = jsonObjArr[i]['nid'];
         console.log('tagNid is ' + tagNid);
@@ -171,38 +173,102 @@ var tagsTableProxy = function(request, response) {
           path: '/sws/nodes?tag-nid='+tagNid,
           method: 'GET'
         };
+        //console.log('inner path: '+options2.path);
         
+        /*
+        var req2 = http.request(options2, function(res2) {
+            var linkData = '';
+            res2.on('data', function(chunk) {
+            	console.log('chunking');
+          	  linkData += chunk;
+            });
+            res2.on('end', function() {
+            	
+          	tagCounter += 1;
+          	var jsonObjArr2 = [];
+          	jsonObjArr2 = JSON.parse(linkData);
+          	retObj.linkCount = jsonObjArr2.length;
+          	retObj.resources = '';
+          	if(retObj.linkCount)
+          	  retObj.resources = '';
+          	for(var i = 0; i < retObj.linkCount; i++) {
+          	  retObj.resources += jsonObjArr2[i]['name'] + ', ';
+          	}
+
+              respObjArr.push(retObj);
+          	
+          	if(tagCounter == jsonObjArr.length) {
+          	  //console.log('respObjArr: '+respObjArr);
+          	  response.send(respObjArr);
+              }
+              
+            	console.log('done');
+            	res2.send("Response");
+            });
+            res2.on('error', function(e) {
+          	console.log('error message: ' + e);
+            });
+
+          });
+        
+        req.end();
+        */
+        
+        
+        
+        /*
+        var tagNid = jsonObjArr[i]['nid'];
+        console.log('tagNid is ' + tagNid);
+        var options2 = {
+          host: proxy.serviceHost,
+          port: proxy.servicePort,
+          path: '/sws/nodes?tag-nid='+tagNid,
+          method: 'GET'
+        };
+        console.log('inner path: '+options2.path);
         var req2 = http.request(options2, function(res2) {
           var linkData = '';
           res2.on('data', function(chunk) {
         	linkData += chunk;
           });
           res2.on('end', function() {
-        	console.log('linkData: ' + linkData);
-        	var jsonObjArr2;
-        	if(linkData == '[]')
-        	  jsonObjArr2  = [];
-        	else
-        	  jsonObjArr2 = JSON.parse(linkData);
+        	tagCounter += 1;
+        	var jsonObjArr2 = [];
+        	jsonObjArr2 = JSON.parse(linkData);
         	retObj.linkCount = jsonObjArr2.length;
+        	retObj.resources = '';
+        	if(retObj.linkCount)
+        	  retObj.resources = '';
+        	for(var i = 0; i < retObj.linkCount; i++) {
+        	  retObj.resources += jsonObjArr2[i]['name'] + ', ';
+        	}
+
+            respObjArr.push(retObj);
+        	
+        	if(tagCounter == jsonObjArr.length) {
+        	  //console.log('respObjArr: '+respObjArr);
+        	  response.send(respObjArr);
+            }
           });
           res2.on('error', function(e) {
         	console.log('error message: ' + e);
           });
+
         });
         
         req2.end();
+        */
         /******************************************/
+         
+        //var ex = i + ', swtf-008, baro-1b, 6798687';
         
-        //for(var i = 0; i < jsonObjArr.length; i++)
-          //for(var key in jsonObjArr[i])
-            //console.log(key + ': ' +jsonObjArr[i][key]);
-        
-        //console.log(retObj);
+        //retObj.resources = ex;
         respObjArr.push(retObj);
       }
       
       response.send(respObjArr);
+      
+      //response.send(respObjArr);
     });
 
     res.on('error', function(e) {
