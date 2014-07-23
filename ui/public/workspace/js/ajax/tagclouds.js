@@ -38,10 +38,13 @@ $(document).ready(function() {
 			      $('#cloud_info').append('<div>Description: '+tagDesc+'</div>');
 			      $('#cloud_info').append('<ul id="tagContentsList">');
 			      
+			      var linked_nids = new Array();
+			      
 			      for(var i = 0; i < linkCount; i++) {
 			    	  
 			    	var resName;
 			    	var resNid = linksArr[i]['nid'];
+			    	linked_nids.push(resNid);
 			    	
 			    	var resType;
 			    	if(linksArr[i]['type'] == 0) {
@@ -160,8 +163,24 @@ $(document).ready(function() {
 			    	}
 			      }		// End of for loop.
 			      $('#tagCloudButtons').empty();
-			      $('#tagCloudButtons').append('<button>Obtain DOI</button>');
-			      $('#tagCloudButtons').append('<button>Delete Tag</button>');
+			      
+			      $obtain_doi_button = $('<button>Obtain DOI</button>').on('click',function(){
+			    	 
+			    	  console.log('grab parameters of the tag here');
+			    	  
+			    	  
+			    	  console.log('submit to doi here');
+			    	  
+			      });
+			      
+			      $delete_tag_button = $('<button>Remove Tag</button>').on('click',function(){
+			    	 
+			    	  deleteTag(tagNid,linked_nids,uid);
+			    	  
+			      });
+			      
+			      $('#tagCloudButtons').append($obtain_doi_button);
+			      $('#tagCloudButtons').append($delete_tag_button);
     		    });
     		  
     		  $('#tagClouds').append($tagcloud);
@@ -177,6 +196,79 @@ $(document).ready(function() {
             
 
 });
+
+
+
+function deleteTag(tag_nid,linked_nids,uid) {
+	
+	 
+	if(linked_nids != undefined) {
+	
+		for(var i=0;i<linked_nids.length;i++) {
+			  console.log('curl -X DELETE http://techint-b117:8080/sws/tag/' + tag_nid + '/link/' + linked_nids[i]);
+			  
+			  var url = 'http://' + SW.hostname + ':' + SW.port + '/deletetag/'+uid;
+				
+			  var delete_link_url = 'http://' + SW.hostname + ':' + SW.port + '/deletetaglinkproxy/' + SW.current_user_number;
+			  delete_link_url += '?tag_nid=' + tag_nid + '&resource_nid=' + linked_nids[i];
+				 
+			  
+			  $.ajax({
+				    url: delete_link_url,
+				    async: false,
+				    global: false,
+					type: 'DELETE',
+					success: function(data) {
+						console.log('tag link successfully deleted');
+						
+						
+						
+					},
+					error: function() {
+						console.log('error');
+					}
+			  
+			  
+			  });
+			  
+			  
+			  
+		}
+		  
+		
+	} 
+	
+	
+	console.log('curl -X DELETE http://techint-b117:8080/sws/tag/' + tag_nid);
+	
+	var delete_tag_url = 'http://' + SW.hostname + ':' + SW.port + '/deletetagproxy/' + SW.current_user_number;
+	delete_tag_url += '?tag_nid=' + tag_nid;
+	
+	$.ajax({
+	    url: delete_tag_url,
+	    async: false,
+	    global: false,
+		type: 'DELETE',
+		success: function(data) {
+			console.log('tag successfully deleted');
+			
+			location.href=window.location;
+			
+		},
+		error: function() {
+			console.log('error');
+		}
+  
+  
+    });
+	
+	
+
+	
+	
+	
+}
+
 
 function getReducedArr(tag_name_arr) 
 {

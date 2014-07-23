@@ -9,6 +9,111 @@ var proxy = require('./proxyConfig.js');
 var data = require('../data/firewall_sources.js');
 
 
+var deletetagsHelper = function(request, response) {
+	
+var args = url.parse(request.url, true).query;
+	
+	for (var key in args) {
+		console.log('key: ' + key + ' value: ' + args[key]);
+	}
+	
+
+	var tag_nid = args['tag_nid'];
+	
+	var options = {
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
+			path: "/sws/tag/" + tag_nid,   // uid=" + user_id; + '&name='+name+'&description='+description,
+			method: 'DELETE'
+	};
+	
+    var req = http.request(options, function(resp) {
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			//response.send(responseData);
+			console.log('officially deleted tag');
+			
+
+			response.send("deleting tag");
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+	
+	
+	//http://techint-b117:8080/sws/tag/604012
+	
+	/*
+	var resource_nid = args['resource_nid'];
+	
+	//curl -X DELETE http://techint-b117:8080/sws/tag/600284/link/88456 
+	
+	
+	
+    
+	*/
+	
+};
+
+module.exports.deletetagsHelper = deletetagsHelper;
+
+
+var deletetaglinksHelper = function(request, response) {
+	
+var args = url.parse(request.url, true).query;
+	
+	for (var key in args) {
+		console.log('key: ' + key + ' value: ' + args[key]);
+	}
+	
+	var tag_nid = args['tag_nid'];
+	var resource_nid = args['resource_nid'];
+	
+	//curl -X DELETE http://techint-b117:8080/sws/tag/600284/link/88456 
+	
+	var options = {
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
+			path: "/sws/tag/" + tag_nid + '/link/' + resource_nid,   // uid=" + user_id; + '&name='+name+'&description='+description,
+			method: 'DELETE'
+	};
+	
+    var req = http.request(options, function(resp) {
+		
+		var responseData = '';
+		resp.on('data', function(chunk) {
+			responseData += chunk;
+		});
+		
+		resp.on('end', function() {
+			//response.send(responseData);
+			console.log('officially deleted tag link');
+			
+
+			response.send("deleting tag link");
+		});
+		
+		resp.on('error', function(e) {
+			response.send('error: ' + e);
+		});
+	});
+	
+	req.end();
+	
+	
+};
+
+module.exports.deletetaglinksHelper = deletetaglinksHelper;
+
 
 var taginfoHelper = function(request,response) {
 	

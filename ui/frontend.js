@@ -398,69 +398,23 @@ app.get('/appinfo/:appnum', function(request, response) {
 
 //-----------Tags-----------//
 
+app.del('/deletetagproxy/:user_id', function(request, response) {
+	
+	console.log('\n\n---------in deletetagproxy----------');
+	var res = tags.deletetagsHelper(request, response);
+	
+});
+
+app.del('/deletetaglinkproxy/:user_id', function(request, response) {
+	
+	console.log('\n\n---------in deletetaglinkproxy----------');
+	var res = tags.deletetaglinksHelper(request, response);
+	
+});
+
 //creates a new tag
 app.post('/tagproxy/:user_id', function(request, response) {
 
-	
-	/*
-<<<<<<< HEAD
-=======
-	console.log('\n\n---------in tag proxy----------');
-	console.log('Adding tag');
-	
-	var args = url.parse(request.url, true).query;
-	
-	for (var key in args) {
-		console.log('key: ' + key + ' value: ' + args[key]);
-	}
-	
-	var user_id = request.params.user_id;
-	var name = args['name'];
-	var description = args['description'];
-	
-	console.log('user_id: ' + user_id);
-	
-	var options = {
-			host: proxy.serviceHost,
-			port: proxy.servicePort,
-			path: "/sws/tag?uid=" + user_id + '&name='+name+'&description='+description,
-			method: 'POST'
-	};
-	
-	console.log('here');
-	
-	//curl -X POST 'http://160.91.210.19:8080/sws/tag?name=tag11&uid=5112'
-	
-	var req = http.request(options, function(resp) {
-		
-		var responseData = '';
-		resp.on('data', function(chunk) {
-			responseData += chunk;
-		});
-		
-		resp.on('end', function() {
-			//response.send(responseData);
-			console.log('tag post responseData: ' + responseData);
-			
-
-		    var jsonObj = JSON.parse(responseData);
-			
-			response.send(jsonObj);
-		});
-		
-		resp.on('error', function(e) {
-		  response.send('error in app.post: (/tagproxy/:user_id' + e);
-		});
-	});
-	
-	req.end();
-	
-	
-	
-	
-	//var res = tags.tagsproxyHelper(request, response);
->>>>>>> 8c8b28418fc9b25ecc9ca07afcfa50aaeae30f29
-	*/
 	
 	var res = tags.tagsproxyHelper(request, response);
 	
