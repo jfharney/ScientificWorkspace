@@ -715,7 +715,7 @@ public class TitanAPI
      * @param a_properties
      * @param a_output 
      */
-    public void getTags( int a_uid, boolean a_owned, boolean a_shared, String a_shared_uids, boolean a_public, String a_public_uids, String a_properties, JSONStringer a_output )
+    public void getTags( int a_uid, boolean a_owned, boolean a_shared, String a_shared_uids, boolean a_public, String a_public_uids, String a_name, String a_properties, JSONStringer a_output )
     {
         if ( m_graph == null )
             throw new IllegalStateException("Graph not initialized");
@@ -729,12 +729,17 @@ public class TitanAPI
         {
             GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( m_graph.getVertices(Schema.UID, a_uid )).out(Schema.ASSET).has(Schema.TYPE,Schema.Type.TAG.toInt());
 
+            if ( a_name != null )
+                grem.has(Schema.NAME, Cmp.EQUAL, a_name);
+
             // Store results
             grem.fill(results);
         }
 
         if ( a_shared )
         {
+            // Collect ~other~ user's tags that are shared with calling user
+
             if ( a_shared_uids != null )
             {
                 GremlinPipeline<Vertex,Vertex> grem;
@@ -748,7 +753,12 @@ public class TitanAPI
                     // Start from specified users and navigate to shared tags that calling user has access to
                     // No need to check tag access since "member" edges are only present when shared
                     // Also no need to check type==user for end-points since uid is only present on user nodes
-                    grem = new GremlinPipeline( m_graph.getVertices(Schema.UID, uid )).out(Schema.ASSET).has(Schema.TYPE,Schema.Type.TAG.toInt()).as("x").copySplit(
+                    grem = new GremlinPipeline( m_graph.getVertices(Schema.UID, uid )).out(Schema.ASSET).has(Schema.TYPE,Schema.Type.TAG.toInt());
+
+                    if ( a_name != null )
+                        grem.has(Schema.NAME, a_name);
+
+                    grem.as("x").copySplit(
                         new GremlinPipeline().out(Schema.MEMBER).has(Schema.UID,a_uid).back("x"),
                         new GremlinPipeline().out(Schema.MEMBER).out(Schema.MEMBER).has(Schema.UID,a_uid).back("x")
                         ).fairMerge().dedup();
@@ -760,14 +770,59 @@ public class TitanAPI
             else
             {
                 // Start from user, look for user and group membership to shared tags
-                GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline(m_graph.getVertices(Schema.UID, a_uid)).copySplit(
-                    new GremlinPipeline().in(Schema.MEMBER).in(Schema.MEMBER).as("x").has(Schema.TYPE,Schema.Type.TAG.toInt()).in(Schema.ASSET).hasNot(Schema.UID,a_uid).back("x"),
-                    new GremlinPipeline().in(Schema.MEMBER).has(Schema.TYPE,Schema.Type.TAG.toInt())
-                    ).fairMerge().dedup();
+                GremlinPipeline<Vertex,Vertex> grem;
+                if ( a_name != null )
+                {
+                    grem = new GremlinPipeline(m_graph.getVertices(Schema.UID, a_uid)).copySplit(
+                        new GremlinPipeline().in(Schema.MEMBER).in(Schema.MEMBER).as("x").has(Schema.TYPE,Schema.Type.TAG.toInt()).has(Schema.NAME, a_name).in(Schema.ASSET).hasNot(Schema.UID,a_uid).back("x"),
+                        new GremlinPipeline().in(Schema.MEMBER).has(Schema.TYPE,Schema.Type.TAG.toInt()).has(Schema.NAME, a_name)
+                        ).fairMerge().dedup();
+                }
+                else
+                {
+                    grem = new GremlinPipeline(m_graph.getVertices(Schema.UID, a_uid)).copySplit(
+                        new GremlinPipeline().in(Schema.MEMBER).in(Schema.MEMBER).as("x").has(Schema.TYPE,Schema.Type.TAG.toInt()).in(Schema.ASSET).hasNot(Schema.UID,a_uid).back("x"),
+                        new GremlinPipeline().in(Schema.MEMBER).has(Schema.TYPE,Schema.Type.TAG.toInt())
+                        ).fairMerge().dedup();
+                }
 
                 // Add results (will induce duplicates)
                 Set tmp_results = new HashSet();
                 results.addAll( grem.fill( tmp_results ));
+            }
+        }
+
+        if ( a_public )
+        {
+            // Collect ~other~ user's tags that are public
+            System.out.println("Public");
+
+            if ( a_public_uids != null )
+            {
+                GremlinPipeline<Vertex,Vertex> grem;
+                Integer[] uids = parseIntegerCSV( a_public_uids );
+                for ( int uid : uids )
+                {
+                    // Skip owner if it's in the list
+                    if ( uid == a_uid )
+                        continue;
+
+                    // Start from specified users and navigate to public tags
+                    grem = new GremlinPipeline( m_graph.getVertices(Schema.UID, uid)).out(Schema.ASSET).has(Schema.TYPE,Schema.Type.TAG.toInt()).has(Schema.ACCESS,Schema.Access.PUBLIC.toInt());
+
+                    if ( a_name != null )
+                        grem.has(Schema.NAME, a_name);
+
+                    Set tmp_results = new HashSet();
+                    results.addAll( grem.fill( tmp_results ));
+                }
+            }
+            else
+            {
+                // Use index to find all public tags...
+                Iterator<Vertex> it = m_graph.query().has(Schema.TYPE,Schema.Type.TAG.toInt()).has(Schema.ACCESS, Schema.Access.PUBLIC.toInt()).vertices().iterator();
+                while ( it.hasNext())
+                    results.add( it.next() );
             }
         }
 
@@ -1175,25 +1230,28 @@ public class TitanAPI
 
         UserInfo user = getUserInfo( a_uid );
 
+        System.out.println( "Search: " + a_query );
+
         Iterable<Result<Vertex> > results = m_graph.indexQuery("search", a_query).vertices();
 
         a_output.array();
 
-        //long startTime = System.nanoTime();
-        //Integer len = 0;
+        long startTime = System.nanoTime();
+        Integer len = 0;
 
         for ( Result<Vertex> res : results )
         {
-            //++len;
+            ++len;
+            //System.out.println( "id: " + res.getElement().getId());
             processVertexQueryResult( user, res.getElement(), a_output );
         }
 
         a_output.endArray();
 
-        //long endTime = System.nanoTime();
-        //double duration = (endTime - startTime)*1e-9;		
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
 
-        //System.out.print( String.format( "%d results in %g sec, or %g inserts/sec", len, duration, len/duration ));
+        System.out.println( String.format( "%d results processed in %g sec, or %g res/sec", len, duration, len/duration ));
     }
 
     //=========== UTILITY METHODS ======================================================================================
@@ -1307,7 +1365,7 @@ public class TitanAPI
     private boolean hasTagAccess( Vertex a_tag, int a_uid )
     {
         GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( a_tag ).as("x").copySplit(
-            new GremlinPipeline().has(Schema.ACCESS,2), // Public
+            new GremlinPipeline().has(Schema.ACCESS,Schema.Access.PUBLIC), // Public
             new GremlinPipeline().in(Schema.ASSET).has(Schema.UID, a_uid).back("x"), // Owned by uid
             new GremlinPipeline().out(Schema.MEMBER).has(Schema.UID, a_uid).back("x"), // User ACL
             new GremlinPipeline().out(Schema.MEMBER).out(Schema.MEMBER).has(Schema.UID,a_uid).back("x") // Group ACL
@@ -1383,7 +1441,7 @@ public class TitanAPI
             String path = hasFileAccess( a_vertex, a_user );
             if ( path == null )
             {
-                System.out.println("Bad file access:");
+                //System.out.println("Bad file access:");
                 return;
             }
 
@@ -1395,14 +1453,14 @@ public class TitanAPI
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.PROD).iterator();
             if ( !e.hasNext() )
             {
-                System.out.println("Bad job access (1):");
+                //System.out.println("Bad job access (1):");
                 return;
             }
 
             int uid = e.next().getVertex(Direction.OUT).getProperty(Schema.UID);
             if ( uid != a_user.m_uid )
             {
-                System.out.println("Bad job access (2):");
+                //System.out.println("Bad job access (2):");
                 return;
             }
 
@@ -1414,7 +1472,7 @@ public class TitanAPI
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.COMP).iterator();
             if ( !e.hasNext() )
             {
-                System.out.println("Bad app access (1):");
+                //System.out.println("Bad app access (1):");
                 return;
             }
 
@@ -1423,14 +1481,14 @@ public class TitanAPI
             e = job.getEdges(Direction.IN, Schema.PROD).iterator();
             if ( !e.hasNext() )
             {
-                System.out.println("Bad app access (2):");
+                //System.out.println("Bad app access (2):");
                 return;
             }
             Vertex usr = e.next().getVertex(Direction.OUT);
 
             if ( (int)usr.getProperty(Schema.UID) != a_user.m_uid )
             {
-                System.out.println("Bad app access (3):");
+                //System.out.println("Bad app access (3):");
                 return;
             }
 
@@ -1442,7 +1500,7 @@ public class TitanAPI
             // Validate user has access to this file (by path)
             if ( !hasTagAccess( a_vertex, a_user.m_uid ))
             {
-                System.out.println("Bad tag access (1):");
+                //System.out.println("Bad tag access (1):");
                 return;
             }
 
@@ -1451,7 +1509,7 @@ public class TitanAPI
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.ASSET).iterator();
             if ( !e.hasNext() )
             {
-                System.out.println("Bad tag access (2):");
+                //System.out.println("Bad tag access (2):");
                 return;
             }
 

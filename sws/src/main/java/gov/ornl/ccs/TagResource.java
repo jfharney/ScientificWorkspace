@@ -157,6 +157,7 @@ public class TagResource
     public String getTags(
         @DefaultValue("-1") @QueryParam(Schema.UID) int a_uid,
         @QueryParam("owned") String a_owned,
+        @QueryParam("name") String a_name,
         @QueryParam("shared") String a_shared,
         @QueryParam("shared_uids") String a_shared_uids,
         @QueryParam("public") String a_public,
@@ -175,7 +176,7 @@ public class TagResource
             if ( !( owned || shared || pub ))
                 owned = shared = pub = true;
 
-            m_api.getTags( a_uid, owned, shared, a_shared_uids, pub, a_public_uids, a_properties, output );
+            m_api.getTags( a_uid, owned, shared, a_shared_uids, pub, a_public_uids, a_name, a_properties, output );
         }
         else if ( a_uid > -1 && a_nid > -1 )
             m_api.getTagsFromNode( a_nid, a_uid, a_properties, output );
