@@ -5,11 +5,7 @@ var app = express();
 var http = require('http');
 var url = require('url');
 var proxy = require('./proxyConfig.js');
-
 var data = require('../data/firewall_sources.js');
-
-
-
 
 var groupinfoHelper = function(request, response) {
 	
@@ -42,16 +38,13 @@ var groupinfoHelper = function(request, response) {
 			//console.log('length: ' + groupObjsArr.length);
 			
 			var respArr = [];
-			for(var i=0;i<groupObjsArr.length;i++) {
+			for(var i = 0; i < groupObjsArr.length; i++) {
 				
-				/* fill in the tooltip
-				var tooltip = 'Job ID: '+ jobJidArr[i] + 
-	              '\nJob Name: ' + jobNameArr[i] + 
-	              '\nStart Time: ' + formatTimestamp(jobStartArr[i]) + 
-	              '\nEnd Time: ' + formatTimestamp(jobStopArr[i]) + 
-	              '\nHost Name: ' + jobHostArr[i] + 
-	              '\nWall Time: ' + jobWallArr[i];
-				*/
+			  for(var key in groupObjsArr[i])
+				console.log(key + ': ' + groupObjsArr[i][key]);
+
+				var tooltip = 'Group ID: '+ groupObjsArr[i]['gid'] + 
+	              			  '\nGroup Name: ' + groupObjsArr[i]['gname'];
 				
 			    var child = {};
 			    child['title'] = groupObjsArr[i]['gname'];
@@ -59,7 +52,7 @@ var groupinfoHelper = function(request, response) {
 			    child['isFolder'] = true;
 			    child['type'] = 2;
 			    child['isLazy'] = true;
-				child['tooltip'] = 'This is a tooltip.';
+				child['tooltip'] = tooltip;
 			    child['id'] = groupObjsArr[i]['gid'];
 			     
 			    respArr.push(child);
@@ -178,23 +171,22 @@ var groupsHelper = function(request, response) {
 	  groupmemberObjsArr = JSON.parse(responseData);
 
 	  var respArr = [];
-		for(var i=0;i<groupmemberObjsArr.length;i++) {
+		for(var i = 0; i < groupmemberObjsArr.length; i++) {
 			
-			/* fill in the tooltip
-			var tooltip = 'Job ID: '+ jobJidArr[i] + 
+			// fill in the tooltip
+			/*var tooltip = 'Job ID: '+ jobJidArr[i] + 
             '\nJob Name: ' + jobNameArr[i] + 
             '\nStart Time: ' + formatTimestamp(jobStartArr[i]) + 
             '\nEnd Time: ' + formatTimestamp(jobStopArr[i]) + 
             '\nHost Name: ' + jobHostArr[i] + 
-            '\nWall Time: ' + jobWallArr[i];
-			*/
+            '\nWall Time: ' + jobWallArr[i];*/
 			
 		    var child = {};
 		    child['title'] = groupmemberObjsArr[i]['uname'];
 		    child['isFolder'] = false;
 		    child['type'] = 0;
 		    child['isLazy'] = false;
-			child['tooltip'] = 'This is a tooltip.';
+			child['tooltip'] = 'tooltip';
 		    child['id'] = groupmemberObjsArr[i]['uid'];
 		     
 		    respArr.push(child);

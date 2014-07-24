@@ -126,9 +126,11 @@ app.get("/search_results/:user_id", function(request, response) {
 
 
 app.get('/doi/:user_id',function(request,response) {
-	  console.log('\n\n---------in doi_send proxy get for ' + request.params.user_id + '----------');
-	  response.render("doi", { uid : request.params.user_id });
-	});
+  //console.log('\n\n---------in doi_send proxy get for ' + request.params.user_id + '----------');
+  //response.render("doi", { uid : request.params.user_id });
+  // userHelper is defined in the file proxy/users.js.   
+  var res = users.doiUserHelper(request, response); 
+});
 
 app.post('/doi/:user_id',function(request,response) {
 	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
@@ -192,7 +194,7 @@ app.get("/workspace/:user_id", function(request, response) {
     
   } 
   else {
-	  
+	// userHelper is defined in the file proxy/users.js.   
 	var res = users.userHelper(request, response);  
 	
   }  

@@ -26,12 +26,12 @@ head
 html
   body
     
-    div UID: #{uid}
-    div UID: #{creator_uuid}
-    div Creator Email: #{creator_email}
-    div Creator Name: #{creator_name}
-    div Creator Number: #{creator_number}
-    div Creator Username: #{creator_username}
+    div(style="display:none") Creator NID: #{nid}
+    div(style="display:none") Creator UID: #{uid}
+    div(style="display:none") Creator Username: #{uname}
+    div(style="display:none") Creator Name: #{name}
+    div(style="display:none") Creator Email: #{email}
+    
     //div Resource: #{resource.length} 
     - if (typeof(resource) !== 'undefined') {
       - each r in resource
@@ -88,7 +88,7 @@ html
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="../settings/#{uid}") #{uid}
+                a(href="../settings/#{uid}") #{uname}
               li
                 a(href="../workspace/#{uid}") Workspace
               li
@@ -101,7 +101,7 @@ html
             ul.nav
               a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
                 i.icon-user
-                span.hidden-phone #{uid}
+                span.hidden-phone #{uname}
                 span.caret
               ul.dropdown-menu
                 li
@@ -127,7 +127,7 @@ html
             ul.breadcrumb
               li
                 a(href="#")
-                  span#user_id_label #{uid}
+                  span#user_id_label #{uname}
                 span.divider /
               li
                 a(href="#") DOI
@@ -175,7 +175,6 @@ html
               div.box.span12
                 div.box-header.well
                   h2 New DOI Form
-                    i.icon-user
                   div.box-icon
                     a.btn.btn-minimize.btn-round(href="#")
                       i.icon-chevron-up
@@ -193,13 +192,13 @@ html
                     div.span12
                       h3 Creator Information
                   div.row-fluid
-                    div.span4 creator
+                    div.span4 Creator
                     div.span6 
-                      input#text(name="creator_input",value="#{creator_name}")
+                      input#text(name="creator_input",value="#{name}")
                   div.row-fluid
-                    div.span4 creator email
+                    div.span4 Creator Email
                     div.span6 
-                      input#text(name="creator_input",value="#{creator_email}")
+                      input#text(name="creator_input",value="#{email}")
                       
                   
                   div.row-fluid#add_creator_row
@@ -214,7 +213,7 @@ html
                       
                       
                   - if (typeof(resource) !== 'undefined') {
-                  - for (var i=0; i<resource.length; i++)
+                  - for (var i = 0; i < resource.length; i++)
                       //div= arr[i]
                       div.row-fluid
                         div.span4 Resource
@@ -224,7 +223,7 @@ html
                           a.metadata(href="#") metadata
                     //- each r in resource
                       div.row-fluid
-                        div.span4 resource
+                        div.span4 Resource
                         div.span6 
                           input#text(name="resource_input",value="#{r}")
                         div.span2
@@ -232,9 +231,9 @@ html
                   -}
                   - else
                     div.row-fluid
-                        div.span4 resource
+                        div.span4 Resource
                         div.span6 
-                          input#text(name="resource_input",value="")
+                          input#text(name="resource_input", value="")
                         div.span2
                           a.metadata(href="#") metadata
                   
