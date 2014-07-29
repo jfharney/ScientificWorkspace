@@ -8,7 +8,7 @@ function postUserData(element) {
 		$(user_info_space).append(
 				'<div>Name: ' + SW.current_user_name + '</div>');
 		$(user_info_space).append(
-				'<div>Username: ' + SW.current_user_username + '</div>');
+				'<div>Username: ' + SW.current_user_uname + '</div>');
 		$(user_info_space).append(
 				'<div>Uid: <span id="user_info_id">' + SW.current_user_number
 						+ '</span></div>');

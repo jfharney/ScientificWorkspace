@@ -26,29 +26,29 @@ head
 html
   body
     // (style="display:none")
-    div Creator NID: #{creator_nid}
-    div Creator UID: #{creator_number}
-    div Creator Username: #{creator_uname}
-    div Creator Name: #{creator_name}
-    div Creator Email: #{creator_email}
+    div(style="display:none") Creator NID: #{creator_nid}
+    div(style="display:none") Creator UID: #{creator_number}
+    div(style="display:none") Creator Username: #{creator_uname}
+    div(style="display:none") Creator Name: #{creator_name}
+    div(style="display:none") Creator Email: #{creator_email}
     
     
     //div Resource: #{resource.length} 
     - if (typeof(resource) !== 'undefined') {
       - each r in resource
-        div Resource: #{r} 
+        div(style="display:none") Resource: #{r} 
     - }
     
     - if (typeof(job) !== 'undefined'){ 
       - each j in job
         if j != 'job1'
-          div Job: #{j}   
+          div(style="display:none") Job: #{j}   
     - }  
     
     - if (typeof(group) !== 'undefined'){ 
       - each g in group
         if g != 'group1'
-          div Group: #{g}
+          div(style="display:none") Group: #{g}
     - }
     - if (typeof(user) !== 'undefined'){ 
       - each u in user
@@ -196,7 +196,7 @@ html
                   div.row-fluid
                     div.span4 Files
                     div.span6 
-                      input#text(name="input_files",value="#{r}")
+                      input#text(name="input_files",value="#{resource}")
                                         
                   
                   hr
