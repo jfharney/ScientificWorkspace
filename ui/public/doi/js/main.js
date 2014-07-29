@@ -111,6 +111,10 @@ $(function(){
 	
 	$('#submit_doi_request').click(function() {
 	
+		
+		
+		
+		
 		alert('submitting doi request');
 		
 		
