@@ -122,7 +122,9 @@ $(function(){
 	});
 	
 	
-	
+	$('button#return').click(function() {
+	  location.href = 'http://localhost:1337/workspace/'+$('span#user_id_label').html();
+    });
 	
 	
 	

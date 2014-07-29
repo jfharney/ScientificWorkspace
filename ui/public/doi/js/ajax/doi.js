@@ -1,5 +1,4 @@
-$(document).ready(function() 
-{
+$(document).ready(function() {
 
 	var host = 'localhost';
 	var port = '1337';
@@ -10,7 +9,7 @@ $(document).ready(function()
 	var totalKeyWords = 1;
 	var totalCreators = 1;
 	
-	console.log('hello');
+	//console.log('hello');
 	
 	$('.delete_creator').on('click',function() {
 		console.log('hee');
