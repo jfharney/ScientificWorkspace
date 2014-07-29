@@ -25,12 +25,12 @@ head
     
 html
   body
-    
-    div(style="display:none") Creator NID: #{nid}
-    div(style="display:none") Creator UID: #{uid}
-    div(style="display:none") Creator Username: #{uname}
-    div(style="display:none") Creator Name: #{name}
-    div(style="display:none") Creator Email: #{email}
+    // (style="display:none")
+    div(style="display:none") Creator NID: #{creator_nid}
+    div(style="display:none") Creator UID: #{creator_number}
+    div(style="display:none") Creator Username: #{creator_uname}
+    div(style="display:none") Creator Name: #{creator_name}
+    div(style="display:none") Creator Email: #{creator_email}
     
     //div Resource: #{resource.length} 
     - if (typeof(resource) !== 'undefined') {
@@ -54,33 +54,6 @@ html
         if u != 'user1'
           div User: #{u} 
     - }
-      
-    
-    
-    //div Selected Uuids:
-    //  span#echoSelectionUuids3
-    //div Selected Types:
-    //  span#echoSelectionTypes3
-    
-    div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
-      div.modal-dialog
-        div.modal-header
-          button.close(type="button",data-dismiss="modal",aria-hidden="true")
-          h4#myModalLabel.modal-title Tag Information
-        div.modal-body
-          div Tag Name:
-          input#tag_name.form-control.create_tree_options(style="margin-bottom:10px")
-          div Tag Description:
-          textarea#tag_description.form-control(rows="3",placeholder="Tag description",style="margin-bottom:10px")
-          div Resources:
-          div#resources_to_tag(style="margin-bottom:10px")
-          div Types:
-          div#resources_types_to_tag(style="margin-bottom:10px")
-          div Share with:
-          div#shared_users(style="margin-bottom:10px") Insert Options for people, groups, etc
-        div.modal-footer
-          button.btn.btn-default(data-dismiss="modal") Cancel
-          button#create_tag.btn.btn-primary Create Tag
           
     div.navbar
       div.navbar-inner 
@@ -88,11 +61,11 @@ html
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="../settings/#{uid}") #{uname}
+                a(href="../settings/#{creator_uid}") #{creator_uname}
               li
-                a(href="../workspace/#{uid}") Workspace
-              li
-                a(href="../doi/#{uid}") DOI
+                a(href="../workspace/#{creator_uname}") Workspace
+              //li
+                //a(href="../doi/#{creator_uid}") DOI
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
@@ -127,7 +100,7 @@ html
             ul.breadcrumb
               li
                 a(href="#")
-                  span#user_id_label #{uname}
+                  span#user_id_label #{creator_uname}
                 span.divider /
               li
                 a(href="#") DOI
@@ -164,9 +137,6 @@ html
         
         
         
-        
-        
-        
         //main content
         div.span8     
       
@@ -187,23 +157,35 @@ html
                       fieldset
                         legend DOI Submittal Form
                   
-                  
+                                    
+                  div.row-fluid(style="margin-bottom:20px") 
+                    div.span12
+                      h3 Title
+                  div.row-fluid
+                    div.span4 DOI Title
+                    div.span6 
+                      input#text(name="doi_title")
+                  div.row-fluid(style="margin-bottom:20px")
+                    div.span4 Other Field
+                    div.span6 
+                      input#text(name="other_field")
+                      
                   div.row-fluid(style="margin-bottom:20px") 
                     div.span12
                       h3 Creator Information
                   div.row-fluid
                     div.span4 Creator
                     div.span6 
-                      input#text(name="creator_input",value="#{name}")
+                      input#text(name="creator_input",value="#{creator_name}")
                   div.row-fluid
                     div.span4 Creator Email
                     div.span6 
-                      input#text(name="creator_input",value="#{email}")
+                      input#text(name="creator_input",value="#{creator_email}")
                       
                   
                   div.row-fluid#add_creator_row
                     div.span6 
-                      button#add_creator_button Add Creator
+                      //button#add_creator_button Add Creator
                   
                   hr    
                       
@@ -216,7 +198,7 @@ html
                   - for (var i = 0; i < resource.length; i++)
                       //div= arr[i]
                       div.row-fluid
-                        div.span4 Resource
+                        div.span4 Resource List
                         div.span6 
                           input#text(name="resource_input",value="#{resource[i]}")
                         div.span2
@@ -239,7 +221,7 @@ html
                   
                   div.row-fluid#add_resouce_row
                     div.span6 
-                      button#add_resource_button Add Resource
+                      //button#add_resource_button Add Resource
                   
                   
                   hr
@@ -280,13 +262,14 @@ html
                       input#text(name="sponsor_org",value="Oak Ridge National Laboratory")
                   
                   div.row-fluid
-                    div.span4 Miscellaneous Metadata
+                    div.span4 Jobs and Applications
                     div.span6 
-                      textarea Jobs: #{job}
+                      textarea #{job}
+                  div.row-fluid
+                    div.span4 People and Groups
+                    div.span6 
+                      textarea #{group}
                     
-                      
-                  
-                  
                   hr
                   
                   div.row-fluid
