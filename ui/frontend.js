@@ -125,45 +125,40 @@ app.get("/search_results/:user_id", function(request, response) {
 /*************************************************************/
 
 
-app.get('/doi/:user_id',function(request,response) {
-  //console.log('\n\n---------in doi_send proxy get for ' + request.params.user_id + '----------');
-  //response.render("doi", { uid : request.params.user_id });
+app.get('/doi/:user_id',function(request, response) {
   // userHelper is defined in the file proxy/users.js.   
   var res = users.doiUserHelper(request, response); 
 });
 
-app.post('/doi/:user_id',function(request,response) {
-	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
+app.post('/doi/:user_id',function(request, response) {
+  console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
-	var model = {};
-	model['uid'] = request.params.user_id;
-	for(var key in request['body']) {
-		console.log('key: ' + key + ' value: ' + request['body'][key] + ' length: ' + request['body'][key].length + ' isArr: ' + isArray(request['body'][key]));
+  var model = {};
+  model['uname'] = request.params.user_id;
+  for(var key in request['body']) {
+    console.log("request['body']["+key+"]: " + request['body'][key] + ', length: ' + request['body'][key].length + ', isArr: ' + isArray(request['body'][key]));
 		
-		if(key == 'resource' || key == 'group' || key == 'job') {
-			var arr = request['body'][key].split(',');
-			console.log('length: ' + arr.length);
-			request['body'][key] = arr;
-		} 
-		
-		if(isArray(request['body'][key])) {
-			model[key] = request['body'][key];
-		} else {
-			var arr = new Array();
-			arr.push(request['body'][key]);
-			model[key] = arr;
-			//console.log('arr: ' + arr);
-		}
-		console.log('key: ' + key + ' value: ' + request['body'][key] + ' length: ' + request['body'][key].length + ' model[] ' + model[key] + ' isArr: ' + isArray(model[key]));
-		
-	}
+    if(key == 'resource' || key == 'group' || key == 'job') {
+      var arr = request['body'][key].split(',');
+      console.log('length: ' + arr.length);
+      request['body'][key] = arr;
+    } 
+    if(isArray(request['body'][key])) {
+      model[key] = request['body'][key];
+    } 
+    else {
+      var arr = new Array();
+      arr.push(request['body'][key]);
+      model[key] = arr;
+    }
+    console.log('key: ' + key + ' value: ' + request['body'][key] + ' length: ' + request['body'][key].length + ' model[] ' + model[key] + ' isArr: ' + isArray(model[key]));	
+  }  // end of for loop
 	
-	//console.log('Returning modell...');
-	for(var key in model) {
-		console.log('key: ' + key + ' model: ' + model[key]);
-	}
+  for(var key in model) {
+    console.log('key: ' + key + ' model: ' + model[key]);
+  }
 	
-	response.render("doi", model);
+  response.render("doi", model);
 });
 
 
@@ -184,7 +179,7 @@ app.get("/", function(request, response) {
 
 app.get("/workspace/:user_id", function(request, response) {
 	
-  console.log('A GET for /workspace/:user_id has been issued.');
+  console.log('A GET for /workspace/'+request.params.user_id+' has been issued.');
   
   
   if(proxy.firewallMode) {

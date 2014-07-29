@@ -33,15 +33,38 @@ html(lang="en")
   body
     
     // DOI modal
-    //div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
+    div#doiModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="doiModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
-          h4#myModalLabel.modal-title DOI 
+          h4#myModalLabel.modal-title DOI Submission Items
         
         div.modal-body
           div Add the following resources to DOI form?
-          div#resources_to_doi(style="margin-bottom:10px")
+          br
+          
+          table
+            tr(valign="top")
+              td(width="15%") Files
+              td#doiModalFilesField
+            tr(valign="top")
+              td(width="15%") Groups
+              td#doiModalGroupsField
+            tr(valign="top")
+              td(width="15%") People
+              td#doiModalPeopleField
+            tr(valign="top")
+              td(width="15%") Jobs
+              td#doiModalJobsField
+            tr(valign="top")
+              td(width="15%") Apps
+              td#doiModalAppsField
+          //div#doiModalFilesField
+          //div#doiModalGroupsField
+          //div#doiModalPeopleField
+          //div#doiModalJobsField
+          //div#doiModalAppsField
+          //div#resources_to_doi(style="margin-bottom:10px")
           
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
@@ -139,11 +162,11 @@ html(lang="en")
       div.row-fluid
         div.span12#user_info_space
           // This seems like as good a place as any to store the remainder of the user data in the document object.
-          p#curUserUuid(style='display:none') #{uuid}
+          p#curUserNid(style='display:none') #{nid}
           p#curUserEmail(style='display:none') #{email}
           p#curUserName(style='display:none') #{name}
           p#curUserNumber(style='display:none') #{uid}
-          p#curUserUsername(style='display:none') #{uname}
+          p#curUserUname(style='display:none') #{uname}
                 
       div.row-fluid
         div.span12
@@ -158,13 +181,13 @@ html(lang="en")
             ul.nav.nav-tabs.nav-stacked.main-menu
               li.nav-header.hidden-tablet Main
               li
-                //a#add_doi_button(href="#")
-                a#add_doi_button(data-toggle="modal", data-target="#doiModal", href="#")
+                // The purpose of the href attribute is just to make the finger pointer appear when you hover.
+                a#add_doi_button(data-toggle="modal", data-target="#doiModal", href="#") 
                   span.hidden-tablet Create DOI
               li.nav-header.hidden-tablet Tags
               li
                 //a#add_tag_button.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
-                a#create_tag.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
+                a#create_tag(data-toggle="modal", data-target="#myModal", href="#")
                   span.hidden-tablet Add Tag
               li
                 a.ajax-link(href="#")
@@ -175,8 +198,7 @@ html(lang="en")
                   
               li.nav-header.hidden-tablet Search 
               li
-                //a#add_doi_button(href="#")
-                a#search_view
+                a#search_view(href="#")
                   span.hidden-tablet Search Workspace
               
         //main content
@@ -344,6 +366,6 @@ html(lang="en")
     
     // script(src="js/ajax/tagTree.js")
     script(src="js/ajax/tagstable.js")
-    script(src="js/ajax/tagclouds.js")
+    //script(src="js/ajax/tagclouds.js")
     script(src="js/add_tag.js")
     script(src="js/add_doi.js")

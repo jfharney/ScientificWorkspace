@@ -3,17 +3,17 @@ $(function() {
   
   /* We transfer the current user data values stored in the document object to the 
    * SW object, defined in core.js.                                                              */
-  SW.current_user_uuid = $('#curUserUuid').html();
+  SW.current_user_nid = $('#curUserNid').html();
   SW.current_user_email = $('#curUserEmail').html();
   SW.current_user_name = $('#curUserName').html();
   SW.current_user_number = $('#curUserNumber').html();
-  SW.current_user_username = $('#curUserUsername').html();
+  SW.current_user_uname = $('#curUserUname').html();
 
-  console.log('SW.current_user_uuid: ' + SW.current_user_uuid);
+  console.log('SW.current_user_nid: ' + SW.current_user_nid);
   console.log('SW.current_user_email: ' + SW.current_user_email);
   console.log('SW.current_user_name: ' + SW.current_user_name);
   console.log('SW.current_user_number: ' + SW.current_user_number);
-  console.log('SW.current_user_username: ' + SW.current_user_username);
+  console.log('SW.current_user_uname: ' + SW.current_user_uname);
   
   /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
   getJobInfo(SW.current_user_number);
@@ -21,7 +21,7 @@ $(function() {
   /* This function is defined in ajax/groupinfo.js. */
   getCollaboratorInfo(SW.current_user_number);
   
-  /* This function is defined in ajax/userinfo.js. */
+  /* This function is defined in public/workspace/js/ajax/userinfo.js. */
   postUserData('#user_info');
   
   /* This function is defined in ajax/fileinfo.js. */
