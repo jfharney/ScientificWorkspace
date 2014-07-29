@@ -26,11 +26,12 @@ head
 html
   body
     // (style="display:none")
-    div(style="display:none") Creator NID: #{creator_nid}
-    div(style="display:none") Creator UID: #{creator_number}
-    div(style="display:none") Creator Username: #{creator_uname}
-    div(style="display:none") Creator Name: #{creator_name}
-    div(style="display:none") Creator Email: #{creator_email}
+    div Creator NID: #{creator_nid}
+    div Creator UID: #{creator_number}
+    div Creator Username: #{creator_uname}
+    div Creator Name: #{creator_name}
+    div Creator Email: #{creator_email}
+    
     
     //div Resource: #{resource.length} 
     - if (typeof(resource) !== 'undefined') {
@@ -160,15 +161,15 @@ html
                                     
                   div.row-fluid(style="margin-bottom:20px") 
                     div.span12
-                      h3 Title
+                      h3 General
                   div.row-fluid
                     div.span4 DOI Title
                     div.span6 
-                      input#text(name="doi_title")
+                      input#text(name="input_title")
                   div.row-fluid(style="margin-bottom:20px")
-                    div.span4 Other Field
+                    div.span4 Description
                     div.span6 
-                      input#text(name="other_field")
+                      input#text(name="input_description")
                       
                   div.row-fluid(style="margin-bottom:20px") 
                     div.span12
@@ -176,53 +177,27 @@ html
                   div.row-fluid
                     div.span4 Creator
                     div.span6 
-                      input#text(name="creator_input",value="#{creator_name}")
+                      input#text(name="input_creator_name",value="#{creator_name}")
                   div.row-fluid
                     div.span4 Creator Email
                     div.span6 
-                      input#text(name="creator_input",value="#{creator_email}")
+                      input#text(name="input_creator_email",value="#{creator_email}")
                       
                   
                   div.row-fluid#add_creator_row
                     div.span6 
                       //button#add_creator_button Add Creator
-                  
-                  hr    
+                      
                       
                   div.row-fluid(style="margin-bottom:20px,margin-top:20px;")
                     div.span12  
-                      h3 Resources
-                      
-                      
-                  - if (typeof(resource) !== 'undefined') {
-                  - for (var i = 0; i < resource.length; i++)
-                      //div= arr[i]
-                      div.row-fluid
-                        div.span4 Resource List
-                        div.span6 
-                          input#text(name="resource_input",value="#{resource[i]}")
-                        div.span2
-                          a.metadata(href="#") metadata
-                    //- each r in resource
-                      div.row-fluid
-                        div.span4 Resource
-                        div.span6 
-                          input#text(name="resource_input",value="#{r}")
-                        div.span2
-                          a.metadata(href="#") metadata
-                  -}
-                  - else
-                    div.row-fluid
-                        div.span4 Resource
-                        div.span6 
-                          input#text(name="resource_input", value="")
-                        div.span2
-                          a.metadata(href="#") metadata
-                  
-                  div.row-fluid#add_resouce_row
+                      h3 Assets
+
+                  div.row-fluid
+                    div.span4 Files
                     div.span6 
-                      //button#add_resource_button Add Resource
-                  
+                      input#text(name="input_files",value="#{r}")
+                                        
                   
                   hr
                   
@@ -233,11 +208,11 @@ html
                   div.row-fluid
                     div.span4 Keyword
                     div.span6 
-                      input#text(name="keyword_input",value="")
+                      input#text(name="input_keywords",value="")
                   
-                  div.row-fluid#add_keyword_row
-                    div.span6 
-                      button#add_keyword_button Add Keyword
+                  //div.row-fluid#add_keyword_row
+                    //div.span6 
+                      //button#add_keyword_button Add Keyword
                   
                     
                   hr
@@ -245,21 +220,28 @@ html
                   div.row-fluid(style="margin-bottom:20px")
                     div.span12
                       h3 Miscellaneous
+                      
+                  div.row-fluid
+                    div.span4 Resources
+                    div.span6 
+                      input#text(name="input_resources")
+                    div.span2
+                      a.metadata(href="#") metadata
                   
                   div.row-fluid
                     div.span4 Language
                     div.span6 
-                      input#text(name="language",value="English")
+                      input#text(name="input_language",value="English")
                   
                   div.row-fluid
                     div.span4 Country
                     div.span6 
-                      input#text(name="country",value="USA")
+                      input#text(name="input_country",value="USA")
                   
                   div.row-fluid
                     div.span4 Sponsor Organization
                     div.span6 
-                      input#text(name="sponsor_org",value="Oak Ridge National Laboratory")
+                      input#text(name="input_sponsor_org",value="Oak Ridge National Laboratory")
                   
                   div.row-fluid
                     div.span4 Jobs and Applications
@@ -269,6 +251,7 @@ html
                     div.span4 People and Groups
                     div.span6 
                       textarea #{group}
+                  
                     
                   hr
                   
@@ -278,63 +261,7 @@ html
                       button#cancel Cancel
                       button#return Return to Workspace
                   
-                  
-                  
-                  
-                  //
-                    div.row-fluid
-                      div.span6 resource
-                      div.span6 
-                        input#text(name="resource_input")
-                    div.row-fluid
-                      div.span6 creator email
-                      div.span6 
-                        input#text(name="creator_email_input")
-                    div.row-fluid
-                      div.span6 related resource
-                      div.span6 
-                        input#text(name="related_resource_input")
-                    div.row-fluid
-                      div.span6 product nos
-                      div.span6 
-                        input#text(name="product_nos_input")
-                    div.row-fluid
-                      div.span6 contract nos
-                      div.span6 
-                        input#text(name="contract_nos_input")
-                    div.row-fluid
-                      div.span6 other identifying numbers
-                      div.span6 
-                        input#text(name="other_identifying_numbers_input")
-                    div.row-fluid
-                      div.span6 availability
-                      div.span6 
-                        input#text(name="availability_input")
-             
-                  
-                  
-                  //class DOIData(models.Model):
-                       dataset_type = models.CharField(max_length=50, default="RecordType")
-                       title = models.CharField(max_length=200)
-                       creators = models.CharField(max_length=1024)
-                       creators_email = models.CharField(max_length=1024)
-                       related_resources = models.CharField(max_length=1024, default="", blank=True)
-                       product_nos = models.CharField(max_length=200, default="", blank=True)
-                       contract_nos = models.CharField(max_length=200, default="", blank=True)
-                       other_identifying_numbers = models.CharField(max_length=200, default="", blank=True)
-                       availability = models.CharField(max_length=2, default="", blank=True)
-                       contributor_organizations = models.CharField(max_length=200, default="", blank=True)
-                       publication_date = models.DateField()
-                       language = models.CharField(max_length=20, default="", blank=True)
-                       country = models.CharField(max_length=20, default="", blank=True)
-                       sponsor_org = models.CharField(max_length=200, default="", blank=True)
-                       keywords = models.CharField(max_length=400, default="", blank=True)
-                       description = models.TextField()
-                       site_url = models.URLField(default="http://olcf.ornl.gov/")
-                       doi = models.URLField(default="", blank=True)
-                       file_extension = models.TextField(max_length=10, default="", blank=True)
-                
-                
+
       
             
     script(src="/doi/js/jquery/jquery-1.7.2.min.js")
