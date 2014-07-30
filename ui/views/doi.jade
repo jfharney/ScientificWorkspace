@@ -26,11 +26,12 @@ head
 html
   body
     // (style="display:none")
-    div(style="display:none") Creator NID: #{creator_nid}
-    div(style="display:none") Creator UID: #{creator_number}
-    div(style="display:none") Creator Username: #{creator_uname}
-    div(style="display:none") Creator Name: #{creator_name}
-    div(style="display:none") Creator Email: #{creator_email}
+    div uname: #{uname}
+    div#creator_nid Creator NID: #{creator_nid}
+    div#creator_number Creator UID: #{creator_number}
+    div#creator_uname Creator Username: #{creator_uname}
+    div#creator_name Creator Name: #{creator_name}
+    div#creator_email Creator Email: #{creator_email}
     
     
     //div Resource: #{resource.length} 
@@ -62,9 +63,9 @@ html
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="../settings/#{creator_uid}") #{creator_uname}
+                a(href="../settings/#{creator_uid}") #{uname}
               li
-                a(href="../workspace/#{creator_uname}") Workspace
+                a(href="../workspace/#{uname}") Workspace
               //li
                 //a(href="../doi/#{creator_uid}") DOI
               li
@@ -101,7 +102,7 @@ html
             ul.breadcrumb
               li
                 a(href="#")
-                  span#user_id_label #{creator_uname}
+                  span#user_id_label #{uname}
                 span.divider /
               li
                 a(href="#") DOI
@@ -192,30 +193,24 @@ html
                   div.row-fluid(style="margin-bottom:20px,margin-top:20px;")
                     div.span12  
                       h3 Assets
-
+                      br
                   div.row-fluid
                     div.span4 Files
                     div.span6 
                       input#text(name="input_files",value="#{resource}")
-                                        
-                  
-                  hr
+                      
+                  br
                   
                   div.row-fluid(style="margin-bottom:20px")
                     div.span12
                       h3 Keywords
                    
                   div.row-fluid
-                    div.span4 Keyword
+                    div.span4 Keywords (comma-separated list)
                     div.span6 
                       input#text(name="input_keywords",value="")
-                  
-                  //div.row-fluid#add_keyword_row
-                    //div.span6 
-                      //button#add_keyword_button Add Keyword
-                  
-                    
-                  hr
+                      
+                  br
                   
                   div.row-fluid(style="margin-bottom:20px")
                     div.span12

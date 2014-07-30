@@ -154,6 +154,7 @@ app.post('/doi/:user_id',function(request, response) {
     console.log('key: ' + key + ' value: ' + request['body'][key] + ' length: ' + request['body'][key].length + ' model[] ' + model[key] + ' isArr: ' + isArray(model[key]));	
   }  // end of for loop
 	
+  console.log('About to render doi.jade...');
   for(var key in model) {
     console.log('key: ' + key + ' model: ' + model[key]);
   }
