@@ -47,7 +47,7 @@ app.post('/search/:user_id',function(request,response) {
 	model['uid'] = request.params.user_id;
 	
 	
-	//console.log('Returning modell...');
+	//console.log('Returning model...');
 	for(var key in model) {
 		console.log('key: ' + key + ' model: ' + model[key]);
 	}
@@ -167,7 +167,7 @@ process.on('uncaughtException', function (err) {
     console.log(err);
 });
 
-app.post('/doi/submit',function(request,response) {
+app.post('/doi_submit',function(request,response) {
     console.log('\n\n>>>> in doi_submit proxy post');
 
     var data = request['body'];
@@ -230,6 +230,7 @@ app.post('/doi/submit',function(request,response) {
     req.write( payload );
     req.end();
 });
+
 
 /*************************************************************/
 
