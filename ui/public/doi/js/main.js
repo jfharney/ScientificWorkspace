@@ -109,17 +109,47 @@ $(function(){
 	});
 
 	
-	$('#submit_doi_request').click(function() {
-	
-		
-		
-		
-		
-		alert('submitting doi request');
-		
-		
-		
-	});
+    $('#submit_doi_request').click(function() {
+        //console.log( "submit DOI!" );
+
+        var data = {}
+
+        // Scrape data from UI, place in object
+        //data.uid = $('[name="input_uid"]').val();
+        data.title = $('[name="input_title"]').val();
+        data.description = $('[name="input_description"]').val();
+        data.creator_name = $('[name="input_creator_name"]').val();
+        data.creator_email = $('[name="input_creator_email"]').val();
+        data.resources = $('[name="input_resources"]').val();
+        data.keywords = $('[name="input_keywords"]').val();
+        data.language = $('[name="input_language"]').val();
+        data.country = $('[name="input_country"]').val();
+        data.sponsor_org = $('[name="input_sponsor_org"]').val();
+        data.files = $('[name="input_files"]').val();
+
+        //console.log( "scraped" );
+        //console.log( data );
+
+        // Submit to internal DOI submit service (proxy)
+        // If OK, go somewhere (workspace?)
+        // If NOT Ok, pop-up error dialog and stay here
+
+        var payload = JSON.stringify( data );
+        //console.log( "payload: " + payload + "\n");
+
+        jQuery.ajax({
+            url: "http://localhost:1337/doi_submit",
+            type: 'POST',
+            data: data,
+            dataType: "json",
+            success: function(data) {
+                alert("DOI submission succeeded.");
+            },
+            error: function() {
+                alert("DOI submission failed.");
+            }
+        });
+    });
 	
 	
 	$('button#return').click(function() {
