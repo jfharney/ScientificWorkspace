@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var http = require('http');
+var https = require('https');
 var url = require('url');
 var proxy = require('./proxy/proxyConfig.js');
 
@@ -130,8 +131,9 @@ app.get('/doi/:user_id',function(request, response) {
   var res = users.doiUserHelper(request, response); 
 });
 
-app.post('/doi/:user_id',function(request, response) {
-  console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
+/*
+app.post('/doi/:user_id',function(request,response) {
+	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
   var model = {};
   model['uname'] = request.params.user_id;
@@ -161,7 +163,75 @@ app.post('/doi/:user_id',function(request, response) {
 	
   response.render("doi", model);
 });
+*/
 
+process.on('uncaughtException', function (err) {
+    console.log(err);
+});
+
+app.post('/doi/submit',function(request,response) {
+    console.log('\n\n>>>> in doi_submit proxy post');
+
+    var data = request['body'];
+
+    // Translate from internal JSON format to external DOI-Service submission XML schema
+    var payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><records><record>";
+
+    // For now, just hard-code the mapping from internal to external representation
+    // Eventually a mapping table should be used
+    payload += "<title>" + data.title + "</title>";
+    payload += "<description>" + data.description + "</description>";
+    payload += "<creators>" + data.creator_name + "</creators>";
+    payload += "<creators_email>" + data.creator_email + "</creators_email>";
+    payload += "<files>" + data.files + "</files>";
+    payload += "<resources>" + data.resources + "</resources>";
+    payload += "<keywords>" + data.keywords + "</keywords>";
+    payload += "<language>" + data.language + "</language>";
+    payload += "<country>" + data.country + "</country>";
+    payload += "<sponsor_org>" + data.sponsor_org + "</sponsor_org>";
+    payload += "</record></records>";
+
+    console.log( payload );
+
+    var options = {
+        host: "doi1.ccs.ornl.gov",
+        port: 80,
+        path: "/doi/new/",
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/xml',
+            'Content-Length': payload.length
+        }
+    };
+
+    var responseData = '';
+
+    var req = https.request(options, function(res) {
+        res.on('data', function (chunk) {
+            responseData += chunk;    
+        });
+
+        res.on('end', function() {
+            console.log( "DOI submit OK" );
+
+            // Return DOI number
+            response.writeHead( 200 );
+            response.write( responseData );
+            response.end();
+        });
+
+        res.on('error', function(e) {
+            console.log( "DOI submit FAIL: " + e.code + ", " + e.message );
+
+            response.writeHead( e.code );
+            response.write( e.message );
+            response.end();
+        });
+    });
+
+    req.write( payload );
+    req.end();
+});
 
 /*************************************************************/
 
