@@ -1,17 +1,27 @@
 
 
-$(function(){
+$(function() {
 	
 	
 	var host = 'http://localhost:1337/workspace/';
 	
+	// Why the following didn't work is a myster to me. -Mark
+	//$('#input_creator_name').val($('#creator_name').html());
+	//$('#input_creator_email').val($('#creator_email').html());
+	//$('#input_files').val($('#spec_resources').html());
+	
+	//console.log("$('#spec_resources').html() is "+$('#spec_resources').html());
+	//console.log("$('#creator_name').html() is "+$('#creator_name').html());
+	//console.log("$('#creator_email').html() is "+$('#creator_email').html());
+	
+	if($('#input_creator_name').val() == 'undefined')
+	  $('#input_creator_name').val('');
 	
 	//changing user option
 	$('.user_dropdown_list').click(function(){
 		//alert('user dropdown');
 		var userName = $(this).html();
 		location.href=host+userName;
-		
 	});
 	
 	

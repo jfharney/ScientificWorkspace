@@ -26,12 +26,13 @@ head
 html
   body
     // (style="display:none")
-    div uname: #{uname}
-    div#creator_nid Creator NID: #{creator_nid}
-    div#creator_number Creator UID: #{creator_number}
-    div#creator_uname Creator Username: #{creator_uname}
-    div#creator_name Creator Name: #{creator_name}
-    div#creator_email Creator Email: #{creator_email}
+    div#uname(style="display:none") #{uname}
+    div#creator_nid(style="display:none") Creator NID: #{creator_nid}
+    div#creator_number(style="display:none") Creator UID: #{creator_number}
+    div#creator_uname(style="display:none") Creator Username: #{creator_uname}
+    div#creator_name(style="display:none") Creator Name: #{creator_name}
+    div#creator_email(style="display:none") Creator Email: #{creator_email}
+    div#spec_resources(style="display:none") Resources: #{resource}
     
     
     //div Resource: #{resource.length} 
@@ -178,12 +179,15 @@ html
                   div.row-fluid
                     div.span4 Creator
                     div.span6 
-                      input#text(name="input_creator_name",value="#{creator_name}")
+                      input#text(name="input_creator_name", value="#{creator_name}")
                   div.row-fluid
                     div.span4 Creator Email
                     div.span6 
-                      input#text(name="input_creator_email",value="#{creator_email}")
-                      
+                      // The following commented code was unsuccesful. 
+                      //- if (#{creator_email} !== 'undefined')
+                      input#text(name="input_creator_email", value="#{creator_email}")
+                      //- else 
+                      //input#text(name="input_creator_email", value="")
                   
                   div.row-fluid#add_creator_row
                     div.span6 
@@ -198,6 +202,7 @@ html
                     div.span4 Files
                     div.span6 
                       input#text(name="input_files",value="#{resource}")
+                      //input(name="input_files", type="text")
                       
                   br
                   

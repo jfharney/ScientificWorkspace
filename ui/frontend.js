@@ -131,7 +131,6 @@ app.get('/doi/:user_id',function(request, response) {
   var res = users.doiUserHelper(request, response); 
 });
 
-/*
 app.post('/doi/:user_id',function(request,response) {
 	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
@@ -163,7 +162,6 @@ app.post('/doi/:user_id',function(request,response) {
 	
   response.render("doi", model);
 });
-*/
 
 process.on('uncaughtException', function (err) {
     console.log(err);
