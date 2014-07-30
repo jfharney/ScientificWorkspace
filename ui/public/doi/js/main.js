@@ -138,7 +138,7 @@ $(function(){
         //console.log( "payload: " + payload + "\n");
 
         jQuery.ajax({
-            url: "http://localhost:1337/doi/submit",
+            url: "http://localhost:1337/doi_submit",
             type: 'POST',
             data: data,
             dataType: "json",

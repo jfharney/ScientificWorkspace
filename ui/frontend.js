@@ -131,7 +131,7 @@ app.get('/doi/:user_id',function(request, response) {
   var res = users.doiUserHelper(request, response); 
 });
 
-/*
+
 app.post('/doi/:user_id',function(request,response) {
 	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
@@ -162,13 +162,13 @@ app.post('/doi/:user_id',function(request,response) {
 	
   response.render("doi", model);
 });
-*/
+
 
 process.on('uncaughtException', function (err) {
     console.log(err);
 });
 
-app.post('/doi/submit',function(request,response) {
+app.post('/doi_submit',function(request,response) {
     console.log('\n\n>>>> in doi_submit proxy post');
 
     var data = request['body'];
@@ -231,6 +231,7 @@ app.post('/doi/submit',function(request,response) {
     req.write( payload );
     req.end();
 });
+
 
 /*************************************************************/
 
