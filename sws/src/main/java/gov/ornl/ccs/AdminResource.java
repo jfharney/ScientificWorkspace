@@ -18,6 +18,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import org.json.JSONStringer;
 
+
 /**
  * REST Web Service
  *
@@ -33,33 +34,78 @@ public class AdminResource
     {
     }
 
-    @Path("status")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getStatus()
+    private void checkCredentials( String a_password )
     {
-        JSONStringer output = new JSONStringer();
+        if ( a_password == null )
+            throw new WebApplicationException( Response.Status.FORBIDDEN );
 
-        output.object();
-        output.key("status").value("ok");
-        output.endObject();
-
-        return output.toString();
+        if ( !a_password.equals( "think1st" ))
+            throw new WebApplicationException( Response.Status.UNAUTHORIZED );
     }
 
-    @Path("stop")
+    @Path("init")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String postStop()
+    public void initializeDb(
+        @QueryParam("pass") String a_password ) throws Exception
     {
+        checkCredentials(a_password);
+
+        m_api.initializeDb();
+    }
+
+    @Path("load")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String load(
+        @QueryParam("pass") String a_password,
+        @QueryParam("users") String a_users,
+        @QueryParam("groups") String a_groups,
+        @QueryParam("jobs") String a_jobs,
+        @QueryParam("apps") String a_apps,
+        @QueryParam("files") String a_files,
+        @QueryParam("path") String a_path ) throws Exception
+    {
+        checkCredentials(a_password);
+
+        JSONStringer output = new JSONStringer();
+        output.array();
+
+        if ( a_users != null )
+            m_api.loadUsers( a_users, output );
+
+        if ( a_groups != null )
+            m_api.loadGroups( a_groups, output );
+
+        if ( a_jobs != null )
+            m_api.loadJobs( a_jobs, output );
+
+        if ( a_apps != null )
+            m_api.loadApps( a_apps, output );
+
+        if ( a_files != null )
+            m_api.loadFiles( a_files, a_path, output );
+
+        output.endArray();
+        return output.toString();
+    }
+
+    @Path("crawl/jobs")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String crawlJobs(
+        @QueryParam("pass") String a_password,
+        @DefaultValue("-1") @QueryParam("start") long a_start )  throws Exception
+    {
+        checkCredentials(a_password);
+
         JSONStringer output = new JSONStringer();
 
-        output.object();
-        output.key("status").value("stopped");
-        output.endObject();
+        m_api.crawlJobs( a_start, output );
 
         return output.toString();
     }
 
-    //private final TitanAPI m_api = TitanAPI.getInstance();
+    private final TitanAdminAPI m_api = TitanAdminAPI.getInstance();
 }
+

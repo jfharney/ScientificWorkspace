@@ -10,7 +10,8 @@ public class Schema
         APP(3),
         FILE(4),
         DIR(5),
-        TAG(6);
+        TAG(6),
+        EVENT(7);
 
         public static Type fromInt( int val ) throws Exception
         {
@@ -23,6 +24,7 @@ public class Schema
             case 4: return FILE;
             case 5: return DIR;
             case 6: return TAG;
+            case 7: return EVENT;
             }
 
             throw new Exception("Invalid Type conversion: " + val );

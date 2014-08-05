@@ -107,8 +107,10 @@ public class TagResource
     public void deleteTagByNID(
         @DefaultValue("-1") @PathParam("nodeid") long a_nodeid )
     {
+        // TODO - Must ensure nodeid refers to a tag vertex
+
         if ( a_nodeid > -1 )
-            m_api.deleteObjectByNID( a_nodeid );
+            m_api.deleteObjectByNID( a_nodeid, Schema.Type.TAG.toInt() );
         else
             throw new WebApplicationException( Response.Status.BAD_REQUEST ); 
     }

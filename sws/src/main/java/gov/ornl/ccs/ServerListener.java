@@ -11,8 +11,11 @@ public void contextDestroyed(ServletContextEvent sce)
 {
     System.out.println("SWS stopping");
 
-    TitanAPI api = TitanAPI.getInstance();
-    api.shutdown();
+    if ( TitanAPI.instantiated() )
+    {
+        TitanAdminAPI.getInstance().shutdown();
+        TitanAPI.getInstance().shutdown();
+    }
 }
 
 @Override
