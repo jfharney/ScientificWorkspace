@@ -60,10 +60,10 @@ var doiUserHelper = function(request, response) {
 	});
 
 	resp.on('end', function() {
-	  //console.log('users responseData: ' + responseData);
       var userObj = JSON.parse(responseData);
-      for(var key in userObj)
-    	console.log(key + ': ' + userObj[key]);
+      userObj['resource'] = '';				// This addition prevents a message of "undefined" appearing in the files field.
+      userObj['creator_name'] = userObj['name'];
+      userObj['creator_email'] = userObj['email'];
       response.render("doi", userObj);
 	});
 

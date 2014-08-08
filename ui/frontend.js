@@ -39,7 +39,7 @@ if(proxy.firewallMode)
 
 /*************************************************************/
 
-app.post('/search/:user_id',function(request,response) {
+app.post('/search/:user_id', function(request,response) {
 	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
 	
@@ -125,25 +125,16 @@ app.get("/search_results/:user_id", function(request, response) {
 
 /*************************************************************/
 
-
-app.get('/doi/:user_id',function(request, response) {
-  // userHelper is defined in the file proxy/users.js.   
+app.get('/doi/:user_id', function(request, response) {
+  /* doiUserHelper is defined in the file proxy/users.js. */   
   var res = users.doiUserHelper(request, response); 
 });
 
-app.post('/doi/:user_id',function(request,response) {
-	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
+app.post('/doi/:user_id', function(request, response) {
 	
-  var model = {};
+  var model = {};		/* model is the JSON object we will pass to the page doi.jade. */
   model['uname'] = request.params.user_id;
   for(var key in request['body']) {
-    console.log("request['body']["+key+"]: " + request['body'][key] + ', length: ' + request['body'][key].length + ', isArr: ' + isArray(request['body'][key]));
-		
-    if(key == 'resource' || key == 'group' || key == 'job') {
-      var arr = request['body'][key].split(',');
-      console.log('length: ' + arr.length);
-      request['body'][key] = arr;
-    } 
     if(isArray(request['body'][key])) {
       model[key] = request['body'][key];
     } 
@@ -151,15 +142,8 @@ app.post('/doi/:user_id',function(request,response) {
       var arr = new Array();
       arr.push(request['body'][key]);
       model[key] = arr;
-    }
-    console.log('key: ' + key + ' value: ' + request['body'][key] + ' length: ' + request['body'][key].length + ' model[] ' + model[key] + ' isArr: ' + isArray(model[key]));	
-  }  // end of for loop
-	
-  console.log('About to render doi.jade...');
-  for(var key in model) {
-    console.log('key: ' + key + ' model: ' + model[key]);
-  }
-	
+    }	
+  }  // end of for loop through request['body']
   response.render("doi", model);
 });
 
@@ -239,7 +223,6 @@ app.get("/settings/:user_id", function(request, response) {
 	  response.render("settings", { uid : request.params.user_id });
 });
 
-
 /*************************************************************/
 
 app.get("/", function(request, response) {
@@ -267,9 +250,6 @@ app.get("/workspace/:user_id", function(request, response) {
 
 
 /*************************************************************/
-
-
-
 
 app.get("/userinfo/:user_id", function(request, response) {
 	
@@ -391,8 +371,6 @@ app.get('/groups/:gid',function(request, response) {
 	  
   }
   
-  
-
 });
 
 
@@ -479,21 +457,12 @@ app.del('/deletetaglinkproxy/:user_id', function(request, response) {
 	
 });
 
-//creates a new tag
+/* Creates a new tag. */
 app.post('/tagproxy/:user_id', function(request, response) {
-
 	
-	var res = tags.tagsproxyHelper(request, response);
-	
-});
-
-//associates a new tag with a resource
-app.post('/associationproxy/:user_id',function(request,response){
-	
-	var res = tags.associationsproxyHelper(request, response);
+  var res = tags.tagsProxyHelper(request, response);
 	
 });
-
 
 //gets all the tags given a user
 app.get('/tags', function(request, response) 
@@ -506,7 +475,14 @@ app.get('/tags', function(request, response)
 app.get('/tags/:tag_name', function(request, response) 
 {
 	
-	var res = taginfoHelper(request, response);
+	var res = tags.taginfoHelper(request, response);		// tag. needed? 
+	
+});
+
+app.post('/associationproxy/:user_id', function(request, response) 
+{
+	
+	var res = tags.associationsproxyHelper(request, response);
 	
 });
 
@@ -531,35 +507,12 @@ app.get('/tagsTable/:uid', function(request, response) {
 
 app.get('/files/:userNum', function(request, response) {
 	
-	/*
-  //console.log('usernum: ' + request.params.userNum);
-  var usernum = request.params.userNum;
-  var queriedPath =	request.query.path;
-	
-  console.log('in get files for queriedPath ... ' + queriedPath);
-  var args = url.parse(request.url, true).query;
-  //var path = "/sws/files?uid=5112&path=|"; 			// + args['path'];
-	
-  var path = '/sws/files?uid=' + usernum + '&path=' + queriedPath + '&list=retrieve';
-  
-  // Query above is an object containing all the 
-  // arguments in the URL as key-value pairs. 
-  var options = {
-    host: proxy.serviceHost,
-	port: proxy.servicePort,
-	path: path,
-	method: 'GET'
-  };
-
-  //console.log('path->' + path);
-  */
-	
-	
   if(proxy.firewallMode) {
 	  
 	  var res = files.filesproxyHelperFirewall(request, response);
 	  
-  } else {
+  } 
+  else {
 
 	  var res = files.filesproxyHelper(request, response);
 	  

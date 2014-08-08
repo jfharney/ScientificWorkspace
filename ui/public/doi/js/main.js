@@ -1,81 +1,46 @@
-
-
 $(function() {
+		
+  var host = 'http://localhost:1337/doi/';
+	
+  /* Change user option (admin only) */
+  $('.user_dropdown_list').click(function() {
+    var userName = $(this).html();
+    location.href = host + userName;
+  });
 	
 	
-	var host = 'http://localhost:1337/workspace/';
+  $('#add_resource_button').click(function() {
+		
+    var html = '';
+    
+	html+='<div class="row-fluid">'
+	html+='  <div class="span4">Resource</div>';
+	html+='  <div class="span6">';
+	html+='    <input id="text" name="resource_input" value="" />';
+	html+='  </div>';
+	html+='  <div class="span2">';
+	html+='    <a class="metadata" href="#">metadata</a>';
+	html+='  </div>';
+	html+='</div>';
+		
+	$('#add_resouce_row').before(html);
+		
+  });
 	
-	// Why the following didn't work is a myster to me. -Mark
-	//$('#input_creator_name').val($('#creator_name').html());
-	//$('#input_creator_email').val($('#creator_email').html());
-	//$('#input_files').val($('#spec_resources').html());
-	
-	//console.log("$('#spec_resources').html() is "+$('#spec_resources').html());
-	//console.log("$('#creator_name').html() is "+$('#creator_name').html());
-	//console.log("$('#creator_email').html() is "+$('#creator_email').html());
-	
-	if($('#input_creator_name').val() == 'undefined')
-	  $('#input_creator_name').val('');
-	
-	//changing user option
-	$('.user_dropdown_list').click(function(){
-		//alert('user dropdown');
-		var userName = $(this).html();
-		location.href=host+userName;
-	});
-	
-	
-	$('#add_resource_button').click(function() {
+  $('#add_keyword_button').click(function() {
 		
+    var html = '';
 		
-		var html = '';
+	html+='<div class="row-fluid">'
+	html+='  <div class="span4">Keyword</div>';
+	html+='  <div class="span6">';
+	html+='    <input id="text" name="resource_input" value="" />';
+	html+='  </div>';
+    html+='</div>';
+    
+	$('#add_keyword_row').before(html);
 		
-		html+='<div class="row-fluid">'
-		
-		html+='  <div class="span4">Resource</div>';
-		
-		html+='  <div class="span6">';
-		html+='    <input id="text" name="resource_input" value="" />';
-		html+='  </div>';
-		
-		
-		html+='  <div class="span2">';
-		html+='    <a class="metadata" href="#">metadata</a>';
-		html+='  </div>';
-		
-		html+='</div>';
-		
-		//alert('html: ' + html);
-		//$('#add_resouce_row').before('<div>hello</div>');
-		$('#add_resouce_row').before(html);
-		
-	});
-	
-	$('#add_keyword_button').click(function() {
-		
-		
-		var html = '';
-		
-		html+='<div class="row-fluid">'
-		
-		html+='  <div class="span4">Keyword</div>';
-		
-		html+='  <div class="span6">';
-		html+='    <input id="text" name="resource_input" value="" />';
-		html+='  </div>';
-		
-		/*
-		html+='  <div class="span2">';
-		html+='    <a class="metadata" href="#">metadata</a>';
-		html+='  </div>';
-		*/
-		html+='</div>';
-		
-		//alert('html: ' + html);
-		//$('#add_resouce_row').before('<div>hello</div>');
-		$('#add_keyword_row').before(html);
-		
-	});
+  });
 
 	$('#add_creator_button').click(function() {
 	

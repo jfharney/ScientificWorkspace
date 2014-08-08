@@ -1,11 +1,8 @@
 function getFileInfo(uid) {
-	
-  //console.log('in getFileInfo1 for uid: ' + uid);
-  var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+uid;
-  url = url + '?path=|';
+
+  var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+uid+ '?path=|';
   var children = [];
-	
-  
+
   //create the initial children
   $.ajax({
     url: url,
@@ -55,7 +52,7 @@ function buildFileTree(treeData) {
 	  SW.selected_file_titles = SW.selected_file_titles.join(', ');
 	  /* Replace the pipes in the string with forward slashes. */
 	  SW.selected_file_titles = SW.selected_file_titles.split('|').join('/');
-	  console.log(SW.selected_file_titles);
+	  //console.log(SW.selected_file_titles);
       
       /* I don't know what this nid stuff is doing for us, but I'm leaving it in. */
       var selNids = $.map(selNodes, function(node) {

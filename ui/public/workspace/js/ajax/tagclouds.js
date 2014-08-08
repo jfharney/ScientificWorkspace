@@ -1,3 +1,7 @@
+/* The code in this file is concerned with populating the tag cloud. For better or worse, it has 
+ * remained in its own ready event. 
+ */
+
 $(document).ready(function() {
   console.log('Inside the ready event in tagclouds.js.');
 
@@ -15,12 +19,12 @@ $(document).ready(function() {
       tagsArr = JSON.parse(data);
       
       $.each(tagsArr, function(index, element) {
-    	var tagName = element['name']
-    	var tagNid = element['nid'];
-    	var tagDesc = element['desc'];
+        var tagName = element['name']
+        var tagNid = element['nid'];
+        var tagDesc = element['desc'];
     	
   	    // Then, for each tag nid in the given array, we query its links. To start with, we need only a count of the links.
-    	$.ajax({
+        $.ajax({
     	  type: "GET",
     	  url: tagLinks_url_prefix + tagNid,
     	  success: function(data) {
@@ -30,63 +34,68 @@ $(document).ready(function() {
     		
     		if(linkCount > 0) {
     		  var fontSize = 8;
-    		  var $tagcloud = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
+    		  var $tagcloud = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+
+    				           (fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
     		    .on('click', function() {
                   $('div#tagCloudInfo').empty();
-  			      $('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+"</div>");
+  			      $('div#tagCloudInfo').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+
+  			    		                       $(this).text()+"</div>");
 			      $('#cloud_info').append('<div># Objects: '+linkCount+'</div>');
 			      $('#cloud_info').append('<div>Description: '+tagDesc+'</div>');
 			      $('#cloud_info').append('<ul id="tagContentsList">');
 			      
+			      SW.resetTaggedFields();				/* Reset the tagged fields. */
 			      var linked_nids = new Array();
 			      
+			      // Now we iterate through the links. 
 			      for(var i = 0; i < linkCount; i++) {
-			    	  
-			    	var resName;
+			    	var resName, resType;
 			    	var resNid = linksArr[i]['nid'];
 			    	linked_nids.push(resNid);
-			    	
-			    	var resType;
-			    	if(linksArr[i]['type'] == 0) {
+                    
+			    	if(linksArr[i]['type'] == 0) {				/* the USER type */
 				      resName = linksArr[i]['name'];
 				      resType = 'user';
-	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Email: '+linksArr[i]['email']+'<br />&nbsp;&nbsp;&nbsp;Uid: '+linksArr[i]['uid']+'</span>')
+				      SW.tagged_person_names.push(resName);
+	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+
+	                		        '" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Email: '+
+	                		        linksArr[i]['email']+'<br />&nbsp;&nbsp;&nbsp;Uid: '+linksArr[i]['uid']+'</span>')
 	          			.on("click", function() {
-	              		  var pos = $(this).attr('id').indexOf('_');		// This line and the following aren't pretty, but are needed to get the correct resNid value.
-	              		  resNid = $(this).attr('id').substring(pos+1);		// All they do is pull the nid value off the end of the element id. 
+	          			  resNid = getNidValue($(this).attr('id'));
 	                      $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
 	                      $(this).hide();
 	                    });
-	                    $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
-	          			  .on("click", function() {
-	            		    var pos = $(this).attr('id').indexOf('_');
-	              		    resNid = $(this).attr('id').substring(pos+1);
-	                        $('#lessTagInfoSpan_'+resNid).css('display', 'inline'); 
-	                        $(this).hide();
-				    	  });
-	  					$('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-	                    $('#tagResource_'+resNid).append($lessLink);
-	                    $('#tagResource_'+resNid).append($moreLink);
+	                  $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
+	          			.on("click", function() {
+                          resNid = getNidValue($(this).attr('id'));
+	                      $('#lessTagInfoSpan_'+resNid).css('display', 'inline'); 
+	                      $(this).hide();
+				    	});
+	                  $('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
+	                  $('#tagResource_'+resNid).append($lessLink);
+	                  $('#tagResource_'+resNid).append($moreLink);
 				    }
-			    	if(linksArr[i]['type'] == 1) {
+			    	
+			    	else if(linksArr[i]['type'] == 1) {			/* the GROUP type */
 					  resName = linksArr[i]['gname'];
 					  resType = 'group';
+					  SW.tagged_group_names.push(resName);
 		  			  $('#cloud_info').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
 					}
-			    	if(linksArr[i]['type'] == 2) {
+			    	
+			    	else if(linksArr[i]['type'] == 2) {			/* the JOB type */
 			    	  resName = linksArr[i]['name'];
 			    	  resType = 'job';
+			    	  SW.tagged_job_names.push(resName);
                       $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+linksArr[i]['jid']+'<br />&nbsp;&nbsp;&nbsp;Started: '+formatTimestamp(linksArr[i]['start'])+'<br />&nbsp;&nbsp;&nbsp;Ended: '+formatTimestamp(linksArr[i]['stop'])+'</span>')
           			  .on("click", function() {
-              			var pos = $(this).attr('id').indexOf('_');			// This line and the following aren't pretty, but are needed to get the correct resNid value.
-              			resNid = $(this).attr('id').substring(pos+1);		// All they do is pull the nid value off the end of the element id. 
+          				resNid = getNidValue($(this).attr('id'));
                         $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
                         $(this).hide();
                       });
                       $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
           			  .on("click", function() {
-            			var pos = $(this).attr('id').indexOf('_');
-              			resNid = $(this).attr('id').substring(pos+1);
+          				resNid = getNidValue($(this).attr('id'));
                         $('#lessTagInfoSpan_'+resNid).css('display', 'inline'); 
                         $(this).hide();
 			    	  });
@@ -94,20 +103,20 @@ $(document).ready(function() {
                       $('#tagResource_'+resNid).append($lessLink);
                       $('#tagResource_'+resNid).append($moreLink);
 			    	}
-			    	else if(linksArr[i]['type'] == 3) {
+			    	
+			    	else if(linksArr[i]['type'] == 3) {			/* the APP type */
 			    	  resName = linksArr[i]['nid'];		// Apps don't actually have names. 
 			    	  resType = 'app';
+			    	  SW.tagged_app_names.push(resName);
                       $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;App ID: '+linksArr[i]['aid']+'<br />&nbsp;&nbsp;&nbsp;Started: '+formatTimestamp(linksArr[i]['start'])+'<br />&nbsp;&nbsp;&nbsp;Ended: '+formatTimestamp(linksArr[i]['stop'])+'</span>')
           			  .on("click", function() {
-              			var pos = $(this).attr('id').indexOf('_');
-              			resNid = $(this).attr('id').substring(pos+1); 
+          				resNid = getNidValue($(this).attr('id')); 
                         $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
                         $(this).hide();
                       });
                       $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
           			  .on("click", function() {
-            			var pos = $(this).attr('id').indexOf('_');
-              			resNid = $(this).attr('id').substring(pos+1);
+          				resNid = getNidValue($(this).attr('id'));
                         $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
                         $(this).hide();
           			  });
@@ -115,20 +124,20 @@ $(document).ready(function() {
                       $('#tagResource_'+resNid).append($lessLink);
                       $('#tagResource_'+resNid).append($moreLink);
 			    	}
-			    	else if(linksArr[i]['type'] == 4) {
+			    	
+			    	else if(linksArr[i]['type'] == 4) {			/* the FILE type */
 			    	  resName = linksArr[i]['name'];
 				      resType = 'file';
+				      SW.tagged_file_names.push(resName);
                       $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
           			  .on("click", function() {
-              			var pos = $(this).attr('id').indexOf('_');
-              			resNid = $(this).attr('id').substring(pos+1); 
+          				resNid = getNidValue($(this).attr('id'));
                         $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
                         $(this).hide();
                       });
                       $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
           			  .on("click", function() {
-            			var pos = $(this).attr('id').indexOf('_');
-              			resNid = $(this).attr('id').substring(pos+1);
+          				resNid = getNidValue($(this).attr('id'));
                         $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
                         $(this).hide();
           			  });
@@ -136,20 +145,19 @@ $(document).ready(function() {
                       $('#tagResource_'+resNid).append($lessLink);
                       $('#tagResource_'+resNid).append($moreLink);
 			    	}
-			    	else if(linksArr[i]['type'] == 5) {
+			    	
+			    	else if(linksArr[i]['type'] == 5) {			/* the DIRECTORY type */
 				      resName = linksArr[i]['name'];
 					  resType = 'directory';
 	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
 	          			.on("click", function() {
-	              		  var pos = $(this).attr('id').indexOf('_');
-	              	      resNid = $(this).attr('id').substring(pos+1); 
+	          			  resNid = getNidValue($(this).attr('id'));
 	                      $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
 	                      $(this).hide();
 	                    });
 	                  $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
 	          			.on("click", function() {
-	            		  var pos = $(this).attr('id').indexOf('_');
-	              		  resNid = $(this).attr('id').substring(pos+1);
+	          			  resNid = getNidValue($(this).attr('id'));
 	                      $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
 	                      $(this).hide();
 	          		  });
@@ -157,25 +165,42 @@ $(document).ready(function() {
 	                  $('#tagResource_'+resNid).append($lessLink);
 	                  $('#tagResource_'+resNid).append($moreLink);
 				    }
+			    	
 			    	else {
 			    	  resName = linksArr[i]['nid'];
 			    	  resType = 'other';
 			    	}
+			    	
 			      }		// End of for loop.
 			      $('#tagCloudButtons').empty();
 			      
-			      $obtain_doi_button = $('<button>Obtain DOI</button>').on('click',function(){
-			    	 
-			    	  console.log('grab parameters of the tag here');
+			      // OBTAIN DOI Button
+			      $obtain_doi_button = $('<button data-toggle="modal" data-target="#doiModal">Obtain DOI</button>')
+			        .on('click', function() {
+			        	
+			          SW.doiBySelection = false;
+			          SW.doiByTag = true;
 			    	  
+			    	  /* Reset the modal fields. */
+                      $('#doiModalFilesField').html('');
+			    	  $('#doiModalGroupsField').html('');
+			    	  $('#doiModalPeopleField').html('');
+			    	  $('#doiModalJobsField').html('');
+			    	  $('#doiModalAppsField').html('');			// Does SW.selected_app_titles exist?
 			    	  
-			    	  console.log('submit to doi here');
+			    	  /* Reset the flag which checks whether a file is included. */
+			    	  SW.file_included_flag = false;
 			    	  
-			      });
+			    	  $('#doiModalFilesField').html(SW.tagged_file_names.join(', '));
+			    	  $('#doiModalGroupsField').html(SW.tagged_group_names.toString());
+			    	  $('#doiModalPeopleField').html(SW.tagged_person_names.toString());
+			    	  $('#doiModalJobsField').html(SW.tagged_job_names.toString());
+			    	  $('#doiModalAppsField').html(SW.tagged_app_names.toString());
+                    });
 			      
-			      $delete_tag_button = $('<button>Remove Tag</button>').on('click',function(){
+			      $delete_tag_button = $('<button>Remove Tag</button>').on('click', function() {
 			    	 
-			    	  deleteTag(tagNid,linked_nids,uid);
+                    deleteTag(tagNid,linked_nids,uid);
 			    	  
 			      });
 			      
@@ -185,7 +210,7 @@ $(document).ready(function() {
     		  
     		  $('#tagClouds').append($tagcloud);
 
-    		}
+            }		// End of if(linkCount > 0) block.
     	  },
     	  error: function() {}
     	});
@@ -280,7 +305,6 @@ function getReducedArr(tag_name_arr)
 	var tag_name = tag_name_arr[0];
 	var tag_count = 0;
 	for(var i=0; i < tag_name_arr.length; i++) {
-		//console.log('tagname->' + tag_name);
 		tag_count = tag_count+1;
 		if(tag_name_arr[i] != tag_name) {
 			tag_names.push(tag_name);
@@ -294,8 +318,6 @@ function getReducedArr(tag_name_arr)
 	tag_counts.push(tag_count);
 	console.log('tag_names: ' + tag_names);
 	return tag_names;
-	
-	//console.log('tag_counts: ' + tag_counts);
 }
 
 function getCountsArr(tag_name_arr) 
@@ -308,7 +330,6 @@ function getCountsArr(tag_name_arr)
 	var tag_name = tag_name_arr[0];
 	var tag_count = 0;
 	for(var i=0; i < tag_name_arr.length; i++) {
-		//console.log('tagname->' + tag_name);
 		tag_count = tag_count + 1;
 		if(tag_name_arr[i] != tag_name) {
 			tag_names.push(tag_name);
@@ -322,18 +343,7 @@ function getCountsArr(tag_name_arr)
 	tag_counts.push(tag_count);
 	
 	return tag_counts;
-	//console.log('tag_names: ' + tag_names);
-	//console.log('tag_counts: ' + tag_counts);
 }
-
-// Takes a string like 2014-02-05T17:56:23.000Z and returns 2014-02-05.  
-/*function formatDate(jobStartDate)
-{
-	var n = jobStartDate.indexOf('T');
-	if(n != -1)
-	  jobStartDate = jobStartDate.substring(0, n);
-	return jobStartDate;
-}*/
 
 /* Taken from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript */
 function formatTimestamp(UNIX_timestamp) {
@@ -352,4 +362,13 @@ function formatTimestamp(UNIX_timestamp) {
    var time = month + ' ' + date + ', ' + year + '&nbsp;&nbsp;' + hour + ':' + min + ':' + sec ;
    
    return time;
+}
+
+/* Given an id attribute value of the format tagResource_12345, this function returns the 12345 part, 
+ * which corresponds to an object Nid. It takes a string as its only argument.                                                                    
+ */
+function getNidValue(id) {
+  var pos = id.indexOf('_');
+  var nid = id.substring(pos+1);
+  return nid
 }

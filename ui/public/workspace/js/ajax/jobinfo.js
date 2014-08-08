@@ -12,15 +12,12 @@ function getJobInfo(userNum, searchArg) {
     url: url,
     global: false,
     type: 'GET',
-	//async: false,
 	success: function(data) 
 	{
       for(var i = 0; i < data.length; i++) {
         children.push(data[i]);
-      }
-	  buildJobsTree(children);			
-	  
-	  /* This function is defined below. */ 
+      } 
+	  buildJobsTree(children);			/* This function is defined below. */
     },
     error: function() { console.log('error in getting job info'); }
   });
@@ -32,18 +29,12 @@ function getAppInfo(url) {
 
   var queryString = '';
   
-  //console.log('In jobinfo.js, getAppInfo() has been passed the url ' + url);
-  
   $.ajax({
     url: url,
     type: 'GET',
     data: queryString,
     success: function(data) {
-      //console.log(jQuery.isEmptyObject(data));
-      //console.log('Here is info_obj:');
       info_obj = data;
-      //for(var i in info_obj)
-    	//console.log(i + ': ' + info_obj[i]);
       var info_space = '#app_info';
       $(info_space).empty();
       if(!jQuery.isEmptyObject(info_obj)) {
@@ -75,8 +66,6 @@ function buildJobsTree(children) {
 	checkbox: true,
 	selectMode: 3,
 	onSelect: function(select, node) {
-		
-		//alert('node type: ' + node.data.type);
 		
 		if(node.data.type == '2') {
 			
@@ -139,26 +128,11 @@ function buildJobsTree(children) {
 			console.log('selected_app_nids: ' + SW.selected_app_nids + ' length: ' + SW.selected_app_nids.length);
 			
 		}
-		
-		
 	},
 	onActivate: function(node) {
 	  var info_obj = '';
 	  //console.log('node type: ' + node.data.type);    		
 	  if(node.data.type == 2) {
-		//console.log('this is a job');
-		/*
-		for(var i in node.data)
-		  console.log(i + ': ' + node.data[i]);
-		    		  
-		var url = 'http://' + SW.hostname + ':' + SW.port + '/jobinfo/' + node.data.jobid;
-		console.log('url is ' + url);
-		var info_space = '#job_info';
-		$(info_space).empty();
-		
-		var queryString = '';
-		 */
-		
 		$.ajax({
 		  url: url,
           type: 'GET',
@@ -195,9 +169,9 @@ function buildJobsTree(children) {
         
         for(var i in node.data)
           console.log(i + ': ' + node.data[i]);
-        var url = 'http://' + SW.hostname + ':' + SW.port + '/appinfo/'+node.data.appid; //+'?jobid='+node.data.jobid;
+        var url = 'http://' + SW.hostname + ':' + SW.port + '/appinfo/'+node.data.appid;
         console.log('Passing url '+url+' to getAppInfo.');
-        // getAppInfo is defined just above this function in the same file. 
+        /* getAppInfo is defined just above this function in the same file. */ 
         getAppInfo(url);
         
       }

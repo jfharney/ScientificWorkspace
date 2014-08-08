@@ -38,41 +38,32 @@ html(lang="en")
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
           h4#myModalLabel.modal-title DOI Submission Items
-        
         div.modal-body
           div Add the following resources to DOI form?
           br
-          
           table
             tr(valign="top")
               td(width="15%") Files
-              td#doiModalFilesField
+              td(style="padding-left:15px")#doiModalFilesField
             tr(valign="top")
               td(width="15%") Groups
-              td#doiModalGroupsField
+              td(style="padding-left:15px")#doiModalGroupsField
             tr(valign="top")
               td(width="15%") People
-              td#doiModalPeopleField
+              td(style="padding-left:15px")#doiModalPeopleField
             tr(valign="top")
               td(width="15%") Jobs
-              td#doiModalJobsField
+              td(style="padding-left:15px")#doiModalJobsField
             tr(valign="top")
               td(width="15%") Apps
-              td#doiModalAppsField
-          //div#doiModalFilesField
-          //div#doiModalGroupsField
-          //div#doiModalPeopleField
-          //div#doiModalJobsField
-          //div#doiModalAppsField
-          //div#resources_to_doi(style="margin-bottom:10px")
+              td(style="padding-left:15px")#doiModalAppsField
           
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
-          button#create_doi_button.btn.btn-primary Create DOI form
-       
+          button#create_doi_button.btn.btn-primary Create DOI Form
     
     // ADD TAG MODAL
-    div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
+    div#tagModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
       div.modal-dialog
         div.modal-header
           button.close(type="button",data-dismiss="modal",aria-hidden="true")
@@ -111,6 +102,7 @@ html(lang="en")
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
       
+    // NAVIGATION BAR
     div.navbar
       div.navbar-inner 
         div.container-fluid
@@ -181,13 +173,12 @@ html(lang="en")
             ul.nav.nav-tabs.nav-stacked.main-menu
               li.nav-header.hidden-tablet Main
               li
-                // The purpose of the href attribute is just to make the finger pointer appear when you hover.
-                a#add_doi_button(data-toggle="modal", data-target="#doiModal", href="#") 
+                // The click event for a#add_doi_button is defined in js/add_doi.js.
+                a#add_doi_button(data-toggle="modal", data-target="#doiModal", href="#")  
                   span.hidden-tablet Create DOI
               li.nav-header.hidden-tablet Tags
               li
-                //a#add_tag_button.ajax-link(data-toggle="modal", data-target="#myModal", href="#")
-                a#create_tag(data-toggle="modal", data-target="#myModal", href="#")
+                a#create_tag(data-toggle="modal", data-target="#tagModal", href="#")
                   span.hidden-tablet Add Tag
               li
                 a.ajax-link(href="#")
@@ -366,6 +357,6 @@ html(lang="en")
     
     // script(src="js/ajax/tagTree.js")
     script(src="js/ajax/tagstable.js")
-    //script(src="js/ajax/tagclouds.js")
+    script(src="js/ajax/tagclouds.js")
     script(src="js/add_tag.js")
     script(src="js/add_doi.js")

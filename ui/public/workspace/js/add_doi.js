@@ -4,19 +4,22 @@ $(document).ready(function() {
 
   // This is the button in the left menu panel. 
   $('#add_doi_button').click(function() { 
-    console.log('add doi');
+	SW.doiBySelection = true;
+	SW.doiByTag = false;
     
     $('#doiModalFilesField').html(''+SW.selected_file_titles);
     $('#doiModalGroupsField').html(''+SW.selected_group_titles);
     $('#doiModalPeopleField').html(''+SW.selected_user_titles);
     $('#doiModalJobsField').html(''+SW.selected_job_titles);
-    $('#doiModalAppsField').html();									// Does SW.selected_app_titles exist? 
+    $('#doiModalAppsField').html(''+SW.selected_app_titles);		// Is SW.selected_app_titles being populated correctly? 
   });
 	  
-  // This is the button INSIDE the DOI modal. 
+  /* This is the button INSIDE the DOI modal. */ 
   $('button#create_doi_button').click(function() {
-    /* The boolean SW.selected_file_flag indicates whether at least one file is selected. */
-    if(SW.selected_file_flag ==  '')
+    if($('#doiModalFilesField').html() != '')
+      SW.file_included_flag = true;
+    /* The boolean SW.file_included_flag indicates whether at least one file is selected. */
+    if(SW.file_included_flag == false)
       alert('At least one file must be selected to request a DOI.');
     else
       createDOI();
@@ -24,6 +27,8 @@ $(document).ready(function() {
 	  
 });
 
+/* This function takes an array as its sole argument. It returns a string, which is a set of input tags.
+ */
 function addGroups(selected_group_items) {
   var input = '';
 	  
@@ -51,14 +56,14 @@ function addUsers(selected_user_items) {
   var input = '';
   if(typeof selected_user_items != "undefined" && selected_user_items != null && selected_user_items.length > 0) {
     if(!sample) {
-      var groupKey = 'user';
+      var userKey = 'user';
 	  for(var i = 0; i < selected_user_items.length; i++) {
 		input += '<input type="hidden" name="'+ userKey +'" value="'+ selected_user_items[i] +'" />';
       }
 	} 
     else {
       var userKey = 'user';
-      //padded the array with one value - this a hack to avoid single element arrays that blow up the backend
+      // Array with one dummy value, a hack to avoid single element arrays that blow up the backend.
 	  var userValue1 = 'user1';
 	  input += '<input type="hidden" name="'+ userKey +'" value="'+ userValue1 +'" />';
 	  for(var i = 0; i < selected_user_items.length; i++) {
@@ -110,21 +115,40 @@ function addJobs(selected_job_items) {
 	  
   if(!sample) {
     var jobKey = 'job';
-	for(var i=0;i<selected_job_items.length;i++) {
+	for(var i = 0; i < selected_job_items.length; i++) {
       input += '<input type="hidden" name="'+ jobKey +'" value="'+ selected_job_items[i] +'" />';
     }
   } 
   else {
     var jobKey = 'job';
-
-    //padded the array with one value - this a hack to avaoid single element arrays that blow up the backend
+    // Array with one dummy value, a hack to avoid single element arrays that blow up the backend.
     var jobValue1 = 'job1';
-    input+='<input type="hidden" name="'+ jobKey +'" value="'+ jobValue1 +'" />';
-    for(var i=0;i<selected_job_items.length;i++) {
+    input += '<input type="hidden" name="'+ jobKey +'" value="'+ jobValue1 +'" />';
+    for(var i = 0; i < selected_job_items.length; i++) {
       input += '<input type="hidden" name="'+ jobKey +'" value="'+ selected_job_items[i] +'" />';
     }
   }
 	  
+  return input;
+}
+
+function addApps(selected_app_items) {
+  var input = '';
+		  
+  if(!sample) {
+	for(var i = 0; i < selected_app_items.length; i++) {
+      input += '<input type="hidden" name="app" value="'+ selected_app_items[i] +'" />';
+    }
+  } 
+  else {
+    // Array with one dummy value, a hack to avoid single element arrays that blow up the backend.
+    var appValue1 = 'app1';
+    input += '<input type="hidden" name="app" value="'+ appValue1 +'" />';
+    for(var i = 0; i < selected_app_items.length; i++) {
+      input += '<input type="hidden" name="app" value="'+ selected_app_items[i] +'" />';
+    }
+  }
+		  
   return input;
 }
   
@@ -132,22 +156,6 @@ function addResources(selected_file_items) {
   var input = '';
 	
   input += '<input type="hidden" name="'+ 'resource' +'" value="'+ selected_file_items +'" />';
-  
-  /*if(!sample) {
-    for(var i = 0; i < selected_file_items.length; i++) {
-      input += '<input type="hidden" name="'+ 'resource' +'" value="'+ selected_file_items[i] +'" />';
-    }
-  } 
-  else {
-    var fileKey = 'file';
-    // Padded the array with one value - this a hack to avoid single element arrays that blow up the backend.
-    var fileValue1 = 'file1';
-    input += '<input type="hidden" name="'+ fileKey +'" value="'+ fileValue1 +'" />';
-		
-    for(var i = 0; i < selected_file_items.length; i++) {
-      input+='<input type="hidden" name="'+ fileKey +'" value="'+ selected_file_items[i] +'" />';
-    }
-  }*/
 	
   return input;
 }
@@ -156,36 +164,45 @@ function addResources(selected_file_items) {
 function createDOI() {
 
   var username = SW.current_user_uname;
-  console.log("In createDOI(), username is " + username);
-  var usernumber = SW.current_user_number;
-	  
-  var selected_file_titles = SW.selected_file_titles;
-	  
+  var selected_file_titles = SW.selected_file_titles;  
   var input = '';
-  //put the user data in the hidden input fields
-	  
+  
+  /* Put the user data in the hidden input fields. */  
   input += addCreator();
 	  
-  //put the selected file keys in the hidden input fields
-  input += addResources(SW.selected_file_titles);
+  /* Put the indicated file names in the hidden input fields. */
+  if(SW.doiBySelection)
+    input += addResources(SW.selected_file_titles);
+  if(SW.doiByTag)
+    input += addResources(SW.tagged_file_names);
 	
-  //put the selected apps/jobs in the hidden input fields
-  input += addJobs(SW.selected_job_titles);
+  /* Put the indicated jobs in the hidden input fields. */
+  if(SW.doiBySelection)
+    input += addJobs(SW.selected_job_titles);
+  if(SW.doiByTag)
+    input += addJobs(SW.tagged_job_names);
+  
+  /* Put the indicated apps in the hidden input fields. */
+  if(SW.doiBySelection)
+    input += addApps(SW.selected_app_titles);
+  if(SW.doiByTag)
+    input += addApps(SW.tagged_app_names);
 	
-  //put the selected apps/jobs in the hidden input fields
-  input += addGroups(SW.selected_group_titles);
+  /* Put the indicated groups in the hidden input fields. */
+  if(SW.doiBySelection)
+    input += addGroups(SW.selected_group_titles);
+  if(SW.doiByTag)
+    input += addGroups(SW.tagged_group_names);
 	
-  //put the selected apps/jobs in the hidden input fields
-  input += addUsers(SW.selected_user_titles);
-
-		
-  //put the selected collaborators in the hidden input fields (may be deprecated)
+  /* Put the indicated persons in the hidden input fields. */
+  if(SW.doiBySelection)
+    input += addUsers(SW.selected_user_titles);
+  if(SW.doiByTag)
+	input += addUsers(SW.tagged_person_names);
 	  
-  url = "http://" + "localhost" + ":" + "1337" + "/doi/" + username + "";
+  url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
-  console.log('input: ' + input + ' url: ' + url);
-	
-  //send request
+  /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();
   	
