@@ -109,6 +109,57 @@ public class Schema
         }
     }
 
+    public enum Event
+    {
+        OTHER_SHARED_TAG(1),
+        OTHER_REVOKED_TAG(2),
+        OTHER_SHARED_GROUP_TAG(3),
+        OTHER_REVOKED_GROUP_TAG(4),
+        OTHER_TAGGED_ASSET(5);
+        //OTHER_ADDED_TO_GROUP(103),
+        //OTHER_REMOVED_FROM_GROUP(104);
+
+        public static Event fromInt( int val ) throws Exception
+        {
+            switch ( val )
+            {
+            case 1: return OTHER_SHARED_TAG;
+            case 2: return OTHER_REVOKED_TAG;
+            case 3: return OTHER_SHARED_GROUP_TAG;
+            case 4: return OTHER_REVOKED_GROUP_TAG;
+            case 5: return OTHER_TAGGED_ASSET;
+            }
+
+            throw new Exception("Invalid Status conversion: " + val );
+        }
+
+        public String describe()
+        {
+            switch ( m_value )
+            {
+            case 1: return "A user has shared a tag with you.";
+            case 2: return "A user has revoked your access to a tag.";
+            case 3: return "A user has shared a tag with a group that you belong to.";
+            case 4: return "A user has revoked group access to a tag.";
+            case 5: return "A user has tagged one of your assets.";
+            }
+
+            return "";
+        }
+
+        public Integer toInt()
+        {
+            return m_value;
+        }
+
+        private Integer m_value;
+
+        private Event( int val )
+        {
+           m_value = val;
+        }
+    }
+
     // Vertex Properties
     public static final String TYPE     = "type";   // Node/vertex type
     public static final String UID      = "uid";    // POSIX User ID (users only)
@@ -136,6 +187,7 @@ public class Schema
     public static final String FMODE    = "fmode";  // File mode
     public static final String FSIZE    = "fsize";  // File size
     public static final String STATUS   = "status"; // Indicates node requires user review
+    public static final String SUBTYPE  = "subtype";// Arbitrary sub-type number
 
 
     // Injected "properties" (not stored in graph)

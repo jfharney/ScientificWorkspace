@@ -546,7 +546,6 @@ public class TitanAPI
             }
         }
         throw new WebApplicationException( Response.Status.NOT_FOUND ); 
-
     }
 
     /**
@@ -758,7 +757,7 @@ public class TitanAPI
             if ( a_shared_uids != null )
             {
                 GremlinPipeline<Vertex,Vertex> grem;
-                Integer[] uids = parseIntegerCSV( a_shared_uids );
+                ArrayList<Integer> uids = parseIntegerCSV( a_shared_uids );
                 for ( int uid : uids )
                 {
                     // Skip owner if it's in the list (can't share a tag with self)
@@ -810,12 +809,11 @@ public class TitanAPI
         if ( a_public )
         {
             // Collect ~other~ user's tags that are public
-            System.out.println("Public");
 
             if ( a_public_uids != null )
             {
                 GremlinPipeline<Vertex,Vertex> grem;
-                Integer[] uids = parseIntegerCSV( a_public_uids );
+                ArrayList<Integer> uids = parseIntegerCSV( a_public_uids );
                 for ( int uid : uids )
                 {
                     // Skip owner if it's in the list
@@ -955,8 +953,8 @@ public class TitanAPI
 
             // For shared tags, parse ACLs
             // Do this before creating vertex to catch any errors
-            Integer[] uids = null;
-            Integer[] gids = null;
+            ArrayList<Integer> uids = null;
+            ArrayList<Integer> gids = null;
             if ( a_access == 1 )
             {
                 uids = parseIntegerCSV( a_acl_uids );
@@ -974,19 +972,28 @@ public class TitanAPI
                 // Add edges to ACL entities
                 if ( a_access == 1 )
                 {
+                    Vertex member;
                     for ( int uid : uids )
                     {
                         it = m_graph.getVertices(Schema.UID,uid).iterator();
                         if ( !it.hasNext() )
                             throw new IllegalStateException("Invalid uid in ACL");
-                        tag.addEdge(Schema.MEMBER, it.next() );
+                        member = it.next();
+                        tag.addEdge(Schema.MEMBER, member );
+                        ArrayList<Vertex> tags = new ArrayList<>();
+                        tags.add(tag);
+                        newUserEvent( member, tags, Schema.Event.OTHER_SHARED_TAG );
                     }
                     for ( int gid : gids )
                     {
                         it = m_graph.getVertices(Schema.GID,gid).iterator();
                         if ( !it.hasNext() )
                             throw new IllegalStateException("Invalid gid in ACL");
-                        tag.addEdge(Schema.MEMBER, it.next() );
+                        member = it.next();
+                        tag.addEdge(Schema.MEMBER, member );
+                        ArrayList<Vertex> tags = new ArrayList<>();
+                        tags.add(tag);
+                        newGroupEvent( member, tags, Schema.Event.OTHER_SHARED_GROUP_TAG );
                     }
                 }
 
@@ -1049,8 +1056,8 @@ public class TitanAPI
             {
                 // For shared tags, parse ACLs
                 // Do this before changing vertex to catch any errors
-                Integer[] uids = null;
-                Integer[] gids = null;
+                ArrayList<Integer> uids = null;
+                ArrayList<Integer> gids = null;
                 if ( a_access == 1 )
                 {
                     uids = parseIntegerCSV( a_acl_uids );
@@ -1059,34 +1066,84 @@ public class TitanAPI
 
                 try
                 {
+                    Edge e;
+                    Vertex member;
+                    Iterator<Vertex> it;
+                    ArrayList<Integer>  old_uids = new ArrayList<>();
+                    ArrayList<Integer>  old_gids = new ArrayList<>();
+
                     // Remove all ACLs (outgoing member edges)
                     GremlinPipeline<Vertex,Edge> grem = new GremlinPipeline( tag ).outE(Schema.MEMBER);
 
                     while ( grem.hasNext() )
-                        grem.next().remove();
+                    {
+                        e = grem.next();
+
+                        // Remember who was already shared in order to send appropriate shared/revoked events later
+                        member = e.getVertex(Direction.IN);
+                        if ( member.getProperty(Schema.TYPE) == Schema.Type.USER.toInt() )
+                            old_uids.add( (Integer)member.getProperty( Schema.UID ));
+                        else
+                            old_gids.add( (Integer)member.getProperty( Schema.GID ));
+
+                        e.remove();
+                    }
 
                     // Update tag vertex with new properties
                     ElementHelper.setProperties( tag, Schema.TYPE, Schema.Type.TAG.toInt(), Schema.NAME, a_tag,
                             Schema.DESC, a_desc!=null?a_desc:"", Schema.ACCESS, a_access );
 
+                    ArrayList<Vertex> ev_links = new ArrayList<>();
+                    ev_links.add( tag );
+
                     // Add edges to ACL entities
                     if ( a_access == 1 )
                     {
-                        Iterator<Vertex> it;
-
+                        // Update ACL edges
+                        // Calc diff between old and new ACLs and send appropriate events
                         for ( int uid : uids )
                         {
                             it = m_graph.getVertices(Schema.UID,uid).iterator();
                             if ( !it.hasNext() )
                                 throw new IllegalStateException("Invalid uid in ACL");
-                            tag.addEdge(Schema.MEMBER, it.next() );
+                            member = it.next();
+                            tag.addEdge(Schema.MEMBER, member );
+
+                            if ( !old_uids.contains( uid ))
+                            {
+                                newUserEvent( member, ev_links, Schema.Event.OTHER_SHARED_TAG );
+                            }
                         }
                         for ( int gid : gids )
                         {
                             it = m_graph.getVertices(Schema.GID,gid).iterator();
                             if ( !it.hasNext() )
                                 throw new IllegalStateException("Invalid gid in ACL");
-                            tag.addEdge(Schema.MEMBER, it.next() );
+
+                            member = it.next();
+                            tag.addEdge(Schema.MEMBER, member );
+
+                            if ( !old_gids.contains( gid ))
+                            {
+                                newGroupEvent( member, ev_links, Schema.Event.OTHER_SHARED_GROUP_TAG );
+                            }
+                        }
+                    }
+
+                    // Send shared tag revoked events, if needed
+                    for ( int uid : old_uids )
+                    {
+                        if ( uids == null || !uids.contains( uid ))
+                        {
+                            newUserEvent( m_graph.getVertices(Schema.UID, uid).iterator().next(), ev_links, Schema.Event.OTHER_REVOKED_TAG );
+                        }
+                    }
+
+                    for ( int gid : old_gids )
+                    {
+                        if ( gids == null || !gids.contains( gid ))
+                        {
+                            newGroupEvent( m_graph.getVertices(Schema.GID, gid).iterator().next(), ev_links, Schema.Event.OTHER_REVOKED_GROUP_TAG );
                         }
                     }
 
@@ -1120,7 +1177,7 @@ public class TitanAPI
      * @param a_tag
      * @param a_add_uids
      * @param a_add_gids
-     * @param a_output 
+     * @param a_output
      */
     private void addTagACLs( Vertex a_tag, boolean a_add_uids, boolean a_add_gids, JSONStringer a_output )
     {
@@ -1139,7 +1196,6 @@ public class TitanAPI
         while ( grem.hasNext() )
         {
             member = grem.next();
-            //System.out.println("Found ACL member: " + member.getProperty("type"));
             if ( member.getProperty(Schema.TYPE) == Schema.Type.USER.toInt() && a_add_uids )
             {
                 if ( acl_uids.length() > 0 )
@@ -1175,7 +1231,7 @@ public class TitanAPI
         m_graph.rollback();
 
         // Create pipe to ALL users events
-        GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( m_graph.getVertices( Schema.UID, a_uid )).out(Schema.ASSET).has(Schema.TYPE, Schema.Type.EVENT.toInt());
+        GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( m_graph.getVertices( Schema.UID, a_uid )).out(Schema.META).has(Schema.TYPE, Schema.Type.EVENT.toInt());
 
         // Apply status filter, if set
         if ( a_status > -1 )
@@ -1185,10 +1241,31 @@ public class TitanAPI
         if ( a_ctime > -1 )
             grem.has(Schema.CTIME, Cmp.GREATER_THAN_EQUAL, a_ctime);
 
+        Vertex event;
+        Iterator<Edge> e;
+
         a_output.array();
 
-        while ( grem.hasNext() ) {}
-//            convertVertexProperties( grem.next(), null, a_output, true );
+        while ( grem.hasNext() )
+        {
+            event = grem.next();
+            //convertVertexProperties( grem.next(), null, a_output, true );
+            a_output.object();
+
+            a_output.key(Schema.NID).value( event.getId() );
+
+            for ( String k : event.getPropertyKeys() )
+                a_output.key(k).value( event.getProperty(k) );
+
+            a_output.key("context").array();
+
+            e = event.getEdges( Direction.OUT, Schema.CTXT ).iterator();
+            while ( e.hasNext() )
+                processVertexResult( e.next().getVertex(Direction.IN), null, a_output );
+
+            a_output.endArray();
+            a_output.endObject();
+        }
 
         a_output.endArray();
     }
@@ -1214,6 +1291,35 @@ public class TitanAPI
 
         vertex.setProperty( Schema.STATUS, a_status );
         m_graph.commit();
+    }
+
+
+    private void newUserEvent( Vertex a_user, ArrayList<Vertex> a_vertices, Schema.Event a_event )
+    {
+        // Create new event vertex
+        Vertex event = m_graph.addVertex(null);
+        ElementHelper.setProperties( event, Schema.TYPE, Schema.Type.EVENT.toInt(), Schema.SUBTYPE, a_event.toInt(),
+                Schema.DESC, a_event.describe(), Schema.STATUS, Schema.Status.REVIEW.toInt(),
+                Schema.CTIME, System.currentTimeMillis()/1000 );
+
+        // Create edges between event and user
+        a_user.addEdge( Schema.META, event );
+
+        // Create edges between event and associated vertices
+        for ( Vertex vert : a_vertices )
+            event.addEdge( Schema.CTXT, vert );
+    }
+
+    private void newGroupEvent( Vertex a_group, ArrayList<Vertex> a_vertices, Schema.Event a_event )
+    {
+        // Get members of group
+        GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( a_group ).out(Schema.MEMBER).has(Schema.TYPE, Schema.Type.USER.toInt());
+
+        while ( grem.hasNext() )
+        {
+            // Get all members of group
+            newUserEvent( grem.next(), a_vertices, a_event );
+        }
     }
 
     //=========== LINKING METHODS ======================================================================================
@@ -1357,7 +1463,8 @@ public class TitanAPI
      * @param a_list
      * @return 
      */
-    private Integer[] parseIntegerCSV( String a_list )
+    //private Integer[] parseIntegerCSV( String a_list )
+    private ArrayList<Integer> parseIntegerCSV( String a_list )
     {
         try
         {
@@ -1365,10 +1472,12 @@ public class TitanAPI
             {
                 String[] str_vals = a_list.split("\\s*,\\s*");
 
-                Integer[] results = new Integer[str_vals.length];
+                //Integer[] results = new Integer[str_vals.length];
+                ArrayList<Integer> results = new ArrayList<>(str_vals.length);
 
                 for ( int i = 0; i < str_vals.length; i++ )
-                    results[i] = Integer.parseInt(str_vals[i]);
+                    results.add( Integer.parseInt(str_vals[i]));
+//                    results[i] = Integer.parseInt(str_vals[i]);
 
                 return results;
             }
@@ -1378,7 +1487,8 @@ public class TitanAPI
             throw new IllegalStateException("Invalid numeric list paramter");
         }
 
-        return new Integer[0];
+        //return new Integer[0];
+        return new ArrayList<Integer>();
     }
 
     /**
@@ -1469,8 +1579,6 @@ public class TitanAPI
                 Integer gid = parent.getProperty(Schema.XGID);
                 Integer mode = parent.getProperty(Schema.FMODE);
 
-                //System.out.println( a_file.getProperty(Schema.NAME) + "u: " + uid + ", g: " + gid + ", m: " + mode );
-
                 if ( uid != null && gid != null )
                 {
                     if ( uid.equals( a_user.m_uid ))
@@ -1505,7 +1613,6 @@ public class TitanAPI
             String path = hasFileAccess( a_vertex, null );
             if ( path == null )
             {
-                //System.out.println("Bad file access:");
                 return;
             }
 
@@ -1544,7 +1651,6 @@ public class TitanAPI
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.ASSET).iterator();
             if ( !e.hasNext() )
             {
-                //System.out.println("Bad tag access (2):");
                 return;
             }
 
@@ -1571,12 +1677,10 @@ public class TitanAPI
 
         if ( type == Schema.Type.FILE.toInt() || type == Schema.Type.DIR.toInt() )
         {
-            //System.out.println("Check file, uid: " + a_user.m_uid );
             // Validate user has access to this file (by path)
             String path = hasFileAccess( a_vertex, a_user );
             if ( path == null )
             {
-                //System.out.println("Bad file access:");
                 return;
             }
 
@@ -1588,14 +1692,12 @@ public class TitanAPI
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.PROD).iterator();
             if ( !e.hasNext() )
             {
-                //System.out.println("Bad job access (1):");
                 return;
             }
 
             int uid = e.next().getVertex(Direction.OUT).getProperty(Schema.UID);
             if ( uid != a_user.m_uid )
             {
-                //System.out.println("Bad job access (2):");
                 return;
             }
 
@@ -1607,7 +1709,6 @@ public class TitanAPI
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.COMP).iterator();
             if ( !e.hasNext() )
             {
-                //System.out.println("Bad app access (1):");
                 return;
             }
 
@@ -1616,14 +1717,12 @@ public class TitanAPI
             e = job.getEdges(Direction.IN, Schema.PROD).iterator();
             if ( !e.hasNext() )
             {
-                //System.out.println("Bad app access (2):");
                 return;
             }
             Vertex usr = e.next().getVertex(Direction.OUT);
 
             if ( (int)usr.getProperty(Schema.UID) != a_user.m_uid )
             {
-                //System.out.println("Bad app access (3):");
                 return;
             }
 
@@ -1635,7 +1734,6 @@ public class TitanAPI
             // Validate user has access to this file (by path)
             if ( !hasTagAccess( a_vertex, a_user.m_uid ))
             {
-                //System.out.println("Bad tag access (1):");
                 return;
             }
 
@@ -1644,7 +1742,6 @@ public class TitanAPI
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.ASSET).iterator();
             if ( !e.hasNext() )
             {
-                //System.out.println("Bad tag access (2):");
                 return;
             }
 
