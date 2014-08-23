@@ -457,7 +457,7 @@ app.del('/deletetaglinkproxy/:user_id', function(request, response) {
 	
 });
 
-/* Creates a new tag. */
+/* Creates a new tag. user_id is the user number, or uid. */
 app.post('/tagproxy/:user_id', function(request, response) {
 	
   var res = tags.tagsProxyHelper(request, response);

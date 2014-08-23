@@ -24,7 +24,7 @@ head
   link(href="css/DataTables/jquery.dataTables_themeroller.css", rel="stylesheet")
   link(href="css/DataTables/jquery.dataTables.css", rel="stylesheet")
   link(href="css/DataTables/demo_table_jui.css", rel="stylesheet")
-  //link(href="css/DataTables/ColVis/ColVis.css", rel="stylesheet")
+  link(href="css/DataTables/ColVis/ColVis.css", rel="stylesheet")
   
   script(src="js/core.js")
   script(src="js/sampledata.js")
@@ -91,7 +91,6 @@ html(lang="en")
         div.modal-header
           button.close(type="button", data-dismiss="modal", aria-hidden="true")
           h4#tableModalLabel.modal-title Tags Table
-        
         div.modal-body.box-content#tagsTableContainer(style="margin-top:10px; max-height:550px; width:500px; overflow:auto")
           table#tagsTable.display.dataTable
             thead
@@ -100,6 +99,7 @@ html(lang="en")
                 th Description
             tbody
         div.modal-footer
+          button#createDoiFromTagsButton.btn(data-dismiss="modal") Request DOI
           button.btn.btn-default(data-dismiss="modal") Cancel
       
     // NAVIGATION BAR
@@ -117,7 +117,6 @@ html(lang="en")
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
-                  
           div.btn-group.pull-right
             ul.nav
               a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
@@ -140,7 +139,6 @@ html(lang="en")
                 li(role="presentation")
         
     div.container-fluid
-    
       div.row-fluid
         div.span12
           div
@@ -191,8 +189,9 @@ html(lang="en")
               li
                 a#search_view(href="#")
                   span.hidden-tablet Search Workspace
+          div#tagCloud.well.nav-collapse.sidebar-nav(style="margin-top:15px")
               
-        //main content
+        // MAIN CONTENT
         div.span8
           div.row-fluid.sortable
           
@@ -245,12 +244,12 @@ html(lang="en")
                   button#clearJobsSearchTextButton Clear
                 div#jobs_tree(style="height:200px")
           
-          // TAG CLOUD
+          // TAG WORKSPACE
           div.row-fluid.sortable
             div.box.span12
               div.box-header.well
                 span#jobSearchIcon
-                  h2 Tag Cloud
+                  h2 Tag Workspace
                 div.box-icon
                   a.btn.btn-minimize.btn-round(href="#")
                     i.icon-chevron-up
@@ -259,10 +258,14 @@ html(lang="en")
               div.box-content
                 div.row-fluid
                   div.span6
-                    div#tagClouds(style="margin-top:10px;")
-                  div.span4
-                    div#tagCloudInfo
-                  div#tagCloudButtons.span2
+                    ul#tagButtonList(style="list-style:none")
+                    br
+                    div#aggregateTagButtons
+                      button#tagcloudObtainDoiButton(data-toggle="modal" data-target="#doiModal") Obtain DOI
+                      button#tagcloudUpdateTagButton Update Tag
+                      button#tagcloudDeleteTagButton Delete Tag
+                  div.span6
+                    div#tagInfoPane
                 
           div.row-fluid.sortable
             div.span12
@@ -331,8 +334,6 @@ html(lang="en")
     script(src="js/jquery/jquery.cleditor.min.js")
     script(src="js/jquery/jquery.noty.js")
     script(src="js/jquery/jquery.elfinder.min.js")  
-    //script(src="js/jquery/jquery.hovercard.min.js")
-    //script(src="js/jquery/jquery.hovercard.custom.js")
     script(src="js/jquery/jquery.raty.min.js")
     script(src="js/jquery/jquery.iphone.toggle.js")
     script(src="js/jquery/jquery.autogrow-textarea.js")
@@ -340,23 +341,17 @@ html(lang="en")
     script(src="js/jquery/jquery.history.js")
     script(src="js/charisma.js")
     script(src="js/jquery/jquery.dynatree.min.js")
-    //script(src="js/jquery/jquery.tools.min.js")
     
-
     script(src="js/ajax/userinfo.js")
     script(src="js/ajax/groupinfo.js")
     script(src="js/ajax/fileinfo.js")
     script(src="js/ajax/jobinfo.js")
     
     script(src="js/feed.js")
-    script(src="js/main.js")
     
-    // script(src="js/ajax/jobtree.js")
-    // script(src="js/ajax/filetree.js")
-    // script(src="js/ajax/jobs_widget.js")
-    
-    // script(src="js/ajax/tagTree.js")
     script(src="js/ajax/tagstable.js")
     script(src="js/ajax/tagclouds.js")
     script(src="js/add_tag.js")
     script(src="js/add_doi.js")
+    
+    script(src="js/main.js")

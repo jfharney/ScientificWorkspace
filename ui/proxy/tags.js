@@ -258,8 +258,7 @@ var associationsproxyHelper = function(request,response) {
 module.exports.associationsproxyHelper = associationsproxyHelper;
 
 
-/* This is where a new tag is created.
- */
+/* This is where a new tag is created. */
 var tagsProxyHelper = function(request,response) {
 	
   console.log('\n\n---------in tag proxy----------');
@@ -273,19 +272,26 @@ var tagsProxyHelper = function(request,response) {
   var user_id = request.params.user_id;
   var name = args['name'];
   var description = args['description'];
+  description = description.split(' ').join('+');
 	
   console.log('user_id: ' + user_id);
+  console.log('name: '+name);
+  console.log('description: '+description);
 	
   var options = {
     host: proxy.serviceHost,
     port: proxy.servicePort,
-    path: "/sws/tag?uid=" + user_id + '&name='+name+'&description='+description,
+    path: "/sws/tag?uid=" + user_id + '&name='+name+'&desc='+description,
     method: 'POST'
   };
-	
+  
   //curl -X POST 'http://160.91.210.19:8080/sws/tag?name=tag11&uid=5112'
 	
   var req = http.request(options, function(resp) {
+    
+	console.log('Issuing host '+options.host);  
+    console.log('Issuing port '+options.port);
+	console.log('Issuing path '+options.path);
 		
     var responseData = '';
     resp.on('data', function(chunk) {
@@ -298,12 +304,12 @@ var tagsProxyHelper = function(request,response) {
       response.send(jsonObj);
     });
 		
-		resp.on('error', function(e) {
-			response.send('error: ' + e);
-		});
+	resp.on('error', function(e) {
+	  response.send('error: ' + e);
 	});
+  });
 	
-	req.end();
+  req.end();
 	
 }
 

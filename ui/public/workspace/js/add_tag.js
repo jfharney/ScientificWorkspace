@@ -1,18 +1,21 @@
 $(document).ready(function() {
 	
+  /* Click event for the Create Tag button in the Add Tag modal. */
   $('#create_tag1').click(function() {
 
-	console.log('Creating Create Tag.');
-    createTag();
-	$('#tagModal').modal('hide');
-	
-	/* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
-	location.reload();			//Commented out for debugging purposes only!
-	
-	/* Reset fields for next tag creation. */
-	$('#tag_name').val('');
-	$('#tag_description').val('');
+    /* For now, we are only checking to see whether the tag name is an empty string. */
+    if($('input#tag_name').val() != '') {
+	  createTag();
+	  $('#tagModal').modal('hide');
+      /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
+	  //location.reload();
 	  
+      /* Reset fields for next tag creation. */
+      $('#tag_name').val('');
+      $('#tag_description').val('');
+    }
+    else
+      alert('Tag name field is required!');
   });
 });
 
@@ -92,8 +95,8 @@ function createTag() {
       //default is that the page will reload
       addTagToPage();
     },
-    error: function() {
-      alert('error in createTag() in add_tag.js');
+    error: function(e) {
+      alert('error in createTag() in add_tag.js: '+e);
     }
   });
 }

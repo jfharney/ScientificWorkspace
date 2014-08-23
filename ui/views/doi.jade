@@ -33,7 +33,12 @@ html
     div#creator_email(style="display:none") Creator Email: #{creator_email}
     div#spec_resources(style="display:none") Resources: #{resource}
     
-    //div Resource: #{resource.length} 
+    div Resource: #{resource.length} 
+    
+    - if (typeof(resource) !== 'undefined') {
+      div Hello!
+    - }
+    
     - if (typeof(resource) !== 'undefined') {
       - each r in resource
         div Resource: #{r} 
