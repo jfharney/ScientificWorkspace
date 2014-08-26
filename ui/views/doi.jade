@@ -22,21 +22,26 @@ head
   link(href="/doi/css/modal.css" rel="stylesheet")
   script(src="/doi/js/core.js")
     
-    
 html
   body
     // (style="display:none")
-    div(style="display:none") Creator NID: #{creator_nid}
-    div(style="display:none") Creator UID: #{creator_number}
-    div(style="display:none") Creator Username: #{creator_uname}
-    div(style="display:none") Creator Name: #{creator_name}
-    div(style="display:none") Creator Email: #{creator_email}
+    div#uname(style="display:none") #{uname}
+    div#creator_nid(style="display:none") Creator NID: #{creator_nid}
+    div#creator_number(style="display:none") Creator UID: #{creator_number}
+    div#creator_uname(style="display:none") Creator Username: #{creator_uname}
+    div#creator_name(style="display:none") Creator Name: #{creator_name}
+    div#creator_email(style="display:none") Creator Email: #{creator_email}
+    div#spec_resources(style="display:none") Resources: #{resource}
     
+    div Resource: #{resource.length} 
     
-    //div Resource: #{resource.length} 
+    - if (typeof(resource) !== 'undefined') {
+      div Hello!
+    - }
+    
     - if (typeof(resource) !== 'undefined') {
       - each r in resource
-        div(style="display:none") Resource: #{r} 
+        div Resource: #{r} 
     - }
     
     - if (typeof(job) !== 'undefined'){ 
@@ -53,7 +58,7 @@ html
     - if (typeof(user) !== 'undefined'){ 
       - each u in user
         if u != 'user1'
-          div User: #{u} 
+          div(style="display:none") User: #{u} 
     - }
           
     div.navbar
@@ -62,11 +67,9 @@ html
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="../settings/#{creator_uid}") #{creator_uname}
+                a(href="../settings/#{uname}") #{uname}
               li
-                a(href="../workspace/#{creator_uname}") Workspace
-              //li
-                //a(href="../doi/#{creator_uid}") DOI
+                a(href="../workspace/#{uname}") Workspace
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
@@ -101,7 +104,7 @@ html
             ul.breadcrumb
               li
                 a(href="#")
-                  span#user_id_label #{creator_uname}
+                  span#user_id_label #{uname}
                 span.divider /
               li
                 a(href="#") DOI
@@ -133,9 +136,6 @@ html
               li
                 a.ajax-link(href="#")
                   span.hidden-tablet Search DOIs
-          //  button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal",data-target="#myModal",style="margin-bottom:50px") Add Tag
-          // <i class="icon-home"></i><span class="hidden-tablet"> Dashboard</span>
-        
         
         
         //main content
@@ -156,9 +156,9 @@ html
                   div.row-fluid
                     div.span12 
                       fieldset
-                        legend DOI Submittal Form
-                  
-                                    
+                        legend DOI Submission Form
+       
+                  // GENERAL
                   div.row-fluid(style="margin-bottom:20px") 
                     div.span12
                       h3 General
@@ -171,52 +171,50 @@ html
                     div.span6 
                       input#text(name="input_description")
                       
+                  // CREATOR INFORMATION
                   div.row-fluid(style="margin-bottom:20px") 
                     div.span12
                       h3 Creator Information
                   div.row-fluid
                     div.span4 Creator
                     div.span6 
-                      input#text(name="input_creator_name",value="#{creator_name}")
+                      input#text(name="input_creator_name", value="#{creator_name}")
                   div.row-fluid
                     div.span4 Creator Email
-                    div.span6 
-                      input#text(name="input_creator_email",value="#{creator_email}")
-                      
+                    div.span6
+                      input#text(name="input_creator_email", value="#{creator_email}")
                   
                   div.row-fluid#add_creator_row
                     div.span6 
                       //button#add_creator_button Add Creator
                       
                       
+                  // ASSETS
                   div.row-fluid(style="margin-bottom:20px,margin-top:20px;")
                     div.span12  
                       h3 Assets
-
+                      br
                   div.row-fluid
                     div.span4 Files
                     div.span6 
                       input#text(name="input_files",value="#{resource}")
-                                        
+                      //input(name="input_files", type="text")
+                      
+                  br
                   
-                  hr
-                  
+                  // KEYWORDS
                   div.row-fluid(style="margin-bottom:20px")
                     div.span12
                       h3 Keywords
                    
                   div.row-fluid
-                    div.span4 Keyword
+                    div.span4 Keywords (comma-separated list)
                     div.span6 
                       input#text(name="input_keywords",value="")
+                      
+                  br
                   
-                  //div.row-fluid#add_keyword_row
-                    //div.span6 
-                      //button#add_keyword_button Add Keyword
-                  
-                    
-                  hr
-                  
+                  // MISCELLANEOUS
                   div.row-fluid(style="margin-bottom:20px")
                     div.span12
                       h3 Miscellaneous
@@ -226,44 +224,41 @@ html
                     div.span6 
                       input#text(name="input_resources")
                     div.span2
-                      a.metadata(href="#") metadata
                   
                   div.row-fluid
                     div.span4 Language
                     div.span6 
-                      input#text(name="input_language",value="English")
+                      input#text(name="input_language", value="English")
                   
                   div.row-fluid
                     div.span4 Country
                     div.span6 
-                      input#text(name="input_country",value="USA")
+                      input#text(name="input_country", value="USA")
                   
                   div.row-fluid
                     div.span4 Sponsor Organization
                     div.span6 
-                      input#text(name="input_sponsor_org",value="Oak Ridge National Laboratory")
+                      input#text(name="input_sponsor_org", value="Oak Ridge National Laboratory")
                   
                   div.row-fluid
                     div.span4 Jobs and Applications
                     div.span6 
-                      textarea #{job}
+                      textarea #{job} 
+                        | #{app}
                   div.row-fluid
                     div.span4 People and Groups
                     div.span6 
-                      textarea #{group}
+                      textarea #{group} 
+                        | #{user}
                   
-                    
                   hr
                   
                   div.row-fluid
                     div.span6 
                       button#submit_doi_request Submit DOI Request
-                      button#cancel Cancel
                       button#return Return to Workspace
                   
 
-      
-            
     script(src="/doi/js/jquery/jquery-1.7.2.min.js")
     script(src="/doi/js/jquery/jquery-ui-1.8.21.custom.min.js")
     script(src="/doi/js/bootstrap/bootstrap-transition.js")
@@ -304,11 +299,4 @@ html
     script(src="/doi/js/jquery/jquery.dynatree.min.js")
     script(src="/doi/js/main.js")
     script(src="/doi/js/ajax/doi.js")
-    // script(src="js/ajax/jobtree.js")
-    // script(src="js/ajax/filetree.js")
-    // script(src="js/ajax/jobs_widget.js")
-    // script(src="js/ajax/userinfo.js")
-    // script(src="js/ajax/tagTree.js")
-    // script(src="js/ajax/tagstable.js")
-    // script(src="js/ajax/tagclouds.js")
-    // script(src="js/addtag.js")
+    

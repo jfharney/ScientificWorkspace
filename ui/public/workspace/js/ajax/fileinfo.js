@@ -1,11 +1,8 @@
 function getFileInfo(uid) {
-	
-  //console.log('in getFileInfo1 for uid: ' + uid);
-  var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+uid;
-  url = url + '?path=|';
+
+  var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+uid+ '?path=|';
   var children = [];
-	
-  
+
   //create the initial children
   $.ajax({
     url: url,
@@ -41,7 +38,7 @@ function buildFileTree(treeData) {
 	children: treeData,
 	onSelect: function(select, node) {
 		
-      var selNodes = node.tree.getSelectedNodes();
+      /*var selNodes = node.tree.getSelectedNodes();
 	  SW.selected_file_flag = false;
 	  SW.selected_file_titles = $.map(selNodes, function(node) {
     	// Need to apply a test to the node to see if it is a dir or a file.
@@ -51,13 +48,13 @@ function buildFileTree(treeData) {
   	    }
       });
       
-	  /* Change the array into a string. */
+	  /* Change the array into a string. 
 	  SW.selected_file_titles = SW.selected_file_titles.join(', ');
-	  /* Replace the pipes in the string with forward slashes. */
+	  /* Replace the pipes in the string with forward slashes. 
 	  SW.selected_file_titles = SW.selected_file_titles.split('|').join('/');
-	  console.log(SW.selected_file_titles);
+	  //console.log(SW.selected_file_titles);
       
-      /* I don't know what this nid stuff is doing for us, but I'm leaving it in. */
+      /* I don't know what this nid stuff is doing for us, but I'm leaving it in. 
       var selNids = $.map(selNodes, function(node) {
         return node.data.nid;
       });
@@ -67,9 +64,26 @@ function buildFileTree(treeData) {
         nid_arr.push(selNids[i]);
       }
       SW.selected_file_nids = selNids;
+      
+      var resType = '';
+      if(node.data.isFolder)
+        resType = 'directory';
+      else
+        resType = 'file';
+      // This function is defined in tagclouds.js. 
+      setSelectedFields(node.data.title, node.data.nid, resType);*/
 
-      //$('#resources_to_doi').empty();
-      //$('#resources_to_doi').append('<div>' + SW.selected_file_titles + '</div>');
+      // This is the new scheme (8-25-2014). We add the selected file path to the selection array SW.selected_tagged_objects.files, which is "flattened" into the (set) array SW.selected_file_paths.
+      if(select)
+        addFileNameToTaggedFiles(node.data.title, 0);
+      else
+        removeFileNameFromTaggedFiles(0);      // This won't work!
+      // Flatten the list. 
+      SW.selected_file_paths.length = 0;
+      var obj = SW.selected_tagged_objects;
+      for(var key in obj.files)
+        SW.selected_file_paths.push(key);
+      //console.log(SW.selected_file_paths.toString());
     },
     onClick: function(node, event) {
 			/*

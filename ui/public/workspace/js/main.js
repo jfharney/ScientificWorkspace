@@ -2,18 +2,12 @@ $(function() {
   console.log('<><><>MAIN<><><>');
   
   /* We transfer the current user data values stored in the document object to the 
-   * SW object, defined in core.js.                                                              */
+   * SW object, defined in core.js.                                                    */
   SW.current_user_nid = $('#curUserNid').html();
   SW.current_user_email = $('#curUserEmail').html();
   SW.current_user_name = $('#curUserName').html();
   SW.current_user_number = $('#curUserNumber').html();
   SW.current_user_uname = $('#curUserUname').html();
-
-  console.log('SW.current_user_nid: ' + SW.current_user_nid);
-  console.log('SW.current_user_email: ' + SW.current_user_email);
-  console.log('SW.current_user_name: ' + SW.current_user_name);
-  console.log('SW.current_user_number: ' + SW.current_user_number);
-  console.log('SW.current_user_uname: ' + SW.current_user_uname);
   
   /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
   getJobInfo(SW.current_user_number);
@@ -73,7 +67,7 @@ $(function() {
   if(visibilityObj['projectsVis'] == 'false')
 	$('#projectsBox').hide();
   
-  /* Jobs Panel **********/
+  /* Jobs Panel *******************/
 	  
   // Display the Jobs search panel when the jobs header or magnifying glass is clicked.
   $("#jobSearchIcon").on("click", function() {
@@ -116,11 +110,11 @@ $(function() {
   }) ;
   
   
-	
-	
+  renderTagCloud();		// defined in tagclouds.js
+  displayAggregateTagWorkspaceButtons(); // to initially hide the tag workspace buttons
   
 
-});
+});		// End of Ready event.
 
 /* This function sets the object visibilityObj to represent the values of the document cookie. 
  * This exact same function appears in both public/js/settings/js/main.js and 

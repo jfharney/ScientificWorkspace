@@ -1,71 +1,46 @@
-
-
-$(function(){
+$(function() {
+		
+  var host = 'http://localhost:1337/doi/';
+	
+  /* Change user option (admin only) */
+  $('.user_dropdown_list').click(function() {
+    var userName = $(this).html();
+    location.href = host + userName;
+  });
 	
 	
-	var host = 'http://localhost:1337/workspace/';
+  $('#add_resource_button').click(function() {
+		
+    var html = '';
+    
+	html+='<div class="row-fluid">'
+	html+='  <div class="span4">Resource</div>';
+	html+='  <div class="span6">';
+	html+='    <input id="text" name="resource_input" value="" />';
+	html+='  </div>';
+	html+='  <div class="span2">';
+	html+='    <a class="metadata" href="#">metadata</a>';
+	html+='  </div>';
+	html+='</div>';
+		
+	$('#add_resouce_row').before(html);
+		
+  });
 	
-	
-	//changing user option
-	$('.user_dropdown_list').click(function(){
-		//alert('user dropdown');
-		var userName = $(this).html();
-		location.href=host+userName;
+  $('#add_keyword_button').click(function() {
 		
-	});
-	
-	
-	$('#add_resource_button').click(function() {
+    var html = '';
 		
+	html+='<div class="row-fluid">'
+	html+='  <div class="span4">Keyword</div>';
+	html+='  <div class="span6">';
+	html+='    <input id="text" name="resource_input" value="" />';
+	html+='  </div>';
+    html+='</div>';
+    
+	$('#add_keyword_row').before(html);
 		
-		var html = '';
-		
-		html+='<div class="row-fluid">'
-		
-		html+='  <div class="span4">Resource</div>';
-		
-		html+='  <div class="span6">';
-		html+='    <input id="text" name="resource_input" value="" />';
-		html+='  </div>';
-		
-		
-		html+='  <div class="span2">';
-		html+='    <a class="metadata" href="#">metadata</a>';
-		html+='  </div>';
-		
-		html+='</div>';
-		
-		//alert('html: ' + html);
-		//$('#add_resouce_row').before('<div>hello</div>');
-		$('#add_resouce_row').before(html);
-		
-	});
-	
-	$('#add_keyword_button').click(function() {
-		
-		
-		var html = '';
-		
-		html+='<div class="row-fluid">'
-		
-		html+='  <div class="span4">Keyword</div>';
-		
-		html+='  <div class="span6">';
-		html+='    <input id="text" name="resource_input" value="" />';
-		html+='  </div>';
-		
-		/*
-		html+='  <div class="span2">';
-		html+='    <a class="metadata" href="#">metadata</a>';
-		html+='  </div>';
-		*/
-		html+='</div>';
-		
-		//alert('html: ' + html);
-		//$('#add_resouce_row').before('<div>hello</div>');
-		$('#add_keyword_row').before(html);
-		
-	});
+  });
 
 	$('#add_creator_button').click(function() {
 	

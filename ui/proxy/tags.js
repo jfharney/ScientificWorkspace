@@ -11,7 +11,7 @@ var data = require('../data/firewall_sources.js');
 
 var deletetagsHelper = function(request, response) {
 	
-var args = url.parse(request.url, true).query;
+  var args = url.parse(request.url, true).query;
 	
 	for (var key in args) {
 		console.log('key: ' + key + ' value: ' + args[key]);
@@ -258,63 +258,62 @@ var associationsproxyHelper = function(request,response) {
 module.exports.associationsproxyHelper = associationsproxyHelper;
 
 
-var tagsproxyHelper = function(request,response) {
+/* This is where a new tag is created. */
+var tagsProxyHelper = function(request,response) {
 	
-	console.log('\n\n---------in tag proxy----------');
-	console.log('Adding tag');
+  console.log('\n\n---------in tag proxy----------');
+  console.log('Adding tag');
+  var args = url.parse(request.url, true).query;
 	
+  for(var key in args) {
+    console.log('key: ' + key + ' value: ' + args[key]);
+  }
 	
+  var user_id = request.params.user_id;
+  var name = args['name'];
+  var description = args['description'];
+  description = description.split(' ').join('+');
 	
-	var args = url.parse(request.url, true).query;
+  console.log('user_id: ' + user_id);
+  console.log('name: '+name);
+  console.log('description: '+description);
 	
-	for (var key in args) {
-		console.log('key: ' + key + ' value: ' + args[key]);
-	}
+  var options = {
+    host: proxy.serviceHost,
+    port: proxy.servicePort,
+    path: "/sws/tag?uid=" + user_id + '&name='+name+'&desc='+description,
+    method: 'POST'
+  };
+  
+  //curl -X POST 'http://160.91.210.19:8080/sws/tag?name=tag11&uid=5112'
 	
-	var user_id = request.params.user_id;
-	var name = args['name'];
-	var description = args['description'];
-	
-	console.log('user_id: ' + user_id);
-	
-	var options = {
-			host: proxy.serviceHost,
-			port: proxy.servicePort,
-			path: "/sws/tag?uid=" + user_id + '&name='+name+'&description='+description,
-			method: 'POST'
-	};
-	
-	console.log('')
-	
-	//curl -X POST 'http://160.91.210.19:8080/sws/tag?name=tag11&uid=5112'
-	
-	var req = http.request(options, function(resp) {
+  var req = http.request(options, function(resp) {
+    
+	console.log('Issuing host '+options.host);  
+    console.log('Issuing port '+options.port);
+	console.log('Issuing path '+options.path);
 		
-		var responseData = '';
-		resp.on('data', function(chunk) {
-			responseData += chunk;
-		});
+    var responseData = '';
+    resp.on('data', function(chunk) {
+      responseData += chunk;
+    });
 		
-		resp.on('end', function() {
-			//response.send(responseData);
-			console.log('tag post responseData: ' + responseData);
-			
-
-		    var jsonObj = JSON.parse(responseData);
-			
-			response.send(jsonObj);
-		});
+    resp.on('end', function() {
+      console.log('tag post responseData: ' + responseData);
+      var jsonObj = JSON.parse(responseData);
+      response.send(jsonObj);
+    });
 		
-		resp.on('error', function(e) {
-			response.send('error: ' + e);
-		});
+	resp.on('error', function(e) {
+	  response.send('error: ' + e);
 	});
+  });
 	
-	req.end();
+  req.end();
 	
 }
 
-module.exports.tagsproxyHelper = tagsproxyHelper;
+module.exports.tagsProxyHelper = tagsProxyHelper;
 
 
 var tagLinksProxHelper = function(request, response) {
