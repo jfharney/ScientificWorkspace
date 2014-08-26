@@ -12,6 +12,8 @@ app.use(express.static('public'));
 
 var servicePort = 8080;
 
+var ui_hostname = 'localhost';
+var ui_port = '8001';
 
 // Start Express
 var express = require("express");
@@ -20,10 +22,22 @@ var app = express();
 // Set the view directory to /views
 app.set("views", __dirname + "/views");
 
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.bodyParser());
+
 
 // Use the Jade templating language
 app.set("view engine", "jade");
+
+app.get('/formtest',function(request,response) {
+	
+	var jsonModel = {'a':'a'};
+	
+	response.render("formtest", jsonModel);
+});
+
 
 app.get('/sciworkspace1', function(request, response) {
 	console.log('in sciworkspace 1');
@@ -33,6 +47,52 @@ app.get('/sciworkspace1', function(request, response) {
 });
 
 
+app.post('/form', function(request, response) {
+
+	console.log('in /form - printing payload');
+	
+	var value = '';
+	for(var key in request['body']) {
+	
+		console.log("request['body']["+key+"]: " + request['body'][key] + ', length: ' + request['body'][key].length + ', isArr: ' + isArray(request['body'][key]));
+	
+		value = request['body'][key];
+	}
+	
+	var jsonModel = {'b' : value};
+	
+	response.render('formtest2',jsonModel);
+	
+});
+
+app.post('/form3', function(request, response) {
+
+	console.log('in /form3 - printing payload');
+	
+	var value = '';
+	for(var key in request['body']) {
+	
+		console.log("request['body']["+key+"]: " + request['body'][key] + ', length: ' + request['body'][key].length + ', isArr: ' + isArray(request['body'][key]));
+	
+		value = request['body'][key];
+	}
+	
+	var jsonModel = {'b' : value};
+	
+	jsonModel['ui_hostname'] = ui_hostname;
+	jsonModel['ui_port'] = ui_port;
+	
+	response.render('formtest3',jsonModel);
+	
+});
+
+function isArray(what) 
+{
+    return Object.prototype.toString.call(what) === '[object Array]';
+}
+
+
+/*
 app.get('/jobs', function(request, response) 
 {
 
@@ -133,11 +193,7 @@ var jobsproxyHelper = function(request, response) {
   req.end();
 };
 
-/* We want to take a time like this: 
- * 		2014-02-05T17:56:23.000Z
- * and turn it into: 
- * 		2014-02-05 17:56:23
- */
+
 function formatTimestamp(timestamp) {
   timestamp = timestamp.replace('T', ' ');
   timestamp = timestamp.substring(0, timestamp.indexOf('Z')-4);
@@ -243,6 +299,7 @@ app.get('/apps', function(request, response) {
 
 
 });
+*/
 
 
 http.createServer(app).listen(8001);
