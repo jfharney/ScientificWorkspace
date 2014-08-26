@@ -4,14 +4,14 @@ $(document).ready(function() {
 
   // This is the button in the left menu panel. 
   $('#add_doi_button').click(function() { 
-	SW.doiBySelection = true;
-	SW.doiByTag = false;
+	//SW.doiBySelection = true;
+	//SW.doiByTag = false;
     
-    $('#doiModalFilesField').html(SW.selected_file_paths.toString());
-    $('#doiModalGroupsField').html(''+SW.selected_group_titles);
-    $('#doiModalPeopleField').html(''+SW.selected_user_titles);
-    $('#doiModalJobsField').html(''+SW.selected_job_titles);
-    $('#doiModalAppsField').html(''+SW.selected_app_titles);		// Is SW.selected_app_titles being populated correctly? 
+    $('#doiModalFilesField').html(''+SW.selected_file_paths);
+    $('#doiModalGroupsField').html();
+    $('#doiModalPeopleField').html();
+    $('#doiModalJobsField').html();
+    $('#doiModalAppsField').html(); 
   });
   
 	  
@@ -153,10 +153,13 @@ function addApps(selected_app_items) {
   return input;
 }
   
-function addResources(selected_file_items) {
+function addResources() {
   var input = '';
 	
-  input += '<input type="hidden" name="'+ 'resource' +'" value="'+ selected_file_items +'" />';
+  input += '<input type="hidden" name="'+ 'resource' +'" value="'+ SW.selected_file_paths +'" />';
+  input += '<input type="hidden" name="'+ 'fileNids' +'" value="'+ SW.selected_file_nids +'" />';
+  
+  alert('In add_doi.js, SW.selected_file_nids: '+SW.selected_file_nids);
 	
   return input;
 }
@@ -172,37 +175,35 @@ function createDOI() {
   input += addCreator();
 	  
   /* Put the indicated file names in the hidden input fields. */
-  if(SW.doiBySelection)
-    input += addResources(SW.selected_file_titles);
-  if(SW.doiByTag)
-    input += addResources(SW.tagged_file_names);
+  //if(SW.doiBySelection)
+  input += addResources();
+  //if(SW.doiByTag)
+    //input += addResources(SW.tagged_file_names);
 	
   /* Put the indicated jobs in the hidden input fields. */
-  if(SW.doiBySelection)
+  /*if(SW.doiBySelection)
     input += addJobs(SW.selected_job_titles);
   if(SW.doiByTag)
     input += addJobs(SW.tagged_job_names);
   
   /* Put the indicated apps in the hidden input fields. */
-  if(SW.doiBySelection)
+  /*if(SW.doiBySelection)
     input += addApps(SW.selected_app_titles);
   if(SW.doiByTag)
     input += addApps(SW.tagged_app_names);
 	
   /* Put the indicated groups in the hidden input fields. */
-  if(SW.doiBySelection)
+  /*if(SW.doiBySelection)
     input += addGroups(SW.selected_group_titles);
   if(SW.doiByTag)
     input += addGroups(SW.tagged_group_names);
 	
   /* Put the indicated persons in the hidden input fields. */
-  if(SW.doiBySelection)
+  /*if(SW.doiBySelection)
     input += addUsers(SW.selected_user_titles);
   if(SW.doiByTag)
 	input += addUsers(SW.tagged_person_names);
-  
-  console.log(input);
-  alert('stop');
+  */
 	  
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	

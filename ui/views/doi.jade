@@ -44,6 +44,11 @@ html
         div Resource: #{r} 
     - }
     
+    - if (typeof(fileNids) !== 'undefined') {
+      - each f in fileNids
+        div File Nid: #{f} 
+    - }
+    
     - if (typeof(job) !== 'undefined'){ 
       - each j in job
         if j != 'job1'
@@ -198,7 +203,7 @@ html
                     div.span4 Files
                     div.span6 
                       input#text(name="input_files",value="#{resource}")
-                      //input(name="input_files", type="text")
+                      input(name="fileNids", type="hidden", value="#{fileNids}")
                       
                   br
                   

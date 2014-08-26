@@ -134,6 +134,7 @@ app.post('/doi/:user_id', function(request, response) {
 	
   var model = {};		/* model is the JSON object we will pass to the page doi.jade. */
   model['uname'] = request.params.user_id;
+  
   for(var key in request['body']) {
     if(isArray(request['body'][key])) {
       model[key] = request['body'][key];
@@ -143,6 +144,7 @@ app.post('/doi/:user_id', function(request, response) {
       arr.push(request['body'][key]);
       model[key] = arr;
     }	
+    console.log(key + ': ' + model[key]);
   }  // end of for loop through request['body']
   response.render("doi", model);
 });
@@ -166,6 +168,7 @@ app.post('/doi_submit',function(request,response) {
     payload += "<creators>" + data.creator_name + "</creators>";
     payload += "<creators_email>" + data.creator_email + "</creators_email>";
     payload += "<files>" + data.files + "</files>";
+    payload += "<nids>"+data.fileNids+"</nids>";
     payload += "<resources>" + data.resources + "</resources>";
     payload += "<keywords>" + data.keywords + "</keywords>";
     payload += "<language>" + data.language + "</language>";
@@ -176,8 +179,9 @@ app.post('/doi_submit',function(request,response) {
     console.log( payload );
 
     var options = {
-        host: "doi1.ccs.ornl.gov",
-        port: 80,
+        //host: "doi1.ccs.ornl.gov",
+        host: proxy.serviceHost,
+        port: proxy.servicePort,
         path: "/doi/new/",
         method: 'POST',
         headers: {
