@@ -38,15 +38,20 @@ function renderTagCloud() {
     				     (fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
                 .on('click', function() {
                   // We add a representation of the tag selected to the tag workspace.
+                  // Check to see if the tag is already in the Tags Workspace when clicked. If it is, don't re-add it. 
                   if($.inArray(tagNid, SW.tagNidsInWorkspace) == -1) {
-                    $('ul#tagButtonList').append('<li id="tagWsLi_'+tagNid+'" style="margin:5px"><input id="tagWsCheck_'+tagNid+'" type="checkbox" onclick=setTaggedFields('+tagNid+'); style="margin-right:5px"><button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button><img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tag Workspace." /></li>');
-                    displayAggregateTagWorkspaceButtons();
                     SW.tagNidsInWorkspace.push(tagNid);
+                    
+                    $('ul#tagButtonList').append('<li id="tagWsLi_'+tagNid+'" style="margin:5px"><input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px"><button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button><img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tag Workspace." /></li>');
+                    //onclick=setTaggedFields('+tagNid+'); 
+                    displayAggregateTagWorkspaceButtons();
+                    
                     $('#removeIcon_'+tagNid).on('click', function() {
                       $('li#tagWsLi_'+tagNid).remove();
-                      SW.tagNidsInWorkspace.splice(SW.tagNidsInWorkspace.indexOf(tagNid), 1);
+                      //SW.tagNidsInWorkspace.splice(SW.tagNidsInWorkspace.indexOf(tagNid), 1);
                       displayAggregateTagWorkspaceButtons();
                     });
+                    
                     // Now we define the behavior for the click event of each button added to the Tag Workspace.
                     $('button#tagWsButton_'+tagNid).on('click', function() {
                     	
@@ -56,7 +61,7 @@ function renderTagCloud() {
                       $('#tagInfoPane').append('<div>Description: '+tagDesc+'</div>');
                       $('#tagInfoPane').append('<ul id="tagContentsList">');
                       
-    			      SW.resetTaggedFields();				// Reset the tagged fields. This is gonna have to be adjusted, since we are going to be creating a DOI from multiple tags.
+    			      //SW.resetTaggedFields();				// Reset the tagged fields. This is gonna have to be adjusted, since we are going to be creating a DOI from multiple tags.
     			      var linked_nids = new Array();
     			      
     			      // Now we iterate through the links. 
@@ -181,8 +186,11 @@ function renderTagCloud() {
     			    	  resName = linksArr[i]['nid'];
     			    	  resType = 'other';
     			    	}
+    			    	
     			      }		// end of for loop.
-                    });
+    			      
+                    });     // end of 
+                    
                   }
                 });
     		  $('#tagCloud').append($tag);
@@ -201,6 +209,18 @@ function renderTagCloud() {
   });
 }       // end of renderTagCloud()
 
+$('.tagCheckbox').on('change', function() {
+  console.log(this.id +' has been checked!');
+});
+
+
+/*function setSelectedTags() {
+  SW.selected_tag_names.length = 0;
+  SW.selected_tag_nids.length = 0;
+  $([id^='tagWsCheck']).each(function() {
+    if(this.prop(checked))
+  });
+}*/
 
 /* Called on line 42 above. For the rather complicated scheme we are employing here, see the note
  * in core.js preceding the declaration of the variable SW.selected_tagged_objects. */
@@ -259,7 +279,7 @@ function setSelectedFields(resName, resNid, resType) {
 /* This function handles adding the file names (with their paths) to the global object which is
  * used to populate the DOI modal. */
 function addFileNameToTaggedFiles(fileName, tagNid) {
-  console.log('Inside addFileNameToTaggedFiles, adding fileName '+fileName);
+  /*console.log('Inside addFileNameToTaggedFiles, adding fileName '+fileName);
   // We have the global object SW.selected_tagged_objects.files. 
   // We first want to check if fileName is a field in this object.
   var obj = SW.selected_tagged_objects;
@@ -277,7 +297,7 @@ function addFileNameToTaggedFiles(fileName, tagNid) {
   }
   for(var key in obj.files)
     SW.selected_file_paths.push(key);
-  console.log(SW.selected_file_paths.toString());
+  console.log(SW.selected_file_paths.toString());*/
 }
 
 // SW.selected_tagged_objects is an object whose fields are objects.
@@ -293,7 +313,7 @@ function removeFileNameFromTaggedFiles(tagNid) {
   // Iterate through every field in SW.selected_tagged_objects.files. If tagNid appears in its 
   // array of ints, remove it from the array. If the array becomes an empty array by this action,
   // remove the field from the object.
-  var obj = SW.selected_tagged_objects;
+  /*var obj = SW.selected_tagged_objects;
   for(var key in obj.files) {
     var index = obj.files[key].indexOf(tagNid);
     if(index != -1) {
@@ -301,7 +321,7 @@ function removeFileNameFromTaggedFiles(tagNid) {
       if(obj.files[key].length == 0)
         delete obj.files[key];
     }
-  }
+  }*/
   //for(var key in obj.files)
     //console.log(key+': '+obj.files[key]);
 }
