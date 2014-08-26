@@ -8,7 +8,7 @@ function renderTagCloud() {
   var tags_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
   
-  // The out Ajax call gets the set of tags for the current user.
+  // The outer Ajax call gets the set of tags for the current user.
   $.ajax({
 	type: "GET",
 	url: tags_url_prefix + 'uid=' + uid,
@@ -181,30 +181,33 @@ function renderTagCloud() {
     			    	  resName = linksArr[i]['nid'];
     			    	  resType = 'other';
     			    	}
-    			    	
-    			      }		// End of for loop.
+    			      }		// end of for loop.
                     });
                   }
                 });
-    				     
     		  $('#tagCloud').append($tag);
-    		}		// End of if(linkCount > 0) block.
+    		}		// end of if(linkCount > 0) block.
           },
           error: function(e) {console.log('Error in tagsData call of renderTagCloud(): '+e);}
         });
       });
 	},
 	error: function(e) {console.log('Error in linksData call of renderTagCloud(): '+e);}
+  });       // end of outer Ajax call
+  
+  // When the DOI modal is shown, we need it to show the selected items in the appropriate fields. 
+  $('#tagcloudObtainDoiButton').on('click', function() {
+    
   });
-
-}
+}       // end of renderTagCloud()
 
 
 /* Called on line 42 above. For the rather complicated scheme we are employing here, see the note
  * in core.js preceding the declaration of the variable SW.selected_tagged_objects. */
 function setTaggedFields(tagNid) {
+  
   if(document.getElementById('tagWsCheck_'+tagNid).checked) {
-    console.log('Checkbox tagWsCheck_'+tagNid+' is checked.');
+    //console.log('Checkbox tagWsCheck_'+tagNid+' is checked.');
     $.ajax({
       type: "GET",
       url: 'http://' + SW.hostname + ':' + SW.port + '/tags/links/'+tagNid,
@@ -213,18 +216,19 @@ function setTaggedFields(tagNid) {
         for(var i = 0; i < linksArr.length; i++) {
           var type = linksArr[i]['type'];
           if(type == 0)
-            console.log('User!');
+            ;//console.log('User!');
           else if(type == 1)
-            console.log('Group!');
+            ;//console.log('Group!');
           else if(type == 2)
-            console.log('Job!');
+            ;//console.log('Job!');
           else if(type == 3)
-            console.log('App!'); 
+            ;//console.log('App!'); 
           else if(type == 4) {
-            console.log('File!');
+            //console.log('File!');
+            addFileNameToTaggedFiles(linksArr[i]['path'], tagNid);
           }
           else if(type == 5)
-            console.log('Directory!');
+            ;//console.log('Directory!');
           else
             console.log('Tag?!');
         }
@@ -233,13 +237,74 @@ function setTaggedFields(tagNid) {
     });
   }
   else {
-    console.log('Checkbox tagWsCheck_'+tagNid+' is unchecked.');
+    //console.log('Checkbox tagWsCheck_'+tagNid+' is unchecked.');
+    removeFileNameFromTaggedFiles(tagNid);
   }
 }
 
+// This function works on the same set of globals that setTaggedFields does.  
+function setSelectedFields(resName, resNid, resType) {
+  // When I select a file, I want to add it to the object SW.selected_tagged_objects.files. 
+  // I use the same scheme as when I select a tag in the Tags Workspace. However, instead of
+  // giving it a tag nid in the array, I add a 0. This approach will work because we can 
+  // assume that resources will appear only once outside the Tags Workspace.
+  
+  // Need to replace the pipes with forward slashes. | -> /
+  resName = resName.split('|').join('/');
+  console.log('The '+resType+' '+resName+' with nid '+resNid+' has been selected.');
+  if(resType == 'file')
+    addFileNameToTaggedFiles(resName, 0);
+}
 
+/* This function handles adding the file names (with their paths) to the global object which is
+ * used to populate the DOI modal. */
+function addFileNameToTaggedFiles(fileName, tagNid) {
+  console.log('Inside addFileNameToTaggedFiles, adding fileName '+fileName);
+  // We have the global object SW.selected_tagged_objects.files. 
+  // We first want to check if fileName is a field in this object.
+  var obj = SW.selected_tagged_objects;
+  // Replace the pipes with forward slashes.
+  fileName = fileName.replace(/|/, '/');
+  
+  if(fileName in obj.files) {
+    // If the fileName is in the object, add the tag nid to the corresponding array.
+    obj.files[fileName].push(tagNid);
+  }
+  else {
+    // If the fileName is not in the object, add that object as an array and push the tag nid thereonto.
+    obj.files[fileName] = [];
+    obj.files[fileName].push(tagNid);
+  }
+  for(var key in obj.files)
+    SW.selected_file_paths.push(key);
+  console.log(SW.selected_file_paths.toString());
+}
 
+// SW.selected_tagged_objects is an object whose fields are objects.
+// SW.selected_tagged_objects.files is an object whose fields are arrays.
+// Each field in SW.selected_tagged_objects.files has a file path for its name and an array of ints for its value. 
 
+/* This function removes file paths from the global SW.selected_tagged_objects.files. It is 
+ * called from either of two events: 
+ *      1. The X to the right of a tag button in the Tags Workspace is clicked. 
+ *      2. The checkbox to the left of a tag button in the Tags Workspace is unchecked.
+ */
+function removeFileNameFromTaggedFiles(tagNid) {
+  // Iterate through every field in SW.selected_tagged_objects.files. If tagNid appears in its 
+  // array of ints, remove it from the array. If the array becomes an empty array by this action,
+  // remove the field from the object.
+  var obj = SW.selected_tagged_objects;
+  for(var key in obj.files) {
+    var index = obj.files[key].indexOf(tagNid);
+    if(index != -1) {
+      obj.files[key].splice(index, 1);
+      if(obj.files[key].length == 0)
+        delete obj.files[key];
+    }
+  }
+  //for(var key in obj.files)
+    //console.log(key+': '+obj.files[key]);
+}
 
 
 

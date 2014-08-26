@@ -7,12 +7,13 @@ $(document).ready(function() {
 	SW.doiBySelection = true;
 	SW.doiByTag = false;
     
-    $('#doiModalFilesField').html(''+SW.selected_file_titles);
+    $('#doiModalFilesField').html(SW.selected_file_paths.toString());
     $('#doiModalGroupsField').html(''+SW.selected_group_titles);
     $('#doiModalPeopleField').html(''+SW.selected_user_titles);
     $('#doiModalJobsField').html(''+SW.selected_job_titles);
     $('#doiModalAppsField').html(''+SW.selected_app_titles);		// Is SW.selected_app_titles being populated correctly? 
   });
+  
 	  
   /* This is the button INSIDE the DOI modal. */ 
   $('button#create_doi_button').click(function() {
@@ -31,7 +32,7 @@ $(document).ready(function() {
  */
 function addGroups(selected_group_items) {
   var input = '';
-	  
+
   if(!sample) {
 	var groupKey = 'group';
 	for(var i = 0; i < selected_group_items.length; i++) {
@@ -199,6 +200,9 @@ function createDOI() {
     input += addUsers(SW.selected_user_titles);
   if(SW.doiByTag)
 	input += addUsers(SW.tagged_person_names);
+  
+  console.log(input);
+  alert('stop');
 	  
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
