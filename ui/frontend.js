@@ -158,9 +158,24 @@ app.post('/doi_submit',function(request,response) {
 
     var data = request['body'];
 
+    for(var key in data) {
+    	console.log('key: ' + key + ' ' + data[key]);
+    }
+    
     // Translate from internal JSON format to external DOI-Service submission XML schema
     var payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><records><record>";
 
+    var file_nids = data.fileNids;
+    var group_nids = data.groupNids;
+    var user_nids = data.userNids;
+    var job_nids = data.jobNids;
+    var app_nids = data.appNids;
+    var tag_nids = data.tagNids;
+    
+    var nids = file_nids;
+    
+    console.log('nids: ' + nids);
+    
     // For now, just hard-code the mapping from internal to external representation
     // Eventually a mapping table should be used
     payload += "<title>" + data.title + "</title>";
@@ -168,7 +183,7 @@ app.post('/doi_submit',function(request,response) {
     payload += "<creators>" + data.creator_name + "</creators>";
     payload += "<creators_email>" + data.creator_email + "</creators_email>";
     payload += "<files>" + data.files + "</files>";
-    payload += "<nids>"+data.fileNids+"</nids>";
+    payload += "<nids>"+nids+"</nids>";
     payload += "<resources>" + data.resources + "</resources>";
     payload += "<keywords>" + data.keywords + "</keywords>";
     payload += "<language>" + data.language + "</language>";
