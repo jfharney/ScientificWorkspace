@@ -44,9 +44,19 @@ html
         div Resource: #{r} 
     - }
     
-    - if (typeof(fileNids) !== 'undefined') {
-      - each f in fileNids
+    - if (typeof(file_nids) !== 'undefined') {
+      - each f in file_nids
         div File Nid: #{f} 
+    - }
+    
+    - if (typeof(group_nids) !== 'undefined') {
+      - each g in group_nids
+        div Group Nid: #{g} 
+    - }
+    
+    - if (typeof(tag_nids) !== 'undefined') {
+      - each t in tag_nids
+        div Tag Nid: #{t} 
     - }
     
     - if (typeof(job) !== 'undefined'){ 
@@ -203,8 +213,10 @@ html
                     div.span4 Files
                     div.span6 
                       input#text(name="input_files",value="#{resource}")
-                      input(name="fileNids", type="hidden", value="#{fileNids}")
+                      input(name="file_nids", type="hidden", value="#{file_nids}")
+                      input(name="group_nids", type="hidden", value="#{group_nids}")
                       
+                      input(name="tag_nids",type="hidden",value="#{tag_nids}")
                   br
                   
                   // KEYWORDS

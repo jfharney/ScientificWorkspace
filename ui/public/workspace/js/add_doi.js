@@ -8,7 +8,7 @@ $(document).ready(function() {
 	//SW.doiByTag = false;
     
     $('#doiModalFilesField').html(''+SW.selected_file_paths);
-    $('#doiModalGroupsField').html();
+    $('#doiModalGroupsField').html(''+SW.selected_group_titles);
     $('#doiModalPeopleField').html();
     $('#doiModalJobsField').html();
     $('#doiModalAppsField').html(); 
@@ -30,13 +30,13 @@ $(document).ready(function() {
 
 /* This function takes an array as its sole argument. It returns a string, which is a set of input tags.
  */
-function addGroups(selected_group_items) {
+function addGroups() {
   var input = '';
 
   if(!sample) {
-	var groupKey = 'group';
-	for(var i = 0; i < selected_group_items.length; i++) {
-	  input += '<input type="hidden" name="'+ groupKey +'" value="'+ selected_group_items[i] +'" />';
+	var groupKey = 'group_nids';
+	for(var i = 0; i < SW.selected_group_nids.length; i++) {
+	  input += '<input type="hidden" name="'+ groupKey +'" value="'+ SW.selected_group_nids[i] +'" />';
     }
   } 
   else {
@@ -157,11 +157,20 @@ function addResources() {
   var input = '';
 	
   input += '<input type="hidden" name="'+ 'resource' +'" value="'+ SW.selected_file_paths +'" />';
-  input += '<input type="hidden" name="'+ 'fileNids' +'" value="'+ SW.selected_file_nids +'" />';
+  input += '<input type="hidden" name="'+ 'file_nids' +'" value="'+ SW.selected_file_nids +'" />';
   
-  alert('In add_doi.js, SW.selected_file_nids: '+SW.selected_file_nids);
 	
   return input;
+}
+
+function addTags() {
+	
+	var input = '';
+	
+	input += '<input type="hidden" name="'+ 'tag_nids' +'" value="'+ SW.selected_tag_nids +'" />';
+	console.log('adding tag nids: ' + SW.selected_tag_nids);
+	
+	return input;
 }
                             	  
                             	  
@@ -193,6 +202,7 @@ function createDOI() {
     input += addApps(SW.tagged_app_names);
 	
   /* Put the indicated groups in the hidden input fields. */
+  input += addGroups();
   /*if(SW.doiBySelection)
     input += addGroups(SW.selected_group_titles);
   if(SW.doiByTag)
@@ -205,8 +215,11 @@ function createDOI() {
 	input += addUsers(SW.tagged_person_names);
   */
 	  
+  input += addTags();
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
+  alert('input: ' + input);
+  
   /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();

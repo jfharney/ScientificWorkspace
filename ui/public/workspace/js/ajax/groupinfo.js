@@ -144,7 +144,7 @@ function buildCollaboratorTree(children) {
 			
 			
 			SW.selected_group_titles.push(selTitles.join(", "));
-			console.log('selected_job_titles: ' + SW.selected_group_titles);
+			console.log('selected_group_titles: ' + SW.selected_group_titles);
 			
 			
 		}

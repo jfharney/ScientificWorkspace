@@ -161,20 +161,37 @@ app.post('/doi_submit',function(request,response) {
     for(var key in data) {
     	console.log('key: ' + key + ' ' + data[key]);
     }
+    console.log('\n');
     
     // Translate from internal JSON format to external DOI-Service submission XML schema
     var payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><records><record>";
 
-    var file_nids = data.fileNids;
-    var group_nids = data.groupNids;
-    var user_nids = data.userNids;
-    var job_nids = data.jobNids;
-    var app_nids = data.appNids;
-    var tag_nids = data.tagNids;
+    var file_nids = data.file_nids;
+    var group_nids = data.group_nids;
+    var user_nids = data.user_nids;
+    var job_nids = data.job_nids;
+    var app_nids = data.app_nids;
+    var tag_nids = data.tag_nids;
     
-    var nids = file_nids;
+    //gather all the nids in one string/input value
+    var nids = '';
+    nids += file_nids; 
+    nids += ',' + group_nids;
+    nids += ',' + tag_nids;
+    
+    //unify with tag nids
     
     console.log('nids: ' + nids);
+    
+    
+    var files = data.files;
+    
+    
+    //call the GET tag service that grabs the listing of files
+    
+
+    //unify the files with the tagged files here
+    
     
     // For now, just hard-code the mapping from internal to external representation
     // Eventually a mapping table should be used
@@ -182,7 +199,7 @@ app.post('/doi_submit',function(request,response) {
     payload += "<description>" + data.description + "</description>";
     payload += "<creators>" + data.creator_name + "</creators>";
     payload += "<creators_email>" + data.creator_email + "</creators_email>";
-    payload += "<files>" + data.files + "</files>";
+    payload += "<files>" + files + "</files>";
     payload += "<nids>"+nids+"</nids>";
     payload += "<resources>" + data.resources + "</resources>";
     payload += "<keywords>" + data.keywords + "</keywords>";

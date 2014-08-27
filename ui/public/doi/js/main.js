@@ -101,7 +101,12 @@ $(function() {
         data.country = $('[name="input_country"]').val();
         data.sponsor_org = $('[name="input_sponsor_org"]').val();
         data.files = $('[name="input_files"]').val();
+        
+        data.file_nids = $('[name="file_nids"]').val();
+        data.group_nids = $('[name="group_nids"]').val();
 
+        data.tag_nids = $('[name="tag_nids"]').val();
+        
         //console.log( "scraped" );
         //console.log( data );
 
