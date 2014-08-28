@@ -6,8 +6,13 @@ $(document).ready(function() {
   $('#add_doi_button').click(function() { 
     
     $('#doiModalFilesField').html(''+SW.selected_file_paths);
+/*<<<<<<< HEAD
     $('#doiModalGroupsField').html(''+SW.selected_group_names);
     $('#doiModalPeopleField').html(''+SW.selected_people_names);
+=======
+    $('#doiModalGroupsField').html(''+SW.selected_group_titles);
+    $('#doiModalPeopleField').html();
+>>>>>>> 9febb2118b104a07976fe9bc0ff15dfd6357b3d9*/
     $('#doiModalJobsField').html();
     $('#doiModalAppsField').html(); 
   });
@@ -28,13 +33,17 @@ $(document).ready(function() {
 
 /* This function takes an array as its sole argument. It returns a string, which is a set of input tags.
  */
+
 /*function addGroups(selected_group_items) {      Commented out 8-27-14
+=======
+function addGroups() {
+>>>>>>> 9febb2118b104a07976fe9bc0ff15dfd6357b3d9
   var input = '';
 
   if(!sample) {
-	var groupKey = 'group';
-	for(var i = 0; i < selected_group_items.length; i++) {
-	  input += '<input type="hidden" name="'+ groupKey +'" value="'+ selected_group_items[i] +'" />';
+	var groupKey = 'group_nids';
+	for(var i = 0; i < SW.selected_group_nids.length; i++) {
+	  input += '<input type="hidden" name="'+ groupKey +'" value="'+ SW.selected_group_nids[i] +'" />';
     }
   } 
   else {
@@ -195,9 +204,24 @@ function addResources() {
   var input = '';
 	
   input += '<input type="hidden" name="'+ 'resource' +'" value="'+ SW.selected_file_paths +'" />';
-  input += '<input type="hidden" name="'+ 'fileNids' +'" value="'+ SW.selected_file_nids +'" />';
+
+  //input += '<input type="hidden" name="'+ 'fileNids' +'" value="'+ SW.selected_file_nids +'" />';
+
+  input += '<input type="hidden" name="'+ 'file_nids' +'" value="'+ SW.selected_file_nids +'" />';
+  
+
 	
   return input;
+}
+
+function addTags() {
+	
+	var input = '';
+	
+	input += '<input type="hidden" name="'+ 'tag_nids' +'" value="'+ SW.selected_tag_nids +'" />';
+	console.log('adding tag nids: ' + SW.selected_tag_nids);
+	
+	return input;
 }
                             	  
                             	  
@@ -214,9 +238,13 @@ function createDOI() {
   input += addPeople();
   input += addGroups();
   input += addResources();
+	  
+  input += addTags();
 
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
+  //alert('input: ' + input);
+  
   /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();

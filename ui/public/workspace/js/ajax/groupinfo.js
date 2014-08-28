@@ -109,8 +109,34 @@ function buildCollaboratorTree(children) {
 	          return node.data.title;
 	      });       
 
-	      console.log('SW.selected_group_nids: '+SW.selected_group_nids);
-	      console.log('SW.selected_group_names: '+SW.selected_group_names);
+
+			SW.selected_group_titles = [];
+			SW.selected_group_nids = [];
+			var selNodes = node.tree.getSelectedNodes();
+			  
+			var selTitles = $.map(selNodes, function(node) {
+				  return node.data.title;
+			});
+			
+			var selNids = $.map(selNodes, function(node) {
+				return node.data.nid;
+			});
+			  
+			
+			console.log('<><><>><>In groupinfo.js select nids<><><><><>');
+			var nid_arr = new Array();
+			for(var i=0;i<selNids.length;i++) {
+			  console.log('i: ' + i + ' ' + selNids[i] + ' ');
+			  nid_arr.push(selNids[i]);
+			}
+			
+			SW.selected_group_nids = selNids;
+			
+			
+			
+			SW.selected_group_titles.push(selTitles.join(", "));
+			console.log('selected_group_titles: ' + SW.selected_group_titles);
+			
 		}
 	},
 	onActivate: function(node) {

@@ -19,12 +19,22 @@ SW.selected_people_names = [];
 SW.selected_group_nids = [];
 SW.selected_group_names = []; 
 
+
 SW.file_included_flag = false;
+
+//global file resources
+
 SW.selected_file_nids = [];
 SW.selected_file_paths = [];
 
+//global group resources
+SW.selected_group_nids = [];
+SW.selected_group_titles = [];
+
+//global tag resources
 SW.selected_tag_names = [];
 SW.selected_tag_nids = [];
+
 SW.tagNidsInWorkspace = [];     // Tracks which tags are currently in Tags Workspace. If a tag is already there, it cannot be re-added.
 
 

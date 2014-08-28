@@ -37,21 +37,71 @@ function renderTagCloud() {
     		  var $tag = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+
     				     (fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
                 .on('click', function() {
-                  // We add a representation of the tag selected to the tag workspace.
-                  // Check to see if the tag is already in the Tags Workspace when clicked. If it is, don't re-add it.
+
                   
+                	// We add a representation of the tag selected to the tag workspace.
+                  // Check to see if the tag is already in the Tags Workspace when clicked. If it is, don't re-add it. 
+
                   if($.inArray(tagNid, SW.tagNidsInWorkspace) == -1) {
+                	
+                	  console.log('pushing tag nid ' + tagNid);
+                	  
                     SW.tagNidsInWorkspace.push(tagNid);
                     
-                    $('ul#tagButtonList').append('<li id="tagWsLi_'+tagNid+'" style="margin:5px"><input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px"><button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button><img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tag Workspace." /></li>');
- 
+                    $tag_li = $('<li id="tagWsLi_' + tagNid + '" style="margin:5px"></li>');
+                    
+                    $tag_checkbox = $('<input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px">').change(function(){
+                    	console.log('checkbox changed');
+                		SW.selected_tag_nids = [];
+                    	$.each($('.tagCheckbox'),function() {
+                    		//empty global list here
+                    		
+                    		if($(this).is(':checked')) {
+                        		console.log('checked ' + this.id);
+                        		//add the tag nid to global list
+                        		var nid = this.id.substring((this.id.search('_')+1));
+                        		console.log('index: ' + nid);
+                        		
+                        		SW.selected_tag_nids.push(nid);
+                    		} else {
+                    			console.log('unchecked ' + this.id);
+                    			
+                    		}
+                    		
+                    	});
+                    	console.log('nids: ' + SW.selected_tag_nids);
+                    } );
+                    
+                    $tag_button = $('<button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>');//.click(function() { });
+                    
+                    $tag_remove_icon = $('<img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tag Workspace." />').click(function(){
+                    	console.log('removing ' + tagNid);
+                    	$('li#tagWsLi_'+tagNid).remove();
+                    });
+                    
+                    
+                    $tag_li.append($tag_checkbox);
+                    $tag_li.append($tag_button);
+                    $tag_li.append($tag_remove_icon);
+                    
+                    
+                    $('ul#tagButtonList').append($tag_li);
+                    
                     displayAggregateTagWorkspaceButtons();
+                    
+                    /*
+                    $('ul#tagButtonList').append('<li id="tagWsLi_'+tagNid+'" style="margin:5px"><input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" 
+                    style="margin-right:5px"><button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>
+                    <img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tag Workspace." /></li>');
+                    //onclick=setTaggedFields('+tagNid+'); 
+                    
                     
                     $('#removeIcon_'+tagNid).on('click', function() {
                       $('li#tagWsLi_'+tagNid).remove();
                       SW.tagNidsInWorkspace.splice(SW.tagNidsInWorkspace.indexOf(tagNid), 1);
                       displayAggregateTagWorkspaceButtons();
                     });
+                    */
                     
                     // Now we define the behavior for the click event of each button added to the Tag Workspace.
                     $('button#tagWsButton_'+tagNid).on('click', function() {
@@ -71,10 +121,13 @@ function renderTagCloud() {
     			    	var resNid = linksArr[i]['nid'];
     			    	linked_nids.push(resNid);
                         
+    			    	
     			    	if(linksArr[i]['type'] == 0) {				// the USER type
     				      resName = linksArr[i]['name'];
     				      resType = 'user';
     				      SW.tagged_person_names.push(resName);
+    				      
+    				      /*
     	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+
     	                		        '" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Email: '+
     	                		        linksArr[i]['email']+'<br />&nbsp;&nbsp;&nbsp;Uid: '+linksArr[i]['uid']+'</span>')
@@ -92,15 +145,20 @@ function renderTagCloud() {
     	                  $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
     	                  $('#tagResource_'+resNid).append($lessLink);
     	                  $('#tagResource_'+resNid).append($moreLink);
+    	                  */
     				    }
     			    	
+    			    	
+    			    	/*
     			    	else if(linksArr[i]['type'] == 1) {			// the GROUP type
     					  resName = linksArr[i]['gname'];
     					  resType = 'group';
     					  SW.tagged_group_names.push(resName);
     		  			  $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
     					}
+    			    	*/
     			    	
+    			    	/*
     			    	else if(linksArr[i]['type'] == 2) {			// the JOB type
     			    	  resName = linksArr[i]['name'];
     			    	  resType = 'job';
@@ -121,7 +179,9 @@ function renderTagCloud() {
                           $('#tagResource_'+resNid).append($lessLink);
                           $('#tagResource_'+resNid).append($moreLink);
     			    	}
+    			    	*/
     			    	
+    			    	/*
     			    	else if(linksArr[i]['type'] == 3) {			// the APP type
     			    	  resName = linksArr[i]['nid'];		// Apps don't actually have names. 
     			    	  resType = 'app';
@@ -142,11 +202,13 @@ function renderTagCloud() {
                           $('#tagResource_'+resNid).append($lessLink);
                           $('#tagResource_'+resNid).append($moreLink);
     			    	}
+    			    	*/
     			    	
     			    	else if(linksArr[i]['type'] == 4) {			// the FILE type
     			    	  resName = linksArr[i]['path'];
     				      resType = 'file';
     				      SW.tagged_file_names.push(resName);
+    				      /*
                           $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
               			  .on("click", function() {
               				resNid = getNidValue($(this).attr('id'));
@@ -162,10 +224,13 @@ function renderTagCloud() {
     				      $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
                           $('#tagResource_'+resNid).append($lessLink);
                           $('#tagResource_'+resNid).append($moreLink);
+                          */
     			    	}
     			    	else if(linksArr[i]['type'] == 5) {			// the DIRECTORY type
     				      resName = linksArr[i]['name'];
     					  resType = 'directory';
+    					  
+    					  /*
     	                  $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
     	          			.on("click", function() {
     	          			  resNid = getNidValue($(this).attr('id'));
@@ -181,6 +246,7 @@ function renderTagCloud() {
     					  $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
     	                  $('#tagResource_'+resNid).append($lessLink);
     	                  $('#tagResource_'+resNid).append($moreLink);
+    	                  */
     				    }
     			    	
     			    	else {
@@ -193,7 +259,9 @@ function renderTagCloud() {
                     });     // end of 
                     
                   }
-                });
+                
+                }); //on click function
+    		  
     		  $('#tagCloud').append($tag);
     		}		// end of if(linkCount > 0) block.
           },
