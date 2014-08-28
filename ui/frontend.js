@@ -164,6 +164,7 @@ app.post('/doi_submit',function(request,response) {
     // Translate from internal JSON format to external DOI-Service submission XML schema
     var payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><records><record>";
 
+    /*
     var file_nids = data.file_nids;
     var group_nids = data.group_nids;
     var user_nids = data.user_nids;
@@ -178,7 +179,9 @@ app.post('/doi_submit',function(request,response) {
     nids += ',' + tag_nids;
     
     //unify with tag nids
+    */
     
+    var nids = data.nids;
     console.log('nids: ' + nids);
     
     

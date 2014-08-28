@@ -64,17 +64,15 @@ function addGroups() {
   var nids = SW.selected_group_nids;        // an array
   var names = SW.selected_group_names;      // an array
   
-  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
-  input += '<input type="hidden" name="groupNid" value="dummyGroupNid" />';
+  
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="groupNid" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
   
-  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
-  input += '<input type="hidden" name="groupName" value="dummyGroupName" />';
   for(var i = 0; i < names.length; i++) {
     input += '<input type="hidden" name="groupName" value="'+names[i]+'" />';
   }
+  
   
   return input;
 }
@@ -112,7 +110,7 @@ function addPeople() {
   // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
   input += '<input type="hidden" name="personNid" value="dummyPersonNid" />';
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="personNid" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
   
   // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
@@ -207,7 +205,7 @@ function addResources() {
 
   //input += '<input type="hidden" name="'+ 'fileNids' +'" value="'+ SW.selected_file_nids +'" />';
 
-  input += '<input type="hidden" name="'+ 'file_nids' +'" value="'+ SW.selected_file_nids +'" />';
+  input += '<input type="hidden" name="'+ 'nids' +'" value="'+ SW.selected_file_nids +'" />';
   
 
 	
@@ -218,7 +216,7 @@ function addTags() {
 	
 	var input = '';
 	
-	input += '<input type="hidden" name="'+ 'tag_nids' +'" value="'+ SW.selected_tag_nids +'" />';
+	input += '<input type="hidden" name="'+ 'nids' +'" value="'+ SW.selected_tag_nids +'" />';
 	console.log('adding tag nids: ' + SW.selected_tag_nids);
 	
 	return input;
@@ -235,7 +233,7 @@ function createDOI() {
   input += addCreator();
 	  
   /* Put the indicated file names in the hidden input fields. */
-  input += addPeople();
+  //input += addPeople();
   input += addGroups();
   input += addResources();
 	  
@@ -243,7 +241,7 @@ function createDOI() {
 
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
-  //alert('input: ' + input);
+  alert('input: ' + input);
   
   /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
