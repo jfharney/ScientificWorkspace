@@ -104,7 +104,8 @@ $(function() {
 
         //console.log( "scraped" );
         //console.log( data );
-
+        data.personName = $('[name="personName"]').val();
+        data.groupName = $('[name="groupName"]').val();
         // Submit to internal DOI submit service (proxy)
         // If OK, go somewhere (workspace?)
         // If NOT Ok, pop-up error dialog and stay here

@@ -42,12 +42,9 @@ if(proxy.firewallMode)
 app.post('/search/:user_id', function(request,response) {
 	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
-	
 	var model = {};
 	model['uid'] = request.params.user_id;
 	
-	
-	//console.log('Returning model...');
 	for(var key in model) {
 		console.log('key: ' + key + ' model: ' + model[key]);
 	}
@@ -136,6 +133,7 @@ app.post('/doi/:user_id', function(request, response) {
   model['uname'] = request.params.user_id;
   
   for(var key in request['body']) {
+    console.log('Rendering doi.jade, key is '+key);
     if(isArray(request['body'][key])) {
       model[key] = request['body'][key];
     } 
@@ -177,7 +175,7 @@ app.post('/doi_submit',function(request,response) {
     payload += "</record></records>";
 
     console.log( payload );
-
+    nids += ','+SW.selected_people_nids+SW.selected_group_nids;
     var options = {
         //host: "doi1.ccs.ornl.gov",
         host: proxy.serviceHost,
@@ -347,7 +345,6 @@ app.get('/server3', function(request, response) {
 //--------Groups API----------//
 
 app.get("/groupinfo/:uid", function(request, response) {
-	console.log('in groupinfo...');
   if(proxy.firewallMode) {
 	  
 	var res = groups.groupinfoHelperFirewall(request, response);  
@@ -363,7 +360,6 @@ app.get("/groupinfo/:uid", function(request, response) {
 
 //groups on lazy read off of the tree
 app.get('/groups/:gid',function(request, response) {
-  console.log('gid -> ' + request.params.gid);
 
   if(proxy.firewallMode) {
 	  

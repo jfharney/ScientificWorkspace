@@ -4,12 +4,10 @@ $(document).ready(function() {
 
   // This is the button in the left menu panel. 
   $('#add_doi_button').click(function() { 
-	//SW.doiBySelection = true;
-	//SW.doiByTag = false;
     
     $('#doiModalFilesField').html(''+SW.selected_file_paths);
-    $('#doiModalGroupsField').html();
-    $('#doiModalPeopleField').html();
+    $('#doiModalGroupsField').html(''+SW.selected_group_names);
+    $('#doiModalPeopleField').html(''+SW.selected_people_names);
     $('#doiModalJobsField').html();
     $('#doiModalAppsField').html(); 
   });
@@ -30,7 +28,7 @@ $(document).ready(function() {
 
 /* This function takes an array as its sole argument. It returns a string, which is a set of input tags.
  */
-function addGroups(selected_group_items) {
+/*function addGroups(selected_group_items) {      Commented out 8-27-14
   var input = '';
 
   if(!sample) {
@@ -50,9 +48,29 @@ function addGroups(selected_group_items) {
     }	  
   }
   return input;
+}*/
+
+function addGroups() {
+  var input = '';
+  var nids = SW.selected_group_nids;        // an array
+  var names = SW.selected_group_names;      // an array
+  
+  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
+  input += '<input type="hidden" name="groupNid" value="dummyGroupNid" />';
+  for(var i = 0; i < nids.length; i++) {
+    input += '<input type="hidden" name="groupNid" value="'+nids[i]+'" />';
+  }
+  
+  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
+  input += '<input type="hidden" name="groupName" value="dummyGroupName" />';
+  for(var i = 0; i < names.length; i++) {
+    input += '<input type="hidden" name="groupName" value="'+names[i]+'" />';
+  }
+  
+  return input;
 }
   
-function addUsers(selected_user_items) {
+/*function addUsers(selected_user_items) {  Commented out 8-27-14
   
   var input = '';
   if(typeof selected_user_items != "undefined" && selected_user_items != null && selected_user_items.length > 0) {
@@ -74,6 +92,26 @@ function addUsers(selected_user_items) {
   } 
   else {}
 
+  return input;
+}*/
+
+function addPeople() {
+  var input = '';
+  var nids = SW.selected_people_nids;        // an array
+  var names = SW.selected_people_names;      // an array
+  
+  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
+  input += '<input type="hidden" name="personNid" value="dummyPersonNid" />';
+  for(var i = 0; i < nids.length; i++) {
+    input += '<input type="hidden" name="personNid" value="'+nids[i]+'" />';
+  }
+  
+  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
+  input += '<input type="hidden" name="personName" value="dummyPersonName" />';
+  for(var i = 0; i < names.length; i++) {
+    input += '<input type="hidden" name="personName" value="'+names[i]+'" />';
+  }
+  
   return input;
 }
   
@@ -158,8 +196,6 @@ function addResources() {
 	
   input += '<input type="hidden" name="'+ 'resource' +'" value="'+ SW.selected_file_paths +'" />';
   input += '<input type="hidden" name="'+ 'fileNids' +'" value="'+ SW.selected_file_nids +'" />';
-  
-  alert('In add_doi.js, SW.selected_file_nids: '+SW.selected_file_nids);
 	
   return input;
 }
@@ -175,36 +211,10 @@ function createDOI() {
   input += addCreator();
 	  
   /* Put the indicated file names in the hidden input fields. */
-  //if(SW.doiBySelection)
+  input += addPeople();
+  input += addGroups();
   input += addResources();
-  //if(SW.doiByTag)
-    //input += addResources(SW.tagged_file_names);
-	
-  /* Put the indicated jobs in the hidden input fields. */
-  /*if(SW.doiBySelection)
-    input += addJobs(SW.selected_job_titles);
-  if(SW.doiByTag)
-    input += addJobs(SW.tagged_job_names);
-  
-  /* Put the indicated apps in the hidden input fields. */
-  /*if(SW.doiBySelection)
-    input += addApps(SW.selected_app_titles);
-  if(SW.doiByTag)
-    input += addApps(SW.tagged_app_names);
-	
-  /* Put the indicated groups in the hidden input fields. */
-  /*if(SW.doiBySelection)
-    input += addGroups(SW.selected_group_titles);
-  if(SW.doiByTag)
-    input += addGroups(SW.tagged_group_names);
-	
-  /* Put the indicated persons in the hidden input fields. */
-  /*if(SW.doiBySelection)
-    input += addUsers(SW.selected_user_titles);
-  if(SW.doiByTag)
-	input += addUsers(SW.tagged_person_names);
-  */
-	  
+
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
   /* Send request. */

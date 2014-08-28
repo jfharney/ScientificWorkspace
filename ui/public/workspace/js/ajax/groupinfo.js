@@ -69,14 +69,8 @@ function getGroupInfo(uid) {
 
 // Populates the collaborator widget given the data returned (i.e. children)
 function buildCollaboratorTree(children) {
-	
-  /*console.log('Inside buildCollaboratorTree, here is the children array:');
-  for(var i = 0; i < children.length; i++)
-	for(var j in children[i])
-	  console.log(j + ': ' + children[i][j]);*/
 
   $("#collaborators_tree").dynatree({
-    //title: "Lazy loading sample",
     
 	fx: { height: "toggle", duration: 200 },
 	autoFocus: false, 
@@ -84,110 +78,43 @@ function buildCollaboratorTree(children) {
 	checkbox: true,
 	selectMode: 3,
 	onSelect: function(select, node) {
-		console.log('selection made for ' + node.data.title);
 		
 		if(node.data.type == 0) {
-			console.log('This is a user');
-			
-			SW.selected_user_titles = [];
-			SW.selected_user_nids = [];
-			
-			var selNodes = node.tree.getSelectedNodes();
-			  
-			var selTitles = $.map(selNodes, function(node) {
-				  return node.data.title;
-			});
+          //console.log(node.tree.getSelectedNodes());
+          var selNodes = node.tree.getSelectedNodes();
+            
+          SW.selected_people_nids = $.map(selNodes, function(node) {
+            return node.data.nid;
+          });  
+            
+          SW.selected_people_names = $.map(selNodes, function(node) {
+            if(node.data.type == 0)
+              return node.data.title;
+          });       
 
-			var selNids = $.map(selNodes, function(node) {
-				return node.data.nid;
-			});
-			  
-			
-			console.log('<><><>><>In groupinfo.js user select nids<><><><><>');
-			var nid_arr = new Array();
-			for(var i=0;i<selNids.length;i++) {
-			  console.log('i: ' + i + ' ' + selNids[i] + ' ');
-			  nid_arr.push(selNids[i]);
-			}
-			SW.selected_user_nids = selNids;
-			
-			SW.selected_user_titles.push(selTitles.join(", "));
-			console.log('selected_job_titles: ' + SW.selected_user_titles);
-			
-			
-		} else {
-			console.log('This is a group');
-		
+          //console.log('SW.selected_people_nids: '+SW.selected_people_nids);
+          //console.log('SW.selected_people_names: '+SW.selected_people_names);
+		}
+		else {
+	      //console.log(node.tree.getSelectedNodes());
+	      var selNodes = node.tree.getSelectedNodes();
+	        
+	      SW.selected_group_nids = $.map(selNodes, function(node) {
+	        return node.data.nid;
+	      });  
+	        
+	      SW.selected_group_names = $.map(selNodes, function(node) {
+	        console.log('node.data.type is '+node.data.type);
+	        if(node.data.type == 1)
+	          return node.data.title;
+	      });       
 
-			SW.selected_group_titles = [];
-			SW.selected_group_nids = [];
-			var selNodes = node.tree.getSelectedNodes();
-			  
-			var selTitles = $.map(selNodes, function(node) {
-				  return node.data.title;
-			});
-			
-			var selNids = $.map(selNodes, function(node) {
-				return node.data.nid;
-			});
-			  
-			
-			console.log('<><><>><>In groupinfo.js select nids<><><><><>');
-			var nid_arr = new Array();
-			for(var i=0;i<selNids.length;i++) {
-			  console.log('i: ' + i + ' ' + selNids[i] + ' ');
-			  nid_arr.push(selNids[i]);
-			}
-			
-			SW.selected_group_nids = selNids;
-			
-			
-			
-			SW.selected_group_titles.push(selTitles.join(", "));
-			console.log('selected_job_titles: ' + SW.selected_group_titles);
-			
-			
+	      console.log('SW.selected_group_nids: '+SW.selected_group_nids);
+	      console.log('SW.selected_group_names: '+SW.selected_group_names);
 		}
 	},
 	onActivate: function(node) {
-    	  console.log("Here is the node.data object: ");
-    	    for(var j in node)
-    	      console.log(j + ': ' + node.data[j]);
       var user_info_obj = '';
-      
-      
-      /*
-	  var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/'+node.data.username;
-	  var queryString = '';
-	  console.log('onActivate is called.');
-	    	  
-	  $.ajax({
-	    url: url,
-	    type: 'GET',
-	    data: queryString,
-        success: function(data) {
-    	  user_info_obj = data;
-    	  var user_info_space = '#collaborator_info';
-    	  $(user_info_space).empty();
-    					
-          if(!jQuery.isEmptyObject(user_info_obj)) {
-  		    $(user_info_space).append('<div>username: ' + data['username']+ '</div>');
-            $(user_info_space).append('<div>uid: ' + data['uid']+ '</div>');
-            $(user_info_space).append('<div>email: ' + data['email']+ '</div>');
-            $(user_info_space).append('<div>firstname: ' + data['firstname']+ '</div>');
-            $(user_info_space).append('<div>middlename: ' + data['middlename']+ '</div>');
-            $(user_info_space).append('<div style="margin-bottom:10px">lastname: ' + data['lastname']+ '</div>');
-          } 
-          else {
-    	    $(user_info_space).append('<div>The user does not exist</div>');
-          }
-        },
-        error: function() {
-    	  console.log('error in getting user id');
-        }
-      });
-      */
-      
     },
     onLazyRead: function(node) {
 	  console.log('collaborators lazy read --> title: ' + node.data.title + ' id: ' + node.data.id);

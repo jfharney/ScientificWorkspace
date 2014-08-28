@@ -25,19 +25,15 @@ head
 html
   body
     // (style="display:none")
-    div#uname(style="display:none") #{uname}
-    div#creator_nid(style="display:none") Creator NID: #{creator_nid}
-    div#creator_number(style="display:none") Creator UID: #{creator_number}
-    div#creator_uname(style="display:none") Creator Username: #{creator_uname}
-    div#creator_name(style="display:none") Creator Name: #{creator_name}
-    div#creator_email(style="display:none") Creator Email: #{creator_email}
-    div#spec_resources(style="display:none") Resources: #{resource}
+    div#uname #{uname}
+    div#creator_nid Creator NID: #{creator_nid}
+    div#creator_number Creator UID: #{creator_number}
+    div#creator_uname Creator Username: #{creator_uname}
+    div#creator_name Creator Name: #{creator_name}
+    div#creator_email Creator Email: #{creator_email}
+    div#spec_resources Resources: #{resource}
     
-    div Resource: #{resource.length} 
-    
-    - if (typeof(resource) !== 'undefined') {
-      div Hello!
-    - }
+    div Resource Length: #{resource.length} 
     
     - if (typeof(resource) !== 'undefined') {
       - each r in resource
@@ -46,7 +42,7 @@ html
     
     - if (typeof(fileNids) !== 'undefined') {
       - each f in fileNids
-        div File Nid: #{f} 
+        div File Nids: #{f} 
     - }
     
     - if (typeof(job) !== 'undefined'){ 
@@ -56,12 +52,12 @@ html
     - }  
     
     - if (typeof(group) !== 'undefined'){ 
-      - each g in group
+      - each g in groupName
         if g != 'group1'
           div(style="display:none") Group: #{g}
     - }
     - if (typeof(user) !== 'undefined'){ 
-      - each u in user
+      - each u in personName
         if u != 'user1'
           div(style="display:none") User: #{u} 
     - }
@@ -214,7 +210,8 @@ html
                    
                   div.row-fluid
                     div.span4 Keywords (comma-separated list)
-                    div.span6 
+                    div.span6
+                      //input(name="groupName", type="hidden", value=#{groupName}) 
                       input#text(name="input_keywords",value="")
                       
                   br
