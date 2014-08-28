@@ -41,16 +41,17 @@ var groupinfoHelper = function(request, response) {
 			for(var i = 0; i < groupObjsArr.length; i++) {
 				
 			  for(var key in groupObjsArr[i])
-				console.log(key + ': ' + groupObjsArr[i][key]);
+				//console.log(key + ': ' + groupObjsArr[i][key]);
 
 				var tooltip = 'Group ID: '+ groupObjsArr[i]['gid'] + 
 	              			  '\nGroup Name: ' + groupObjsArr[i]['gname'];
 				
 			    var child = {};
 			    child['title'] = groupObjsArr[i]['gname'];
+			    child['name'] = groupObjsArr[i]['gname'];
 			    child['nid'] = groupObjsArr[i]['nid'];
 			    child['isFolder'] = true;
-			    child['type'] = 2;
+			    child['type'] = 1;
 			    child['isLazy'] = true;
 				child['tooltip'] = tooltip;
 			    child['id'] = groupObjsArr[i]['gid'];

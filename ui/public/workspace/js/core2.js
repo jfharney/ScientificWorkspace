@@ -33,9 +33,7 @@ SW.selected_tag_nids = [];
 
 SW.tagNidsInWorkspace = [];     // tracks which tags are currently in Tags Workspace
 
-
-
-
+SW.typeMap = ['user','group','job','app','file','directory','other'];
 
 
 

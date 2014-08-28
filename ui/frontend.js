@@ -214,10 +214,10 @@ app.post('/doi_submit',function(request,response) {
         //host: "doi1.ccs.ornl.gov",
         host: proxy.serviceHost,
         port: proxy.servicePort,
-        path: "/doi/new/",
+        path: "/sws/doi/new/",
         method: 'POST',
         headers: {
-            'Content-Type': 'text/xml',
+            'Content-Type': 'application/json',
             'Content-Length': payload.length
         }
     };

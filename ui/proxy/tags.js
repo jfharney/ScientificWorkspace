@@ -336,6 +336,7 @@ var tagLinksProxHelper = function(request, response) {
     });
 				
     res.on('end', function() {
+      //console.log('responseData\n' + responseData);
 	  response.send(responseData);
     });
 
@@ -395,7 +396,7 @@ var tagsTableProxy = function(request, response) {
         /* Now, for each tag, we want to get a count of the number of links. */
         
         var tagNid = jsonObjArr[i]['nid'];
-        console.log('tagNid is ' + tagNid);
+        //console.log('tagNid is ' + tagNid);
         var options2 = {
           host: proxy.serviceHost,
           port: proxy.servicePort,
