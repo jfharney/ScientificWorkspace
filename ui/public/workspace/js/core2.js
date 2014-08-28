@@ -37,9 +37,7 @@ SW.selected_tag_nids = [];
 
 SW.tagNidsInWorkspace = [];     // Tracks which tags are currently in Tags Workspace. If a tag is already there, it cannot be re-added.
 
-
-
-
+SW.typeMap = ['user','group','job','app','file','directory','other'];
 
 
 

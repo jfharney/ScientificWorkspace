@@ -15,6 +15,10 @@ function getCollaboratorInfo(userNumber, searchArg) {
       groupsArr = data;
       console.log('Here is groupsArr:');
 
+      for(var key in data[0]) {
+			console.log('groupinfo key: ' + key + ' value: ' + data[0][key]);
+		}
+      
       var children = data;
       buildCollaboratorTree(children);
     },
@@ -44,9 +48,9 @@ function getGroupInfo(uid) {
 		success: function(data) {
 			//console.log('success');
 			//alert('data: ' + data);
-			//for(var key in data) {
-			//	alert('key: ' + key + ' value: ' + data[key]);
-			//}
+			for(var key in data) {
+				console.log('groupinfo key: ' + key + ' value: ' + data[key]);
+			}
 			
 			groupsArr = data['groups'];
 			
