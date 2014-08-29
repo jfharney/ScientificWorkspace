@@ -5,7 +5,14 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.net.URL;
+import java.net.URLEncoder;
+import javax.net.ssl.HttpsURLConnection;
 import java.lang.Thread;
+import java.io.DataOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import org.json.JSONObject;
 import org.json.JSONStringer;
 
 import com.thinkaurelius.titan.core.TitanFactory;
@@ -140,14 +147,12 @@ public class TitanAPI
 
         m_graph.rollback();
 
-        Set<String> props = parseRetrieveProperties( a_properties );
-
         GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( m_graph.getVertex( a_tag_nid )).in(Schema.META);
 
         a_output.array();
 
         while ( grem.hasNext() )
-            processVertexResult( grem.next(), props, a_output );
+            processVertexResult( grem.next(), null, a_output );
             //convertVertexProperties( grem.next(), props, a_output, true );
 
         a_output.endArray();
@@ -457,9 +462,9 @@ public class TitanAPI
             a_output.key("type").value(edge.getLabel());
             a_output.key("status").value(a_status);
             a_output.key("out");
-            processVertexQueryResult( user, edge.getVertex(Direction.OUT), a_output );
+            processVertexResult( edge.getVertex(Direction.OUT), user, a_output );
             a_output.key("in");
-            processVertexQueryResult( user, edge.getVertex(Direction.IN), a_output );
+            processVertexResult( edge.getVertex(Direction.IN), user, a_output );
             a_output.endObject();
         }
 
@@ -499,9 +504,9 @@ public class TitanAPI
             a_output.key("type").value(edge.getLabel());
             a_output.key("status").value(a_status);
             a_output.key("out");
-            processVertexQueryResult( user, edge.getVertex(Direction.OUT), a_output );
+            processVertexResult( edge.getVertex(Direction.OUT), user, a_output );
             a_output.key("in");
-            processVertexQueryResult( user, edge.getVertex(Direction.IN), a_output );
+            processVertexResult( edge.getVertex(Direction.IN), user, a_output );
             a_output.endObject();
         }
 
@@ -538,9 +543,9 @@ public class TitanAPI
                 a_output.key("type").value(e.getLabel());
                 a_output.key("status").value(a_status);
                 a_output.key("out");
-                processVertexQueryResult( user, e.getVertex(Direction.OUT), a_output );
+                processVertexResult( e.getVertex(Direction.OUT), user, a_output );
                 a_output.key("in");
-                processVertexQueryResult( user, e.getVertex(Direction.IN), a_output );
+                processVertexResult( e.getVertex(Direction.IN), user, a_output );
                 a_output.endObject();
                 return;
             }
@@ -1368,7 +1373,7 @@ public class TitanAPI
         Vertex dest = m_graph.getVertex(a_dest_nid);
 
         if ( src == null || dest == null )
-            throw new WebApplicationException( Response.Status.NOT_FOUND ); 
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
 
         Iterator<Edge> it = src.getEdges(Direction.OUT, a_label ).iterator();
         while ( it.hasNext() )
@@ -1419,7 +1424,7 @@ public class TitanAPI
         {
             ++len;
             //System.out.println( "id: " + res.getElement().getId());
-            processVertexQueryResult( user, res.getElement(), a_output );
+            processVertexResult( res.getElement(), user, a_output );
         }
 
         a_output.endArray();
@@ -1429,6 +1434,118 @@ public class TitanAPI
 
         System.out.println( String.format( "%d results processed in %g sec, or %g res/sec", len, duration, len/duration ));
     }
+
+    //=========== DOI METHODS ==========================================================================================
+
+    public void postDOI( long a_user_nid, HashSet<Long> a_dep_nids, String a_title, String a_desc, String a_keywords, String a_payload, JSONStringer a_output ) throws Exception
+    {
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
+
+        m_graph.rollback();
+
+        // Get user from creator_nid
+        Vertex user = m_graph.getVertex( a_user_nid );
+        if ( user == null )
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
+
+        HashSet<Vertex> deps = new HashSet<>();
+        for ( Long nid : a_dep_nids )
+        {
+            Vertex dep = m_graph.getVertex( nid.longValue() );
+            if ( dep == null )
+                throw new WebApplicationException( Response.Status.NOT_FOUND );
+            deps.add( dep );
+        }
+
+        // Ask DOI service to create new DOI, if this succeeds, update graph
+        // If it fails, an exception will be thrown
+        String doi = submitDOI( a_payload );
+
+        // Create DOI vertex
+        Vertex doi_vertex = m_graph.addVertex(null);
+
+        ElementHelper.setProperties( doi_vertex, Schema.TYPE, Schema.Type.DOI.toInt(), Schema.NAME, doi,
+            Schema.TITLE, a_title, Schema.DESC, a_desc, Schema.KEYWORDS, a_keywords,
+            Schema.CTIME, System.currentTimeMillis()/1000 );
+
+        user.addEdge(Schema.ASSET, doi_vertex );
+        for ( Vertex dep : deps )
+            doi_vertex.addEdge( Schema.CTXT, dep );
+
+        m_graph.commit();
+
+        a_output.object();
+        a_output.key("doi").value(doi);
+        a_output.endObject();
+    }
+
+    private String submitDOI( String a_payload ) throws Exception
+    {
+        // TODO Don't hard-code URL to doi service
+        URL url = new URL("https://doi1.ccs.ornl.gov/doi/new/");
+        HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+
+        con.setRequestMethod( "POST" );
+        con.setRequestProperty( "Content-Type", "text/xml" );
+        con.setRequestProperty( "Content-Length", String.valueOf(a_payload.length()) );
+        con.setDoInput(true);
+        con.setDoOutput(true);
+
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes( a_payload );
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+
+        if ( responseCode != 200 )
+            throw new WebApplicationException( responseCode );
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String doi = in.readLine();
+        if ( doi == null )
+            throw new WebApplicationException( Response.Status.INTERNAL_SERVER_ERROR );
+
+        in.close();
+
+        return doi;
+    }
+
+    public void getDOIsByUID( int a_uid, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new IllegalStateException("Graph not initialized");
+
+        m_graph.rollback();
+
+        GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( m_graph.getVertices(Schema.UID, a_uid)).out(Schema.ASSET).has(Schema.TYPE,Schema.Type.DOI.toInt());
+
+        Vertex doi;
+        Iterator<Edge> e;
+
+        a_output.array();
+
+        while ( grem.hasNext() )
+        {
+            doi = grem.next();
+
+            a_output.object();
+
+            convertVertexProperties( doi, null, a_output, false );
+            a_output.key("context").array();
+
+            // Add linked context objects
+            e = doi.getEdges(Direction.OUT, Schema.CTXT).iterator();
+            if ( e.hasNext() )
+                processVertexResult( e.next().getVertex(Direction.IN), null, a_output );
+
+            a_output.endArray();
+            a_output.endObject();
+        }
+        a_output.endArray();
+    }
+
 
     //=========== UTILITY METHODS ======================================================================================
 
@@ -1602,8 +1719,8 @@ public class TitanAPI
         }
         else return ""; // Reached root - return true always
     }
-
-    private void processVertexResult( Vertex a_vertex, Set<String> a_props, JSONStringer a_output )
+/*
+    private void processVertexResult( Vertex a_vertex, JSONStringer a_output )
     {
         int type = a_vertex.getProperty( Schema.TYPE );
 
@@ -1665,14 +1782,18 @@ public class TitanAPI
         convertVertexProperties( a_vertex, null, a_output, false );
         a_output.endObject();
     }
-
+*/
     /**
-     * @param a_user
+     * @param a_user - User receiving this result
      * @param a_vertex
      * @param a_output 
      */
-    private void processVertexQueryResult( UserInfo a_user, Vertex a_vertex, JSONStringer a_output )
+    private void processVertexResult( Vertex a_vertex, UserInfo a_user, JSONStringer a_output )
     {
+        // TODO To be correct, the user should be specified everytime this method is
+        // called; however, it is only provided for search results. This could lead to
+        // elevated access for some cases. Will revisit when refactoring for version 2
+
         int type = a_vertex.getProperty( Schema.TYPE );
 
         if ( type == Schema.Type.FILE.toInt() || type == Schema.Type.DIR.toInt() )
@@ -1696,10 +1817,8 @@ public class TitanAPI
             }
 
             int uid = e.next().getVertex(Direction.OUT).getProperty(Schema.UID);
-            if ( uid != a_user.m_uid )
-            {
+            if ( a_user != null && uid != a_user.m_uid )
                 return;
-            }
 
             a_output.object();
             a_output.key("user").value( uid );
@@ -1708,42 +1827,32 @@ public class TitanAPI
         {
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.COMP).iterator();
             if ( !e.hasNext() )
-            {
                 return;
-            }
 
             Vertex job = e.next().getVertex(Direction.OUT);
 
             e = job.getEdges(Direction.IN, Schema.PROD).iterator();
             if ( !e.hasNext() )
-            {
                 return;
-            }
+
             Vertex usr = e.next().getVertex(Direction.OUT);
 
-            if ( (int)usr.getProperty(Schema.UID) != a_user.m_uid )
-            {
+            if ( a_user != null && (int)usr.getProperty(Schema.UID) != a_user.m_uid )
                 return;
-            }
 
             a_output.object();
             a_output.key("job").value( job.getProperty( Schema.JID ));
         }
         else if ( type == Schema.Type.TAG.toInt() )
         {
-            // Validate user has access to this file (by path)
-            if ( !hasTagAccess( a_vertex, a_user.m_uid ))
-            {
+            // Validate user has access to this tag
+            if ( a_user != null && !hasTagAccess( a_vertex, a_user.m_uid ))
                 return;
-            }
-
 
             // Add owner and ACL info for tags
             Iterator<Edge> e = a_vertex.getEdges(Direction.IN, Schema.ASSET).iterator();
             if ( !e.hasNext() )
-            {
                 return;
-            }
 
             a_output.object();
 
@@ -1751,8 +1860,21 @@ public class TitanAPI
             a_output.key("owner").value( uid );
 
             // Only add ACLs for owned tags
-            if ( uid == a_user.m_uid )
+            if ( a_user == null || uid == a_user.m_uid )
                 addTagACLs( a_vertex, true, true, a_output );
+        }
+        else if ( type == Schema.Type.DOI.toInt() )
+        {
+            a_output.object();
+
+            // Add context objects
+            a_output.key("context").array();
+
+            Iterator<Edge> e = a_vertex.getEdges(Direction.OUT, Schema.CTXT).iterator();
+            if ( e.hasNext() )
+                processVertexResult( e.next().getVertex(Direction.IN), null, a_output );
+
+            a_output.endArray();
         }
         else
             a_output.object();

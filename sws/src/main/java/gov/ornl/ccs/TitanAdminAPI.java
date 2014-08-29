@@ -75,12 +75,15 @@ public class TitanAdminAPI
 
         // Vertex stuff
         m_graph.makeKey(Schema.TYPE).dataType(Integer.class).indexed(INDEX_NAME,Vertex.class).make();
+        m_graph.makeKey(Schema.SUBTYPE).dataType(Integer.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.CTIME).dataType(Long.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.MTIME).dataType(Long.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.START).dataType(Long.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.STOP).dataType(Long.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.NAME).dataType(String.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.DESC).dataType(String.class).indexed(INDEX_NAME,Vertex.class).make();
+        m_graph.makeKey(Schema.TITLE).dataType(String.class).indexed(INDEX_NAME,Vertex.class).make();
+        m_graph.makeKey(Schema.KEYWORDS).dataType(String.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.UID).dataType(Integer.class).indexed(Vertex.class).make(); //unique().make();
         m_graph.makeKey(Schema.UNAME).dataType(String.class).indexed(Vertex.class).make(); //.unique().make();
         m_graph.makeKey(Schema.EMAIL).dataType(String.class).make();

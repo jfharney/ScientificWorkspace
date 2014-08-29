@@ -11,7 +11,8 @@ public class Schema
         FILE(4),
         DIR(5),
         TAG(6),
-        EVENT(7);
+        EVENT(7),
+        DOI(8);
 
         public static Type fromInt( int val ) throws Exception
         {
@@ -25,6 +26,7 @@ public class Schema
             case 5: return DIR;
             case 6: return TAG;
             case 7: return EVENT;
+            case 8: return DOI;
             }
 
             throw new Exception("Invalid Type conversion: " + val );
@@ -162,12 +164,15 @@ public class Schema
 
     // Vertex Properties
     public static final String TYPE     = "type";   // Node/vertex type
+    public static final String SUBTYPE  = "subtype";// Arbitrary sub-type number
     public static final String UID      = "uid";    // POSIX User ID (users only)
     public static final String UNAME    = "uname";  // POSIX User name (users only)
     public static final String GID      = "gid";    // POSIX Group ID (groups only)
     public static final String GNAME    = "gname";  // POSIX Group Name (groups only)
     public static final String NAME     = "name";   // Name (generic)
     public static final String DESC     = "desc";   // Description (generic)
+    public static final String TITLE    = "title";  // Title (generic)
+    public static final String KEYWORDS = "keywd";  // Keywords (generic)
     public static final String EMAIL    = "email";  // Email (users only)
     public static final String START    = "start";  // Start time (jobs/apps)
     public static final String STOP     = "stop";   // Stop time (jobs/apps)
@@ -187,7 +192,7 @@ public class Schema
     public static final String FMODE    = "fmode";  // File mode
     public static final String FSIZE    = "fsize";  // File size
     public static final String STATUS   = "status"; // Indicates node requires user review
-    public static final String SUBTYPE  = "subtype";// Arbitrary sub-type number
+    public static final String DOI      = "doi"; // Indicates node requires user review
 
 
     // Injected "properties" (not stored in graph)
