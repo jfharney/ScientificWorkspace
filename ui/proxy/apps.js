@@ -11,65 +11,41 @@ var servicePort = '8080';
 
 var data = require('../data/firewall_sources.js');
 
-
-// Where/when is appsproxyHelper called? In frontend.js.
+// appsproxyHelper is called in frontend.js.
 var appsproxyHelper = function(request, response) 
 {
-  // The problem here is that request.query.jid is undefined.
   var path = '/sws/apps?jid=' + request.query.jid;
   
-  console.log('In apps.js, the value of path is ' + path);
-	
-  //query the userlist service here
   var options = {
     host: serviceHost,
 	port: servicePort,
 	path: path,
 	method: 'GET'
   };
-	
-  console.log('path-> ' + path);
+
   var responseData = '';
 	 
   var req = http.request(options, function(res) 
   {
-    //console.log("Got response: " + res.statusCode);
-	//console.log('HEADERS: ' + JSON.stringify(res.headers));
-	res.on('data', function (chunk) 
-	{
+	res.on('data', function (chunk) {
 	  responseData += chunk;	
     });
 
-    res.on('end', function() 
-    {
-	  console.log(responseData);
-	  var jsonObj = {};
-	  jsonObj.apps = JSON.parse(responseData);
-
-	  var appsArr = new Array();
-	  var appuuidsArr = new Array();
-			  		  
-	  for(var key in jsonObj) {
-	    // The value of jsonObj is an array.
-		for(var i = 0; i < jsonObj[key].length; i++) {
-		  var appid = jsonObj[key][i]['aid'];
-		  var appuuid = jsonObj[key][i]['nid'];
-		  appsArr.push(appid);
-		  appuuidsArr.push(appuuid);
-		}
-	  }
-			  
-	  var respArr = [];
-	  for(var i = 0; i < appsArr.length; i++) {
-		var respObj = {"title" : appsArr[i], 
-				       "type" : "app", 
-				       "appid" : appsArr[i], 
-				       "jobid" : request.query.jobid, 
-				       "uuid" : appuuidsArr[i] };
+    res.on('end', function() {
+      var jsonObjArr = [];
+      jsonObjArr = JSON.parse(responseData);
+      
+      var respArr = [];     // An array of objects which contain app data. 
+      for(var i = 0; i < jsonObjArr.length; i++) {
+        var respObj = {"title" : jsonObjArr[i]['aid'], 
+                       "type" : 3, 
+                       "appid" : jsonObjArr[i]['aid'], 
+                       "jobid" : request.query.jobid, 
+                       "nid" : jsonObjArr[i]['nid'] };
         respArr.push(respObj);
-	  }
-			  
-	  response.send(respArr);
+      }
+      
+      response.send(respArr);
     });
 		  
   }).on('error', function(e) 
@@ -127,12 +103,9 @@ var appsinfoHelper = function(request, response) {
 		  };
 	
 	 var responseData = '';
-
-	 //console.log ('calling user info...' + request.params.app_id + ' path: ' + path);
 	 
 	 var req = http.request(options, function(res) {
 		  res.on('data', function (chunk) {
-			  //console.log('\n\n\n\nchunk: ' + chunk);
 			  responseData += chunk;	
 				
 		  });
@@ -161,32 +134,8 @@ module.exports.appsinfoHelper = appsinfoHelper;
 
 
 var appsinfoHelperFirewall = function(request, response) {
-
-/*
-  var respArr = [];
-  for(var i = 0; i < appsArr.length; i++) {
-	  var respObj = {};
-	  if(i == 0) {
-		  respObj['title'] = appObj1['aid'];
-		  respObj['type'] = appObj1['type'];
-		  respObj['jobid'] = appObj1['job'];
-		  respObj['uuid'] = appObj1['nid'];
-		  
-	  } else {
-		  respObj['title'] = appObj2['aid'];
-		  respObj['type'] = appObj2['type'];
-		  respObj['jobid'] = appObj2['job'];
-		  respObj['uuid'] = appObj2['nid'];
-	  }
-	
-    respArr.push(respObj);
-  }
-		  
-  response.send(respArr);
-*/
 	
   response.send("hello");
-	
 	
 };
 

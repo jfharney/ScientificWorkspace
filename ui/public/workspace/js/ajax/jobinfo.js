@@ -59,127 +59,47 @@ function getAppInfo(url) {
 
 function buildJobsTree(children) {
   $("#jobs_tree").dynatree({
-	//title: "Lazy loading sample",
 	fx: { height: "toggle", duration: 200 },
 	autoFocus: false, 
 	children: children,
 	checkbox: true,
-	selectMode: 3,
+	selectMode: 3,         // "1:single, 2:multi, 3:multi-hier"
 	onSelect: function(select, node) {
-		
-		if(node.data.type == '2') {
-			
-			SW.selected_job_titles = [];
-			SW.selected_job_nids = [];
-			
-			// Display list of selected nodes
-			var selNodes = node.tree.getSelectedNodes();
-			  
-			var selTitles = $.map(selNodes, function(node) {
-				  return node.data.title;
-			});
-			SW.selected_job_titles.push(selTitles.join(", "));
-			console.log('selected_job_titles: ' + SW.selected_job_titles);
-			
-			var selNids = $.map(selNodes, function(node) {
-				return node.data.nid;
-			});
-			  
-			
-			var nid_arr = new Array();
-			for(var i=0;i<selNids.length;i++) {
-			  //console.log('i: ' + i + ' ' + selNids[i] + ' ');
-			  nid_arr.push(selNids[i]);
-			}
-			//console.log('---------->lengtj: ' + selNids.length);
-		  
-			//SW.selected_file_nids = selNids.join(", ");
-			SW.selected_job_nids = selNids;
-			 
-		} else {
-
-			SW.selected_app_titles = [];
-			SW.selected_app_nids = [];
-			
-			// Display list of selected nodes
-			var selNodes = node.tree.getSelectedNodes();
-			  
-			var selTitles = $.map(selNodes, function(node) {
-				  return node.data.title;
-			});
-			SW.selected_app_titles.push(selTitles.join(", "));
-			console.log('selected_app_titles: ' + SW.selected_app_titles);
-			
-			var selNids = $.map(selNodes, function(node) {
-				return node.data.nid;
-			});
-			  
-			
-			var nid_arr = new Array();
-			for(var i=0;i<selNids.length;i++) {
-			  //console.log('i: ' + i + ' ' + selNids[i] + ' ');
-			  nid_arr.push(selNids[i]);
-			}
-			//console.log('---------->lengtj: ' + selNids.length);
-		  
-			//SW.selected_file_nids = selNids.join(", ");
-			SW.selected_app_nids = nid_arr;//?selNids;
-			
-			console.log('selected_app_nids: ' + SW.selected_app_nids + ' length: ' + SW.selected_app_nids.length);
-			
-		}
-	},
-	onActivate: function(node) {
-	  var info_obj = '';
-	  //console.log('node type: ' + node.data.type);    		
-	  if(node.data.type == 2) {
-		$.ajax({
-		  url: url,
-          type: 'GET',
-          data: queryString,
-          success: function(data) {
-        	  
-        	  /* 7-1
-            info_obj = data;
-              if(!jQuery.isEmptyObject(info_obj)) {
-		    	$(info_space).append('<div>nid: ' + info_obj['nid'] + '</div>');
-		    	$(info_space).append('<div>nodes: ' + info_obj['nodes'] + '</div>');
-		    	$(info_space).append('<div>jid: ' + info_obj['jid'] + '</div>');
-		    	$(info_space).append('<div>err: ' + info_obj['err'] + '</div>');
-		    	$(info_space).append('<div>stop: ' + info_obj['stop'] + '</div>');
-		    	$(info_space).append('<div>host: ' + info_obj['host'] + '</div>');
-		    	$(info_space).append('<div>start: ' + info_obj['start'] + '</div>');
-                $(info_space).append('<div>name: ' + info_obj['name'] + '</div>');
-                $(info_space).append('<div>type: ' + info_obj['type'] + '</div>');
-                $(info_space).append('<div>wall: ' + info_obj['wall'] + '</div>');
-                $(info_space).append('<div style="margin-bottom:10px">user: ' + info_obj['user'] + '</div>');
-              } 
-              else {
-		    	$(user_info_space).append('<div>The job does not exist</div>');
-              }
-              */
-          },
-          error: function(e) {
-        	console.log('jobinfo.js: Got error: ' + e);
-          }
+	  console.log('node.data.type is '+node.data.type);
+      var selNodes = node.tree.getSelectedNodes();
+      if(node.data.type == 2) {       // Jobs
+        
+        SW.selected_job_names = $.map(selNodes, function(node) {
+          if(node.data.type == 2)
+            return node.data.title;
         });
+            
+        SW.selected_job_nids = $.map(selNodes, function(node) {
+          if(node.data.type == 2)
+            return node.data.nid;
+        });
+
+        //console.log('SW.selected_job_names: '+SW.selected_job_names);
+        //console.log('SW.selected_job_nids: '+SW.selected_job_nids);	 
       } 
-	  else {
-        console.log('This is an app.');
-        
-        for(var i in node.data)
-          console.log(i + ': ' + node.data[i]);
-        var url = 'http://' + SW.hostname + ':' + SW.port + '/appinfo/'+node.data.appid;
-        console.log('Passing url '+url+' to getAppInfo.');
-        /* getAppInfo is defined just above this function in the same file. */ 
-        getAppInfo(url);
-        
-      }
-    },
+      else if(node.data.type == 3) {       // Apps 
+	        
+	    SW.selected_app_ids = $.map(selNodes, function(node) {
+	      if(node.data.type == 3)
+	        return node.data.title;
+	      });
+	            
+	    SW.selected_app_nids = $.map(selNodes, function(node) {
+	      if(node.data.type == 3)
+	        return node.data.nid;
+	    });
+
+	    //console.log('SW.selected_app_ids: '+SW.selected_app_ids);
+	    //console.log('SW.selected_app_nids: '+SW.selected_app_nids);			
+	  }
+	},
+	onActivate: function(node) {},
     onLazyRead: function(node) {
-      console.log('lazy reading jobs tree for ' + node.data.jobid);
-      
-      
       var jid = node.data.jobid; 
       var url = 'http://' + SW.hostname + ':' + SW.port + '/appsproxy?jid='+jid;
       console.log(url);

@@ -1,9 +1,6 @@
 /* This function is called in main.js near the end of the ready event. 
  */
 
-
-
-
 function renderTagCloud() {
 	
   var uid = SW.current_user_number;

@@ -4,21 +4,14 @@ $(document).ready(function() {
 
   // This is the button in the left menu panel. 
   $('#add_doi_button').click(function() { 
-    
-    $('#doiModalFilesField').html(''+SW.selected_file_paths);
-/*<<<<<<< HEAD
-    $('#doiModalGroupsField').html(''+SW.selected_group_names);
     $('#doiModalPeopleField').html(''+SW.selected_people_names);
-=======
-    $('#doiModalGroupsField').html(''+SW.selected_group_titles);
-    $('#doiModalPeopleField').html();
->>>>>>> 9febb2118b104a07976fe9bc0ff15dfd6357b3d9*/
-    $('#doiModalJobsField').html();
-    $('#doiModalAppsField').html(); 
+    $('#doiModalGroupsField').html(''+SW.selected_group_names);
+    $('#doiModalFilesField').html(''+SW.selected_file_paths);
+    $('#doiModalJobsField').html(''+SW.selected_job_names);
+    $('#doiModalAppsField').html(''+SW.selected_app_ids); 
   });
-  
-	  
-  /* This is the button INSIDE the DOI modal. */ 
+    
+  /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
   $('button#create_doi_button').click(function() {
     if($('#doiModalFilesField').html() != '')
       SW.file_included_flag = true;
@@ -31,97 +24,91 @@ $(document).ready(function() {
 	  
 });
 
-/* This function takes an array as its sole argument. It returns a string, which is a set of input tags.
- */
-
-/*function addGroups(selected_group_items) {      Commented out 8-27-14
-=======
-function addGroups() {
->>>>>>> 9febb2118b104a07976fe9bc0ff15dfd6357b3d9
+function addPeople() {
   var input = '';
-
-  if(!sample) {
-	var groupKey = 'group_nids';
-	for(var i = 0; i < SW.selected_group_nids.length; i++) {
-	  input += '<input type="hidden" name="'+ groupKey +'" value="'+ SW.selected_group_nids[i] +'" />';
-    }
-  } 
-  else {
-    var groupKey = 'group';
-
-    //padded the array with one value - this a hack to avoid single element arrays that blow up the backend
-	var groupValue1 = 'group1';
-	input += '<input type="hidden" name="'+ groupKey +'" value="'+ groupValue1 +'" />';
-    for(var i = 0; i < selected_group_items.length; i++) {
-      input+='<input type="hidden" name="'+ groupKey +'" value="'+ selected_group_items[i] +'" />';
-    }	  
+  var names = SW.selected_people_names;          // an array
+  var nids = SW.selected_people_nids;            // an array
+  
+  for(var i = 0; i < names.length; i++) {
+    input += '<input type="hidden" name="personName" value="'+names[i]+'" />';
   }
-  return input;
-}*/
-
-function addGroups() {
-  var input = '';
-  var nids = SW.selected_group_nids;        // an array
-  var names = SW.selected_group_names;      // an array
   
-  
+  // People nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
   }
+  
+  return input;
+}
+
+function addGroups() {
+  var input = '';
+  var names = SW.selected_group_names;          // an array
+  var nids = SW.selected_group_nids;            // an array
   
   for(var i = 0; i < names.length; i++) {
     input += '<input type="hidden" name="groupName" value="'+names[i]+'" />';
   }
   
-  
-  return input;
-}
-  
-/*function addUsers(selected_user_items) {  Commented out 8-27-14
-  
-  var input = '';
-  if(typeof selected_user_items != "undefined" && selected_user_items != null && selected_user_items.length > 0) {
-    if(!sample) {
-      var userKey = 'user';
-	  for(var i = 0; i < selected_user_items.length; i++) {
-		input += '<input type="hidden" name="'+ userKey +'" value="'+ selected_user_items[i] +'" />';
-      }
-	} 
-    else {
-      var userKey = 'user';
-      // Array with one dummy value, a hack to avoid single element arrays that blow up the backend.
-	  var userValue1 = 'user1';
-	  input += '<input type="hidden" name="'+ userKey +'" value="'+ userValue1 +'" />';
-	  for(var i = 0; i < selected_user_items.length; i++) {
-        input+='<input type="hidden" name="'+ userKey +'" value="'+ selected_user_items[i] +'" />';
-      }
-    }
-  } 
-  else {}
-
-  return input;
-}*/
-
-function addPeople() {
-  var input = '';
-  var nids = SW.selected_people_nids;        // an array
-  var names = SW.selected_people_names;      // an array
-  
-  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
-  input += '<input type="hidden" name="personNid" value="dummyPersonNid" />';
+  // Group nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
-  }
-  
-  // We add a dummy value as the first hidden input, a hack to avoid single element arrays that blow up the back end. Still needed? 
-  input += '<input type="hidden" name="personName" value="dummyPersonName" />';
-  for(var i = 0; i < names.length; i++) {
-    input += '<input type="hidden" name="personName" value="'+names[i]+'" />';
+    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
   }
   
   return input;
 }
+
+function addJobs() {
+  var input = '';
+  var names = SW.selected_job_names;          // an array
+  var nids = SW.selected_job_nids;            // an array
   
+  for(var i = 0; i < names.length; i++) {
+    input += '<input type="hidden" name="jobName" value="'+names[i]+'" />';
+  }
+  
+  // Job nids are aggregated into the general nids collection.
+  for(var i = 0; i < nids.length; i++) {
+    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+  }
+  
+  return input;
+}
+
+function addApps() {
+  var input = '';
+  var ids = SW.selected_app_ids;              // an array
+  var nids = SW.selected_app_nids;            // an array
+  
+  for(var i = 0; i < ids.length; i++) {
+    input += '<input type="hidden" name="appId" value="'+ids[i]+'" />';
+  }
+  
+  // App nids are aggregated into the general nids collection.
+  for(var i = 0; i < nids.length; i++) {
+    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+  }
+  
+  return input;
+}
+
+function addFiles() {
+  var input = '';
+  var paths = SW.selected_file_paths;          // an array
+  var nids = SW.selected_file_nids;            // an array
+  
+  for(var i = 0; i < paths.length; i++) {
+    input += '<input type="hidden" name="fileName" value="'+paths[i]+'" />';
+  }
+  
+  // Group nids are aggregated into the general nids collection.
+  for(var i = 0; i < nids.length; i++) {
+    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+  }
+  
+  return input;
+}
+
 function addCreator() {
 	  
   var input = '';
@@ -156,62 +143,6 @@ function addCreator() {
   return input;
 }
 
-function addJobs(selected_job_items) {
-  var input = '';
-	  
-  if(!sample) {
-    var jobKey = 'job';
-	for(var i = 0; i < selected_job_items.length; i++) {
-      input += '<input type="hidden" name="'+ jobKey +'" value="'+ selected_job_items[i] +'" />';
-    }
-  } 
-  else {
-    var jobKey = 'job';
-    // Array with one dummy value, a hack to avoid single element arrays that blow up the backend.
-    var jobValue1 = 'job1';
-    input += '<input type="hidden" name="'+ jobKey +'" value="'+ jobValue1 +'" />';
-    for(var i = 0; i < selected_job_items.length; i++) {
-      input += '<input type="hidden" name="'+ jobKey +'" value="'+ selected_job_items[i] +'" />';
-    }
-  }
-	  
-  return input;
-}
-
-function addApps(selected_app_items) {
-  var input = '';
-		  
-  if(!sample) {
-	for(var i = 0; i < selected_app_items.length; i++) {
-      input += '<input type="hidden" name="app" value="'+ selected_app_items[i] +'" />';
-    }
-  } 
-  else {
-    // Array with one dummy value, a hack to avoid single element arrays that blow up the backend.
-    var appValue1 = 'app1';
-    input += '<input type="hidden" name="app" value="'+ appValue1 +'" />';
-    for(var i = 0; i < selected_app_items.length; i++) {
-      input += '<input type="hidden" name="app" value="'+ selected_app_items[i] +'" />';
-    }
-  }
-		  
-  return input;
-}
-  
-function addResources() {
-  var input = '';
-	
-  input += '<input type="hidden" name="'+ 'resource' +'" value="'+ SW.selected_file_paths +'" />';
-
-  //input += '<input type="hidden" name="'+ 'fileNids' +'" value="'+ SW.selected_file_nids +'" />';
-
-  input += '<input type="hidden" name="'+ 'nids' +'" value="'+ SW.selected_file_nids +'" />';
-  
-
-	
-  return input;
-}
-
 function addTags() {
 	
 	var input = '';
@@ -233,18 +164,20 @@ function createDOI() {
   input += addCreator();
 	  
   /* Put the indicated file names in the hidden input fields. */
-  //input += addPeople();
+  input += addPeople();
   input += addGroups();
-  input += addResources();
+  input += addJobs();
+  input += addApps();
+  input += addFiles();
 	  
   input += addTags();
 
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
-  alert('input: ' + input);
+  //alert('input: ' + input);
   
   /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();
   	
-}                   	  
+}

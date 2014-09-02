@@ -28,54 +28,32 @@ var groupinfoHelper = function(request, response) {
       responseData += chunk;	
     });
     res.on('end', function() {
-    	try {
-		    //var jsonObj = JSON.parse(responseData);
-	
-    		console.log('groups.js responseData: ' + responseData);
-		    var groupObjsArr = [];
-			groupObjsArr = JSON.parse(responseData);
-
-			//console.log('length: ' + groupObjsArr.length);
+      try {
+	    console.log('groups.js responseData: ' + responseData);
+		var groupObjsArr = [];
+	    groupObjsArr = JSON.parse(responseData);
 			
-			var respArr = [];
-			for(var i = 0; i < groupObjsArr.length; i++) {
+        var respArr = [];
+        for(var i = 0; i < groupObjsArr.length; i++) {
+          for(var key in groupObjsArr[i])
+            var tooltip = 'Group ID: '+ groupObjsArr[i]['gid'] + '\nGroup Name: ' + groupObjsArr[i]['gname'];
 				
-			  for(var key in groupObjsArr[i])
-				//console.log(key + ': ' + groupObjsArr[i][key]);
-
-				var tooltip = 'Group ID: '+ groupObjsArr[i]['gid'] + 
-	              			  '\nGroup Name: ' + groupObjsArr[i]['gname'];
-				
-			    var child = {};
-			    child['title'] = groupObjsArr[i]['gname'];
-			    child['name'] = groupObjsArr[i]['gname'];
-			    child['nid'] = groupObjsArr[i]['nid'];
-			    child['isFolder'] = true;
-			    child['type'] = 1;
-			    child['isLazy'] = true;
-				child['tooltip'] = tooltip;
-			    child['id'] = groupObjsArr[i]['gid'];
+          var child = {};
+          child['title'] = groupObjsArr[i]['gname'];
+          child['name'] = groupObjsArr[i]['gname'];
+		  child['isFolder'] = true;
+		  child['type'] = 1;
+		  child['isLazy'] = true;
+		  child['tooltip'] = tooltip;
+		  child['gid'] = groupObjsArr[i]['gid'];
+		  child['nid'] = groupObjsArr[i]['nid'];
 			     
-			    respArr.push(child);
+		  respArr.push(child);
 			      
-			}
-			
-			
-		    //var filteredGroupsObj = {'groups' : []};
-		    var filteredGroupsObj = {};
-		    
-			// Modularize the search refinement.
-		    /*
-		    if(searchArg != undefined && searchArg != '') {
-			  filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj);
-		    }
-		    else {
-		      console.log('Jobs jsonObj: ' + jsobObj);
-	          response.send(jsonObj);
-		    }
-		    */
-		    
-			response.send(respArr);
+		}
+
+        var filteredGroupsObj = {};
+        response.send(respArr);
 	      
       } 
       catch (e) {
@@ -133,8 +111,6 @@ module.exports.groupinfoHelperFirewall = groupinfoHelperFirewall;
 var groupsHelper = function(request, response) {
 
   var path = '/sws/users?gid=' + request.params.gid;
-
-  //console.log('group path --> ' + path);
   
   var options = {
     host: proxy.serviceHost,
@@ -155,8 +131,6 @@ var groupsHelper = function(request, response) {
       jsonObj.members = JSON.parse(responseData);
       var uidArr = new Array();
       var unameArr = new Array();
-
-      //console.log('users: ' + responseData);
       
       /* Get all the users associated with this group. */
       for(var key in jsonObj) {
@@ -168,33 +142,22 @@ var groupsHelper = function(request, response) {
         }
       }
       
-      var groupmemberObjsArr = [];
-	  groupmemberObjsArr = JSON.parse(responseData);
+      var groupMemberObjsArr = [];
+	  groupMemberObjsArr = JSON.parse(responseData);
 
 	  var respArr = [];
-		for(var i = 0; i < groupmemberObjsArr.length; i++) {
-			
-			// fill in the tooltip
-			/*var tooltip = 'Job ID: '+ jobJidArr[i] + 
-            '\nJob Name: ' + jobNameArr[i] + 
-            '\nStart Time: ' + formatTimestamp(jobStartArr[i]) + 
-            '\nEnd Time: ' + formatTimestamp(jobStopArr[i]) + 
-            '\nHost Name: ' + jobHostArr[i] + 
-            '\nWall Time: ' + jobWallArr[i];*/
-			
-		    var child = {};
-		    child['title'] = groupmemberObjsArr[i]['uname'];
-		    child['isFolder'] = false;
-		    child['type'] = 0;
-		    child['isLazy'] = false;
-			child['tooltip'] = 'tooltip';
-		    child['id'] = groupmemberObjsArr[i]['uid'];
+		for(var i = 0; i < groupMemberObjsArr.length; i++) {
+		  var child = {};
+		  child['title'] = groupMemberObjsArr[i]['uname'];
+		  child['isFolder'] = false;
+		  child['type'] = 0;
+		  child['isLazy'] = false;
+	      child['tooltip'] = 'tooltip';
+		  child['uid'] = groupMemberObjsArr[i]['uid'];
+		  child['nid'] = groupMemberObjsArr[i]['nid'];
 		     
-		    respArr.push(child);
-		      
+		  respArr.push(child);    
 		}
-		
-      
 
       response.send(respArr);
     });

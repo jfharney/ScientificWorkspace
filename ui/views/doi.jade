@@ -25,56 +25,40 @@ head
 html
   body
     // (style="display:none")
-    div#uname #{uname}
-    div#creator_nid Creator NID: #{creator_nid}
-    div#creator_number Creator UID: #{creator_number}
-    div#creator_uname Creator Username: #{creator_uname}
-    div#creator_name Creator Name: #{creator_name}
-    div#creator_email Creator Email: #{creator_email}
-    div#spec_resources Resources: #{resource}
+    div#creator_nid(style="display:none") Creator NID: #{creator_nid}
+    div#creator_number(style="display:none") Creator UID: #{creator_number}
+    div#creator_uname(style="display:none") Creator Username: #{creator_uname}
+    div#creator_name(style="display:none") Creator Name: #{creator_name}
+    div#creator_email(style="display:none") Creator Email: #{creator_email}
     
-    div Resource Length: #{resource.length} 
-    
-    - if (typeof(resource) !== 'undefined') {
-      - each r in resource
-        div Resource: #{r} 
+    - if (typeof(personName) !== 'undefined') { 
+      - each p in personName
+          div Person: #{p}
     - }
     
-
-    //- if (typeof(fileNids) !== 'undefined') {
-      - each f in fileNids
-        div File Nids: #{f} 
-
-    - if (typeof(nids) !== 'undefined') {
-      - each n in nids
-        div Nid: #{n} 
-    - }
-    
-    //- if (typeof(group_nids) !== 'undefined') {
-      - each g in group_nids
-        div Group Nid: #{g} 
-    //- }
-    
-    //- if (typeof(tag_nids) !== 'undefined') {
-      - each t in tag_nids
-        div Tag Nid: #{t} 
-    //- }
-    
-    - if (typeof(job) !== 'undefined'){ 
-      - each j in job
-        if j != 'job1'
-          div(style="display:none") Job: #{j}   
-    - }  
-    
-    - if (typeof(group) !== 'undefined'){ 
+    - if (typeof(groupName) !== 'undefined') { 
       - each g in groupName
-        if g != 'group1'
-          div(style="display:none") Group: #{g}
+          div Group: #{g}
     - }
-    - if (typeof(user) !== 'undefined'){ 
-      - each u in personName
-        if u != 'user1'
-          div(style="display:none") User: #{u} 
+    
+    - if (typeof(jobName) !== 'undefined') { 
+      - each j in jobName
+          div Job: #{j}
+    - }
+
+    - if (typeof(appId) !== 'undefined') { 
+      - each a in appId
+          div App: #{a}
+    - }
+
+    - if (typeof(fileName) !== 'undefined') {
+      - each f in fileName
+        div File: #{f} 
+    - }
+
+    - if (typeof(nid) !== 'undefined') {
+      - each n in nid
+        div Nid: #{n} 
     - }
           
     div.navbar
@@ -213,7 +197,7 @@ html
                   div.row-fluid
                     div.span4 Files
                     div.span6 
-                      input#text(name="input_files",value="#{resource}")
+                      input#text(name="input_files",value="#{fileName}")
                       input#text(name="input_nids",type="hidden",value="#{nids}")
                       
                   br
@@ -260,13 +244,13 @@ html
                   div.row-fluid
                     div.span4 Jobs and Applications
                     div.span6 
-                      textarea #{job} 
-                        | #{app}
+                      textarea #{jobName} 
+                        | #{appId}
                   div.row-fluid
                     div.span4 People and Groups
                     div.span6 
-                      textarea #{group} 
-                        | #{user}
+                      textarea #{personName} 
+                        | #{groupName}
                   
                   hr
                   

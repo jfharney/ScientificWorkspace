@@ -4,23 +4,13 @@ function getCollaboratorInfo(userNumber, searchArg) {
   
   var url = 'http://'+SW.hostname+':'+SW.port+'/groupinfo/'+userNumber+'?search='+searchArg;
   
-  console.log('get Collaborator Info: ' + url);
-  
   // Grab the group info for the user with uid (number).
   $.ajax({
 	  
     url: url,
     type: 'GET',
     success: function(data) {
-      groupsArr = data;
-      console.log('Here is groupsArr:');
-
-      for(var key in data[0]) {
-			console.log('groupinfo key: ' + key + ' value: ' + data[0][key]);
-		}
-      
-      var children = data;
-      buildCollaboratorTree(children);
+      buildCollaboratorTree(data);
     },
     error: function() {
       console.log('error in getting group info');
@@ -31,14 +21,12 @@ function getCollaboratorInfo(userNumber, searchArg) {
 
 function getGroupInfo(uid) {
 	
-	alert('in get group info for uid: ' + uid);
-	
 	var url = 'http://' + SW.hostname + ':' + SW.port + '/groupinfo/'+uid;
 	var queryString = '';
 	
-	var groupsArr = '';
+	var groupsArr = [];
 	
-	//create the initial children
+	// Create the initial children.
 	$.ajax({
 		url: url,
 		global: false,
@@ -46,25 +34,14 @@ function getGroupInfo(uid) {
 		async: false,
 		data: queryString,
 		success: function(data) {
-			//console.log('success');
-			//alert('data: ' + data);
-			for(var key in data) {
-				console.log('groupinfo key: ' + key + ' value: ' + data[key]);
-			}
-			
-			groupsArr = data['groups'];
-			
-			
+		  groupsArr = data['groups'];
 		},
 		error: function() {
 			console.log('error in getting group info');
 		}
 	});
 	
-	//console.log('in getgroupinfo for groups arr: ' + groupsArr);
-	
 	return groupsArr;
-	
 }
 
 
@@ -80,76 +57,47 @@ function buildCollaboratorTree(children) {
 	autoFocus: false, 
 	children: children,
 	checkbox: true,
-	selectMode: 3,
+	selectMode: 3,         // "1:single, 2:multi, 3:multi-hier"
 	onSelect: function(select, node) {
 		
-		if(node.data.type == 0) {
-          //console.log(node.tree.getSelectedNodes());
-          var selNodes = node.tree.getSelectedNodes();
+	  var selNodes = node.tree.getSelectedNodes();
+	  if(node.data.type == 0) {       // Users
+          
+        SW.selected_people_names = $.map(selNodes, function(node) {
+          if(node.data.type == 0)
+            return node.data.title;
+        });
             
-          SW.selected_people_nids = $.map(selNodes, function(node) {
+        SW.selected_people_nids = $.map(selNodes, function(node) {
+          if(node.data.type == 0)
             return node.data.nid;
-          });  
-            
-          SW.selected_people_names = $.map(selNodes, function(node) {
-            if(node.data.type == 0)
-              return node.data.title;
-          });       
+        });
 
-          //console.log('SW.selected_people_nids: '+SW.selected_people_nids);
-          //console.log('SW.selected_people_names: '+SW.selected_people_names);
-		}
-		else {
-	      //console.log(node.tree.getSelectedNodes());
-	      var selNodes = node.tree.getSelectedNodes();
-	        
-	      SW.selected_group_nids = $.map(selNodes, function(node) {
+        //console.log('SW.selected_people_names: '+SW.selected_people_names);
+        //console.log('SW.selected_people_nids: '+SW.selected_people_nids);
+	  }
+	  else if(node.data.type == 1) {       // Groups
+	    SW.selected_group_names = $.map(selNodes, function(node) {
+	      if(node.data.type == 1)
+	        return node.data.title;
+	    });
+	    
+	    SW.selected_group_nids = $.map(selNodes, function(node) {
+	      if(node.data.type == 1)
 	        return node.data.nid;
-	      });  
-	        
-	      SW.selected_group_names = $.map(selNodes, function(node) {
-	        console.log('node.data.type is '+node.data.type);
-	        if(node.data.type == 1)
-	          return node.data.title;
-	      });       
+	    });
 
-
-			SW.selected_group_titles = [];
-			SW.selected_group_nids = [];
-			var selNodes = node.tree.getSelectedNodes();
-			  
-			var selTitles = $.map(selNodes, function(node) {
-				  return node.data.title;
-			});
-			
-			var selNids = $.map(selNodes, function(node) {
-				return node.data.nid;
-			});
-			  
-			
-			console.log('<><><>><>In groupinfo.js select nids<><><><><>');
-			var nid_arr = new Array();
-			for(var i=0;i<selNids.length;i++) {
-			  console.log('i: ' + i + ' ' + selNids[i] + ' ');
-			  nid_arr.push(selNids[i]);
-			}
-			
-			SW.selected_group_nids = selNids;
-			
-			
-			
-			SW.selected_group_titles.push(selTitles.join(", "));
-			console.log('selected_group_titles: ' + SW.selected_group_titles);
-			
-		}
+        //console.log('SW.selected_group_names: '+SW.selected_group_names);
+        //console.log('SW.selected_group_nids: '+SW.selected_group_nids);	
+	  }
 	},
 	onActivate: function(node) {
       var user_info_obj = '';
     },
     onLazyRead: function(node) {
-	  console.log('collaborators lazy read --> title: ' + node.data.title + ' id: ' + node.data.id);
+	  console.log('collaborators lazy read --> title: ' + node.data.title + ' gid: ' + node.data.gid);
       node.appendAjax({
-		url: 'http://' + SW.hostname + ':' + SW.port + '/groups/' + node.data.id,
+		url: 'http://' + SW.hostname + ':' + SW.port + '/groups/' + node.data.gid,
 		// We don't want the next line in production code:
 		debugLazyDelay: 50
       });

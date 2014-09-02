@@ -39,31 +39,21 @@ function buildFileTree(treeData) {
 	onSelect: function(select, node) {
 	  console.log(node.tree.getSelectedNodes());
 	  var selNodes = node.tree.getSelectedNodes();
-	    
-	  SW.selected_file_nids = $.map(selNodes, function(node) {
-	    return node.data.nid;
-	  });  
-	    
+
       SW.selected_file_paths = $.map(selNodes, function(node) {
         var str = node.data.title;
         str = str.replace(/\|/g, '/');
         return str;
-      }); 	    
-	    
-	    
-	  console.log('SW.selected_file_nids: '+SW.selected_file_nids);
-	    
-	    
+      });
+      
+      SW.selected_file_nids = $.map(selNodes, function(node) {
+        return node.data.nid;
+      });
+      
+      console.log('SW.selected_file_paths: '+SW.selected_file_paths);
+      console.log('SW.selected_file_nids: '+SW.selected_file_nids);
     },
-    onClick: function(node, event) {
-			/*
-	        // We should not toggle, if target was "checkbox", because this
-	        // would result in double-toggle (i.e. no toggle)
-	    	 // console.log('clicked...');
-	        if( node.getEventTargetType(event) == "title" )
-	          node.toggleSelect();
-	        */
-    },
+    onClick: function(node, event) {},
 	onKeydown: function(node, event) {
 	  if( event.which == 32 ) {
 	    node.toggleSelect();
@@ -71,8 +61,6 @@ function buildFileTree(treeData) {
 	  }
     },
 	onLazyRead: function(node) {
-      //console.log('on lazy read');
-      //console.log('title ' + node.data.title);
 			
       var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+SW.current_user_number;
       url = url + '?path=' + node.data.path;
