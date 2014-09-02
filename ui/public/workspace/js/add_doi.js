@@ -35,7 +35,7 @@ function addPeople() {
   
   // People nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
   
   return input;
@@ -52,7 +52,7 @@ function addGroups() {
   
   // Group nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
   
   return input;
@@ -69,7 +69,7 @@ function addJobs() {
   
   // Job nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
   
   return input;
@@ -86,7 +86,7 @@ function addApps() {
   
   // App nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
   
   return input;
@@ -103,7 +103,7 @@ function addFiles() {
   
   // Group nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
-    input += '<input type="hidden" name="nid" value="'+nids[i]+'" />';
+    input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
   
   return input;
@@ -174,7 +174,7 @@ function createDOI() {
 
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
-  //alert('input: ' + input);
+  alert('input: ' + input);
   
   /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
