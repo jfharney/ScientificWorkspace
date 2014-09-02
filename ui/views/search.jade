@@ -20,7 +20,7 @@ head
   link(href="/search/css/uploadify.css", rel="stylesheet",type="text/css")
   link(href="/search/css/dynatree/ui.dynatree.css", rel="stylesheet",type="text/css")
   link(href="/search/css/modal.css" rel="stylesheet")
-  script(src="/search/js/core.js")
+  script(src="/search/js/core2.js")
     
     
 html
@@ -36,11 +36,11 @@ html
           div.top-nav.nav-collapse
             ul.nav
               li 
-                a(href="../settings/#{uid}") #{uid}
+                a(href="../settings/#{uname}") #{uname}
               li
-                a(href="../workspace/#{uid}") Workspace
+                a(href="../workspace/#{uname}") Workspace
               li
-                a(href="../doi/#{uid}") DOI
+                a(href="../doi/#{uname}") DOI
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
@@ -51,7 +51,7 @@ html
             ul.nav
               a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
                 i.icon-user
-                span.hidden-phone #{uid}
+                span.hidden-phone #{uname}
                 span.caret
               ul.dropdown-menu
                 li
@@ -77,10 +77,18 @@ html
             ul.breadcrumb
               li
                 a(href="#")
-                  span#user_id_label #{uid}
+                  span#user_id_label #{uname}
                 span.divider /
               li
                 a(href="#") DOI
+      div.row-fluid
+        div.span12#user_info_space
+          // This seems like as good a place as any to store the remainder of the user data in the document object.
+          p#curUserNid(style='display:none') #{nid}
+          p#curUserEmail(style='display:none') #{email}
+          p#curUserName(style='display:none') #{name}
+          p#curUserNumber(style='display:none') #{uid}
+          p#curUserUname(style='display:none') #{uname}
       div.row-fluid
         div.span12#user_info_space
      
@@ -138,9 +146,13 @@ html
                         form
                           fieldset
                             div.control-group
-                              label.control-label Search:
+                              label.control-label Text:
                               div.controls
                                 input.input-xlarge.focused#search_text(type="text",value="")
+                            div.control-group
+                              label.control-label Keywords:
+                              div.controls
+                                input.input-xlarge.focused#keywords_text(type="text",value="")
                             //div.control-group
                               label.control-label From
                               div.controls
@@ -149,26 +161,29 @@ html
                               label.control-label To
                               div.controls
                                 input.input-xlarge.datepicker#date02(type="text",value="")
+                      // (0=user,1=group,2=job,3=app,4=file,5=dir,6=tag)
                       div.span6
                         div.row-fluid
                           div.span12  
                             div.control-group
                               label.control-label Resource Type(s):
-                              div.controls
-                                labels.checkbox.inline Users
-                                  input#Users(type="checkbox",value="Users",checked) 
-                                labels.checkbox.inline Groups
-                                  input#Groups(type="checkbox",value="Groups",checked) 
-                                labels.checkbox.inline Files
-                                  input#Files(type="checkbox",value="Files",checked) 
-                                labels.checkbox.inline Directories
-                                  input#Directories(type="checkbox",value="Directories",checked) 
-                                labels.checkbox.inline Jobs
-                                  input#Jobs(type="checkbox",value="Jobs",checked) 
-                                labels.checkbox.inline Apps
-                                  input#Apps(type="checkbox",value="Apps",checked) 
-                                labels.checkbox.inline Tags
-                                  input#Tags(type="checkbox",value="Tags",checked) 
+                              div.controls  
+                                labels.checkbox.inline user
+                                  input.type_checkbox#user(type="checkbox",value="user",checked) 
+                                labels.checkbox.inline group
+                                  input.type_checkbox#group(type="checkbox",value="group",checked) 
+                                labels.checkbox.inline job
+                                  input.type_checkbox#job(type="checkbox",value="job",checked) 
+                                labels.checkbox.inline app
+                                  input.type_checkbox#app(type="checkbox",value="app",checked) 
+                                labels.checkbox.inline file
+                                  input.type_checkbox#file(type="checkbox",value="file",checked) 
+                                labels.checkbox.inline dir
+                                  input.type_checkbox#dir(type="checkbox",value="dir",checked) 
+                                labels.checkbox.inline tag
+                                  input.type_checkbox#tag(type="checkbox",value="tag",checked) 
+                                labels.checkbox.inline doi
+                                  input.type_checkbox#doi(type="checkbox",value="doi",checked) 
                                    
                                  
                     div.span12

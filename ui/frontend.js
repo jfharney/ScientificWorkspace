@@ -42,6 +42,22 @@ if(proxy.firewallMode)
 app.post('/search/:user_id', function(request,response) {
 	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
 	
+	console.log('A GET for /workspace/'+request.params.user_id+' has been issued.');
+	  
+	  
+	if(proxy.firewallMode) {
+	  
+		var userObj = data.userObj;
+		response.render("workspace", userObj);
+    
+	} 
+	else {
+		// userHelper is defined in the file proxy/users.js.   
+		var res = users.userSearchHelper(request, response);  
+	
+	}  
+	
+	/*
 	var model = {};
 	model['uid'] = request.params.user_id;
 	
@@ -50,10 +66,9 @@ app.post('/search/:user_id', function(request,response) {
 	}
 	
 	response.render("search", model);
+	*/
 });
 
-
-/*************************************************************/
 
 app.get("/search_results/:user_id", function(request, response) {
 	  console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
