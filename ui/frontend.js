@@ -157,12 +157,12 @@ app.post('/doi_submit',function(request,response) {
     var data = request['body'];
 
     for(var key in data) {
-    	console.log('key: ' + key + ' ' + data[key]);
+    	console.log('key: ' + key + ', value: ' + data[key]);
     }
     console.log('\n');
     
     // Translate from internal JSON format to external DOI-Service submission XML schema
-    var payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><records><record>";
+    //var payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><records><record>";
 
     /*
     var file_nids = data.file_nids;
@@ -181,7 +181,7 @@ app.post('/doi_submit',function(request,response) {
     //unify with tag nids
     */
     
-    var nids = data.nids;
+    /*var nids = data.nids;
     console.log('nids: ' + nids);
     
     
@@ -209,18 +209,20 @@ app.post('/doi_submit',function(request,response) {
     payload += "<sponsor_org>" + data.sponsor_org + "</sponsor_org>";
     payload += "</record></records>";
 
-    console.log( payload );
+    console.log( payload );*/
+    
+    // The following line is wrong, but we are keeping it now to prevent the POST of the form. 
     nids += ','+SW.selected_people_nids+SW.selected_group_nids;
+    
     var options = {
-        //host: "doi1.ccs.ornl.gov",
-        host: proxy.serviceHost,
-        port: proxy.servicePort,
-        path: "/sws/doi/new/",
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': payload.length
-        }
+      host: proxy.serviceHost,
+      port: proxy.servicePort,
+      path: "/sws/doi/new/",
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length
+      }
     };
 
     var responseData = '';
@@ -248,7 +250,7 @@ app.post('/doi_submit',function(request,response) {
         });
     });
 
-    req.write( payload );
+    req.write( data );      // Changed from "payload". -Mark, 9-02
     req.end();
 });
 
@@ -514,12 +516,12 @@ app.get('/tags/:tag_name', function(request, response)
 	
 });
 
-app.post('/associationproxy/:user_id', function(request, response) 
+/*app.post('/associationproxy/:user_id', function(request, response)        // Commented out by Mark on 9-02-14. 
 {
 	
 	var res = tags.associationsproxyHelper(request, response);
 	
-});
+});*/
 
 app.get('/tags/links/:tag_nid', function(request, response) {
   
