@@ -32,6 +32,7 @@ var tags = require('./proxy/tags.js');
 
 
 var data = require('./data/firewall_sources.js');
+var sample_search_results = require('./data/sample_search_results.js');
 
 if(proxy.firewallMode)
   console.log('firewall: ' + proxy.firewallMode);
@@ -39,16 +40,15 @@ if(proxy.firewallMode)
 
 /*************************************************************/
 
-app.post('/search/:user_id', function(request,response) {
-	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
+app.get('/search/:user_id', function(request,response) {
+	console.log('\n\n---------in get search for ' + request.params.user_id + '----------');
 	
-	console.log('A GET for /workspace/'+request.params.user_id+' has been issued.');
-	  
-	  
+	console.log('A GET for /searc/'+request.params.user_id+' has been issued.');
+	
 	if(proxy.firewallMode) {
-	  
+		  
 		var userObj = data.userObj;
-		response.render("workspace", userObj);
+		response.render("search", userObj);
     
 	} 
 	else {
@@ -57,24 +57,72 @@ app.post('/search/:user_id', function(request,response) {
 	
 	}  
 	
-	/*
-	var model = {};
-	model['uid'] = request.params.user_id;
 	
-	for(var key in model) {
-		console.log('key: ' + key + ' model: ' + model[key]);
-	}
-	
-	response.render("search", model);
-	*/
 });
 
+app.post('/search/:user_id', function(request,response) {
+	console.log('\n\n---------in post search for ' + request.params.user_id + '----------');
+	
+	console.log('A POST for /searc/'+request.params.user_id+' has been issued.');
+	  
+	  
+	if(proxy.firewallMode) {
+	  
+		var userObj = data.userObj;
+		response.render("search", userObj);
+    
+	} 
+	else {
+		// userHelper is defined in the file proxy/users.js.   
+		var res = users.userSearchHelper(request, response);  
+	
+	}  
+	
+});
+
+//from 
+app.get("/search_results_doi_metadata/:user_id", function(request, response) {
+	console.log('\n\n---------in search_results_doi for ' + request.params.user_id + '----------');
+	
+	for(var key in request_obj) {
+		console.log('key: ' + key);
+	}
+	
+	
+	//return an array of doi objects
+	//doi
+	// - metadata
+	// - links
+	/*
+	var appsObjArr = data.appsObjArr;
+	  
+	var respArr = [];
+	for(var i=0;i<appsObjArr.length;i++) {
+	  var respObj = {};
+
+	  respObj['title'] = appsObjArr[i]['aid'];
+	  respObj['type'] = appsObjArr[i]['type'];
+	  respObj['jobid'] = appsObjArr[i]['job'];
+	  respObj['uuid'] = appsObjArr[i]['nid'];
+	  respObj['appid'] = appsObjArr[i]['aid'];
+	  respArr.push(respObj);
+	}
+	  
+	response.send(respArr);
+	*/
+	
+	
+	
+	response.send('returning doi results');
+});
 
 app.get("/search_results/:user_id", function(request, response) {
 	  console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
 	  //curl -X GET 'http://techint-b117:8080/sws/search?uid=5112&query=v.name:tag*'
 	  var request_obj = request['query'];
 	  
+	  //alert("'http://localhost:8080/sws/search?uid=7827&query=v.name=OLCF+AND+v.type=8+AND+v.keywd:peru+AND+v.desc:new+AND+v.ctime:[0+TO+9999999999]'");
+		
 	  
 	  for(var key in request_obj) {
 		  console.log('key: ' + key);
@@ -87,9 +135,30 @@ app.get("/search_results/:user_id", function(request, response) {
 		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:tag*';
 			
 	  } else {
-		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text + '*';
+		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text;// + '*';
 	  }
 	  
+	  console.log('path--->' + 'http://' + proxy.serviceHost + ':' + proxy.servicePort + path);
+	  
+	  
+	  console.log('sample search results array');
+	  //sample ... return one of each type
+	  var sample_search_results_obj_arr = sample_search_results.search_results_obj_arr;
+	  
+
+	  response.send(sample_search_results_obj_arr);
+	  /*
+	  for(var i=0;i<sample_search_results_obj_arr.length;i++) {
+		  var result = sample_search_results_obj_arr[i];
+		  console.log('result: ' + i);
+		  for(var key in result) {
+			  console.log('\tkey: ' + key + ' result: ' + result[key]);
+		  }
+	  }
+	  */
+	  
+	  
+	  /*
 		//query the userlist service here
 		var options = {
 				host: proxy.serviceHost,
@@ -124,14 +193,47 @@ app.get("/search_results/:user_id", function(request, response) {
 		 });
 		 
 		 req.end();
+	  */
 	  
 	  
-	  
-	  //response.render("settings", { uid : request.params.user_id });
 });
 
 
+function filterResultsByType(response_arr, type) {
+	
+}
 
+function filterResultsByBitmap(response_arr, bitmap) {
+	
+	
+	/*
+	for(var i=0;i<response_arr.length;i++) {
+		var result = response_arr[i];
+		
+		var type = result['type'];
+		
+		console.log('type: ' + type + ' bitmap: ' + bitmap[type]);
+		if(bitmap[type]==1) {
+			var $record = $('<div class="row-fluid"></div>');
+			
+			var $subheader = $('<div class="span10" style="margin-left: 10px">');
+			var $type = $('<div>Type: ' + SW.type_str[type] + '</div>');
+			$subheader.append($type);
+			
+			$record.append($subheader);
+			
+			var $separator = $('<hr>');
+			
+			console.log($record.html());
+			
+			$('#results').append($record);
+			$('#results').append($separator);
+		}
+		
+	}
+	*/
+	
+}
 
 
 

@@ -52,7 +52,7 @@ SW.typeMap = ['user','group','job','app','file','directory','other'];
 
 SW.selected_types = [];
 SW.type_str = ['user','group','job','app','file','dir','tag','doi'];
-SW.type_bitmap = [0,0,0,0,0,0,0,0];
+SW.type_bitmap = [1,1,1,1,1,1,1,1];
 
 SW.getTypeIndex = function(type) {
 	var index = -1;
