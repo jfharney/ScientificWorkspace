@@ -25,34 +25,34 @@ head
 html
   body
     // (style="display:none")
-    div#creator_nid(style="display:none") Creator NID: #{creator_nid}
-    div#creator_number(style="display:none") Creator UID: #{creator_number}
-    div#creator_uname(style="display:none") Creator Username: #{creator_uname}
-    div#creator_name(style="display:none") Creator Name: #{creator_name}
-    div#creator_email(style="display:none") Creator Email: #{creator_email}
+    div#creator_nid Creator NID: #{creator_nid}
+    div#creator_number Creator UID: #{creator_number}
+    div#creator_uname Creator Username: #{creator_uname}
+    div#creator_name Creator Name: #{creator_name}
+    div#creator_email Creator Email: #{creator_email}
     
-    - if (typeof(personName) !== 'undefined') { 
-      - each p in personName
+    - if (typeof(personNames) !== 'undefined') { 
+      - each p in personNames
           div Person: #{p}
     - }
     
-    - if (typeof(groupName) !== 'undefined') { 
-      - each g in groupName
+    - if (typeof(groupNames) !== 'undefined') { 
+      - each g in groupNames
           div Group: #{g}
     - }
     
-    - if (typeof(jobName) !== 'undefined') { 
-      - each j in jobName
+    - if (typeof(jobNames) !== 'undefined') { 
+      - each j in jobNames
           div Job: #{j}
     - }
 
-    - if (typeof(appId) !== 'undefined') { 
-      - each a in appId
+    - if (typeof(appIds) !== 'undefined') { 
+      - each a in appIds
           div App: #{a}
     - }
 
-    - if (typeof(fileName) !== 'undefined') {
-      - each f in fileName
+    - if (typeof(fileNames) !== 'undefined') {
+      - each f in fileNames
         div File: #{f} 
     - }
 
@@ -197,7 +197,7 @@ html
                   div.row-fluid
                     div.span4 Files
                     div.span6 
-                      input#text(name="input_files",value="#{fileName}")
+                      input#text(name="input_files",value="#{fileNames}")
                       input#text(name="input_nids",type="hidden",value="#{nids}")
                       
                   br
@@ -210,7 +210,7 @@ html
                   div.row-fluid
                     div.span4 Keywords (comma-separated list)
                     div.span6
-                      //input(name="groupName", type="hidden", value=#{groupName}) 
+                      //input(name="groupName", type="hidden", value=#{groupNames}) 
                       input#text(name="input_keywords",value="")
                       
                   br
@@ -244,13 +244,13 @@ html
                   div.row-fluid
                     div.span4 Jobs and Applications
                     div.span6 
-                      textarea #{jobName} 
-                        | #{appId}
+                      textarea #{jobNames} 
+                        | #{appIds}
                   div.row-fluid
                     div.span4 People and Groups
                     div.span6 
-                      textarea #{personName} 
-                        | #{groupName}
+                      textarea #{personNames} 
+                        | #{groupNames}
                   
                   hr
                   

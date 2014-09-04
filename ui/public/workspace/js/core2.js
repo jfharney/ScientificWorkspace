@@ -42,6 +42,14 @@ SW.selected_tag_nids = [];
 
 SW.tagNidsInWorkspace = [];     // Tracks which tags are currently in Tags Workspace. If a tag is already there, it cannot be re-added.
 
+// These globals are set by the single in focus tag in the Tags Workspace. They are used when the Obtain DOI button on the right is used.
+SW.single_tag_people = [];
+SW.single_tag_groups = [];
+SW.single_tag_jobs = [];
+SW.single_tag_apps = [];
+SW.single_tag_files = [];
+SW.single_tag_nids = [];
+
 SW.typeMap = ['user','group','job','app','file','directory','other'];
 
 

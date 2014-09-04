@@ -30,7 +30,7 @@ function addPeople() {
   var nids = SW.selected_people_nids;            // an array
   
   for(var i = 0; i < names.length; i++) {
-    input += '<input type="hidden" name="personName" value="'+names[i]+'" />';
+    input += '<input type="hidden" name="personNames" value="'+names[i]+'" />';
   }
   
   // People nids are aggregated into the general nids collection.
@@ -47,7 +47,7 @@ function addGroups() {
   var nids = SW.selected_group_nids;            // an array
   
   for(var i = 0; i < names.length; i++) {
-    input += '<input type="hidden" name="groupName" value="'+names[i]+'" />';
+    input += '<input type="hidden" name="groupNames" value="'+names[i]+'" />';
   }
   
   // Group nids are aggregated into the general nids collection.
@@ -64,7 +64,7 @@ function addJobs() {
   var nids = SW.selected_job_nids;            // an array
   
   for(var i = 0; i < names.length; i++) {
-    input += '<input type="hidden" name="jobName" value="'+names[i]+'" />';
+    input += '<input type="hidden" name="jobNames" value="'+names[i]+'" />';
   }
   
   // Job nids are aggregated into the general nids collection.
@@ -81,7 +81,7 @@ function addApps() {
   var nids = SW.selected_app_nids;            // an array
   
   for(var i = 0; i < ids.length; i++) {
-    input += '<input type="hidden" name="appId" value="'+ids[i]+'" />';
+    input += '<input type="hidden" name="appIds" value="'+ids[i]+'" />';
   }
   
   // App nids are aggregated into the general nids collection.
@@ -98,7 +98,7 @@ function addFiles() {
   var nids = SW.selected_file_nids;            // an array
   
   for(var i = 0; i < paths.length; i++) {
-    input += '<input type="hidden" name="fileName" value="'+paths[i]+'" />';
+    input += '<input type="hidden" name="fileNames" value="'+paths[i]+'" />';
   }
   
   // Group nids are aggregated into the general nids collection.
@@ -113,33 +113,18 @@ function addCreator() {
 	  
   var input = '';
 	  
-  if(!sample) {
-    var creator_nid_Key = 'creator_nid';
-	var creator_email_Key = 'creator_email';
-	var creator_name_Key = 'creator_name';
-	var creator_number_Key = 'creator_number';
-	var creator_uname_Key = 'creator_uname';
+  var creator_nid_Key = 'creator_nid';
+  var creator_email_Key = 'creator_email';
+  var creator_name_Key = 'creator_name';
+  var creator_number_Key = 'creator_number';
+  var creator_uname_Key = 'creator_uname';
 
-	input+='<input type="hidden" name="'+ creator_nid_Key +'" value="'+ SW.current_user_nid +'" />';
-	input+='<input type="hidden" name="'+ creator_email_Key +'" value="'+ SW.current_user_email +'" />';
-	input+='<input type="hidden" name="'+ creator_name_Key +'" value="'+ SW.current_user_name +'" />';
-	input+='<input type="hidden" name="'+ creator_number_Key +'" value="'+ SW.current_user_number +'" />';
-	input+='<input type="hidden" name="'+ creator_uname_Key +'" value="'+ SW.current_user_uname +'" />';
-  } 
-  else {
-    var creator_nid_Key = 'creator_nid';
-    var creator_email_Key = 'creator_email';
-	var creator_name_Key = 'creator_name';
-	var creator_number_Key = 'creator_number';
-	var creator_uname_Key = 'creator_uname';
+  input+='<input type="hidden" name="'+ creator_nid_Key +'" value="'+ SW.current_user_nid +'" />';
+  input+='<input type="hidden" name="'+ creator_email_Key +'" value="'+ SW.current_user_email +'" />';
+  input+='<input type="hidden" name="'+ creator_name_Key +'" value="'+ SW.current_user_name +'" />';
+  input+='<input type="hidden" name="'+ creator_number_Key +'" value="'+ SW.current_user_number +'" />';
+  input+='<input type="hidden" name="'+ creator_uname_Key +'" value="'+ SW.current_user_uname +'" />';
 
-	input+='<input type="hidden" name="'+ creator_nid_Key +'" value="'+ SW.current_user_nid +'" />';
-	input+='<input type="hidden" name="'+ creator_email_Key +'" value="'+ SW.current_user_email +'" />';
-	input+='<input type="hidden" name="'+ creator_name_Key +'" value="'+ SW.current_user_name +'" />';
-	input+='<input type="hidden" name="'+ creator_number_Key +'" value="'+ SW.current_user_number +'" />';
-	input+='<input type="hidden" name="'+ creator_uname_Key +'" value="'+ SW.current_user_uname +'" />';
-  }
-  
   return input;
 }
 
@@ -157,7 +142,7 @@ function addTags() {
 function createDOI() {
 
   var username = SW.current_user_uname;
-  var selected_file_titles = SW.selected_file_titles;  
+  var selected_file_titles = SW.selected_file_titles;
   var input = '';
   
   /* Put the user data in the hidden input fields. */  

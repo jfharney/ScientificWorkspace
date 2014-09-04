@@ -11,9 +11,7 @@ function renderTagCloud() {
   // The outer Ajax call gets the set of tags for the current user.
   $.ajax({
 	type: "GET",
-	
 	url: tags_url_prefix + 'uid=' + uid,
-	
 	success: function(tagsData) {
       var tagsArr = [];
       tagsArr = JSON.parse(tagsData);
@@ -29,8 +27,7 @@ function renderTagCloud() {
         $.ajax({
           type: "GET",
           url: tagLinks_url_prefix + tagNid,
-          success: function(linksData) {
-        	  
+          success: function(linksData) {        	  
             var linksArr = [];
             linksArr = JSON.parse(linksData);
             var linkCount = linksArr.length;
@@ -38,57 +35,79 @@ function renderTagCloud() {
             // Now populate the tag cloud in the lower left display panel.
             if(linkCount > 0) {		// We don't care about displaying tags with no links. The interface should prevent such tags from being created anyway.
       		  var fontSize = 8;
-    		  var $tag = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+
+    		  var $tag = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
+    		    .on('click', function() {
+                  //tag information pane
+    			  $('#tagInfoPane').empty();
+                  //info part
+                  $info_pane = $('<div class="span8" id="info_pane"></div>');
 
-    				     (fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>').on('click', function() {
-                  
-    				    	 
-    			
-    				    	 
-    			//tag information pane
-    			$('#tagInfoPane').empty();
-                
-                
-                
-                
-                
-                //info part
-                $info_pane = $('<div class="span8" id="info_pane"></div>');
+                  $tag_name = $('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+'</div>');
+                  $tag_description = $('<div>Description: '+tagDesc+'</div>');
+                  $tag_link_count = $('<div>Linked Objects: '+linkCount+'</div>');
 
+                  // Function tagsContentList defined below in line 209. 
+                  var $tags_contents_list = tagsContentList(element, linksData);
                 
-                $tag_name = $('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+'</div>');
-                $tag_description = $('<div>Description: '+tagDesc+'</div>');
-                $tag_link_count = $('<div>Linked Objects: '+linkCount+'</div>');
-
-                var $tags_contents_list = tagsContentList(element,linksData);
-                
-                $info_pane.append($tag_name);
-                $info_pane.append($tag_description);
-                $info_pane.append($tag_link_count);
+                  $info_pane.append($tag_name);
+                  $info_pane.append($tag_description);
+                  $info_pane.append($tag_link_count);
                     
-                $info_pane.append($tag_contents_list);
+                  $info_pane.append($tag_contents_list);
 
-                $('#tagInfoPane').append($info_pane);
+                  $('#tagInfoPane').append($info_pane);
 
-                
+                  //button part
+                  $button_pane = $('<div class="span4 buttons" id="button_pane"></div>');
 
-    			//button part
-
-                $button_pane = $('<div class="span4 buttons" id="button_pane"></div>');
-
-                $obtain_doi_button = $('<p><button class="btn btn-default btn-sm">Obtain DOI</button></p>').click(function(){
-                	console.log('obtaining doi');
-                });
-                $delete_tag_button = $('<p><button class="btn btn-default btn-sm">Delete Tag</button></p>').click(function(){
-                	console.log('deleting tag');
-
-                	
-                	//deleteTag(tag_nid,linked_nids,uid);
-                });
-                $update_tag_button = $('<p><button class="btn btn-default btn-sm">Update Tag</button></p>').click(function(){
+                  // RIGHT HAND OBTAIN DOI BUTTON (for a single tag)
+                  $obtain_doi_button = $('<p><button class="btn btn-default btn-sm">Obtain DOI</button></p>')
+                    .click(function() {
+                      if(SW.single_tag_files.length == 0) 
+                        alert('Tag must contain at least one file for a DOI request to be made.');
+                      else {
+                        var input = '';
+                        
+                        var url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + SW.current_user_uname;
+                        
+                        input+='<input type="hidden" name="creator_nid" value="'+ SW.current_user_nid +'" />';
+                        input+='<input type="hidden" name="creator_email" value="'+ SW.current_user_email +'" />';
+                        input+='<input type="hidden" name="creator_name" value="'+ SW.current_user_name +'" />';
+                        input+='<input type="hidden" name="creator_number" value="'+ SW.current_user_number +'" />';
+                        input+='<input type="hidden" name="creator_uname" value="'+ SW.current_user_uname +'" />';
+  
+                        for(var i = 0; i < SW.single_tag_people.length; i++)
+                          input += '<input type="hidden" name="personNames" value="'+SW.single_tag_people[i]+'" />';
+                        
+                        for(var i = 0; i < SW.single_tag_groups.length; i++)
+                          input += '<input type="hidden" name="groupNames" value="'+SW.single_tag_groups[i]+'" />';
+                        
+                        for(var i = 0; i < SW.single_tag_jobs.length; i++)
+                          input += '<input type="hidden" name="jobNames" value="'+SW.single_tag_jobs[i]+'" />';
+                        
+                        for(var i = 0; i < SW.single_tag_apps.length; i++)
+                          input += '<input type="hidden" name="appIds" value="'+SW.single_tag_apps[i]+'" />';
+                        
+                        for(var i = 0; i < SW.single_tag_files.length; i++)
+                          input += '<input type="hidden" name="fileNames" value="'+SW.single_tag_files[i]+'" />';
+                        
+                        for(var i = 0; i < SW.single_tag_nids.length; i++)
+                          input += '<input type="hidden" name="nids" value="'+SW.single_tag_nids[i]+'" />';
+                        
+                        /* Send request. */
+                        jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
+                          .appendTo('body').submit().remove();
+                      }
+                    });
+                  $delete_tag_button = $('<p><button class="btn btn-default btn-sm">Delete Tag</button></p>')
+                    .click(function(){
+                	  console.log('deleting tag');
+                      //deleteTag(tag_nid,linked_nids,uid);
+                    });
+                $update_tag_button = $('<p><button class="btn btn-default btn-sm">Update Tag</button></p>')
+                  .click(function(){
                 	console.log('updating tag');
-                	
-                });
+                  });
                 
                 $button_pane.append($obtain_doi_button);
                 $button_pane.append($delete_tag_button);
@@ -101,41 +120,33 @@ function renderTagCloud() {
                 
              	var linked_nids = new Array();
   			      
-             	
-             	
-                
-            	// We add a representation of the tag selected to the tag workspace.
+             	// We add a representation of the tag selected to the tag workspace.
                 // Check to see if the tag is already in the Tags Workspace when clicked. If it is, don't re-add it. 
                 if($.inArray(tagNid, SW.tagNidsInWorkspace) == -1) {
-                	
-                	console.log('pushing tag nid ' + tagNid);
-                	  
-                    SW.tagNidsInWorkspace.push(tagNid);
+                  SW.tagNidsInWorkspace.push(tagNid);
+                  $tag_li = $('<li id="tagWsLi_' + tagNid + '" style="margin:5px"></li>');
                     
-                    $tag_li = $('<li id="tagWsLi_' + tagNid + '" style="margin:5px"></li>');
-                    
-                    $tag_checkbox = $('<input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px">').change(function(){
-                    	console.log('checkbox changed');
+                  $tag_checkbox = $('<input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px">')
+                    .change(function(){
+                  	  console.log('checkbox changed');
+	
+                   	  //empty the global tag nid array
+                   	  SW.selected_tag_nids = [];
                 		
-                    	//empty the global tag nid array
-                    	SW.selected_tag_nids = [];
-                		
-                    	$.each($('.tagCheckbox'),function() {
-                    		//empty global list here
-                    		
-                    		if($(this).is(':checked')) {
-                    			
-                        		//add the tag nid to global list
-                        		var nid = this.id.substring((this.id.search('_')+1));
-                        		SW.selected_tag_nids.push(nid);
-                        		
-                    		} 
-                    		
-                    	});
-                    	console.log('current global tag nids: ' + SW.selected_tag_nids);
+                   	  $.each($('.tagCheckbox'),function() {
+                        //empty global list here
+                        if($(this).is(':checked')) {
+                          // Add the tag nid to global list.
+                          var nid = this.id.substring((this.id.search('_')+1));
+                          SW.selected_tag_nids.push(nid);
+                        } 
+                      });
+                    	
+                   	  console.log('current global tag nids: ' + SW.selected_tag_nids);
                     });
                     
-                    $tag_button = $('<button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>').click(function() {
+                  $tag_button = $('<button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>')
+                    .click(function() {
                     	
                     	//tag information pane
                     	$('#tagInfoPane').empty();
@@ -229,7 +240,8 @@ $('.tagCheckbox').on('change', function() {
 //linksData -> tag links information
 //output:
 //$tags_content_list - an unordered list of the objects to which the tag refers
-function tagsContentList(element,linksData) {
+// Called above in lines 50 and 135. 
+function tagsContentList(element, linksData) {
 	
   $tag_contents_list = $('<ul id="tagContentsList"></ul>');
 	
@@ -256,6 +268,39 @@ function tagsContentList(element,linksData) {
   	} else if(linksArr[i]['type'] == 6) {
   		linksArr[i]['name'] = linksArr[i]['nid'];
   	}
+  	
+  	// Add the names to the globals for a single tag.
+  	if(linksArr[i]['type'] == 0) {
+  	  SW.single_tag_people.push(linksArr[i]['name']);
+  	  SW.single_tag_nids.push(linksArr[i]['nid']);
+  	  console.log('SW.single_tag_people is now '+SW.single_tag_people);
+  	  console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
+  	}
+  	else if(linksArr[i]['type'] == 1) {
+      SW.single_tag_groups.push(linksArr[i]['name']);
+      SW.single_tag_nids.push(linksArr[i]['nid']);
+      console.log('SW.single_tag_groups is now '+SW.single_tag_groups);
+      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
+    }
+    else if(linksArr[i]['type'] == 2) {
+      SW.single_tag_jobs.push(linksArr[i]['name']);
+      SW.single_tag_nids.push(linksArr[i]['nid']);
+      console.log('SW.single_tag_jobs is now '+SW.single_tag_jobs);
+      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
+    }
+    else if(linksArr[i]['type'] == 3) {
+      SW.single_tag_apps.push(linksArr[i]['aid']);
+      SW.single_tag_nids.push(linksArr[i]['nid']);
+      console.log('SW.single_tag_apps is now '+SW.single_tag_apps);
+      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
+    }
+    else if(linksArr[i]['type'] == 4) {
+      SW.single_tag_files.push(linksArr[i]['path']);
+      SW.single_tag_nids.push(linksArr[i]['nid']);
+      console.log('SW.single_tag_files is now '+SW.single_tag_files);
+      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
+    }
+    else {'Error: unhandled type'}
   	
   	var type_int = linksArr[i]['type'];
   	
@@ -422,60 +467,6 @@ function setSelectedFields(resName, resNid, resType) {
     addFileNameToTaggedFiles(resName, 0);
 }
 
-/* This function handles adding the file names (with their paths) to the global object which is
- * used to populate the DOI modal. */
-function addFileNameToTaggedFiles(fileName, tagNid) {
-  /*console.log('Inside addFileNameToTaggedFiles, adding fileName '+fileName);
-  // We have the global object SW.selected_tagged_objects.files. 
-  // We first want to check if fileName is a field in this object.
-  var obj = SW.selected_tagged_objects;
-  // Replace the pipes with forward slashes.
-  fileName = fileName.replace(/|/, '/');
-  
-  if(fileName in obj.files) {
-    // If the fileName is in the object, add the tag nid to the corresponding array.
-    obj.files[fileName].push(tagNid);
-  }
-  else {
-    // If the fileName is not in the object, add that object as an array and push the tag nid thereonto.
-    obj.files[fileName] = [];
-    obj.files[fileName].push(tagNid);
-  }
-  for(var key in obj.files)
-    SW.selected_file_paths.push(key);
-  console.log(SW.selected_file_paths.toString());*/
-}
-
-// SW.selected_tagged_objects is an object whose fields are objects.
-// SW.selected_tagged_objects.files is an object whose fields are arrays.
-// Each field in SW.selected_tagged_objects.files has a file path for its name and an array of ints for its value. 
-
-/* This function removes file paths from the global SW.selected_tagged_objects.files. It is 
- * called from either of two events: 
- *      1. The X to the right of a tag button in the Tags Workspace is clicked. 
- *      2. The checkbox to the left of a tag button in the Tags Workspace is unchecked.
- */
-function removeFileNameFromTaggedFiles(tagNid) {
-  // Iterate through every field in SW.selected_tagged_objects.files. If tagNid appears in its 
-  // array of ints, remove it from the array. If the array becomes an empty array by this action,
-  // remove the field from the object.
-  /*var obj = SW.selected_tagged_objects;
-  for(var key in obj.files) {
-    var index = obj.files[key].indexOf(tagNid);
-    if(index != -1) {
-      obj.files[key].splice(index, 1);
-      if(obj.files[key].length == 0)
-        delete obj.files[key];
-    }
-  }*/
-  //for(var key in obj.files)
-    //console.log(key+': '+obj.files[key]);
-}
-
-
-
-
-
 
 /* In the Tag Workspace, there is a block of three buttons that can act upon one or more selected tags.
  * This function is meant to display that block if there is at least one button for a tag in the Tag
@@ -549,337 +540,3 @@ function getNidValue(id) {
   return nid
 }
 
-
-
-
-
-
-
-
-
-
-//Everything below -> Removed 8-27
-
-//SW.resetTaggedFields();				// Reset the tagged fields. This is gonna have to be adjusted, since we are going to be creating a DOI from multiple tags.
-
-
-/*
-function getCountsArr(tag_name_arr) 
-{
-	console.log('in get counts');
-	
-	var tag_names = new Array();
-	var tag_counts = new Array();
-	
-	var tag_name = tag_name_arr[0];
-	var tag_count = 0;
-	for(var i=0; i < tag_name_arr.length; i++) {
-		tag_count = tag_count + 1;
-		if(tag_name_arr[i] != tag_name) {
-			tag_names.push(tag_name);
-			tag_counts.push(tag_count);
-			tag_name = tag_name_arr[i];
-			tag_count = 0;
-		}
-	}
-
-	tag_names.push(tag_name);
-	tag_counts.push(tag_count);
-	
-	return tag_counts;
-}
-*/
-
-// Now we define the behavior for the click event of each button added to the Tag Workspace.
-//$('button#tagWsButton_'+tagNid).on('click', function() {
-
-	
-/*                   	
-  $('#tagInfoPane').empty();
-  $('#tagInfoPane').append('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+"</div>");
-  $('#tagInfoPane').append('<div># Objects: '+linkCount+'</div>');
-  $('#tagInfoPane').append('<div>Description: '+tagDesc+'</div>');
-  
-  $tag_contents_list = $('<ul id="tagContentsList"></ul>');
-  $('#tagInfoPane').append($tag_contents_list);
-  
-  //$('#tagInfoPane').append('<ul id="tagContentsList">');
-  
-  //SW.resetTaggedFields();				// Reset the tagged fields. This is gonna have to be adjusted, since we are going to be creating a DOI from multiple tags.
-  var linked_nids = new Array();
-  
-  // Now we iterate through the links. 
-  for(var i = 0; i < linkCount; i++) {
-	var resName, resType;
-	var resNid = linksArr[i]['nid'];
-	linked_nids.push(resNid);
-    
-	
-	if(linksArr[i]['type'] == 0) {				// the USER type
-      resName = linksArr[i]['name'];
-      resType = 'user';
-      //SW.tagged_person_names.push(resName);
-      
-      
-      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+
-    		        '" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Email: '+
-    		        linksArr[i]['email']+'<br />&nbsp;&nbsp;&nbsp;Uid: '+linksArr[i]['uid']+'</span>')
-			.on("click", function() {
-			  resNid = getNidValue($(this).attr('id'));
-          $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
-          $(this).hide();
-        });
-      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
-			.on("click", function() {
-          resNid = getNidValue($(this).attr('id'));
-          $('#lessTagInfoSpan_'+resNid).css('display', 'inline'); 
-          $(this).hide();
-    	});
-      $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-      $('#tagResource_'+resNid).append($lessLink);
-      $('#tagResource_'+resNid).append($moreLink);
-      
-    }
-	
-	
-	
-	else if(linksArr[i]['type'] == 1) {			// the GROUP type
-	  resName = linksArr[i]['gname'];
-	  resType = 'group';
-	  SW.tagged_group_names.push(resName);
-		  $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-	}
-	
-	
-	
-	else if(linksArr[i]['type'] == 2) {			// the JOB type
-	  resName = linksArr[i]['name'];
-	  resType = 'job';
-	  SW.tagged_job_names.push(resName);
-      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Job ID: '+linksArr[i]['jid']+'<br />&nbsp;&nbsp;&nbsp;Started: '+formatTimestamp(linksArr[i]['start'])+'<br />&nbsp;&nbsp;&nbsp;Ended: '+formatTimestamp(linksArr[i]['stop'])+'</span>')
-		  .on("click", function() {
-			resNid = getNidValue($(this).attr('id'));
-        $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
-        $(this).hide();
-      });
-      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
-		  .on("click", function() {
-			resNid = getNidValue($(this).attr('id'));
-        $('#lessTagInfoSpan_'+resNid).css('display', 'inline'); 
-        $(this).hide();
-	  });
-		  $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-      $('#tagResource_'+resNid).append($lessLink);
-      $('#tagResource_'+resNid).append($moreLink);
-	}
-	
-	
-	
-	else if(linksArr[i]['type'] == 3) {			// the APP type
-	  resName = linksArr[i]['nid'];		// Apps don't actually have names. 
-	  resType = 'app';
-	  SW.tagged_app_names.push(resName);
-      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;App ID: '+linksArr[i]['aid']+'<br />&nbsp;&nbsp;&nbsp;Started: '+formatTimestamp(linksArr[i]['start'])+'<br />&nbsp;&nbsp;&nbsp;Ended: '+formatTimestamp(linksArr[i]['stop'])+'</span>')
-		  .on("click", function() {
-			resNid = getNidValue($(this).attr('id')); 
-        $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
-        $(this).hide();
-      });
-      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
-		  .on("click", function() {
-			resNid = getNidValue($(this).attr('id'));
-        $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
-        $(this).hide();
-		  });
-	  $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-      $('#tagResource_'+resNid).append($lessLink);
-      $('#tagResource_'+resNid).append($moreLink);
-	}
-	
-	
-	else if(linksArr[i]['type'] == 4) {			// the FILE type
-		alert('adding file info');
-	  resName = linksArr[i]['path'];
-      resType = 'file';
-      
-      $less_link = $('<span id="lessTagInfoSpan_'+resNid+'" style=""></span>');
-      $less_a = $('<a style="cursor:pointer">less</a>');
-      $less_content = $('<span><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]["name"]+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'</span>');
-      
-      $less_link.append($less_a);
-      $less_link.append($less_content);
-      
-      $more_link = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>').on('click', function() {
-    	  resNid = getNidValue($(this).attr('id'));
-          $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
-          $(this).hide();
-      });
-      
-      $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-      
-      $('#tagResource_'+resNid).append($more_link);
-      
-      //$('#tagResource_'+resNid).append($less_span);
-      
-      //SW.tagged_file_names.push(resName);
-      
-      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a>
-      <br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+
-      formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
-		  .on("click", function() {
-			resNid = getNidValue($(this).attr('id'));
-        $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
-        $(this).hide();
-      });
-      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
-		  .on("click", function() {
-			resNid = getNidValue($(this).attr('id'));
-        $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
-        $(this).hide();
-		  });
-      $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-      $('#tagResource_'+resNid).append($lessLink);
-      $('#tagResource_'+resNid).append($moreLink);
-      
-	}
-	else if(linksArr[i]['type'] == 5) {			// the DIRECTORY type
-      resName = linksArr[i]['name'];
-	  resType = 'directory';
-	  
-	  
-      $lessLink = $('<span id="lessTagInfoSpan_'+resNid+'" style="display:none"><a style="cursor:pointer">less</a><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]['name']+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'<br />&nbsp;&nbsp;&nbsp;Modified: '+formatTimestamp(linksArr[i]['mtime'])+'</span>')
-			.on("click", function() {
-			  resNid = getNidValue($(this).attr('id'));
-          $('#moreTagInfoLink_'+resNid).css('display', 'inline'); 
-          $(this).hide();
-        });
-      $moreLink = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>')
-			.on("click", function() {
-			  resNid = getNidValue($(this).attr('id'));
-          $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
-          $(this).hide();
-		  });
-	  $('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-      $('#tagResource_'+resNid).append($lessLink);
-      $('#tagResource_'+resNid).append($moreLink);
-      
-    }
-	
-	else {
-	  resName = linksArr[i]['nid'];
-	  resType = 'other';
-	}
-	
-  }		// end of for loop.
-*/
-//});     // end of 
-
-
-
-/*
-var resNid = linksArr[i]['nid'];
-
-var resName, resType;
-
-linked_nids.push(resNid);
-
-if(linksArr[i]['type'] == 4) {			// the FILE type
-alert('adding file info');
-resName = linksArr[i]['path'];
-resType = 'file';
-
-$('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-
-
-$less_link = $('<span id="lessTagInfoSpan_'+resNid+'" style=""></span>');
-$less_a = $('<a style="cursor:pointer">less</a>');
-$less_content = $('<span><br />&nbsp;&nbsp;&nbsp;Name: '+linksArr[i]["name"]+'<br />&nbsp;&nbsp;&nbsp;Created: '+formatTimestamp(linksArr[i]['ctime'])+'</span>');
-
-$less_link.append($less_a);
-$less_link.append($less_content);
-
-$more_link = $('<a id="moreTagInfoLink_'+resNid+'" style="cursor:pointer">more</a>').on('click', function() {
-  resNid = getNidValue($(this).attr('id'));
-  $('#lessTagInfoSpan_'+resNid).css('display', 'inline');
-  $(this).hide();
-});
-
-$('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-
-$('#tagResource_'+resNid).append($more_link);
-
-}
-*/
-
-
-
-
-/*
-//linked_nids.push(resNid);
-	if(linksArr[i]['type'] == 0) {				// the USER type
-		
-		var resType = 'user';
-		var resName = linksArr[i]['name'];
-	    
-		$tag_contents_item = $('<li id="tagResource_'+resNid+'"><span style="font-weight:bold">'+resName+'</span> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_list.append($tag_contents_item);
-		
-		
-	    
-	} 
-	*/
-	/*
-	else if(linksArr[i]['type'] == 1) {			// the GROUP type
-
-		var resType = 'group';
-		var resName = linksArr[i]['name'];
-		
-		//SW.tagged_group_names.push(resName);
-		//$('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_item = $('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_list.append($tag_contents_item);
-	    
-} else if(linksArr[i]['type'] == 2) {			// the JOB type
-
-		var resType = 'job';
-		var resName = linksArr[i]['name'];
-		
-		//SW.tagged_group_names.push(resName);
-		//$('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_item = $('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_list.append($tag_contents_item);
-	    
-} else if(linksArr[i]['type'] == 3) {			// the APP type
-
-		var resType = 'app';
-		var resName = linksArr[i]['name'];
-		
-		//SW.tagged_group_names.push(resName);
-		//$('#tagContentsList').append('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_item = $('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_list.append($tag_contents_item);
-	    
-} else if(linksArr[i]['type'] == 4) {			// the FILE type
-		
-		var resType = 'file';
-		var resName = linksArr[i]['name'];
-    	
-		$tag_contents_item = $('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_list.append($tag_contents_item);
-    	
-} else if(linksArr[i]['type'] == 5) {			// the DIRECTORY type
-		
-		var resType = 'directory';
-		var resName = linksArr[i]['name'];
-    	
-		$tag_contents_item = $('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-		$tag_contents_list.append($tag_contents_item);
-    	
-} else {
-	var resType = 'other';
-	var resName = linksArr[i]['nid'];
-    	
-	$tag_contents_item = $('<li id="tagResource_'+resNid+'"><b>'+resName+'</b> ('+resType+')&nbsp;</li><br />');
-	$tag_contents_list.append($tag_contents_item);
-}
-	*/
