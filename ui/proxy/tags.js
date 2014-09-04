@@ -186,7 +186,7 @@ var tagsHelper = function(request,response) {
 		});
 		
 		resp.on('end', function() {
-			//console.log('tag responseData: \n' + responseData);
+			console.log('tag responseData: \n' + responseData);
 			response.send(responseData);
 		});
 		
@@ -320,6 +320,7 @@ var tagLinksProxHelper = function(request, response) {
 
   var path = '/sws/nodes?tag-nid=' + request.params.tag_nid;
 
+  console.log('tag links path: ' + path);
   var options = {
 	host: proxy.serviceHost,
 	port: proxy.servicePort,
@@ -336,7 +337,7 @@ var tagLinksProxHelper = function(request, response) {
     });
 				
     res.on('end', function() {
-      //console.log('responseData\n' + responseData);
+      console.log('responseData\n' + responseData);
 	  response.send(responseData);
     });
 

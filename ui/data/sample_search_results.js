@@ -89,23 +89,23 @@ search_results_obj_6['mtime'] = 1380646733;
 search_results_obj_arr.push(search_results_obj_6);
 
 var search_results_obj_7 = {};
-search_results_obj_7['nid'] = 600120;
+search_results_obj_7['nid'] = 5386652;
 search_results_obj_7['access'] = 0;
-search_results_obj_7['name'] = 'jamrozTagFive';
+search_results_obj_7['name'] = 'jamrozTag';
 search_results_obj_7['type'] = 6;
-search_results_obj_7['desc'] = "This is Tag Five.";
+search_results_obj_7['desc'] = "This is Jamroz Tag.";
 search_results_obj_7['owner'] = 9328;
 
-search_results_obj_arr.push(search_results_obj_7);
+//search_results_obj_arr.push(search_results_obj_7);
 
 
 var search_results_obj_8 = {};
-search_results_obj_8['nid'] = 604012;
+search_results_obj_8['nid'] = 5386656;
 search_results_obj_8['access'] = 0;
-search_results_obj_8['name'] = "markTagOne";
+search_results_obj_8['name'] = "myNewTag6";
 search_results_obj_8['type'] = 6;
 search_results_obj_8['desc'] = "";
-search_results_obj_8['owner'] = 9328;
+search_results_obj_8['owner'] = 5112;
 
 search_results_obj_arr.push(search_results_obj_8);
 
@@ -113,7 +113,7 @@ var search_results_obj_9 = {};
 search_results_obj_9['nid'] = 9999999;
 search_results_obj_9['name'] = "Doi1";
 search_results_obj_9['type'] = 7;
-search_results_obj_9['links'] = "54608,1722972,101324";
+//search_results_obj_9['links'] = "54608,1722972,101324";
 search_results_obj_9['owner'] = 9328;
 
 search_results_obj_arr.push(search_results_obj_9);

@@ -135,67 +135,14 @@ $(function(){
 				
 				processResults(data);
 				
-				/*
-				var search_arr = new Array();
-				// (0=user,1=group,2=job,3=app,4=file,5=dir,6=tag,7=doi)
-				var usersChecked = $("#Users").is(':checked');
-				if(usersChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
 				
-				var groupsChecked = $("#Groups").is(':checked');
-				if(usersChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				var jobsChecked = $("#Jobs").is(':checked');
-				if(jobsChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				var appsChecked = $("#Apps").is(':checked');
-				if(appsChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				var filesChecked = $("#Files").is(':checked');
-				if(filesChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-
-				var directoriesChecked = $("#Directories").is(':checked');
-				if(directoriesChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-
-				var tagsChecked = $("#Tags").is(':checked');
-				if(tagsChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				
-				
-				processResults(data,search_arr);
-				*/
 			},
 			error: function() {
 				console.log('error in getting search results');
 			}
 		});
+		
+		
 		
 	});
 	
@@ -216,35 +163,177 @@ function processResults(data) {
 			
 			var $record = $('<div class="row-fluid"></div>');
 
-			var $content = $('<div class="span9"></div>')
-			var $type = $('<div class="row-fluid"><div class="span12">Type: ' + SW.type_str[type] + '</div></div>');
+			
+			//content
+			var $content = $('<div class="span9" id="' + result['nid'] + '"></div>')
+			var $type = $('<div class="row-fluid"><div class="span12">Type: ' + SW.type_str[type] + ' ' + result['nid'] + '</div></div>');
 			$content.append($type);
 			
-			var $buttons = $('<div class="span3"></div>');
-			$buttons.append($('<div>insert functionality here</div>'));
-			
+			//tags have to be handled a little differently
 			
 			/*
-			
-			var $subheader = $('<div class="span10" style="margin-left: 10px">');
-			var $type = $('<div>Type: ' + SW.type_str[type] + '</div>');
-			$subheader.append($type);
-			
-			$record.append($subheader);
-			
-			var $body = $('<div></div>');
-			
-			for(var key in result) {
-				$key = $('<div>' + key + '</div>');
-				$body.append($key);
+			if(type == 6) {
+				for(var key in result) {
+					
+					var $property = $('<div class="row-fluid">' +  
+							  '<div class="span1"></div>' +
+							  '<div class="span3">' + key + '</div>' +
+							  '<div class="span8">' + result[key] + '</div>' +
+							  '</div>');
+					$content.append($property);
+					
+				}		
+				var $links = $('<a id="' + result['nid'] + '">' + 'Tagged resources</a>').click(function(){
+					alert('this.id: ' + this.id);
+				});
+				var $property = $('<div class="row-fluid">' +  
+						  '<div class="span1"></div>' +
+						  '<div class="span3">' + Tagged Resources + '</div>' +
+						  '<div class="span8">' + result[key] + '</div>' +
+						  '</div>');
+			}
+			*/
+			//all others handled the same
+			if(type == 6) {
+				for(var key in result) {
+
+					var $property = $('<div class="row-fluid"></div>');
+					
+					
+					var $space = $('<div class="span1"></div>');
+					var $key = $('<div class="span3">' + key + '</div>');
+					var $result = $('<div class="span8">' + result[key] + '</div>');
+					$property.append($space);
+					$property.append($key);
+					$property.append($result);
+					
+					
+					$content.append($property);
+					
+				}			
+				
+				var $property = $('<div class="row-fluid" id="property_' + result['nid'] + '"></div>');
+				
+				var $links = $('<a id="' + result['nid'] + '" style="cursor:pointer">' + 'Tagged resources</a>').click(function(){
+					alert('this.id: ' + this.id);
+					
+					
+					
+					var uid = SW.current_user_number;
+					  
+					var url = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/' + this.id;
+					  
+					var id = this.id;
+					console.log('url--->' + url);
+					$.ajax({
+					 	type: "GET",
+					  	url: url,
+					  	success: function(linksData) {
+
+					  		console.log('success');
+					  		
+					  		var linksArr = [];
+				            linksArr = JSON.parse(linksData);
+				            var linkCount = linksArr.length;
+				            
+				            console.log('linkCount: ' + linkCount);
+				            
+				            // Now populate the tag cloud in the lower left display panel.
+				            if(linkCount > 0) {		// We don't care about displaying tags with no links. The interface should prevent such tags from being created anyway.
+				            
+				            	
+				            	//var $tags_contents_list = tagsContentListForSearch();
+				            	//var $tags_contents_list = tagsContentListForSearch(element,linksData);
+				            	
+				            	var $tag_contents_list = $('<ul id="tagContentsList"></ul>');
+				            	
+				            	for(var i = 0; i < linkCount; i++) {
+				            		
+				            		var resName = linksArr[i]['name'];
+				            		var resNid = linksArr[i]['nid'];
+				            		var resType = linksArr[i]['type'];
+				            		
+					            	$tag_resource_item_li = $('<li id="tagResource_'+resNid+'"></li>');
+					        		$tag_resource_name = $('<span style="font-weight:bold">'+resName+' ('+resType+')&nbsp;</span> ');
+
+					        		$tag_resource_item_li.append($tag_resource_name);
+					        		//$tag_resource_item_li.append($tag_resource_morelink);
+					        		//$tag_resource_item_li.append($tag_resource_info);
+					        		$tag_contents_list.append($tag_resource_item_li);
+				            	}
+				            	
+				            	console.log('Contents List: ' + $tag_contents_list.html());
+				            	
+				            	$('#property_' + id).append($tag_contents_list);
+				            	
+				            	alert('#property_' + id);
+				            	
+				            }
+					  		
+				            
+					  		
+					  		
+					  	},
+					  	error: function() {
+					  		
+					  		console.log('error');
+					  		
+					  	}
+					  	
+					});
+						
+					  
+					
+					
+					
+					
+					
+				});
+				
+				var $space = $('<div class="span1"></div>');
+				
+				var $key = $('<div class="span3"></div>');
+				$key.append($links);
+				
+				var $result = $('<div class="span8">' + '</div>');
+				
+				$property.append($space);
+				$property.append($key);
+				$property.append($result);
+				
+				
+				$content.append($property);
+					
+				
 			}
 			
-			$record.append($body);
+			//all others handled the same
+			if(type != 6 && type != 7) {
+				for(var key in result) {
+
+					var $property = $('<div class="row-fluid"></div>');
+					
+					
+					var $space = $('<div class="span1"></div>');
+					var $key = $('<div class="span3">' + key + '</div>');
+					var $result = $('<div class="span8">' + result[key] + '</div>');
+					$property.append($space);
+					$property.append($key);
+					$property.append($result);
+					
+					
+					$content.append($property);
+					
+				}			
+				
+			}
+			
+			//functionality/buttons
+			var $buttons = $('<div class="span3"></div>');
+			$buttons.append($('<div>insert any functionality here</div>'));
 			
 			
-			console.log($record.html());
-			*/
-			
+			//append to the record
 			$record.append($content);
 			$record.append($buttons);
 			
@@ -260,52 +349,117 @@ function processResults(data) {
 }
 
 
-/*
-function processResults(data,search_arr) {
+function tagsContentListForSearch() {
 	
-	// (0=user,1=group,2=job,3=app,4=file,5=dir,6=tag)
+	$tag_contents_list = $('<ul id="tagContentsList"></ul>');
 	
-	console.log('search_arr: ' + search_arr);
-	$('#results').empty();
+	$tag_contents_list.append('<li>item</li>');
 	
-	console.log('process results data length----> ' + data.length);
+	console.log('Contents List: ' + $tag_contents_list.html());
 	
-	for(var i=0;i<data.length;i++) {
-		
-		var type = data[i]['type'];
-		
-		if(search_arr[type] == 1) {
-			
-			var html = '<div class="row-fluid">';
-			
-			html += '<div class="span10" style="margin-left: 10px">';
+	return $tag_contents_list;
+	
+}
 
+function tagsContentListForSearch(element,linksData) {
+	$tag_contents_list = $('<ul id="tagContentsList"></ul>');
+	
+	
+	
+	  /*
+	  
+	  var tagNid = element['nid'];
+	  var tagName = element['name'];
+	  var tagDesc = element['desc'];
+	  
+	  var linksArr = [];
+	  linksArr = JSON.parse(linksData);
+	  var linkCount = linksArr.length;
+	  
+	  // Now we iterate through the links. 
+	  for(var i = 0; i < linkCount; i++) {
+	  
+	  	var resNid = linksArr[i]['nid'];
+	  	
+	  	
+	  	//small bug in group info being returned - want the name "name" not "gname"
+	  	//small bug in app info being returned - want the name "name" not "nid"
+	  	if(linksArr[i]['type'] == 1) {
+	  		linksArr[i]['name'] = linksArr[i]['gname'];
+	  	} else if(linksArr[i]['type'] == 3) {		
+	  		linksArr[i]['name'] = linksArr[i]['nid'];
+	  	} else if(linksArr[i]['type'] == 6) {
+	  		linksArr[i]['name'] = linksArr[i]['nid'];
+	  	}
+	  	
+	  	var type_int = linksArr[i]['type'];
+	  	
+	  	var resType = SW.typeMap[type_int];
+		var resName = linksArr[i]['name'];
+		var resNid = linksArr[i]['nid'];
+		
+		//individual list item for each of the resource to which the tag refers
+		$tag_resource_item_li = $('<li id="tagResource_'+resNid+'"></li>');
+		$tag_resource_name = $('<span style="font-weight:bold">'+resName+' ('+resType+')&nbsp;</span> ');
+		$tag_resource_morelink = $('<a id="' + resNid + '" style="cursor:pointer">more</a>').click(function() {
 			
-			html += '<div>Type: ' + SW.typeMap[type];
-			html += '</div>';
-
-			var nid = data[i]['nid'];
-			html += '<div>Node id: ' + nid;
-			html += '</div>';
-			
-			
-			
-			for(var key in data[i]) {
-				html += '<div>' + key + ': ' + data[i][key];
-				html += '</div>';
+			if(this.innerHTML == 'more') {
+				this.innerHTML = 'less';
+				$('#tagResourceInfo_'+this.id).show('slow');
+			} else {
+				this.innerHTML = 'more';
+				$('#tagResourceInfo_'+this.id).hide('slow');
 			}
 			
-			html += '</div>';
-			html += '</div>';
-			
-			html += '<hr>';
+		});
+		$tag_resource_info = $('<div id="tagResourceInfo_'+resNid+'" style="display:none">' + '</div>');
 
-			$('#results').append(html);
-			
-			
+		for(var key in linksArr[i]) {
+			$key = $('<div style="margin-left:5px">' + key + ' : ' + linksArr[i][key] + '</div>')
+			$tag_resource_info.append($key);
 		}
+		
+		
+		$tag_resource_item_li.append($tag_resource_name);
+		$tag_resource_item_li.append($tag_resource_morelink);
+		$tag_resource_item_li.append($tag_resource_info);
+		$tag_contents_list.append($tag_resource_item_li);
+		
+	  }
+	  */
+	  return $tag_contents_list;
+	  		
+		    	
+	  
+	  
+	}
+
+
+
+
+
+
+/*
+var hasLinks = false;
+for(var key in result) {
+	if(key != 'links') {
+		var $property = $('<div class="row-fluid">' +  
+				  '<div class="span1"></div>' +
+				  '<div class="span3">' + key + '</div>' +
+				  '<div class="span8">' + result[key] + '</div>' +
+				  '</div>');
+		$content.append($property);
+	} else {
+		hasLinks = true;
 	}
 	
-	
+}
+if(hasLinks) {
+	var $property = $('<div class="row-fluid">' +  
+			  '<div class="span1"></div>' +
+			  '<div class="span3">' + 'links' + '</div>' +
+			  '<div class="span8">' + 'links stuff' + '</div>' +
+			  '</div>');
+	$content.append($property);
 }
 */

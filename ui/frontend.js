@@ -80,7 +80,8 @@ app.post('/search/:user_id', function(request,response) {
 	
 });
 
-//from 
+//comes directly from the doi service 
+//
 app.get("/search_results_doi_metadata/:user_id", function(request, response) {
 	console.log('\n\n---------in search_results_doi for ' + request.params.user_id + '----------');
 	
@@ -88,32 +89,40 @@ app.get("/search_results_doi_metadata/:user_id", function(request, response) {
 		console.log('key: ' + key);
 	}
 	
+	var path = '';
 	
-	//return an array of doi objects
-	//doi
-	// - metadata
-	// - links
-	/*
-	var appsObjArr = data.appsObjArr;
+	var doi_host = "doi1.ccs.ornl.gov";
+	var doi_port = '8080';
 	  
+	var doi_name = 'doi_title';
+	
+	path = '/doi/search?uid=' + request.params.user_id + '&';
+	
+  
+	console.log('path--->' + 'http://' + doi_host + ':' + doi_port + path);
+	  
+	
 	var respArr = [];
-	for(var i=0;i<appsObjArr.length;i++) {
-	  var respObj = {};
+	
+	var respObj = {};
 
-	  respObj['title'] = appsObjArr[i]['aid'];
-	  respObj['type'] = appsObjArr[i]['type'];
-	  respObj['jobid'] = appsObjArr[i]['job'];
-	  respObj['uuid'] = appsObjArr[i]['nid'];
-	  respObj['appid'] = appsObjArr[i]['aid'];
-	  respArr.push(respObj);
-	}
-	  
+	respObj['title'] = 'doi_title';
+	respObj['description'] = 'doi_description';
+	respObj['creators'] = 'doi_creators';
+	respObj['creators_email'] = 'creators_email';
+	respObj['files'] = 'doi_files';
+	respObj['nids'] = 'doi_nids';
+	respObj['resources'] = 'doi_resources';
+	respObj['keywords'] = 'doi_keywords';
+	respObj['language'] = 'doi_language';
+	respObj['country'] = 'doi_country';
+	respObj['sponsor_org'] = 'doi_sponsor_org';
+	
+	respArr.push(respObj);
+	
+	//response.send('returning doi results');
 	response.send(respArr);
-	*/
 	
-	
-	
-	response.send('returning doi results');
 });
 
 app.get("/search_results/:user_id", function(request, response) {
@@ -619,6 +628,8 @@ app.post('/tagproxy/:user_id', function(request, response) {
 //gets all the tags given a user
 app.get('/tags', function(request, response) 
 {	
+
+	console.log('\n\n\n----Tags ----\n\n');
 	var res = tags.tagsHelper(request,response);
 	
 });
@@ -640,6 +651,7 @@ app.post('/associationproxy/:user_id', function(request, response)
 
 app.get('/tags/links/:tag_nid', function(request, response) {
   
+	console.log('\n\n\n----Tags links----\n\n');
 	var res = tags.tagLinksProxHelper(request, response);
 	
 		
