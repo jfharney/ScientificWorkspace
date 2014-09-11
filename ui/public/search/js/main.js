@@ -77,18 +77,6 @@ $(function(){
 	$('button#search_button').click(function() {
 		
 
-		/*
-		console.log('text: ' + text);
-		
-		if(text == '') {
-			text = '*';
-		}
-		
-		var url = 'http://localhost:1337/' + 'search_results/' + '5112?text=' + text;
-		*/
-		
-	
-		
 		
 		var text = 'tag';
 		
@@ -125,22 +113,22 @@ $(function(){
 				$criteria = $('<div class="row-fluid" style="margin-bottom:20px;"><div class="span12">Insert Criteria here</div></div>');
 				$('#results').append($criteria);
 				
-				for(var i=0;i<data.length;i++) {
-					  var result = data[i];
-					  //console.log('result: ' + i);
-					  for(var key in result) {
-						  //console.log('\tkey: ' + key + ' result: ' + result[key]);
-					  }
-				}
 				
 				processResults(data);
 				
+				console.log('append DOI result here');
+				//append doi results here
+				$('#results').append('<div>DDDDOI result here</div>');
+
+				var $separator = $('<hr>');	
+				$('#results').append($separator);
 				
 			},
 			error: function() {
 				console.log('error in getting search results');
 			}
 		});
+		
 		
 		
 		
@@ -155,183 +143,18 @@ function processResults(data) {
 	for(var i=0;i<data.length;i++) {
 		var result = data[i];
 		
-		var type = result['type'];
+		//var type = result['type'];
 		
-		console.log('type: ' + type + ' bitmap: ' + bitmap[type]);
-		if(bitmap[type]==1) {
-			
+		console.log('type: ' + result['type'] + ' bitmap: ' + bitmap[result['type']]);
+		if(bitmap[result['type']]==1) {
 			
 			var $record = $('<div class="row-fluid"></div>');
 
+			//record content
+			var $content = recordContent(result);
 			
-			//content
-			var $content = $('<div class="span9" id="' + result['nid'] + '"></div>')
-			var $type = $('<div class="row-fluid"><div class="span12">Type: ' + SW.type_str[type] + ' ' + result['nid'] + '</div></div>');
-			$content.append($type);
-			
-			//tags have to be handled a little differently
-			
-			/*
-			if(type == 6) {
-				for(var key in result) {
-					
-					var $property = $('<div class="row-fluid">' +  
-							  '<div class="span1"></div>' +
-							  '<div class="span3">' + key + '</div>' +
-							  '<div class="span8">' + result[key] + '</div>' +
-							  '</div>');
-					$content.append($property);
-					
-				}		
-				var $links = $('<a id="' + result['nid'] + '">' + 'Tagged resources</a>').click(function(){
-					alert('this.id: ' + this.id);
-				});
-				var $property = $('<div class="row-fluid">' +  
-						  '<div class="span1"></div>' +
-						  '<div class="span3">' + Tagged Resources + '</div>' +
-						  '<div class="span8">' + result[key] + '</div>' +
-						  '</div>');
-			}
-			*/
-			//all others handled the same
-			if(type == 6) {
-				for(var key in result) {
-
-					var $property = $('<div class="row-fluid"></div>');
-					
-					
-					var $space = $('<div class="span1"></div>');
-					var $key = $('<div class="span3">' + key + '</div>');
-					var $result = $('<div class="span8">' + result[key] + '</div>');
-					$property.append($space);
-					$property.append($key);
-					$property.append($result);
-					
-					
-					$content.append($property);
-					
-				}			
-				
-				var $property = $('<div class="row-fluid" id="property_' + result['nid'] + '"></div>');
-				
-				var $links = $('<a id="' + result['nid'] + '" style="cursor:pointer">' + 'Tagged resources</a>').click(function(){
-					alert('this.id: ' + this.id);
-					
-					
-					
-					var uid = SW.current_user_number;
-					  
-					var url = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/' + this.id;
-					  
-					var id = this.id;
-					console.log('url--->' + url);
-					$.ajax({
-					 	type: "GET",
-					  	url: url,
-					  	success: function(linksData) {
-
-					  		console.log('success');
-					  		
-					  		var linksArr = [];
-				            linksArr = JSON.parse(linksData);
-				            var linkCount = linksArr.length;
-				            
-				            console.log('linkCount: ' + linkCount);
-				            
-				            // Now populate the tag cloud in the lower left display panel.
-				            if(linkCount > 0) {		// We don't care about displaying tags with no links. The interface should prevent such tags from being created anyway.
-				            
-				            	
-				            	//var $tags_contents_list = tagsContentListForSearch();
-				            	//var $tags_contents_list = tagsContentListForSearch(element,linksData);
-				            	
-				            	var $tag_contents_list = $('<ul id="tagContentsList"></ul>');
-				            	
-				            	for(var i = 0; i < linkCount; i++) {
-				            		
-				            		var resName = linksArr[i]['name'];
-				            		var resNid = linksArr[i]['nid'];
-				            		var resType = linksArr[i]['type'];
-				            		
-					            	$tag_resource_item_li = $('<li id="tagResource_'+resNid+'"></li>');
-					        		$tag_resource_name = $('<span style="font-weight:bold">'+resName+' ('+resType+')&nbsp;</span> ');
-
-					        		$tag_resource_item_li.append($tag_resource_name);
-					        		//$tag_resource_item_li.append($tag_resource_morelink);
-					        		//$tag_resource_item_li.append($tag_resource_info);
-					        		$tag_contents_list.append($tag_resource_item_li);
-				            	}
-				            	
-				            	console.log('Contents List: ' + $tag_contents_list.html());
-				            	
-				            	$('#property_' + id).append($tag_contents_list);
-				            	
-				            	alert('#property_' + id);
-				            	
-				            }
-					  		
-				            
-					  		
-					  		
-					  	},
-					  	error: function() {
-					  		
-					  		console.log('error');
-					  		
-					  	}
-					  	
-					});
-						
-					  
-					
-					
-					
-					
-					
-				});
-				
-				var $space = $('<div class="span1"></div>');
-				
-				var $key = $('<div class="span3"></div>');
-				$key.append($links);
-				
-				var $result = $('<div class="span8">' + '</div>');
-				
-				$property.append($space);
-				$property.append($key);
-				$property.append($result);
-				
-				
-				$content.append($property);
-					
-				
-			}
-			
-			//all others handled the same
-			if(type != 6 && type != 7) {
-				for(var key in result) {
-
-					var $property = $('<div class="row-fluid"></div>');
-					
-					
-					var $space = $('<div class="span1"></div>');
-					var $key = $('<div class="span3">' + key + '</div>');
-					var $result = $('<div class="span8">' + result[key] + '</div>');
-					$property.append($space);
-					$property.append($key);
-					$property.append($result);
-					
-					
-					$content.append($property);
-					
-				}			
-				
-			}
-			
-			//functionality/buttons
-			var $buttons = $('<div class="span3"></div>');
-			$buttons.append($('<div>insert any functionality here</div>'));
-			
+			//record functionality
+			var $buttons = recordFunctionality(result);
 			
 			//append to the record
 			$record.append($content);
@@ -339,11 +162,214 @@ function processResults(data) {
 			
 			$('#results').append($record);
 			
+			//separator for each record
 			var $separator = $('<hr>');	
 			$('#results').append($separator);
+			
 		}
 		
 	}
+	
+	
+}
+
+
+function processStandardProperty (key, result) {
+	
+	var $property = $('<div class="row-fluid"></div>');
+	
+	var $space = $('<div class="span1"></div>');
+	var $key = $('<div class="span3">' + key + '</div>');
+	var $result = $('<div class="span8">' + result[key] + '</div>');
+	$property.append($space);
+	$property.append($key);
+	$property.append($result);
+	
+	
+	
+	return $property;
+}
+
+
+
+
+//This needs to be implemented in the tags workspace as well...
+function makeTagsContentListItem(nid,result) {
+	
+	return function () {
+
+		console.log('nid: ' +  nid + ' resource nid: ' + result['nid']);
+			
+		
+		//small bug in group info being returned - want the name "name" not "gname"
+	  	//small bug in app info being returned - want the name "name" not "nid"
+	  	if(result['type'] == 1) {
+	  		result['name'] = result['gname'];
+	  	} else if(result['type'] == 3) {		
+	  		result['name'] = result['nid'];
+	  	} else if(result['type'] == 6) {
+	  		result['name'] = result['nid'];
+	  	}
+	  	
+	  	var type_int = result['type'];
+		var resType = SW.typeMap[type_int];
+		var resName = result['name'];
+		var resNid = result['nid'];
+
+		
+		$tag_resource_item_li = $('<li id="tagResource_'+resNid+'"></li>');
+		
+		$tag_resource_name = $('<span style="font-weight:bold">'+resName+' ('+resType+')&nbsp;</span> ');
+		
+		$tag_resource_morelink = $('<a id="' + resNid + '_' + nid + '" style="cursor:pointer">more</a>').click(function() {
+			
+			if(this.innerHTML == 'more') {
+				this.innerHTML = 'less';
+				$('#tagResourceInfo_'+this.id).show('slow');
+			} else {
+				this.innerHTML = 'more';
+				$('#tagResourceInfo_'+this.id).hide('slow');
+			}
+			
+		});
+		
+		$tag_resource_info = $('<div id="tagResourceInfo_'+resNid+'_' + nid + '" style="display:none">' + '</div>');
+
+		for(var key in result) {
+			$key = $('<div style="margin-left:5px">' + key + ' : ' + result[key] + '</div>')
+			$tag_resource_info.append($key);
+		}
+		
+
+		$tag_resource_item_li.append($tag_resource_name);
+		$tag_resource_item_li.append($tag_resource_morelink);
+		$tag_resource_item_li.append($tag_resource_info);
+		
+		return $tag_resource_item_li;
+		
+	}
+}
+
+
+
+function processTaggedResources (result) {
+	var $property = $('<div class="row-fluid"></div>');
+	
+	
+	var $space = $('<div class="span1"></div>');
+	
+	//Tagged resources
+	var $key = $('<div class="span3" id="' + result['nid'] + '" style="cursor:pointer">' + 'Tagged Resources' + '</div>');
+	
+	
+	
+	//Result is a listing of resources that are tagged
+	var $result = $('<div class="span8"></div>');
+	
+	var $tag_contents_list = $('<ul id="ul_' + result['nid'] + '"></ul>');
+	
+	
+	var uid = SW.current_user_number;
+	var url = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/' + result['nid'];
+	
+	var funcs = [];
+	
+	$.ajax({
+	 	type: "GET",
+	  	url: url,
+	  	//async: false,
+	  	success: function(linksData) {
+	  		
+	  		
+	  		var linksArr = [];
+            linksArr = JSON.parse(linksData);
+            var linkCount = linksArr.length;
+            
+            console.log('resultnid: ' + result['nid']);
+            
+            $tag_contents_list = $('<ul id="tagContentsList"></ul>');
+            
+            for(var i=0;i<linkCount;i++) {
+            	
+            	funcs[i] = makeTagsContentListItem(result['nid'],linksArr[i]);
+            	
+            } 
+            console.log('calling functions here');
+            
+            for(var j=0;j<linkCount;j++) {
+            	var $tag_resource_item_li = funcs[j]();
+            	
+            	$tag_contents_list.append($tag_resource_item_li);
+            	
+            }
+
+        	$result.append($tag_contents_list);
+        	
+        	
+        	
+        	$property.append($space);
+        	$property.append($key);
+        	$property.append($result);
+        	
+	  	},
+	  	error: function() {
+	  		
+	  	}
+	});
+	
+	return $property;
+}
+
+function recordContent(result) {
+	
+	
+	var $content = $('<div class="span9" id="' + result['nid'] + '"></div>')
+	
+	var $type = $('<div class="row-fluid"><div class="span12">Type: ' + SW.type_str[result['type']] + ' ' + result['nid'] + '</div></div>');
+	$content.append($type);
+	
+	
+	//all others handled the same
+	if(result['type'] != 6 && result['type'] != 7) {
+
+		console.log('processing others');
+		
+		for(var key in result) {
+			var $property = processStandardProperty(key, result);
+			$content.append($property);
+		}		
+		
+		
+	} else if (result['type'] == 6) {
+		
+		console.log('processing tag');
+		
+		//standard properties
+		for(var key in result) {
+			var $property = processStandardProperty(key, result);
+			$content.append($property);
+		}		
+		
+		//associations
+		var $property = processTaggedResources(result);
+		$content.append($property);
+	} else if (result['type'] == 7) {
+		
+		console.log('processing doi');
+		
+	}
+	
+	return $content;
+	
+}
+
+function recordFunctionality() {
+	
+	//functionality/buttons
+	var $buttons = $('<div class="span3"></div>');
+	$buttons.append($('<div>insert any functionality here</div>'));
+	
+	return $buttons;
 	
 	
 }
@@ -361,105 +387,6 @@ function tagsContentListForSearch() {
 	
 }
 
-function tagsContentListForSearch(element,linksData) {
-	$tag_contents_list = $('<ul id="tagContentsList"></ul>');
-	
-	
-	
-	  /*
-	  
-	  var tagNid = element['nid'];
-	  var tagName = element['name'];
-	  var tagDesc = element['desc'];
-	  
-	  var linksArr = [];
-	  linksArr = JSON.parse(linksData);
-	  var linkCount = linksArr.length;
-	  
-	  // Now we iterate through the links. 
-	  for(var i = 0; i < linkCount; i++) {
-	  
-	  	var resNid = linksArr[i]['nid'];
-	  	
-	  	
-	  	//small bug in group info being returned - want the name "name" not "gname"
-	  	//small bug in app info being returned - want the name "name" not "nid"
-	  	if(linksArr[i]['type'] == 1) {
-	  		linksArr[i]['name'] = linksArr[i]['gname'];
-	  	} else if(linksArr[i]['type'] == 3) {		
-	  		linksArr[i]['name'] = linksArr[i]['nid'];
-	  	} else if(linksArr[i]['type'] == 6) {
-	  		linksArr[i]['name'] = linksArr[i]['nid'];
-	  	}
-	  	
-	  	var type_int = linksArr[i]['type'];
-	  	
-	  	var resType = SW.typeMap[type_int];
-		var resName = linksArr[i]['name'];
-		var resNid = linksArr[i]['nid'];
-		
-		//individual list item for each of the resource to which the tag refers
-		$tag_resource_item_li = $('<li id="tagResource_'+resNid+'"></li>');
-		$tag_resource_name = $('<span style="font-weight:bold">'+resName+' ('+resType+')&nbsp;</span> ');
-		$tag_resource_morelink = $('<a id="' + resNid + '" style="cursor:pointer">more</a>').click(function() {
-			
-			if(this.innerHTML == 'more') {
-				this.innerHTML = 'less';
-				$('#tagResourceInfo_'+this.id).show('slow');
-			} else {
-				this.innerHTML = 'more';
-				$('#tagResourceInfo_'+this.id).hide('slow');
-			}
-			
-		});
-		$tag_resource_info = $('<div id="tagResourceInfo_'+resNid+'" style="display:none">' + '</div>');
-
-		for(var key in linksArr[i]) {
-			$key = $('<div style="margin-left:5px">' + key + ' : ' + linksArr[i][key] + '</div>')
-			$tag_resource_info.append($key);
-		}
-		
-		
-		$tag_resource_item_li.append($tag_resource_name);
-		$tag_resource_item_li.append($tag_resource_morelink);
-		$tag_resource_item_li.append($tag_resource_info);
-		$tag_contents_list.append($tag_resource_item_li);
-		
-	  }
-	  */
-	  return $tag_contents_list;
-	  		
-		    	
-	  
-	  
-	}
 
 
 
-
-
-
-/*
-var hasLinks = false;
-for(var key in result) {
-	if(key != 'links') {
-		var $property = $('<div class="row-fluid">' +  
-				  '<div class="span1"></div>' +
-				  '<div class="span3">' + key + '</div>' +
-				  '<div class="span8">' + result[key] + '</div>' +
-				  '</div>');
-		$content.append($property);
-	} else {
-		hasLinks = true;
-	}
-	
-}
-if(hasLinks) {
-	var $property = $('<div class="row-fluid">' +  
-			  '<div class="span1"></div>' +
-			  '<div class="span3">' + 'links' + '</div>' +
-			  '<div class="span8">' + 'links stuff' + '</div>' +
-			  '</div>');
-	$content.append($property);
-}
-*/

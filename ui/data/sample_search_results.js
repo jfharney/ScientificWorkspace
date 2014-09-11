@@ -88,15 +88,17 @@ search_results_obj_6['mtime'] = 1380646733;
 
 search_results_obj_arr.push(search_results_obj_6);
 
+
+//{"nid":5386568,"access":0,"name":"jamrozTag2","type":6,"desc":"This is a tag.","owner":9328}
 var search_results_obj_7 = {};
-search_results_obj_7['nid'] = 5386652;
+search_results_obj_7['nid'] = 5386568;
 search_results_obj_7['access'] = 0;
-search_results_obj_7['name'] = 'jamrozTag';
+search_results_obj_7['name'] = 'jamrozTag2';
 search_results_obj_7['type'] = 6;
-search_results_obj_7['desc'] = "This is Jamroz Tag.";
+search_results_obj_7['desc'] = "This is a Tag.";
 search_results_obj_7['owner'] = 9328;
 
-//search_results_obj_arr.push(search_results_obj_7);
+search_results_obj_arr.push(search_results_obj_7);
 
 
 var search_results_obj_8 = {};

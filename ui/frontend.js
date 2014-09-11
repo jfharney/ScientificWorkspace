@@ -126,7 +126,7 @@ app.get("/search_results_doi_metadata/:user_id", function(request, response) {
 });
 
 app.get("/search_results/:user_id", function(request, response) {
-	  console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
+	  //console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
 	  //curl -X GET 'http://techint-b117:8080/sws/search?uid=5112&query=v.name:tag*'
 	  var request_obj = request['query'];
 	  
@@ -134,7 +134,7 @@ app.get("/search_results/:user_id", function(request, response) {
 		
 	  
 	  for(var key in request_obj) {
-		  console.log('key: ' + key);
+		  //console.log('key: ' + key);
 	  }
 	  var text = request_obj['text'];
 	  
@@ -147,7 +147,7 @@ app.get("/search_results/:user_id", function(request, response) {
 		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text;// + '*';
 	  }
 	  
-	  console.log('path--->' + 'http://' + proxy.serviceHost + ':' + proxy.servicePort + path);
+	  //console.log('path--->' + 'http://' + proxy.serviceHost + ':' + proxy.servicePort + path);
 	  
 	  
 	  console.log('sample search results array');
@@ -208,41 +208,6 @@ app.get("/search_results/:user_id", function(request, response) {
 });
 
 
-function filterResultsByType(response_arr, type) {
-	
-}
-
-function filterResultsByBitmap(response_arr, bitmap) {
-	
-	
-	/*
-	for(var i=0;i<response_arr.length;i++) {
-		var result = response_arr[i];
-		
-		var type = result['type'];
-		
-		console.log('type: ' + type + ' bitmap: ' + bitmap[type]);
-		if(bitmap[type]==1) {
-			var $record = $('<div class="row-fluid"></div>');
-			
-			var $subheader = $('<div class="span10" style="margin-left: 10px">');
-			var $type = $('<div>Type: ' + SW.type_str[type] + '</div>');
-			$subheader.append($type);
-			
-			$record.append($subheader);
-			
-			var $separator = $('<hr>');
-			
-			console.log($record.html());
-			
-			$('#results').append($record);
-			$('#results').append($separator);
-		}
-		
-	}
-	*/
-	
-}
 
 
 
@@ -631,7 +596,7 @@ app.post('/tagproxy/:user_id', function(request, response) {
 app.get('/tags', function(request, response) 
 {	
 
-	console.log('\n\n\n----Tags ----\n\n');
+	console.log('\n----Tags ----\n');
 	var res = tags.tagsHelper(request,response);
 	
 });
@@ -653,7 +618,7 @@ app.get('/tags/:tag_name', function(request, response)
 
 app.get('/tags/links/:tag_nid', function(request, response) {
   
-	console.log('\n\n\n----Tags links----\n\n');
+	//console.log('\n\n\n----Tags links----\n\n');
 	var res = tags.tagLinksProxHelper(request, response);
 	
 		
