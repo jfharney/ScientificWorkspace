@@ -265,43 +265,21 @@ html(lang="en")
                       button#tagcloudUpdateTagButton Update Tag
                       button#tagcloudDeleteTagButton Delete Tag
                   div.span6
-                    div#tagInfoPane.row-fluid
-                    
-          // SINGLE TAG WORKSPACE
-          //div.row-fluid.sortable
-            div.box.span12
-              div.box-header.well
-                span#jobSearchIcon
-                  h2 Single Tag Workspace
-                div.box-icon
-                  a.btn.btn-minimize.btn-round(href="#")
-                    i.icon-chevron-up
-                  a.btn.btn-close.btn-round(href="#")
-                    i.icon-remove
-              div.box-content
-                div.row-fluid
-                  div.span6
-                    ul#tagButtonList(style="list-style:none")
-                    br
-                    div#aggregateTagButtons
-                      button#tagcloudObtainDoiButton(data-toggle="modal" data-target="#doiModal") Obtain DOI
-                      button#tagcloudUpdateTagButton Update Tag
-                      button#tagcloudDeleteTagButton Delete Tag
-                  div.span6
-                    div#tagInfoPane.row-fluid
+                    div.tagInfoPane.row-fluid
                 
+          // INFO PANEL
           div.row-fluid.sortable
             div.span12
               div.box.span12
                 div.box-header.well
                   h2 Info
-                    //i.icon-user
                   div.box-icon
                     a.btn.btn-minimize.btn-round(href="#")
                       i.icon-chevron-up
                     a.btn.btn-close.btn-round(href="#")
                       i.icon-remove
                 div.box-content
+                  div.tagInfoPane.row-fluid
                   h3 User Info
                   div#user_info
                   h3 Collaborators Info

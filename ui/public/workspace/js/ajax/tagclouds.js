@@ -2,25 +2,24 @@
  */
 
 function renderTagCloud() {
-	
+
   var uid = SW.current_user_number;
-	  
   var tags_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
   
   // The outer Ajax call gets the set of tags for the current user.
   $.ajax({
-	type: "GET",
-	url: tags_url_prefix + 'uid=' + uid,
-	success: function(tagsData) {
+    type: "GET",
+    url: tags_url_prefix + 'uid=' + uid,
+    success: function(tagsData) {
       var tagsArr = [];
       tagsArr = JSON.parse(tagsData);
       
       // Then, for each tag returned, we get an array of that tag's links.
       $.each(tagsArr, function(index, element) {
-    	  
+ 
         var tagNid = element['nid'];
-      	var tagName = element['name'];
+        var tagName = element['name'];
         var tagDesc = element['desc'];
         
         // The inner Ajax call gets the set of links for each tag retrieved. 
@@ -32,22 +31,22 @@ function renderTagCloud() {
             linksArr = JSON.parse(linksData);
             var linkCount = linksArr.length;
             
-            // Now populate the tag cloud in the lower left display panel.
-            if(linkCount > 0) {		// We don't care about displaying tags with no links. The interface should prevent such tags from being created anyway.
-      		  var fontSize = 8;
-    		  var $tag = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
-    		    .on('click', function() {
-                  //tag information pane
-    			  $('#tagInfoPane').empty();
-                  //info part
+            // If the tag has at least one link, we add it to the tag cloud in the lower left panel. We don't care about displaying tags with no links. The interface should prevent such tags from being created anyway. 
+            if(linkCount > 0) {
+              var fontSize = 8;
+              var $tag = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
+                .on('click', function() {
+                  console.log('On click event for tag cloud anchor.');
+                  $('.tagInfoPane').empty();
+
                   $info_pane = $('<div class="span8" id="info_pane"></div>');
 
                   $tag_name = $('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+'</div>');
                   $tag_description = $('<div>Description: '+tagDesc+'</div>');
                   $tag_link_count = $('<div>Linked Objects: '+linkCount+'</div>');
 
-                  // Function tagsContentList defined below in line 209. 
-                  var $tags_contents_list = tagsContentList(element, linksData);
+                  // Function makeTagContentList defined below in line 239. 
+                  var $tags_contents_list = makeTagContentList(element, linksData);
                 
                   $info_pane.append($tag_name);
                   $info_pane.append($tag_description);
@@ -55,7 +54,7 @@ function renderTagCloud() {
                     
                   $info_pane.append($tag_contents_list);
 
-                  $('#tagInfoPane').append($info_pane);
+                  $('.tagInfoPane').append($info_pane);
 
                   //button part
                   $button_pane = $('<div class="span4 buttons" id="button_pane"></div>');
@@ -101,12 +100,12 @@ function renderTagCloud() {
                     });
                   $delete_tag_button = $('<p><button class="btn btn-default btn-sm">Delete Tag</button></p>')
                     .click(function(){
-                	  console.log('deleting tag');
+                      console.log('deleting tag');
                       //deleteTag(tag_nid,linked_nids,uid);
                     });
                 $update_tag_button = $('<p><button class="btn btn-default btn-sm">Update Tag</button></p>')
-                  .click(function(){
-                	console.log('updating tag');
+                  .click(function() {
+                    console.log('updating tag');
                   });
                 
                 $button_pane.append($obtain_doi_button);
@@ -114,90 +113,75 @@ function renderTagCloud() {
                 $button_pane.append($update_tag_button);
                 
 
-                $('#tagInfoPane').append($button_pane);
+                $('.tagInfoPane').append($button_pane);
                 
                 
-                
-             	var linked_nids = new Array();
-  			      
-             	// We add a representation of the tag selected to the tag workspace.
+                var linked_nids = new Array();
+        
+                // We add a representation of the tag selected to the tag workspace.
                 // Check to see if the tag is already in the Tags Workspace when clicked. If it is, don't re-add it. 
                 if($.inArray(tagNid, SW.tagNidsInWorkspace) == -1) {
                   SW.tagNidsInWorkspace.push(tagNid);
                   $tag_li = $('<li id="tagWsLi_' + tagNid + '" style="margin:5px"></li>');
                     
                   $tag_checkbox = $('<input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px">')
-                    .change(function(){
-                  	  console.log('checkbox changed');
-	
-                   	  //empty the global tag nid array
-                   	  SW.selected_tag_nids = [];
+                    .change(function() {
+		              // Empty the global tag nid array.
+                      console.log('Change event for tagWsCheck_'+tagNid+' has fired!');
+                      SW.selected_tag_nids = [];
+		              SW.resetMultiTagFields();
                 		
-                   	  $.each($('.tagCheckbox'),function() {
-                        //empty global list here
+                      $.each($('.tagCheckbox'), function() {
                         if($(this).is(':checked')) {
                           // Add the tag nid to global list.
                           var nid = this.id.substring((this.id.search('_')+1));
                           SW.selected_tag_nids.push(nid);
+                          trackSelectedTagLinks(nid);
                         } 
                       });
-                    	
-                   	  console.log('current global tag nids: ' + SW.selected_tag_nids);
+		              //console.log('SW.tagNidsInWorkspace is: ' + SW.selected_tag_nids);
                     });
                     
                   $tag_button = $('<button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>')
                     .click(function() {
+                      //tag information pane
+                      $('#tagInfoPane').empty();
+                    
+                      $tag_name = $('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+'</div>');
+                      $tag_description = $('<div>Description: '+tagDesc+'</div>');
+                      $tag_link_count = $('<div>Linked Objects: '+linkCount+'</div>');
                     	
-                    	//tag information pane
-                    	$('#tagInfoPane').empty();
-                    	
-                    	$tag_name = $('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+'</div>');
-                    	$tag_description = $('<div>Description: '+tagDesc+'</div>');
-                    	$tag_link_count = $('<div>Linked Objects: '+linkCount+'</div>');
-                    	
-                    	
-                        $('#tagInfoPane').append($tag_name);
-                        $('#tagInfoPane').append($tag_description);
-                        $('#tagInfoPane').append($tag_link_count);
-                        
-                        //SW.resetTaggedFields();				// Reset the tagged fields. This is gonna have to be adjusted, since we are going to be creating a DOI from multiple tags.
-                        var linked_nids = new Array();
-      			      
-                        //needs:
-                        //linkCount
-                        //linksArr
-                        var $tags_contents_list = tagsContentList(element,linksData);
+                      $('#tagInfoPane').append($tag_name);
+                      $('#tagInfoPane').append($tag_description);
+                      $('#tagInfoPane').append($tag_link_count);
 
-                        //alert('tags contents: ' + $tags_contents_list.html());
-                        $('#tagInfoPane').append($tag_contents_list);
-                    	
+                      var linked_nids = new Array();
+                      var $tags_contents_list = makeTagContentList(element,linksData);
+
+                      $('#tagInfoPane').append($tag_contents_list);
                     });
                     
                     
-                    
-                    $tag_remove_icon = $('<img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tag Workspace." />').click(function(){
-                    	console.log('removing ' + tagNid);
-                    	$('li#tagWsLi_'+tagNid).remove();
+                    // Here is the X icon button beside each tag button in the Tags Workspace. 
+                    $tag_remove_icon = $('<img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tags Workspace." />')
+                      .click(function() {
+                        var result = $('li#tagWsLi_'+tagNid);
+                        var resultLength = result.length;
+
+                        $('li#tagWsLi_'+tagNid).remove();
                     	
-                    	//remove tag from workspace and update the global tag nids
-                    	SW.selected_tag_nids = [];
-                    	$.each($('.tagCheckbox'),function() {
-                    		//empty global list here
-                    		
-                    		if($(this).is(':checked')) {
-                        		console.log('checked ' + this.id);
-                        		//add the tag nid to global list
-                        		var nid = this.id.substring((this.id.search('_')+1));
-                        		
-                        		SW.selected_tag_nids.push(nid);
-                    		} else {
-                    			console.log('unchecked ' + this.id);
-                    			
-                    		}
-                    		
-                    	});
-                    	console.log('nids: ' + SW.selected_tag_nids);
-                    });
+                        // We reset both the array of selected tag nids and the array of the tag nids in the Tags Workspace. 
+                        SW.selected_tag_nids = [];
+                        SW.tagNidsInWorkspace = [];
+                        $.each($('.tagCheckbox'),function() {
+                          var tagNid = this.id.substring((this.id.search('_')+1));
+                          SW.tagNidsInWorkspace.push(tagNid);
+                          if($(this).is(':checked'))
+                            SW.selected_tag_nids.push(tagNid);
+                        });
+
+                        displayAggregateTagWorkspaceButtons();
+                      });
                     
                     
                     $tag_li.append($tag_checkbox);
@@ -207,7 +191,7 @@ function renderTagCloud() {
                     
                     $('ul#tagButtonList').append($tag_li);
                     
-                    displayAggregateTagWorkspaceButtons();
+                    displayAggregateTagWorkspaceButtons(); 
                                         
                     
                   } //end if tag is not in the workspace already 
@@ -226,22 +210,24 @@ function renderTagCloud() {
   
   // When the DOI modal is shown, we need it to show the selected items in the appropriate fields. 
   $('#tagcloudObtainDoiButton').on('click', function() {
+    var peopleArr = [];
+    for(var key in SW.multi_tag_people)
+      peopleArr.push(key);
+    $('td#doiModalPeopleField').text(peopleArr);
     
+    var filesArr = [];
+    for(var key in SW.multi_tag_files)
+      filesArr.push(key);
+    $('td#doiModalFilesField').text(filesArr);
   });
 }       // end of renderTagCloud()
 
-$('.tagCheckbox').on('change', function() {
-  console.log(this.id +' has been checked!');
-});
+//$('.tagCheckbox').on('change', function() {
+  //console.log(this.id +' has been checked!');
+//});
 
-//returns a jquery element of the listing of all resource object links given the 
-//input:
-//element -> tag title, description, nid
-//linksData -> tag links information
-//output:
-//$tags_content_list - an unordered list of the objects to which the tag refers
-// Called above in lines 50 and 135. 
-function tagsContentList(element, linksData) {
+
+function makeTagContentList(element, linksData) {
 	
   $tag_contents_list = $('<ul id="tagContentsList"></ul>');
 	
@@ -258,8 +244,7 @@ function tagsContentList(element, linksData) {
   
   	var resNid = linksArr[i]['nid'];
   	
-  	
-  	//small bug in group info being returned - want the name "name" not "gname"
+   	//small bug in group info being returned - want the name "name" not "gname"
   	//small bug in app info being returned - want the name "name" not "nid"
   	if(linksArr[i]['type'] == 1) {
   		linksArr[i]['name'] = linksArr[i]['gname'];
@@ -273,32 +258,32 @@ function tagsContentList(element, linksData) {
   	if(linksArr[i]['type'] == 0) {
   	  SW.single_tag_people.push(linksArr[i]['name']);
   	  SW.single_tag_nids.push(linksArr[i]['nid']);
-  	  console.log('SW.single_tag_people is now '+SW.single_tag_people);
-  	  console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
+  	  //console.log('SW.single_tag_people is now '+SW.single_tag_people);
+  	  //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
   	}
   	else if(linksArr[i]['type'] == 1) {
       SW.single_tag_groups.push(linksArr[i]['name']);
       SW.single_tag_nids.push(linksArr[i]['nid']);
-      console.log('SW.single_tag_groups is now '+SW.single_tag_groups);
-      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
+      //console.log('SW.single_tag_groups is now '+SW.single_tag_groups);
+      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
     }
     else if(linksArr[i]['type'] == 2) {
       SW.single_tag_jobs.push(linksArr[i]['name']);
       SW.single_tag_nids.push(linksArr[i]['nid']);
-      console.log('SW.single_tag_jobs is now '+SW.single_tag_jobs);
-      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
+      //console.log('SW.single_tag_jobs is now '+SW.single_tag_jobs);
+      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
     }
     else if(linksArr[i]['type'] == 3) {
       SW.single_tag_apps.push(linksArr[i]['aid']);
       SW.single_tag_nids.push(linksArr[i]['nid']);
-      console.log('SW.single_tag_apps is now '+SW.single_tag_apps);
-      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
+      //console.log('SW.single_tag_apps is now '+SW.single_tag_apps);
+      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
     }
     else if(linksArr[i]['type'] == 4) {
       SW.single_tag_files.push(linksArr[i]['path']);
       SW.single_tag_nids.push(linksArr[i]['nid']);
-      console.log('SW.single_tag_files is now '+SW.single_tag_files);
-      console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
+      //console.log('SW.single_tag_files is now '+SW.single_tag_files);
+      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
     }
     else {'Error: unhandled type'}
   	
@@ -371,15 +356,8 @@ function deleteTag(tag_nid,linked_nids,uid) {
 					error: function() {
 						console.log('error');
 					}
-			  
-			  
 			  });
-			  
-			  
-			  
 		}
-		  
-		
 	} 
 	
 	
@@ -405,9 +383,7 @@ function deleteTag(tag_nid,linked_nids,uid) {
   
   
     });
-	
-	
-	
+
 }
 
 
@@ -426,19 +402,19 @@ function setTaggedFields(tagNid) {
         var linksArr = JSON.parse(linksData);
         for(var i = 0; i < linksArr.length; i++) {
           var type = linksArr[i]['type'];
-          if(type == 0)
+          if(type == 0)             // user
             ;//console.log('User!');
-          else if(type == 1)
+          else if(type == 1)        // group
             ;//console.log('Group!');
-          else if(type == 2)
+          else if(type == 2)        // job
             ;//console.log('Job!');
-          else if(type == 3)
+          else if(type == 3)        // app
             ;//console.log('App!'); 
-          else if(type == 4) {
+          else if(type == 4) {      // file
             //console.log('File!');
             addFileNameToTaggedFiles(linksArr[i]['path'], tagNid);
           }
-          else if(type == 5)
+          else if(type == 5)        // directory
             ;//console.log('Directory!');
           else
             console.log('Tag?!');
@@ -481,37 +457,6 @@ function displayAggregateTagWorkspaceButtons() {
 	$('div#aggregateTagButtons').hide();
 }
 
-
-
-
-function getReducedArr(tag_name_arr) 
-{
-	console.log('in get reduced arr');
-	
-	var tag_names = new Array();
-	var tag_counts = new Array();
-	
-	var tag_name = tag_name_arr[0];
-	var tag_count = 0;
-	for(var i=0; i < tag_name_arr.length; i++) {
-		tag_count = tag_count+1;
-		if(tag_name_arr[i] != tag_name) {
-			tag_names.push(tag_name);
-			tag_counts.push(tag_count);
-			tag_name = tag_name_arr[i];
-			tag_count = 0;
-		}
-	}
-
-	tag_names.push(tag_name);
-	tag_counts.push(tag_count);
-	console.log('tag_names: ' + tag_names);
-	return tag_names;
-}
-
-
-
-
 /* Taken from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript */
 function formatTimestamp(UNIX_timestamp) {
    var a = new Date(UNIX_timestamp * 1000);
@@ -540,3 +485,40 @@ function getNidValue(id) {
   return nid
 }
 
+function trackSelectedTagLinks(tagNid) {
+  var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
+  
+  $.ajax({
+    type: 'GET',
+    url: tagLinks_url_prefix+tagNid,
+    success: function(linksData) {
+      var linksArr = JSON.parse(linksData);
+      for(var key = 0; key < linksArr.length; key++) {
+        var type = linksArr[key]['type'];
+        var name = linksArr[key]['name'];     // remember apps don't have names.
+        if(type == 0) {     // PEOPLE
+          if(name in SW.multi_tag_people)
+            SW.multi_tag_people[name].push(tagNid);
+          else {
+            SW.multi_tag_people[name] = [];
+            SW.multi_tag_people[name].push(tagNid);
+          }
+          for(var j in SW.multi_tag_people)
+            console.log('SW.multi_tag_people['+j+']: '+SW.multi_tag_people[j]);          
+        }
+        if(type == 4) {     // FILES
+          var path = linksArr[key]['path'];     // Defined only for files. 
+          if(path in SW.multi_tag_files)
+            SW.multi_tag_files[path].push(tagNid);
+          else {
+            SW.multi_tag_files[path] = [];
+            SW.multi_tag_files[path].push(tagNid);
+          }
+          for(var j in SW.multi_tag_files)
+            console.log('SW.multi_tag_files['+j+']: '+SW.multi_tag_files[j]);
+        }
+      }
+    },
+    error: function(e) {console.log('Error in trackSelectedTagLinks(tagNid): '+e);}
+  });
+}
