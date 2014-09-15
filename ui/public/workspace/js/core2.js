@@ -54,7 +54,9 @@ SW.multi_tag_groups = {};
 SW.multi_tag_jobs = {};
 SW.multi_tag_apps = {};
 SW.multi_tag_files = {};
-SW.multi_tag_nids = {};     // What does this one do? 
+SW.multi_tag_nids = {};
+
+SW.doiFromTagsFlag = false;
 
 SW.resetMultiTagFields = function() {
   SW.multi_tag_people = {};
@@ -62,7 +64,7 @@ SW.resetMultiTagFields = function() {
   SW.multi_tag_jobs = {};
   SW.multi_tag_apps = {};
   SW.multi_tag_files = {};
-  SW.multi_tag_nids = {};  
+  SW.multi_tag_nids = {};
 }
 
 // These globals track the tags in the Tags Workspace whose checkboxes are currently checked.

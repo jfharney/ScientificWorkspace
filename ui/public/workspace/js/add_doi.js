@@ -4,6 +4,8 @@ $(document).ready(function() {
 
   // This is the button in the left menu panel. 
   $('#add_doi_button').click(function() { 
+    SW.doiFromTagsFlag = false;
+    
     $('#doiModalPeopleField').html(''+SW.selected_people_names);
     $('#doiModalGroupsField').html(''+SW.selected_group_names);
     $('#doiModalFilesField').html(''+SW.selected_file_paths);
@@ -94,14 +96,26 @@ function addApps() {
 
 function addFiles() {
   var input = '';
-  var paths = SW.selected_file_paths;          // an array
-  var nids = SW.selected_file_nids;            // an array
+  var paths = [];
+  var nids = [];
+  if(SW.doiFromTagsFlag) {
+    for(var key in SW.multi_tag_files) {
+      paths.push(key);
+      for(var i = 0; i < SW.multi_tag_files[key].length; i++) {
+        nids.push(SW.multi_tag_files[key][i]);
+      }
+    }
+  }
+  else {
+    var paths = SW.selected_file_paths;
+    var nids = SW.selected_file_nids;
+  }
   
   for(var i = 0; i < paths.length; i++) {
     input += '<input type="hidden" name="fileNames" value="'+paths[i]+'" />';
   }
   
-  // Group nids are aggregated into the general nids collection.
+  // File nids are aggregated into the general nids collection.
   for(var i = 0; i < nids.length; i++) {
     input += '<input type="hidden" name="nids" value="'+nids[i]+'" />';
   }
@@ -132,8 +146,7 @@ function addTags() {
 	
 	var input = '';
 	
-	input += '<input type="hidden" name="'+ 'nids' +'" value="'+ SW.selected_tag_nids +'" />';
-	console.log('adding tag nids: ' + SW.selected_tag_nids);
+	input += '<input type="hidden" name="tagNames" value="'+ SW.selected_tag_names +'" />';
 	
 	return input;
 }
@@ -142,7 +155,6 @@ function addTags() {
 function createDOI() {
 
   var username = SW.current_user_uname;
-  var selected_file_titles = SW.selected_file_titles;
   var input = '';
   
   /* Put the user data in the hidden input fields. */  
