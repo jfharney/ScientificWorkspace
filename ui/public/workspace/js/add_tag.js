@@ -6,18 +6,59 @@ $(document).ready(function() {
     /* For now, we are only checking to see whether the tag name is an empty string. */
     if($('input#tag_name').val() != '') {
 	  createTag();
-	  $('#tagModal').modal('hide');
+	  //$('#tagModal').modal('hide');
       /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
 	  //location.reload();
 	  
       /* Reset fields for next tag creation. */
-      $('#tag_name').val('');
-      $('#tag_description').val('');
+      //$('#tag_name').val('');
+      //$('#tag_description').val('');
     }
     else
       alert('Tag name field is required!');
   });
 });
+
+function tagExists(tagName) {
+	var uid = SW.current_user_number;
+	var tags_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
+	var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
+  
+	var found = false;
+  
+	  // The outer Ajax call gets the set of tags for the current user.
+	$.ajax({
+		type: "GET",
+		async: false,
+		url: tags_url_prefix + 'uid=' + uid,
+		success: function(tagsData) {
+	
+			console.log('success in getting tag list');
+			var tagsArr = [];
+			tagsArr = JSON.parse(tagsData);
+
+
+			for(var i=0;i<tagsArr.length;i++) {
+				var retrieved_tag = tagsArr[i];
+	
+				console.log('tag_name: ' + retrieved_tag['name']);
+
+				if(tagName == retrieved_tag['name']) {
+					found = true;
+				}
+    	
+			}
+	
+		},
+		error: function() {
+
+			console.log('error in getting tag list (add_tag line 81)');
+	    	
+	    }
+	  });
+  
+	  return found;
+}
 
 function createTag() {
 	
@@ -61,44 +102,69 @@ function createTag() {
   var url = 'http://' + SW.hostname + ':' + SW.port + '/tagproxy/'+userNumber + '?name=' + tagName + '&description=' + tagDescription;
   
   console.log('Issuing the URL: '+url);
-	  
-  //url = url + '?path=|';
-  //var children = [];
-  //alert('url: ' + url);
-	  
-  $.ajax({
-    url: url,
-    global: false,
-    type: 'POST',
-    success: function(data) {
-				
-      console.log('success in creating tag ');
-				
-      var tag_nid = data['nid'];
-				  
-      //associate tag to selected files
-      associateFiles(tag_nid);
-				 
-      //associate tag to groups
-      associateGroups(tag_nid);
-				 
-      //associate tag to selected jobs
-      associateJobs(tag_nid);
-				 
-      //associate tag to selected users
-      associateUsers(tag_nid);
 
-      //associate tag to selected apps
-      associateApps(tag_nid);
-				
-      //either reload the page or dynamically add tag
-      //default is that the page will reload
-      addTagToPage();
-    },
-    error: function(e) {
-      alert('error in createTag() in add_tag.js: '+e);
-    }
-  });
+  //first we need to check if the tag name exists
+  //if it does, tell the user
+  var found = tagExists(tagName); 
+  
+  console.log('found: ' + found);
+  
+  
+  if(found) {
+	  alert('A tag with the name: ' + tagName + ' exists.  Please use another name');
+	  //$('#tagModal').modal('hide');
+      /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
+	  //location.reload();
+	  
+      /* Reset fields for next tag creation. */
+      $('#tag_name').val('');
+      $('#tag_description').val('');
+  } else {
+	  
+	  $.ajax({
+	    url: url,
+	    global: false,
+	    type: 'POST',
+	    success: function(data) {
+					
+	      console.log('success in creating tag ');
+					
+	      var tag_nid = data['nid'];
+					  
+	      //associate tag to selected files
+	      associateFiles(tag_nid);
+					 
+	      //associate tag to groups
+	      associateGroups(tag_nid);
+					 
+	      //associate tag to selected jobs
+	      associateJobs(tag_nid);
+					 
+	      //associate tag to selected users
+	      associateUsers(tag_nid);
+
+	      //associate tag to selected apps
+	      associateApps(tag_nid);
+					
+	      //either reload the page or dynamically add tag
+	      //default is that the page will reload
+	      addTagToPage();
+	    },
+	    error: function(e) {
+	      alert('error in createTag() in add_tag.js: '+e);
+	    }
+	  });
+	  
+	  $('#tagModal').modal('hide');
+      /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
+	  //location.reload();
+	  
+      /* Reset fields for next tag creation. */
+      $('#tag_name').val('');
+      $('#tag_description').val('');
+  } 
+  
+  
 }
 
 
@@ -189,7 +255,7 @@ function associateFiles(tag_nid) {
     console.log('selected_file_nids: ' + SW.selected_file_nids + ' selected_file_nids.length ' + SW.selected_file_nids.length + ' [0]: ' + SW.selected_file_nids[0]);
     for(var i = 0; i < SW.selected_file_nids.length; i++) {
 			  
-			 //console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_file_nids[i]); //?name='+tagName+'&uid=5112');
+			 console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_file_nids[i]); //?name='+tagName+'&uid=5112');
 			  
 			 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
 			 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_file_nids[i] + '&type=' + 'file';

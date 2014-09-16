@@ -516,12 +516,12 @@ app.get('/tags/:tag_name', function(request, response)
 	
 });
 
-/*app.post('/associationproxy/:user_id', function(request, response)        // Commented out by Mark on 9-02-14. 
+app.post('/associationproxy/:user_id', function(request, response)        // Commented out by Mark on 9-02-14. 
 {
 	
 	var res = tags.associationsproxyHelper(request, response);
 	
-});*/
+});
 
 app.get('/tags/links/:tag_nid', function(request, response) {
   
