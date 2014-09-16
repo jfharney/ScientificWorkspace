@@ -55,8 +55,8 @@ function renderTagCloud() {
 
                   $('.tagInfoPane').append($info_pane);
 
-                  //button part
-                  $button_pane = $('<div class="span4 buttons" id="button_pane"></div>');
+                  //button part     Commented out on 9-16-14.
+                  /*$button_pane = $('<div class="span4 buttons" id="button_pane"></div>');
 
                   // RIGHT HAND OBTAIN DOI BUTTON (for a single tag)
                   $obtain_doi_button = $('<p><button id="obtainDoiFromSingleTagButton" class="btn btn-default btn-sm">Obtain DOI</button></p>')
@@ -100,11 +100,11 @@ function renderTagCloud() {
                           .appendTo('body').submit().remove();
                       }
                     });
-                  $delete_tag_button = $('<p><button class="btn btn-default btn-sm">Delete Tag</button></p>')
-                    .click(function(){
-                      console.log('deleting tag');
-                      //deleteTag(tag_nid,linked_nids,uid);
-                    });
+                $delete_tag_button = $('<p><button class="btn btn-default btn-sm">Delete Tag</button></p>')
+                  .click(function(){
+                    console.log('deleting tag');
+                    //deleteTag(tag_nid,linked_nids,uid);
+                  });
                 $update_tag_button = $('<p><button class="btn btn-default btn-sm">Update Tag</button></p>')
                   .click(function() {
                     console.log('updating tag');
@@ -114,9 +114,7 @@ function renderTagCloud() {
                 $button_pane.append($delete_tag_button);
                 $button_pane.append($update_tag_button);
                 
-
-                $('.tagInfoPane').append($button_pane);
-                
+                $('.tagInfoPane').append($button_pane);*/
                 
                 var linked_nids = new Array();
         
@@ -138,7 +136,7 @@ function renderTagCloud() {
                         if($(this).is(':checked')) {
                           // Add the tag nid to global list.
                           var nid = this.id.substring((this.id.search('_')+1));
-                          SW.selected_tag_names.push(tagName)
+                          SW.selected_tag_names.push(tagName);
                           SW.selected_tag_nids.push(tagNid);
                         } 
                       });
@@ -147,30 +145,31 @@ function renderTagCloud() {
                   // TAGS WORKSPACE BUTTON
                   $tag_button = $('<button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>')
                     .click(function() {
-                      //tag information pane
-                      $('#tagInfoPane').empty();
+                      // tag information pane
+                      $('.tagInfoPane').empty();
                     
                       $tag_name = $('<div id="cloud_info" style="max-height:225px;width:auto;overflow:auto">Tag Name: '+$(this).text()+'</div>');
                       $tag_description = $('<div>Description: '+tagDesc+'</div>');
                       $tag_link_count = $('<div>Linked Objects: '+linkCount+'</div>');
                     	
-                      $('#tagInfoPane').append($tag_name);
-                      $('#tagInfoPane').append($tag_description);
-                      $('#tagInfoPane').append($tag_link_count);
+                      $('.tagInfoPane').append($tag_name);
+                      $('.tagInfoPane').append($tag_description);
+                      $('.tagInfoPane').append($tag_link_count);
 
                       var $tags_contents_list = makeTagContentList(element, linksData);
 
-                      $('#tagInfoPane').append($tag_contents_list);
+                      $('.tagInfoPane').append($tag_contents_list);
                     });
                     
                     
                   // TAGS WORKSPACE BUTTON X ICON 
                     $tag_button_remove_icon = $('<img id="removeIcon_'+tagNid+'" class="icon-remove" title="Remove this tag from the Tags Workspace." />')
                       .click(function() {
-                        var result = $('li#tagWsLi_'+tagNid);
-                        var resultLength = result.length;
-
                         $('li#tagWsLi_'+tagNid).remove();
+                        
+                        //var buttonCount = $('li[id^="tagWsLi_"]').length;
+                        //if(buttonCount == 0)
+                        $('.tagInfoPane').empty();
                     	
                         // We reset both the array of selected tag nids and the array of the tag nids in the Tags Workspace. 
                         SW.selected_tag_nids = [];
@@ -185,17 +184,13 @@ function renderTagCloud() {
                         displayAggregateTagWorkspaceButtons();
                       });
                     
-                    
                     $tag_li.append($tag_checkbox);
                     $tag_li.append($tag_button);
                     $tag_li.append($tag_button_remove_icon);
                     
-                    
                     $('ul#tagButtonList').append($tag_li);
                     
                     displayAggregateTagWorkspaceButtons(); 
-                                        
-                    
                   } //end if tag is not in the workspace already 
                 	
               }); //on click function
@@ -214,7 +209,7 @@ function renderTagCloud() {
 // On Click event for the Obtain DOI from multiple tags button that appears in the bottom left 
 // of the Tags Workspace panel. We are able to register this event outside of renderTagCloud
 // because the element is part of the initial document object loading. 
-$('#tagcloudObtainDoiButton').on('click', function() {
+/*$('#tagcloudObtainDoiButton').on('click', function() {
   SW.doiFromTagsFlag = true;
   
   var peopleArr = [];
@@ -226,7 +221,7 @@ $('#tagcloudObtainDoiButton').on('click', function() {
   for(var key in SW.multi_tag_files)
     filesArr.push(key);
   $('td#doiModalFilesField').text(filesArr);
-});
+});*/
 
 // This code was outside renderTagCloud. Should we move some things into blocks like this one?
 // Yes, but it doesn't work when the element is added to the page by a user action.
@@ -264,6 +259,7 @@ function makeTagContentList(element, linksData) {
   		linksArr[i]['name'] = linksArr[i]['nid'];
   	}
   	
+    /* Commented out 9-06-14.
   	// Add the names to the globals for a single tag.
   	if(linksArr[i]['type'] == 0) {
   	  SW.single_tag_people.push(linksArr[i]['name']);
@@ -295,7 +291,7 @@ function makeTagContentList(element, linksData) {
       //console.log('SW.single_tag_files is now '+SW.single_tag_files);
       //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
     }
-    else {'Error: unhandled type'}
+    else {'Error: unhandled type'}*/
   	
   	var type_int = linksArr[i]['type'];
   	
@@ -308,13 +304,14 @@ function makeTagContentList(element, linksData) {
 	$tag_resource_name = $('<span style="font-weight:bold">'+resName+' ('+resType+')&nbsp;</span> ');
 	$tag_resource_morelink = $('<a id="' + resNid + '" style="cursor:pointer">more</a>').click(function() {
 		
-		if(this.innerHTML == 'more') {
-			this.innerHTML = 'less';
-			$('#tagResourceInfo_'+this.id).show('slow');
-		} else {
-			this.innerHTML = 'more';
-			$('#tagResourceInfo_'+this.id).hide('slow');
-		}
+    if(this.innerHTML == 'more') {
+      this.innerHTML = 'less';
+      $('#tagResourceInfo_'+this.id).show('slow');
+    } 
+    else {
+      this.innerHTML = 'more';
+      $('#tagResourceInfo_'+this.id).hide('slow');
+    }
 		
 	});
 	$tag_resource_info = $('<div id="tagResourceInfo_'+resNid+'" style="display:none">' + '</div>');
@@ -404,7 +401,6 @@ function deleteTag(tag_nid,linked_nids,uid) {
 function setTaggedFields(tagNid) {
   
   if(document.getElementById('tagWsCheck_'+tagNid).checked) {
-    //console.log('Checkbox tagWsCheck_'+tagNid+' is checked.');
     $.ajax({
       type: "GET",
       url: 'http://' + SW.hostname + ':' + SW.port + '/tags/links/'+tagNid,
@@ -496,6 +492,7 @@ function getNidValue(id) {
 }
 
 function trackSelectedTagLinks(tagNid) {
+  SW.doiFromTagsFlag = true;
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
   
   $.ajax({

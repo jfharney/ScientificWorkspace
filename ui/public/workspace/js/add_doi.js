@@ -4,7 +4,8 @@ $(document).ready(function() {
 
   // This is the button in the left menu panel. 
   $('#add_doi_button').click(function() { 
-    SW.doiFromTagsFlag = false;
+    for(var key in SW.multi_tag_files)
+      SW.selected_file_paths.push(key);
     
     $('#doiModalPeopleField').html(''+SW.selected_people_names);
     $('#doiModalGroupsField').html(''+SW.selected_group_names);
