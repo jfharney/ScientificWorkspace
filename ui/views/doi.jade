@@ -55,6 +55,11 @@ html
       - each f in fileNames
         div File: #{f} 
     - }
+    
+    - if (typeof(tagNames) !== 'undefined') {
+      - each t in tagNames
+        div Tags: #{t} 
+    - }
 
     - if (typeof(nids) !== 'undefined') {
       - each n in nids
