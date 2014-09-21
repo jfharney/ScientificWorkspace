@@ -20,6 +20,9 @@ $(function() {
   
   /* This function is defined in ajax/fileinfo.js. */
   getFileInfo(SW.current_user_number);
+  
+  /* This function is defined in ajax/doiTree.js. */
+  getUserDoiData(SW.current_user_number);
 	
   /* Enables the list box in the top right to change the current user. */
   /* (This feature will be admin-only in final version.) */

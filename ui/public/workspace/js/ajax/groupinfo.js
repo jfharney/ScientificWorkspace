@@ -73,8 +73,8 @@ function buildCollaboratorTree(children) {
             return node.data.nid;
         });
 
-        //console.log('SW.selected_people_names: '+SW.selected_people_names);
-        //console.log('SW.selected_people_nids: '+SW.selected_people_nids);
+        console.log('SW.selected_people_names: '+SW.selected_people_names);
+        console.log('SW.selected_people_nids: '+SW.selected_people_nids);
 	  }
 	  else if(node.data.type == 1) {       // Groups
 	    SW.selected_group_names = $.map(selNodes, function(node) {
@@ -87,8 +87,8 @@ function buildCollaboratorTree(children) {
 	        return node.data.nid;
 	    });
 
-        //console.log('SW.selected_group_names: '+SW.selected_group_names);
-        //console.log('SW.selected_group_nids: '+SW.selected_group_nids);	
+        console.log('SW.selected_group_names: '+SW.selected_group_names);
+        console.log('SW.selected_group_nids: '+SW.selected_group_nids);	
 	  }
 	},
 	onActivate: function(node) {

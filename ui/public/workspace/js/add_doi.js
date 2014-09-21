@@ -3,23 +3,18 @@ var sample = false;
 $(document).ready(function() {
 
   // This is the button in the left menu panel. 
-  $('#add_doi_button').click(function() { 
-    for(var key in SW.multi_tag_files)
-      SW.selected_file_paths.push(key);
+  $('#add_doi_button').click(function() {
     
-    $('#doiModalPeopleField').html(''+SW.selected_people_names);
-    $('#doiModalGroupsField').html(''+SW.selected_group_names);
-    $('#doiModalFilesField').html(''+SW.selected_file_paths);
-    $('#doiModalJobsField').html(''+SW.selected_job_names);
-    $('#doiModalAppsField').html(''+SW.selected_app_ids); 
+    addTagLinksToGlobals();
+    
+    $('#doiModalTagsField').html(''+SW.selected_tag_names);
   });
     
   /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
   $('button#create_doi_button').click(function() {
-    if($('#doiModalFilesField').html() != '')
-      SW.file_included_flag = true;
+
     /* The boolean SW.file_included_flag indicates whether at least one file is selected. */
-    if(SW.file_included_flag == false)
+    if($('#doiModalFilesField').html() == '')
       alert('At least one file must be selected to request a DOI.');
     else
       createDOI();
@@ -99,18 +94,9 @@ function addFiles() {
   var input = '';
   var paths = [];
   var nids = [];
-  if(SW.doiFromTagsFlag) {
-    for(var key in SW.multi_tag_files) {
-      paths.push(key);
-      for(var i = 0; i < SW.multi_tag_files[key].length; i++) {
-        nids.push(SW.multi_tag_files[key][i]);
-      }
-    }
-  }
-  else {
-    var paths = SW.selected_file_paths;
-    var nids = SW.selected_file_nids;
-  }
+
+  var paths = SW.selected_file_paths;
+  var nids = SW.selected_file_nids;
   
   for(var i = 0; i < paths.length; i++) {
     input += '<input type="hidden" name="fileNames" value="'+paths[i]+'" />';
@@ -147,11 +133,93 @@ function addTags() {
 	
 	var input = '';
 	
-	input += '<input type="hidden" name="tagNames" value="'+ SW.selected_tag_names +'" />';
+	for(var i = 0; i < SW.selected_tag_names.length; i++)
+	  input += '<input type="hidden" name="tagNames" value="'+ SW.selected_tag_names[i] +'" />';
+	
+	for(var i = 0; i < SW.selected_tag_nids.length; i++)
+	  input += '<input type="hidden" name="nids" value="'+ SW.selected_tag_nids[i] +'" />';
 	
 	return input;
 }
-                            	  
+
+// This function loops through the selected tags in the Tags Workspace. For each link in each tag, 
+// it adds that link's name and nid to the corresponding globals, but only if those names and nids
+// are not already in the globals. In this manner, duplicate selections of objects are avoided. 
+// This function also populates the fields of the DOI modal, which is an unfortunate necessity
+// created by the Ajax call. 
+function addTagLinksToGlobals() { 
+  var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
+  var addFlag = true;
+
+  for(var i = 0; i < SW.selected_tag_nids.length; i++) {
+    var tagNid = SW.selected_tag_nids[i];
+    $.ajax({
+      type: 'GET',
+      url: tagLinks_url_prefix+tagNid,
+      success: function(linksData) {
+        var linksArr = JSON.parse(linksData);
+        
+        for(var key = 0; key < linksArr.length; key++) {
+          var type = linksArr[key]['type'];
+          var name = linksArr[key]['name'];
+          var nid = linksArr[key]['nid'];
+
+          if(type == 0) {            //  PERSON
+            addFlag = true;
+            for(var i = 0; i < SW.selected_people_nids.length; i++)
+              if(SW.selected_people_nids[i] == nid) addFlag = false;
+            if(addFlag) {
+              SW.selected_people_names.push(linksArr[key]['name']);
+              SW.selected_people_nids.push(nid);
+            }
+          }
+          else if(type == 1) {       //  GROUP
+            addFlag = true;
+            for(var i = 0; i < SW.selected_group_nids.length; i++)
+              if(SW.selected_group_nids[i] == nid) addFlag = false;
+            if(addFlag) {
+              SW.selected_group_names.push(linksArr[key]['gname']);
+              SW.selected_group_nids.push(nid);
+            }
+          }
+          else if(type == 2) {       //  JOB
+            addFlag = true;
+            for(var i = 0; i < SW.selected_job_nids.length; i++)
+              if(SW.selected_job_nids[i] == nid) addFlag = false;
+            if(addFlag) {
+              SW.selected_job_names.push(linksArr[key]['name']);
+              SW.selected_job_nids.push(nid);
+            }
+          }
+          else if(type == 3) {       //  JOB
+            addFlag = true;
+            for(var i = 0; i < SW.selected_app_nids.length; i++)
+              if(SW.selected_app_nids[i] == nid) addFlag = false;
+            if(addFlag) {
+              SW.selected_app_ids.push(linksArr[key]['aid']);
+              SW.selected_app_nids.push(nid);
+            }
+          }
+          else if(type == 4) {       //  FILE
+            addFlag = true;
+            for(var i = 0; i < SW.selected_file_nids.length; i++)
+              if(SW.selected_file_nids[i] == nid) addFlag = false;
+            if(addFlag) {
+              SW.selected_file_paths.push(linksArr[key]['path']);
+              SW.selected_file_nids.push(nid);
+            }
+          }
+        }
+        $('#doiModalPeopleField').html(''+SW.selected_people_names);
+        $('#doiModalGroupsField').html(''+SW.selected_group_names);
+        $('#doiModalJobsField').html(''+SW.selected_job_names);
+        $('#doiModalAppsField').html(''+SW.selected_app_ids);
+        $('#doiModalFilesField').html(''+SW.selected_file_paths);
+      },
+      error: function(e) {console.log('Error in addTagLinksToGlobals(): '+e);}
+    });
+  }
+}                           	  
                             	  
 function createDOI() {
 
@@ -177,5 +245,4 @@ function createDOI() {
   /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();
-  	
 }

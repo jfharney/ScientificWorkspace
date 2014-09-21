@@ -57,6 +57,9 @@ html(lang="en")
             tr(valign="top")
               td(width="15%") Apps
               td(style="padding-left:15px")#doiModalAppsField
+            tr(valign="top")
+              td(width="15%") Tags
+              td(style="padding-left:15px")#doiModalTagsField
           
         div.modal-footer
           button.btn.btn-default(data-dismiss="modal") Cancel
@@ -266,7 +269,16 @@ html(lang="en")
                       //button#tagcloudDeleteTagButton Delete Tag
                   div.span6
                     div.tagInfoPane.row-fluid
-                
+
+          // DOI PANEL
+          div.row-fluid.sortable
+            div.span12
+              div.box.span12
+                div.box-header.well
+                  h2 User DOIs
+                div.box-content
+                  div#doi_tree
+
           // INFO PANEL
           div.row-fluid.sortable
             div.span12
@@ -347,6 +359,7 @@ html(lang="en")
     script(src="js/ajax/groupinfo.js")
     script(src="js/ajax/fileinfo.js")
     script(src="js/ajax/jobinfo.js")
+    script(src="js/ajax/doiTree.js")
     
     script(src="js/feed.js")
     

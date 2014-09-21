@@ -44,7 +44,7 @@ function renderTagCloud() {
                   $tag_description = $('<div>Description: '+tagDesc+'</div>');
                   $tag_link_count = $('<div>Linked Objects: '+linkCount+'</div>');
 
-                  // Function makeTagContentList defined below in line 239. 
+                  // Function makeTagContentList defined below. 
                   var $tags_contents_list = makeTagContentList(element, linksData);
                 
                   $info_pane.append($tag_name);
@@ -54,93 +54,32 @@ function renderTagCloud() {
                   $info_pane.append($tag_contents_list);
 
                   $('.tagInfoPane').append($info_pane);
-
-                  //button part     Commented out on 9-16-14.
-                  /*$button_pane = $('<div class="span4 buttons" id="button_pane"></div>');
-
-                  // RIGHT HAND OBTAIN DOI BUTTON (for a single tag)
-                  $obtain_doi_button = $('<p><button id="obtainDoiFromSingleTagButton" class="btn btn-default btn-sm">Obtain DOI</button></p>')
-                    // On Click event for the Obtain DOI from a single tag button that appears in the righthand side 
-                    // of the Tags Workspace panel. Note that this button bypasses the DOI modal and goes straight to
-                    // the DOI page. 
-                    .click(function() {
-                      if(SW.single_tag_files.length == 0) 
-                        alert('Tag must contain at least one file for a DOI request to be made.');
-                      else {
-                        var input = '';
-                        
-                        var url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + SW.current_user_uname;
-                        
-                        input+='<input type="hidden" name="creator_nid" value="'+ SW.current_user_nid +'" />';
-                        input+='<input type="hidden" name="creator_email" value="'+ SW.current_user_email +'" />';
-                        input+='<input type="hidden" name="creator_name" value="'+ SW.current_user_name +'" />';
-                        input+='<input type="hidden" name="creator_number" value="'+ SW.current_user_number +'" />';
-                        input+='<input type="hidden" name="creator_uname" value="'+ SW.current_user_uname +'" />';
-  
-                        for(var i = 0; i < SW.single_tag_people.length; i++)
-                          input += '<input type="hidden" name="personNames" value="'+SW.single_tag_people[i]+'" />';
-                        
-                        for(var i = 0; i < SW.single_tag_groups.length; i++)
-                          input += '<input type="hidden" name="groupNames" value="'+SW.single_tag_groups[i]+'" />';
-                        
-                        for(var i = 0; i < SW.single_tag_jobs.length; i++)
-                          input += '<input type="hidden" name="jobNames" value="'+SW.single_tag_jobs[i]+'" />';
-                        
-                        for(var i = 0; i < SW.single_tag_apps.length; i++)
-                          input += '<input type="hidden" name="appIds" value="'+SW.single_tag_apps[i]+'" />';
-                        
-                        for(var i = 0; i < SW.single_tag_files.length; i++)
-                          input += '<input type="hidden" name="fileNames" value="'+SW.single_tag_files[i]+'" />';
-                        
-                        for(var i = 0; i < SW.single_tag_nids.length; i++)
-                          input += '<input type="hidden" name="nids" value="'+SW.single_tag_nids[i]+'" />';
-                        
-                        // Send request.
-                        jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
-                          .appendTo('body').submit().remove();
-                      }
-                    });
-                $delete_tag_button = $('<p><button class="btn btn-default btn-sm">Delete Tag</button></p>')
-                  .click(function(){
-                    console.log('deleting tag');
-                    //deleteTag(tag_nid,linked_nids,uid);
-                  });
-                $update_tag_button = $('<p><button class="btn btn-default btn-sm">Update Tag</button></p>')
-                  .click(function() {
-                    console.log('updating tag');
-                  });
                 
-                $button_pane.append($obtain_doi_button);
-                $button_pane.append($delete_tag_button);
-                $button_pane.append($update_tag_button);
-                
-                $('.tagInfoPane').append($button_pane);*/
-                
-                var linked_nids = new Array();
+                  var linked_nids = new Array();
         
-                // We add a representation of the tag selected to the tag workspace.
-                // Check to see if the tag is already in the Tags Workspace when clicked. If it is, don't re-add it. 
-                if($.inArray(tagNid, SW.tagNidsInWorkspace) == -1) {
-                  SW.tagNidsInWorkspace.push(tagNid);
-                  $tag_li = $('<li id="tagWsLi_' + tagNid + '" style="margin:5px"></li>');
+                  // We add a representation of the tag selected to the tag workspace.
+                  // Check to see if the tag is already in the Tags Workspace when clicked. If it is, don't re-add it. 
+                  if($.inArray(tagNid, SW.tagNidsInWorkspace) == -1) {
+                    SW.tagNidsInWorkspace.push(tagNid);
+                    $tag_li = $('<li id="tagWsLi_' + tagNid + '" style="margin:5px"></li>');
                     
-                  // TAGS WORKSPACE BUTTON CHECKBOX
-                  $tag_checkbox = $('<input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px">')
-                    .change(function() {
-		              // Empty the global tag nid array.
-                      SW.selected_tag_nids = [];
-		              //SW.resetMultiTagFields();
-		              trackSelectedTagLinks(tagNid);
-                		
-                      $.each($('.tagCheckbox'), function() {
-                        if($(this).is(':checked')) {
-                          // Add the tag nid to global list.
-                          var nid = this.id.substring((this.id.search('_')+1));
-                          SW.selected_tag_names.push(tagName);
-                          SW.selected_tag_nids.push(tagNid);
-                        } 
+                    // TAGS WORKSPACE BUTTON CHECKBOX
+                    $tag_checkbox = $('<input id="tagWsCheck_'+tagNid+'" class="tagCheckbox" type="checkbox" style="margin-right:5px">')
+                      .change(function() {
+                      
+		                // Empty the global tag nid arrays.
+                        SW.selected_tag_names = [];
+                        SW.selected_tag_nids = [];
+
+                        $.each($('.tagCheckbox'), function() {
+                          if($(this).is(':checked')) {
+                            // Add the tag nid to global list.
+                            var tagNid = this.id.substring((this.id.search('_')+1));
+                            SW.selected_tag_names.push(tagName);
+                            SW.selected_tag_nids.push(tagNid);
+                          } 
+                        });
                       });
-                    });
 
                   // TAGS WORKSPACE BUTTON
                   $tag_button = $('<button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>')
@@ -206,32 +145,6 @@ function renderTagCloud() {
   });       // end of outer Ajax call
 }       // end of renderTagCloud()
 
-// On Click event for the Obtain DOI from multiple tags button that appears in the bottom left 
-// of the Tags Workspace panel. We are able to register this event outside of renderTagCloud
-// because the element is part of the initial document object loading. 
-/*$('#tagcloudObtainDoiButton').on('click', function() {
-  SW.doiFromTagsFlag = true;
-  
-  var peopleArr = [];
-  for(var key in SW.multi_tag_people)
-    peopleArr.push(key);
-  $('td#doiModalPeopleField').text(peopleArr);
-  
-  var filesArr = [];
-  for(var key in SW.multi_tag_files)
-    filesArr.push(key);
-  $('td#doiModalFilesField').text(filesArr);
-});*/
-
-// This code was outside renderTagCloud. Should we move some things into blocks like this one?
-// Yes, but it doesn't work when the element is added to the page by a user action.
-// Like the code below, for instance. Doesn't work because the element does not exist when the
-// code is run. 
-//$('.tagCheckbox').on('change', function() {
-  //console.log(this.id +' has been checked!');
-//});
-
-
 function makeTagContentList(element, linksData) {
 	
   $tag_contents_list = $('<ul id="tagContentsList"></ul>');
@@ -258,40 +171,6 @@ function makeTagContentList(element, linksData) {
   	} else if(linksArr[i]['type'] == 6) {
   		linksArr[i]['name'] = linksArr[i]['nid'];
   	}
-  	
-    /* Commented out 9-06-14.
-  	// Add the names to the globals for a single tag.
-  	if(linksArr[i]['type'] == 0) {
-  	  SW.single_tag_people.push(linksArr[i]['name']);
-  	  SW.single_tag_nids.push(linksArr[i]['nid']);
-  	  //console.log('SW.single_tag_people is now '+SW.single_tag_people);
-  	  //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
-  	}
-  	else if(linksArr[i]['type'] == 1) {
-      SW.single_tag_groups.push(linksArr[i]['name']);
-      SW.single_tag_nids.push(linksArr[i]['nid']);
-      //console.log('SW.single_tag_groups is now '+SW.single_tag_groups);
-      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
-    }
-    else if(linksArr[i]['type'] == 2) {
-      SW.single_tag_jobs.push(linksArr[i]['name']);
-      SW.single_tag_nids.push(linksArr[i]['nid']);
-      //console.log('SW.single_tag_jobs is now '+SW.single_tag_jobs);
-      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
-    }
-    else if(linksArr[i]['type'] == 3) {
-      SW.single_tag_apps.push(linksArr[i]['aid']);
-      SW.single_tag_nids.push(linksArr[i]['nid']);
-      //console.log('SW.single_tag_apps is now '+SW.single_tag_apps);
-      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);      
-    }
-    else if(linksArr[i]['type'] == 4) {
-      SW.single_tag_files.push(linksArr[i]['path']);
-      SW.single_tag_nids.push(linksArr[i]['nid']);
-      //console.log('SW.single_tag_files is now '+SW.single_tag_files);
-      //console.log('SW.single_tag_nids is now '+SW.single_tag_nids);
-    }
-    else {'Error: unhandled type'}*/
   	
   	var type_int = linksArr[i]['type'];
   	
@@ -491,47 +370,3 @@ function getNidValue(id) {
   return nid
 }
 
-function trackSelectedTagLinks(tagNid) {
-  SW.doiFromTagsFlag = true;
-  var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
-  
-  $.ajax({
-    type: 'GET',
-    url: tagLinks_url_prefix+tagNid,
-    success: function(linksData) {
-      var linksArr = JSON.parse(linksData);
-      for(var key = 0; key < linksArr.length; key++) {
-        var type = linksArr[key]['type'];
-        var name = linksArr[key]['name'];
-        var appId = linksArr[key]['aid'];     // remember apps don't have names.
-        var nid = linksArr[key]['nid'];
-        if(type == 0) {     // PEOPLE
-          if(name in SW.multi_tag_people)
-            SW.multi_tag_people[name].push(tagNid);
-          else {
-            SW.multi_tag_people[name] = [];
-            SW.multi_tag_people[name].push(tagNid);
-          }      
-        }
-        if(type == 4) {     // FILES
-          var filePath = linksArr[key]['path'];     // Path field is defined only for files.
-          //console.log('filePath is '+filePath);
-          if(filePath in SW.multi_tag_files) {
-            //console.log('This path already exists!');
-            SW.multi_tag_files[filePath].push(tagNid);
-            //console.log('Adding tagNid '+tagNid+' to SW.multi_tag_files['+filePath+']');
-          }
-          else {
-            SW.multi_tag_files[filePath] = [];
-            SW.multi_tag_files[filePath].push(tagNid);
-            //console.log('Adding field '+filePath+' to object SW.multi_tag_files, and adding tagNid '+tagNid+' to its array.');
-          }
-          for(var key in SW.multi_tag_files)
-            for(var j in SW.multi_tag_files[key])
-              console.log('SW.multi_tag_files['+key+']: '+SW.multi_tag_files[key][j]);
-        }
-      }
-    },
-    error: function(e) {console.log('Error in trackSelectedTagLinks(tagNid): '+e);}
-  });
-}
