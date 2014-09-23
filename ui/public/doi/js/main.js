@@ -98,11 +98,12 @@ $(function() {
         data.resources = $('[name="input_resources"]').val();
         data.keywords = $('[name="input_keywords"]').val();
         data.language = $('[name="input_language"]').val();
-        data.country = $('[name="input_country"]').val();
         data.sponsor_org = $('[name="input_sponsor_org"]').val();
         data.files = $('[name="input_files"]').val();
         
         data.nids = $('[name="input_nids"]').val();
+        data.nids = data.nids.split(',');
+        data.creator_nid = $('[name="creator_nid"]').val();
         /*
         data.file_nids = $('[name="file_nids"]').val();
         data.group_nids = $('[name="group_nids"]').val();

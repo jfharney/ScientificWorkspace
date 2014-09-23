@@ -117,13 +117,13 @@ function addCreator() {
   var creator_nid_Key = 'creator_nid';
   var creator_email_Key = 'creator_email';
   var creator_name_Key = 'creator_name';
-  var creator_number_Key = 'creator_number';
+  var creator_uid_Key = 'creator_uid';
   var creator_uname_Key = 'creator_uname';
 
   input+='<input type="hidden" name="'+ creator_nid_Key +'" value="'+ SW.current_user_nid +'" />';
   input+='<input type="hidden" name="'+ creator_email_Key +'" value="'+ SW.current_user_email +'" />';
   input+='<input type="hidden" name="'+ creator_name_Key +'" value="'+ SW.current_user_name +'" />';
-  input+='<input type="hidden" name="'+ creator_number_Key +'" value="'+ SW.current_user_number +'" />';
+  input+='<input type="hidden" name="'+ creator_uid_Key +'" value="'+ SW.current_user_number +'" />';
   input+='<input type="hidden" name="'+ creator_uname_Key +'" value="'+ SW.current_user_uname +'" />';
 
   return input;
@@ -240,7 +240,7 @@ function createDOI() {
 
   url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
-  alert('input: ' + input);
+  //alert('input: ' + input);
   
   /* Send request. */
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')

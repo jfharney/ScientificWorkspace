@@ -156,88 +156,36 @@ app.post('/doi_submit',function(request,response) {
 
     var data = request['body'];
 
-    for(var key in data) {
-    	console.log('key: ' + key + ', value: ' + data[key]);
-    }
-    console.log('\n');
-    
-    // Translate from internal JSON format to external DOI-Service submission XML schema
-    //var payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><records><record>";
-
-    /*
-    var file_nids = data.file_nids;
-    var group_nids = data.group_nids;
-    var user_nids = data.user_nids;
-    var job_nids = data.job_nids;
-    var app_nids = data.app_nids;
-    var tag_nids = data.tag_nids;
-    
-    //gather all the nids in one string/input value
-    var nids = '';
-    nids += file_nids; 
-    nids += ',' + group_nids;
-    nids += ',' + tag_nids;
-    
-    //unify with tag nids
-    */
-    
-    /*var nids = data.nids;
-    console.log('nids: ' + nids);
-    
-    
-    var files = data.files;
-    
-    
-    //call the GET tag service that grabs the listing of files
-    
-
-    //unify the files with the tagged files here
-    
-    
-    // For now, just hard-code the mapping from internal to external representation
-    // Eventually a mapping table should be used
-    payload += "<title>" + data.title + "</title>";
-    payload += "<description>" + data.description + "</description>";
-    payload += "<creators>" + data.creator_name + "</creators>";
-    payload += "<creators_email>" + data.creator_email + "</creators_email>";
-    payload += "<files>" + files + "</files>";
-    payload += "<nids>"+nids+"</nids>";
-    payload += "<resources>" + data.resources + "</resources>";
-    payload += "<keywords>" + data.keywords + "</keywords>";
-    payload += "<language>" + data.language + "</language>";
-    payload += "<country>" + data.country + "</country>";
-    payload += "<sponsor_org>" + data.sponsor_org + "</sponsor_org>";
-    payload += "</record></records>";
-
-    console.log( payload );*/
+    var payload_str = JSON.stringify(data);
+    console.log(payload_str);
     
     // The following line is wrong, but we are keeping it now to prevent the POST of the form. 
-    nids += ','+SW.selected_people_nids+SW.selected_group_nids;
+    //nids += ','+SW.selected_people_nids+SW.selected_group_nids;
     
     var options = {
       host: proxy.serviceHost,
       port: proxy.servicePort,
       path: "/sws/doi/new/",
       method: 'POST',
+      //rejectUnauthorized: false, 
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': data.length
+        'Content-Length': payload_str.length
       }
     };
 
     var responseData = '';
 
-    var req = https.request(options, function(res) {
+    var req = http.request(options, function(res) {
         res.on('data', function (chunk) {
             responseData += chunk;    
         });
 
         res.on('end', function() {
-            console.log( "DOI submit OK" );
-
-            // Return DOI number
-            response.writeHead( 200 );
-            response.write( responseData );
+            // Return DOI number on success.
+            response.writeHead(res.statusCode);
+            response.write(responseData);
+            console.log('The new DOI number is '+responseData);
             response.end();
         });
 
@@ -250,8 +198,17 @@ app.post('/doi_submit',function(request,response) {
         });
     });
 
-    req.write( data );      // Changed from "payload". -Mark, 9-02
+    req.write( payload_str );
+    
+    req.on('error', function(e) {
+      console.log('DOI request failed: '+e.code+", "+e.message);
+      response.writeHead( e.code );
+      response.write( e.message );
+      response.end();
+    });
+    
     req.end();
+
 });
 
 

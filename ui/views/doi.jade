@@ -26,44 +26,44 @@ html
   body
     // (style="display:none")
     div#creator_nid Creator NID: #{creator_nid}
-    div#creator_number Creator UID: #{creator_number}
+    div#creator_uid Creator UID: #{creator_uid}
     div#creator_uname Creator Username: #{creator_uname}
     div#creator_name Creator Name: #{creator_name}
     div#creator_email Creator Email: #{creator_email}
     
     - if (typeof(personNames) !== 'undefined') { 
       - each p in personNames
-          div Person: #{p}
+          div(style="display:none") Person: #{p}
     - }
     
     - if (typeof(groupNames) !== 'undefined') { 
       - each g in groupNames
-          div Group: #{g}
+          div(style="display:none") Group: #{g}
     - }
     
     - if (typeof(jobNames) !== 'undefined') { 
       - each j in jobNames
-          div Job: #{j}
+          div(style="display:none") Job: #{j}
     - }
 
     - if (typeof(appIds) !== 'undefined') { 
       - each a in appIds
-          div App: #{a}
+          div(style="display:none") App: #{a}
     - }
 
     - if (typeof(fileNames) !== 'undefined') {
       - each f in fileNames
-        div File: #{f} 
+        div(style="display:none") File: #{f} 
     - }
     
     - if (typeof(tagNames) !== 'undefined') {
       - each t in tagNames
-        div Tags: #{t} 
+        div(style="display:none") Tags: #{t} 
     - }
 
     - if (typeof(nids) !== 'undefined') {
       - each n in nids
-        div Nid: #{n} 
+        div(style="display:none") Nid: #{n} 
     - }
           
     div.navbar
@@ -204,6 +204,7 @@ html
                     div.span6 
                       input#text(name="input_files",value="#{fileNames}")
                       input#text(name="input_nids",type="hidden",value="#{nids}")
+                      input#text(name="creator_nid",type="hidden",value="#{creator_nid}")
                       
                   br
                   
