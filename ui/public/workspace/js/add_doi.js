@@ -148,6 +148,8 @@ function addTags() {
 // This function also populates the fields of the DOI modal, which is an unfortunate necessity
 // created by the Ajax call. 
 function addTagLinksToGlobals() { 
+
+  console.log('Inside addTagLinksToGlobals().');
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
   var addFlag = true;
 
@@ -191,7 +193,7 @@ function addTagLinksToGlobals() {
               SW.selected_job_nids.push(nid);
             }
           }
-          else if(type == 3) {       //  JOB
+          else if(type == 3) {       //  APP
             addFlag = true;
             for(var i = 0; i < SW.selected_app_nids.length; i++)
               if(SW.selected_app_nids[i] == nid) addFlag = false;
@@ -209,16 +211,17 @@ function addTagLinksToGlobals() {
               SW.selected_file_nids.push(nid);
             }
           }
-        }
-        $('#doiModalPeopleField').html(''+SW.selected_people_names);
-        $('#doiModalGroupsField').html(''+SW.selected_group_names);
-        $('#doiModalJobsField').html(''+SW.selected_job_names);
-        $('#doiModalAppsField').html(''+SW.selected_app_ids);
-        $('#doiModalFilesField').html(''+SW.selected_file_paths);
+        }   
       },
       error: function(e) {console.log('Error in addTagLinksToGlobals(): '+e);}
     });
   }
+  
+  $('#doiModalPeopleField').html(''+SW.selected_people_names);
+  $('#doiModalGroupsField').html(''+SW.selected_group_names);
+  $('#doiModalJobsField').html(''+SW.selected_job_names);
+  $('#doiModalAppsField').html(''+SW.selected_app_ids);
+  $('#doiModalFilesField').html(''+SW.selected_file_paths);
 }                           	  
                             	  
 function createDOI() {

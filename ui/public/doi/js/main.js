@@ -95,6 +95,7 @@ $(function() {
         data.description = $('[name="input_description"]').val();
         data.creator_name = $('[name="input_creator_name"]').val();
         data.creator_email = $('[name="input_creator_email"]').val();
+        data.contact_email = data.creator_email;
         data.resources = $('[name="input_resources"]').val();
         data.keywords = $('[name="input_keywords"]').val();
         data.language = $('[name="input_language"]').val();
