@@ -2,6 +2,7 @@ function getUserDoiData(userNum) {
   var children = [];
   
   if(SW.doiOfflineMode == true) { 
+	  console.log();
     children.push({
       title: 'DOI_One',
       isFolder: true,
@@ -14,12 +15,23 @@ function getUserDoiData(userNum) {
     children.push({    title: 'DOI_Three',    isFolder: true,    isLazy: false,    doiId: '10-86X-234151235533',    tooltip: 'This is DOI Three.',     children: [{title: 'Metadata', isFolder: true}, {title: 'Linked Objects', isFolder: true}]  });  
     children.push({    title: 'DOI_Four',    isFolder: true,    isLazy: false,    doiId: '10-86X-234151235534',    tooltip: 'This is DOI Four.',     children: [{title: 'Metadata', isFolder: true}, {title: 'Linked Objects', isFolder: true}]  });  
     children.push({    title: 'DOI_Five',    isFolder: true,    isLazy: false,    doiId: '10-86X-234151235535',    tooltip: 'This is DOI Five.',     children: [{title: 'Metadata', isFolder: true}, {title: 'Linked Objects', isFolder: true}]  });
+    buildDoiTree(children);
   }
-  else {
-    console.log('DOI Web service data is not yet available.'); 
+  else { 
+	  	$.ajax({
+	  	  url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
+	  	  type: 'GET',
+	  	  success: function(data) {
+	  		console.log('Here is data: '+data);
+	  	    buildDoiTree(data);
+	  	  },
+	  	  error: function() {
+	  	    console.log('error in getting group info');
+	  	  }	    
+	  });
   }
   
-  buildDoiTree(children);
+  
 }
 
 function buildDoiTree(children) {
@@ -31,7 +43,8 @@ function buildDoiTree(children) {
     onLazyRead: function(node) {
       if(node.data.title == 'Metadata') {
         node.appendAjax({
-          url: ''
+          var doiName = node.data.name;
+          url: 'https://doi1.ccs.ornl.gov/doi/id/10.5072/OLCF/1260530/'
         });
       }
       else if(node.data.title == 'Linked Objects') {

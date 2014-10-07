@@ -8,12 +8,12 @@ $(document).ready(function() {
     addTagLinksToGlobals();
     
     $('#doiModalTagsField').html(''+SW.selected_tag_names);
+    createDOI();
   });
     
   /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
   $('button#create_doi_button').click(function() {
-
-    /* The boolean SW.file_included_flag indicates whether at least one file is selected. */
+	  
     if($('#doiModalFilesField').html() == '')
       alert('At least one file must be selected to request a DOI.');
     else

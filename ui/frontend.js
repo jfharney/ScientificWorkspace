@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http');
 var https = require('https');
+var dois = require('./proxy/dois.js');
 var url = require('url');
 var proxy = require('./proxy/proxyConfig.js');
 
@@ -514,6 +515,30 @@ app.get('/files/:userNum', function(request, response) {
   
 });
 
+//--------DOIs API---------//    // New! Added 9-27-2014 by Mark.
+
+app.get('/dois/:userNum', function(request, response) {
+	
+  if(proxy.firewallMode) {
+		  
+    var res = dois.doisProxyHelperFirewall(request, response);
+  } 
+  else {
+ 
+    var res = dois.doisProxyHelper(request, response);
+		  
+  }	
+	
+});
+
+app.get('/dois/meta/:doiName', function(request, response)) {
+	  var options = {
+			    host: 'doi1.ccs.ornl.gov',
+				port: 80
+				path: '/doi/id/10.5072/OLCF/1260530/',
+				method: 'GET'
+			  };
+}
 
 /*************************************************************/
 
