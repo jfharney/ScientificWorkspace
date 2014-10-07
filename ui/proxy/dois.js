@@ -9,8 +9,12 @@ var data = require('../data/firewall_sources.js');
 
 var doisProxyHelper = function(request, response) {
   var usernum = request.params.userNum;
+<<<<<<< HEAD
   var path = '/sws/dois?uid=' +usernum;
   console.log('In dois.js, about to call '+url);
+=======
+  var path = '/sws/dois?uid=' + usernum;
+>>>>>>> 14b160567ceda3de1b805e47e363e7b32812edf4
 	  
   // Query above is an object containing all the 
   // arguments in the URL as key-value pairs. 
@@ -25,7 +29,11 @@ var doisProxyHelper = function(request, response) {
 			
     var responseData = '';
     resp.on('data', function(chunk) {
+<<<<<<< HEAD
       responseData = chunk;
+=======
+      responseData += chunk;
+>>>>>>> 14b160567ceda3de1b805e47e363e7b32812edf4
     });
 		
     resp.on('end', function() {
@@ -58,7 +66,11 @@ var doisProxyHelper = function(request, response) {
     });
 			
     resp.on('error', function(e) {
+<<<<<<< HEAD
       response.send('error: '+e);
+=======
+      response.send('error: ' + e);
+>>>>>>> 14b160567ceda3de1b805e47e363e7b32812edf4
     });
   });
 		
@@ -84,7 +96,11 @@ var doisProxyHelperFirewall = function(request, response) {
 		var file = files[i];
 				
 		if(queriedPath == '|') {
+<<<<<<< HEAD
 			dynatreeJSONObj['title'] = '|'+file['name'];
+=======
+			dynatreeJSONObj['title'] = '|' + file['name'];
+>>>>>>> 14b160567ceda3de1b805e47e363e7b32812edf4
 			
 			//directory if type is 5 otherwise it is a file
 			if(file['type'] == 5) {

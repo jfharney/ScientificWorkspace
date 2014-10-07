@@ -37,7 +37,7 @@ function buildFileTree(treeData) {
 	selectMode: 2,			// "1:single, 2:multi, 3:multi-hier"
 	children: treeData,
 	onSelect: function(select, node) {
-	  console.log(node.tree.getSelectedNodes());
+	  //console.log(node.tree.getSelectedNodes());
 	  var selNodes = node.tree.getSelectedNodes();
 
       SW.selected_file_paths = $.map(selNodes, function(node) {
@@ -49,9 +49,6 @@ function buildFileTree(treeData) {
       SW.selected_file_nids = $.map(selNodes, function(node) {
         return node.data.nid;
       });
-      
-      console.log('SW.selected_file_paths: '+SW.selected_file_paths);
-      console.log('SW.selected_file_nids: '+SW.selected_file_nids);
     },
     onClick: function(node, event) {},
 	onKeydown: function(node, event) {

@@ -13,7 +13,6 @@ $(document).ready(function() {
     
   /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
   $('button#create_doi_button').click(function() {
-	  
     if($('#doiModalFilesField').html() == '')
       alert('At least one file must be selected to request a DOI.');
     else

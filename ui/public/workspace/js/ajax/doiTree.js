@@ -1,4 +1,5 @@
 function getUserDoiData(userNum) {
+  console.log('userNum is '+userNum);
   var children = [];
   
   if(SW.doiOfflineMode == true) { 
@@ -29,28 +30,52 @@ function getUserDoiData(userNum) {
 	  	    console.log('error in getting group info');
 	  	  }	    
 	  });
+    
+  }
+  else {
+	$.ajax({
+	  url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
+	  type: 'GET',
+	  success: function(data) {
+		console.log('Here is data: '+data);
+	    buildDoiTree(data);
+	  },
+	  error: function() {
+	    console.log('error in getting group info');
+	  }	    
+	}); 
   }
   
   
 }
 
 function buildDoiTree(children) {
+  console.log('The length of children is '+children.length);
+  console.log('Inside buildDoiTree, here is children: '+children);
+  for(var i = 0; i < children.length; i++)
+	  for(key in children[i])
+		console.log(key + ': '+children[i][key]);
   $('#doi_tree').dynatree({
     fx: { height: "toggle", duration: 200 },
     autoFocus: false, 
     children: children,
-    onSelect: function(select, node) {},
+    onSelect: function(select, node) {
+      
+    },
     onLazyRead: function(node) {
       if(node.data.title == 'Metadata') {
         node.appendAjax({
           var doiName = node.data.name;
           url: 'https://doi1.ccs.ornl.gov/doi/id/10.5072/OLCF/1260530/'
         });
+        //node.appendAjax({
+          //url: ''
+        //});
       }
       else if(node.data.title == 'Linked Objects') {
-        node.appendAjax({
-          url: ''
-        });
+        //node.appendAjax({
+          //url: ''
+        //});
       }
     }
   });

@@ -72,9 +72,6 @@ function buildCollaboratorTree(children) {
           if(node.data.type == 0)
             return node.data.nid;
         });
-
-        console.log('SW.selected_people_names: '+SW.selected_people_names);
-        console.log('SW.selected_people_nids: '+SW.selected_people_nids);
 	  }
 	  else if(node.data.type == 1) {       // Groups
 	    SW.selected_group_names = $.map(selNodes, function(node) {
@@ -85,17 +82,14 @@ function buildCollaboratorTree(children) {
 	    SW.selected_group_nids = $.map(selNodes, function(node) {
 	      if(node.data.type == 1)
 	        return node.data.nid;
-	    });
-
-        console.log('SW.selected_group_names: '+SW.selected_group_names);
-        console.log('SW.selected_group_nids: '+SW.selected_group_nids);	
+	    });	
 	  }
 	},
 	onActivate: function(node) {
       var user_info_obj = '';
     },
     onLazyRead: function(node) {
-	  console.log('collaborators lazy read --> title: ' + node.data.title + ' gid: ' + node.data.gid);
+	  //console.log('collaborators lazy read --> title: ' + node.data.title + ' gid: ' + node.data.gid);
       node.appendAjax({
 		url: 'http://' + SW.hostname + ':' + SW.port + '/groups/' + node.data.gid,
 		// We don't want the next line in production code:

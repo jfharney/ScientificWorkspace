@@ -27,6 +27,7 @@ var groups = require('./proxy/groups.js');
 var files = require('./proxy/files.js');
 var jobs = require('./proxy/jobs.js');
 var apps = require('./proxy/apps.js');
+var dois = require('./proxy/dois.js');
 var associations = require('./proxy/associations.js');
 var associationsfeed = require('./proxy/associationsfeed.js');
 var tags = require('./proxy/tags.js');
@@ -539,6 +540,25 @@ app.get('/dois/meta/:doiName', function(request, response)) {
 				method: 'GET'
 			  };
 }
+
+/*************************************************************/
+
+//--------DOIs API---------//    // New! Added 9-27-2014 by Mark.
+
+app.get('/dois/:userNum', function(request, response) {
+	
+  if(proxy.firewallMode) {
+		  
+    var res = dois.doisProxyHelperFirewall(request, response);
+		  
+  } 
+  else {
+ 
+    var res = dois.doisProxyHelper(request, response);
+		  
+  }	
+	
+});
 
 /*************************************************************/
 
