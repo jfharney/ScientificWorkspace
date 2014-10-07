@@ -44,7 +44,7 @@ SW.tagNidsInWorkspace = [];     // Tracks which tags are currently in Tags Works
 SW.selected_tag_names = [];
 SW.selected_tag_nids = [];
 
-SW.doiOfflineMode = true;
+SW.doiOfflineMode = false;
 
 SW.typeMap = ['user','group','job','app','file','directory','other'];
 
