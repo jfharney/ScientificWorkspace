@@ -99,11 +99,8 @@ $(function() {
 
   //put the selected collaborators in the hidden input fields (may be deprecated)
   $('#search_view').click(function() {
-
-	  var username = SW.current_user_username;
 	  
-	  var url = "http://" + "localhost" + ":" + "1337" + "/search/" + username + "";
-		
+	  var url = "http://" + "localhost" + ":" + "1337" + "/search/" + SW.current_user_uname + "";
 		
 	  var input = '';
 	  

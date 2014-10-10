@@ -25,7 +25,7 @@ var userHelper = function(request, response) {
 	});
 
 	resp.on('end', function() {
-	  //console.log('users responseData: ' + responseData);
+	  console.log('users responseData: ' + responseData);
       var userObj = JSON.parse(responseData);
       response.render("workspace", userObj);
 	});
@@ -41,6 +41,43 @@ var userHelper = function(request, response) {
 };
 
 module.exports.userHelper = userHelper;
+
+
+/* userSearchHelper is called in frontend.js (when firewallMode is unset) in response to URLs of 
+ * the form: "/search/:user_id". 														*/
+var userSearchHelper = function(request, response) {
+
+  var options = {
+    host: proxy.serviceHost,
+    port: proxy.servicePort,
+    path: "/sws/user?uname=" + request.params.user_id,
+    method: 'GET'
+  };
+
+  var req = http.request(options, function(resp) {
+    
+	var responseData = '';
+	resp.on('data', function(chunk) {
+      responseData += chunk;
+	});
+
+	resp.on('end', function() {
+	  console.log('users responseData: ' + responseData);
+      var userObj = JSON.parse(responseData);
+      response.render("search", userObj);
+	});
+
+	resp.on('error', function(e) {
+      response.send('error: ' + e);
+    });
+      
+  });
+    	 
+  req.end();	    	 
+
+};
+
+module.exports.userSearchHelper = userSearchHelper;
 
 
 var doiUserHelper = function(request, response) {

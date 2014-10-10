@@ -33,6 +33,7 @@ var tags = require('./proxy/tags.js');
 
 
 var data = require('./data/firewall_sources.js');
+var sample_search_results = require('./data/sample_search_results.js');
 
 if(proxy.firewallMode)
   console.log('firewall: ' + proxy.firewallMode);
@@ -40,30 +41,101 @@ if(proxy.firewallMode)
 
 /*************************************************************/
 
-app.post('/search/:user_id', function(request,response) {
-	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
+app.get('/search/:user_id', function(request,response) {
+	console.log('\n\n---------in get search for ' + request.params.user_id + '----------');
 	
-	var model = {};
-	model['uid'] = request.params.user_id;
+	console.log('A GET for /searc/'+request.params.user_id+' has been issued.');
 	
-	for(var key in model) {
-		console.log('key: ' + key + ' model: ' + model[key]);
-	}
+	if(proxy.firewallMode) {
+		  
+		var userObj = data.userObj;
+		response.render("search", userObj);
+    
+	} 
+	else {
+		// userHelper is defined in the file proxy/users.js.   
+		var res = users.userSearchHelper(request, response);  
 	
-	response.render("search", model);
+	}  
+	
+	
 });
 
+app.post('/search/:user_id', function(request,response) {
+	console.log('\n\n---------in post search for ' + request.params.user_id + '----------');
+	
+	console.log('A POST for /searc/'+request.params.user_id+' has been issued.');
+	  
+	  
+	if(proxy.firewallMode) {
+	  
+		var userObj = data.userObj;
+		response.render("search", userObj);
+    
+	} 
+	else {
+		// userHelper is defined in the file proxy/users.js.   
+		var res = users.userSearchHelper(request, response);  
+	
+	}  
+	
+});
 
-/*************************************************************/
+//comes directly from the doi service 
+//
+app.get("/search_results_doi_metadata/:user_id", function(request, response) {
+	console.log('\n\n---------in search_results_doi for ' + request.params.user_id + '----------');
+	
+	for(var key in request_obj) {
+		console.log('key: ' + key);
+	}
+	
+	var path = '';
+	
+	var doi_host = "doi1.ccs.ornl.gov";
+	var doi_port = '8080';
+	  
+	var doi_name = 'doi_title';
+	
+	path = '/doi/search?uid=' + request.params.user_id + '&';
+	
+  
+	console.log('path--->' + 'http://' + doi_host + ':' + doi_port + path);
+	  
+	
+	var respArr = [];
+	
+	var respObj = {};
+
+	respObj['title'] = 'doi_title';
+	respObj['description'] = 'doi_description';
+	respObj['creators'] = 'doi_creators';
+	respObj['creators_email'] = 'creators_email';
+	respObj['files'] = 'doi_files';
+	respObj['nids'] = 'doi_nids';
+	respObj['resources'] = 'doi_resources';
+	respObj['keywords'] = 'doi_keywords';
+	respObj['language'] = 'doi_language';
+	respObj['country'] = 'doi_country';
+	respObj['sponsor_org'] = 'doi_sponsor_org';
+	
+	respArr.push(respObj);
+	
+	//response.send('returning doi results');
+	response.send(respArr);
+	
+});
 
 app.get("/search_results/:user_id", function(request, response) {
-	  console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
+	  //console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
 	  //curl -X GET 'http://techint-b117:8080/sws/search?uid=5112&query=v.name:tag*'
 	  var request_obj = request['query'];
 	  
+	  //alert("'http://localhost:8080/sws/search?uid=7827&query=v.name=OLCF+AND+v.type=8+AND+v.keywd:peru+AND+v.desc:new+AND+v.ctime:[0+TO+9999999999]'");
+		
 	  
 	  for(var key in request_obj) {
-		  console.log('key: ' + key);
+		  //console.log('key: ' + key);
 	  }
 	  var text = request_obj['text'];
 	  
@@ -73,9 +145,30 @@ app.get("/search_results/:user_id", function(request, response) {
 		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:tag*';
 			
 	  } else {
-		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text + '*';
+		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text;// + '*';
 	  }
 	  
+	  //console.log('path--->' + 'http://' + proxy.serviceHost + ':' + proxy.servicePort + path);
+	  
+	  
+	  console.log('sample search results array');
+	  //sample ... return one of each type
+	  var sample_search_results_obj_arr = sample_search_results.search_results_obj_arr;
+	  
+
+	  response.send(sample_search_results_obj_arr);
+	  /*
+	  for(var i=0;i<sample_search_results_obj_arr.length;i++) {
+		  var result = sample_search_results_obj_arr[i];
+		  console.log('result: ' + i);
+		  for(var key in result) {
+			  console.log('\tkey: ' + key + ' result: ' + result[key]);
+		  }
+	  }
+	  */
+	  
+	  
+	  /*
 		//query the userlist service here
 		var options = {
 				host: proxy.serviceHost,
@@ -110,12 +203,10 @@ app.get("/search_results/:user_id", function(request, response) {
 		 });
 		 
 		 req.end();
+	  */
 	  
 	  
-	  
-	  //response.render("settings", { uid : request.params.user_id });
 });
-
 
 
 
@@ -462,6 +553,8 @@ app.post('/tagproxy/:user_id', function(request, response) {
 //gets all the tags given a user
 app.get('/tags', function(request, response) 
 {	
+
+	console.log('\n----Tags ----\n');
 	var res = tags.tagsHelper(request,response);
 	
 });
@@ -483,6 +576,7 @@ app.post('/associationproxy/:user_id', function(request, response)        // Com
 
 app.get('/tags/links/:tag_nid', function(request, response) {
   
+	//console.log('\n\n\n----Tags links----\n\n');
 	var res = tags.tagLinksProxHelper(request, response);
 	
 		
