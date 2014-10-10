@@ -37,7 +37,7 @@ $(function(){
 				}
 				
 				var groupsChecked = $("#Groups").is(':checked');
-				if(usersChecked) {
+				if(groupsChecked) {
 					search_arr.push('1');
 				} else {
 					search_arr.push('0');
