@@ -33,6 +33,7 @@ var tags = require('./proxy/tags.js');
 
 
 var data = require('./data/firewall_sources.js');
+var sample_search_results = require('./data/sample_search_results.js');
 
 if(proxy.firewallMode)
   console.log('firewall: ' + proxy.firewallMode);
@@ -40,83 +41,271 @@ if(proxy.firewallMode)
 
 /*************************************************************/
 
+app.get('/search/:user_id', function(request,response) {
+	console.log('\n\n---------in get search for ' + request.params.user_id + '----------');
+	
+	console.log('A GET for /searc/'+request.params.user_id+' has been issued.');
+	
+	if(proxy.firewallMode) {
+		  
+		var userObj = data.userObj;
+		response.render("search", userObj);
+    
+	} 
+	else {
+		// userHelper is defined in the file proxy/users.js.   
+		var res = users.userSearchHelper(request, response);  
+	
+	}  
+	
+	
+});
+
 app.post('/search/:user_id', function(request,response) {
-	console.log('\n\n---------in doi_send proxy post for ' + request.params.user_id + '----------');
+	console.log('\n\n---------in post search for ' + request.params.user_id + '----------');
 	
-	var model = {};
-	model['uid'] = request.params.user_id;
+	console.log('A POST for /searc/'+request.params.user_id+' has been issued.');
+	  
+	  
+	if(proxy.firewallMode) {
+	  
+		var userObj = data.userObj;
+		response.render("search", userObj);
+    
+	} 
+	else {
+		// userHelper is defined in the file proxy/users.js.   
+		var res = users.userSearchHelper(request, response);  
 	
-	for(var key in model) {
-		console.log('key: ' + key + ' model: ' + model[key]);
+	}  
+	
+});
+
+//comes directly from the doi service 
+//
+app.get("/search_results_doi_metadata/:user_id", function(request, response) {
+	console.log('\n\n---------in search_results_doi for ' + request.params.user_id + '----------');
+	
+	for(var key in request_obj) {
+		console.log('key: ' + key);
 	}
 	
-	response.render("search", model);
+	var path = '';
+	
+	var doi_host = "doi1.ccs.ornl.gov";
+	var doi_port = '8080';
+	  
+	var doi_name = 'doi_title';
+	
+	path = '/doi/search?uid=' + request.params.user_id + '&';
+	
+  
+	console.log('path--->' + 'http://' + doi_host + ':' + doi_port + path);
+	  
+	
+	var respArr = [];
+	
+	var respObj = {};
+
+	respObj['title'] = 'doi_title';
+	respObj['description'] = 'doi_description';
+	respObj['creators'] = 'doi_creators';
+	respObj['creators_email'] = 'creators_email';
+	respObj['files'] = 'doi_files';
+	respObj['nids'] = 'doi_nids';
+	respObj['resources'] = 'doi_resources';
+	respObj['keywords'] = 'doi_keywords';
+	respObj['language'] = 'doi_language';
+	respObj['country'] = 'doi_country';
+	respObj['sponsor_org'] = 'doi_sponsor_org';
+	
+	respArr.push(respObj);
+	
+	//response.send('returning doi results');
+	response.send(respArr);
+	
 });
 
 
-/*************************************************************/
+app.get("/basic_search/:user_id", function(request, response) {
+    var request_obj = request['query'];
 
-app.get("/search_results/:user_id", function(request, response) {
-	  console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
-	  //curl -X GET 'http://techint-b117:8080/sws/search?uid=5112&query=v.name:tag*'
-	  var request_obj = request['query'];
-	  
-	  
-	  for(var key in request_obj) {
-		  console.log('key: ' + key);
-	  }
-	  var text = request_obj['text'];
-	  
-	  var path = '';
-	  
-	  if(text == '*') {
-		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:tag*';
-			
-	  } else {
-		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text + '*';
-	  }
-	  
-		//query the userlist service here
-		var options = {
-				host: proxy.serviceHost,
-				port: proxy.servicePort,
-				path: path,
-				method: 'GET'
-			  };
-		
-		 var responseData = '';
+    //console.log('basic search');
+    //for(var key in request_obj) {
+    //    console.log('params: ' + key);
+    //}
 
-		 
-		 var req = http.request(options, function(res) {
-			  res.on('data', function (chunk) {
-				responseData += chunk;		
-			  });
-			  res.on('end',function() {
-				  
-				  
-				  console.log('search results response data\n' + responseData);
-				  
-				  var jsonObj = JSON.parse(responseData);
-			      response.send(jsonObj);
-				 
-				  
-			  });
-			  
-		  
-		 }).on('error', function(e) {
-			 
-			  console.log("Got error: " + e.message);
-		 
-		 });
-		 
-		 req.end();
-	  
-	  
-	  
-	  //response.render("settings", { uid : request.params.user_id });
+    var path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + request_obj['text'];
+
+    //query the userlist service here
+    var options = {
+        host: proxy.serviceHost,
+        port: proxy.servicePort,
+        path: path,
+        method: 'GET'
+    };
+
+    var responseData = '';
+
+    var req = http.request(options, function(res)
+    {
+        res.on('data', function (chunk)
+        {
+            responseData += chunk;
+        });
+
+        res.on('end',function()
+        {
+            //console.log('search results response data\n' + responseData);
+            var jsonObj = JSON.parse(responseData);
+            response.send(jsonObj);
+        });
+
+    }).on('error', function(e)
+    {
+        console.log("Got error: " + e.message);
+
+    });
+
+    req.end();
 });
 
 
+app.get("/adv_search/:user_id", function(request, response) {
+    var request_obj = request['query'];
+
+    //console.log('adv search');
+    //for(var key in request_obj) {
+    //    console.log('params: ' + key);
+    //}
+
+    var path = '/sws/search?uid=' + request.params.user_id + '&query=(';
+    var term = false;
+
+    if ( request_obj['name'] )
+    {
+        path = path + 'v.name:'+request_obj['name'];
+        term = true;
+    }
+
+    if ( request_obj['title'] )
+    {
+        if ( term == true )
+            path = path + '+OR+';
+
+        path = path + 'v.title:'+request_obj['title'];
+        term = true;
+    }
+
+    if ( request_obj['desc'] )
+    {
+        if ( term == true )
+            path = path + '+OR+';
+
+        path = path + 'v.desc:'+request_obj['desc'];
+        term = true;
+    }
+
+    if ( request_obj['keywords'] )
+    {
+        if ( term == true )
+            path = path + '+OR+';
+
+        path = path + 'v.keywd:'+request_obj['keywords'];
+        term = true;
+    }
+
+    path = path + ')';
+
+    if ( request_obj['types'] )
+    {
+        var types = request_obj['types'];
+        if ( types != 0x1FF )
+        {
+            //console.log('types: ' + types);
+            var start = 0;
+            var stop = 1;
+            var inblock = false;
+            var idx = 1;
+
+            term = false;
+            path = path + '+AND+(';
+
+            for ( bit = 1; bit < 0x200; bit = bit << 1, idx++ )
+            {
+                //console.log('bit: ' + bit + ", idx: " + idx );
+                //console.log('block: ' + inblock + ", mask: " + (types & bit) );
+
+                if ( inblock == true )
+                {
+                    if (( types & bit ) == 0 )
+                    {
+                        stop = idx - 2;
+                        inblock = false;
+                        if ( term == true )
+                            path = path + '+OR+';
+
+                        path = path + 'v.type:['+start+'+TO+'+stop+']';
+                        term = true;
+                    }
+                }
+                else
+                {
+                    if (( types & bit ) == bit )
+                    {
+                        start = idx - 1;
+                        inblock = true;
+                    }
+                }
+            }
+
+            if ( inblock == true )
+            {
+                stop = idx - 2;
+                if ( term == true )
+                    path = path + '+OR+';
+
+                path = path + 'v.type:['+start+'+TO+'+stop+']';
+            }
+
+            path = path + ')';
+        }
+    }
+
+    console.log('path (final): ' + path);
+
+    //query the userlist service here
+    var options = {
+        host: proxy.serviceHost,
+        port: proxy.servicePort,
+        path: path,
+        method: 'GET'
+    };
+
+    var responseData = '';
+
+    var req = http.request(options, function(res)
+    {
+        res.on('data', function (chunk)
+        {
+            responseData += chunk;
+        });
+
+        res.on('end',function()
+        {
+            //console.log('search results response data\n' + responseData);
+            var jsonObj = JSON.parse(responseData);
+            response.send(jsonObj);
+        });
+
+    }).on('error', function(e)
+    {
+        console.log("Got error: " + e.message);
+
+    });
+
+    req.end();
+});
 
 
 
@@ -458,6 +647,8 @@ app.post('/tagproxy/:user_id', function(request, response) {
 //gets all the tags given a user
 app.get('/tags', function(request, response) 
 {	
+
+	console.log('\n----Tags ----\n');
 	var res = tags.tagsHelper(request,response);
 	
 });
@@ -479,6 +670,7 @@ app.post('/associationproxy/:user_id', function(request, response)        // Com
 
 app.get('/tags/links/:tag_nid', function(request, response) {
   
+	//console.log('\n\n\n----Tags links----\n\n');
 	var res = tags.tagLinksProxHelper(request, response);
 	
 		
