@@ -239,9 +239,8 @@ function processResultsToTree(data)
             {
                 var command = {}
                 command.title = "<span style='color:blue'>Download<span>";
-                command.url = "http://localhost:1337/workspace/d3s";
+                command.command = 1;
                 child.children.push( command );
-                //child.children.push( "<span style='position:relative; color:blue'>Download</span>" );
             }
 
             top_folders[type].children.push(child);
@@ -261,9 +260,12 @@ function processResultsToTree(data)
             selectMode: 1,          // "1:single, 2:multi, 3:multi-hier"
             children: treedata,
             onActivate: function(node) {
-                if( node.data.url )
-                    window.open(node.data.url);
-                //$("#echoActive").text(node.data.title);
+                if( node.data.command == 1 ) // Download a DOI node
+                {
+                    console.log("Download DOI " + node.parent.data.title + " for email " + SW.current_user_email );
+                    console.log("https://doi1.ccs.ornl.gov:443/doi/download?doi=" + node.parent.data.title + "&email=" + SW.current_user_email);
+                    //window.open("https://doi1.ccs.ornl.gov:443/doi/download?doi=" + node.parent.data.title + "&email=" + SW.current_user_email );
+                }
             }
         });
     }
