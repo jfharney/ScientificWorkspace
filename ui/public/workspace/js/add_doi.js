@@ -3,11 +3,12 @@ var sample = false;
 $(document).ready(function() {
 
   // This is the button in the left menu panel. 
-  $('#add_doi_button').click(function() {
+  $('#add_doi_button').on('click', function() {
     
     addTagLinksToGlobals();
-    
-    $('#doiModalTagsField').html(''+SW.selected_tag_names);
+    //$('#doiModalTagsField').html(''+SW.selected_tag_names);
+    //$('#doiModal').modal();
+
   });
     
   /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
@@ -17,6 +18,7 @@ $(document).ready(function() {
       alert('At least one file must be selected to request a DOI.');
     else
       createDOI();
+
   });
 	  
 });
@@ -152,6 +154,17 @@ function addTagLinksToGlobals() {
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
   var addFlag = true;
 
+  if(SW.selected_tag_nids.length == 0) {
+    $('#doiModalPeopleField').html(''+SW.selected_people_names);
+    $('#doiModalGroupsField').html(''+SW.selected_group_names);
+    $('#doiModalJobsField').html(''+SW.selected_job_names);
+    $('#doiModalAppsField').html(''+SW.selected_app_ids);
+    $('#doiModalFilesField').html(''+SW.selected_file_paths);
+    $('#doiModalTagsField').html(''+SW.selected_tag_names);
+
+    $('#doiModal').modal();
+  }
+
   for(var i = 0; i < SW.selected_tag_nids.length; i++) {
     var tagNid = SW.selected_tag_nids[i];
     $.ajax({
@@ -210,17 +223,21 @@ function addTagLinksToGlobals() {
               SW.selected_file_nids.push(nid);
             }
           }
-        }   
-      },
-      error: function(e) {console.log('Error in addTagLinksToGlobals(): '+e);}
-    });
-  }
-  
-  $('#doiModalPeopleField').html(''+SW.selected_people_names);
+        }   // End of for loop.
+          $('#doiModalPeopleField').html(''+SW.selected_people_names);
   $('#doiModalGroupsField').html(''+SW.selected_group_names);
   $('#doiModalJobsField').html(''+SW.selected_job_names);
   $('#doiModalAppsField').html(''+SW.selected_app_ids);
   $('#doiModalFilesField').html(''+SW.selected_file_paths);
+  $('#doiModalTagsField').html(''+SW.selected_tag_names);
+
+  $('#doiModal').modal();
+      },
+      error: function(e) {console.log('Error in addTagLinksToGlobals(): '+e);}
+    });
+  }    // End of for loop.
+
+
 }                           	  
                             	  
 function createDOI() {

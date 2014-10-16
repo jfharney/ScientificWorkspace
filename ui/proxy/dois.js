@@ -40,11 +40,13 @@ var doisProxyHelper = function(request, response) {
           'children': [
                         {
                           title: 'Metadata', 
+                          doiName: jsonObjArr[i]['name'],
                           isFolder: true,
                           isLazy: true,
                         }, 
                         {
-                          title: 'Linked Objects', 
+                          title: 'Linked Objects',
+                          doiName: jsonObjArr[i]['name'], 
                           isFolder: true
                         }
                       ]

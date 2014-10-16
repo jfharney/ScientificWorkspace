@@ -19,20 +19,17 @@ function getUserDoiData(userNum) {
     buildDoiTree(children);
   }
   else {
-	$.ajax({
-	  url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
-	  type: 'GET',
-	  success: function(data) {
-		console.log('Here is data: '+data);
-	    buildDoiTree(data);
-	  },
-	  error: function() {
-	    console.log('error in getting group info');
-	  }	    
-	}); 
+	  $.ajax({
+	    url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
+	    type: 'GET',
+	    success: function(data) {
+	      buildDoiTree(data);
+	    },
+	    error: function() {
+	      console.log('error in getting group info');
+	    }	    
+	  }); 
   }
-  
-  
 }
 
 function buildDoiTree(children) {
@@ -45,14 +42,12 @@ function buildDoiTree(children) {
     fx: { height: "toggle", duration: 200 },
     autoFocus: false, 
     children: children,
-    onSelect: function(select, node) {
-      
-    },
+    onSelect: function(select, node) {},
     onLazyRead: function(node) {
       if(node.data.title == 'Metadata') {
-        //node.appendAjax({
-          //url: ''
-        //});
+        node.appendAjax({
+          url: 'http://' + SW.hostname + ':' + SW.port + '/doi/meta/' + node.data.doiName,
+        });
       }
       else if(node.data.title == 'Linked Objects') {
         //node.appendAjax({

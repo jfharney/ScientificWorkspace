@@ -8,11 +8,11 @@ $(document).ready(function() {
 	  createTag();
 	  //$('#tagModal').modal('hide');
       /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
-	  //location.reload();
+	  location.reload();
 	  
       /* Reset fields for next tag creation. */
-      //$('#tag_name').val('');
-      //$('#tag_description').val('');
+      $('#tag_name').val('');
+      $('#tag_description').val('');
     }
     else
       alert('Tag name field is required!');
@@ -38,7 +38,7 @@ function tagExists(tagName) {
 			tagsArr = JSON.parse(tagsData);
 
 
-			for(var i=0;i<tagsArr.length;i++) {
+			for(var i = 0; i < tagsArr.length; i++) {
 				var retrieved_tag = tagsArr[i];
 	
 				console.log('tag_name: ' + retrieved_tag['name']);

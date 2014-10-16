@@ -29,7 +29,6 @@ var groupinfoHelper = function(request, response) {
     });
     res.on('end', function() {
       try {
-	    console.log('groups.js responseData: ' + responseData);
 		var groupObjsArr = [];
 	    groupObjsArr = JSON.parse(responseData);
 			

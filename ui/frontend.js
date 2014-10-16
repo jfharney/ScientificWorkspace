@@ -228,9 +228,6 @@ app.get("/", function(request, response) {
 
 
 app.get("/workspace/:user_id", function(request, response) {
-	
-  console.log('A GET for /workspace/'+request.params.user_id+' has been issued.');
-  
   
   if(proxy.firewallMode) {
 	  
@@ -376,7 +373,6 @@ app.get('/groups/:gid',function(request, response) {
 
 app.get('/jobsproxy/:userNum', function(request, response) {
 
-	console.log('in jobsproxy');
   if(proxy.firewallMode) {
 	
 	jobs.jobsproxyHelperFirewall(request, response);
@@ -386,10 +382,10 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 	jobs.jobsproxyHelper(request, response);
 	
   }
+
 });
 
 app.get("/jobinfo/:job_id", function(request, response) {
-  console.log('calling jobs info with job_id ' + request.params.job_id);
   
   var res = jobs.jobsinfoHelper(request, response);
 
@@ -397,8 +393,7 @@ app.get("/jobinfo/:job_id", function(request, response) {
 
 // This method has been added to solve the problem of finding a job name
 // given its UUID (from the associations table). 
-app.get("/jobUuid/:job_uuid", function(request, response) {	
-  //console.log ('Calling jobUuid on ' + request.params.job_uuid);	
+app.get("/jobUuid/:job_uuid", function(request, response) {		
 
   var res = jobs.jobsUuidHelper(request, response);
 
@@ -410,6 +405,7 @@ app.get("/jobUuid/:job_uuid", function(request, response) {
 
 // Where/when is this URL issued? In file jobinfo.js, in the onLazyRead field of the Dynatree constructor (in buildJobsTree).
 app.get('/appsproxy', function(request, response) {
+
 	if(proxy.firewallMode) {
 		
 	  var res = apps.appsproxyHelperFirewall(request,response);
@@ -533,6 +529,74 @@ app.get('/dois/:userNum', function(request, response) {
 		  
   }	
 	
+});
+
+// Given a single DOI name (10...), this call returns the metadata for that DOI from Doug's service.
+app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
+	console.log('DOI meta request has been received.');
+
+  //var path = 'doi/id/10.5072%2FOLCF%2F1260530%2F'
+  var path = '/doi/id?doi=10.5072/OLCF/1260530'
+
+  var options = {
+    host: 'doi1.ccs.ornl.gov',
+	port: 443,					// This is an https URL, so I am using port 443. 
+	path: path,
+	rejectUnauthorized: false,
+	method: 'GET'
+  };
+
+  var req = https.request(options, function(resp) {
+  	var responseData = '';
+    resp.on('data', function(chunk) {
+      responseData += chunk;
+      
+    });
+		
+    resp.on('end', function() {
+    	console.log(responseData);
+      var jsonObj = JSON.parse(responseData);
+
+      for(var key in jsonObj[0]['fields'])
+      	console.log(key+': '+jsonObj[0]['fields'][key]);
+      
+      var respObj = [
+        {    
+          title: 'DOI ID', 
+          isFolder: true,
+          isLazy: false,
+          children: { title: jsonObj[0]['fields']['doi'], isFolder: false }
+        },
+        {    
+          title: 'Language', 
+          isFolder: true,
+          isLazy: false,
+          children: { title: jsonObj[0]['fields']['language'], isFolder: false }
+        },
+        {    
+          title: 'Sponsor Org', 
+          isFolder: true,
+          isLazy: false,
+          children: { title: jsonObj[0]['fields']['sponsor_org'], isFolder: false }
+        },
+        {    
+          title: 'Keywords', 
+          isFolder: true,
+          isLazy: false,
+          children: { title: jsonObj[0]['fields']['keywords'], isFolder: false }
+        }
+      ];
+
+      response.send(respObj);
+    });
+
+    resp.on('error', function(e) {
+      response.send('error: ' + e);
+    });
+  });
+
+  req.end();
+
 });
 
 /*************************************************************/

@@ -5,6 +5,7 @@
 	<projects>
 		<project>Servers</project>
 	</projects>
+	<!--
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
@@ -12,6 +13,7 @@
 			</arguments>
 		</buildCommand>
 	</buildSpec>
+	-->
 	<natures>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
