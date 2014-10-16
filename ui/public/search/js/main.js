@@ -194,8 +194,6 @@ $(function(){
 
 function processResultsToTree(data)
 {
-    console.log( 'proc results' );
-
     if ( data.length ==  0 )
     {
         $('#results').append('<div>No results found</div>');
@@ -210,8 +208,6 @@ function processResultsToTree(data)
 
         for(var i=0;i<data.length;i++)
         {
-            console.log( data[i] );
-
             result = data[i];
             type = result['type'];
 
@@ -241,7 +237,11 @@ function processResultsToTree(data)
 
             if ( type == 8 )
             {
-                child.children.push( "<span style='position:relative'>Download:<span style='position:absolute; left:100px;'<a href='http://localhost:1337/workspace'>link</a></span></span>" );
+                var command = {}
+                command.title = "<span style='color:blue'>Download<span>";
+                command.url = "http://localhost:1337/workspace/d3s";
+                child.children.push( command );
+                //child.children.push( "<span style='position:relative; color:blue'>Download</span>" );
             }
 
             top_folders[type].children.push(child);
@@ -259,7 +259,12 @@ function processResultsToTree(data)
         $("#results_tree").dynatree({
             checkbox: false,
             selectMode: 1,          // "1:single, 2:multi, 3:multi-hier"
-            children: treedata
+            children: treedata,
+            onActivate: function(node) {
+                if( node.data.url )
+                    window.open(node.data.url);
+                //$("#echoActive").text(node.data.title);
+            }
         });
     }
 }
