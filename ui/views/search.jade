@@ -21,15 +21,9 @@ head
   link(href="/search/css/dynatree/ui.dynatree.css", rel="stylesheet",type="text/css")
   link(href="/search/css/modal.css" rel="stylesheet")
   script(src="/search/js/core2.js")
-    
-    
+
 html
   body
-    
-   
-      
-    
-    
     div.navbar
       div.navbar-inner 
         div.container-fluid
@@ -44,9 +38,7 @@ html
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
-               
-                
-                 
+
           div.btn-group.pull-right
             ul.nav
               a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
@@ -67,10 +59,8 @@ html
                 li(role="presentation")
                   a#8xo.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 8xo
                 li(role="presentation")
-                  
-        
+
     div.container-fluid
-    
       div.row-fluid
         div.span12
           div
@@ -91,14 +81,11 @@ html
           p#curUserUname(style='display:none') #{uname}
       div.row-fluid
         div.span12#user_info_space
-     
       div.row-fluid
         div.span12
           div
             p.user_info
-      
       div.row-fluid
-      
         //left bar
         div.span2.main-menu-span 
           div.well.nav-collapse.sidebar-nav
@@ -113,91 +100,109 @@ html
               li
                 a.ajax-link(href="#")
                   span.hidden-tablet Place holder 3
-         
-        
-        
-        
+
         //main content
         div.span8     
-      
           div.row-fluid.sortable
             div.span12
               div.box.span12
                 div.box-header.well
-                  h2 Search parameters
+                  h2 Basic Search
                     //i.icon-user
                   div.box-icon
                     a.btn.btn-minimize.btn-round(href="#")
                       i.icon-chevron-up
                     a.btn.btn-close.btn-round(href="#")
                       i.icon-remove
-             
+
                 div.box-content
-                  //div.row-fluid
-                    div.span12 
-                      fieldset Search Parameters
-                  
                   div.row-fluid
-                    div.span12 
-                  
+                    div.span12
+                        form
+                                //fieldset
+                                //div.control-group
+                            label.control-label Text:
+                                //div.controls
+                            input.input-xlarge.focused#search_text(type="text",value="")
+                    div.span12
+                      div.span10
+                      div.span2
+                        div.control-group
+                            div.controls   
+                            button#basic_srch_btn.btn.btn-large Search
+
+          div.row-fluid.sortable
+            div.span12
+              div.box.span12
+                div.box-header.well
+                  h2 Advanced Search
+                  div.box-icon
+                    a.btn.btn-minimize.btn-round(href="#")
+                      i.icon-chevron-up
+                    a.btn.btn-close.btn-round(href="#")
+                      i.icon-remove
+                div.box-content
                   div.row-fluid
-                    div.span12 
+                    div.span12
                       div.span6
                         form
                           fieldset
                             div.control-group
-                              label.control-label Text:
+                              label.control-label Name:
                               div.controls
-                                input.input-xlarge.focused#search_text(type="text",value="")
+                                input.input-xlarge.focused#search_name(type="text",value="")
+                            div.control-group
+                              label.control-label Title:
+                              div.controls
+                                input.input-xlarge.focused#search_title(type="text",value="")
+                            div.control-group
+                              label.control-label Description:
+                              div.controls
+                                input.input-xlarge.focused#search_desc(type="text",value="")
                             div.control-group
                               label.control-label Keywords:
                               div.controls
-                                input.input-xlarge.focused#keywords_text(type="text",value="")
-                            //div.control-group
-                              label.control-label From
-                              div.controls
-                                input.input-xlarge.datepicker#date01(type="text",value="")
-                            //div.control-group
-                              label.control-label To
-                              div.controls
-                                input.input-xlarge.datepicker#date02(type="text",value="")
-                      // (0=user,1=group,2=job,3=app,4=file,5=dir,6=tag)
+                                input.input-xlarge.focused#search_keyw(type="text",value="")
                       div.span6
                         div.row-fluid
-                          div.span12  
-                            div.control-group
-                              label.control-label Resource Type(s):
-                              div.controls  
-                                labels.checkbox.inline user
-                                  input.type_checkbox#user(type="checkbox",value="user",checked) 
-                                labels.checkbox.inline group
-                                  input.type_checkbox#group(type="checkbox",value="group",checked) 
-                                labels.checkbox.inline job
-                                  input.type_checkbox#job(type="checkbox",value="job",checked) 
-                                labels.checkbox.inline app
-                                  input.type_checkbox#app(type="checkbox",value="app",checked) 
-                                labels.checkbox.inline file
-                                  input.type_checkbox#file(type="checkbox",value="file",checked) 
-                                labels.checkbox.inline dir
-                                  input.type_checkbox#dir(type="checkbox",value="dir",checked) 
-                                labels.checkbox.inline tag
-                                  input.type_checkbox#tag(type="checkbox",value="tag",checked) 
-                                labels.checkbox.inline doi
-                                  input.type_checkbox#doi(type="checkbox",value="doi",checked) 
-                                   
-                                 
-                    //div.span12
-                      a(style="cursor:pointer") Advanced Search
+                          div.span12
+                            fieldset
+                                div.control-group
+                                    label.control-label Resource Types:
+                                div.control-group
+                                    input.type_checkbox#users(type="checkbox",value="user",checked)
+                                    labels Users
+                                div.control-group
+                                    input.type_checkbox#groups(type="checkbox",value="group",checked) 
+                                    labels Groups
+                                div.control-group
+                                    input.type_checkbox#jobs(type="checkbox",value="job",checked) 
+                                    labels Jobs
+                                div.control-group
+                                    input.type_checkbox#apps(type="checkbox",value="app",checked) 
+                                    labels Applications
+                                div.control-group
+                                    input.type_checkbox#files(type="checkbox",value="file",checked) 
+                                    labels Files
+                                div.control-group
+                                    input.type_checkbox#dirs(type="checkbox",value="dir",checked) 
+                                    labels Directories
+                                div.control-group
+                                    input.type_checkbox#tags(type="checkbox",value="tag",checked) 
+                                    labels Tags
+                                div.control-group
+                                    input.type_checkbox#events(type="checkbox",value="event",checked) 
+                                    labels DOI
+                                div.control-group
+                                    input.type_checkbox#dois(type="checkbox",value="doi",checked) 
+                                    labels DOI
                     div.span12
-                      hr
-                    div.span12
-                      div.control-group
-                        div.controls   
-                          button#search_button.btn.btn-large Search
-                      
-                      
-                   
-                      
+                      div.span10
+                      div.span2
+                        div.control-group
+                            div.controls   
+                            button#adv_srch_btn.btn.btn-large Search
+
           div.row-fluid.sortable
             div.span12
               div.box.span12
@@ -209,31 +214,16 @@ html
                       i.icon-chevron-up
                     a.btn.btn-close.btn-round(href="#")
                       i.icon-remove
-                div.box-content#results
-                  div.row-fluid
-                    div.span12 
-                      fieldset Live search results
-                      
-                  
-                  //div.row-fluid
-                    div.span12 
-                       div record 1
-                       div Name: 
-                       div Type
-                  
-                  //div.row-fluid
-                    div.span12 
-                       div record 2
-                       div Name: 
-                       div Type
-                  
-                  
-                 
-                 
-                  
-                 
-      
-            
+                    //div.box-content#results
+                div.box-content
+                    div#results
+                    div#results_tree(style="height:300px")
+                    //div.row-fluid
+                        div.span12
+                        fieldset Live search results
+
+
+
     script(src="/search/js/jquery/jquery-1.7.2.min.js")
     script(src="/search/js/jquery/jquery-ui-1.8.21.custom.min.js")
     script(src="/search/js/bootstrap/bootstrap-transition.js")

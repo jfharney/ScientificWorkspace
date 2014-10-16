@@ -126,88 +126,186 @@ app.get("/search_results_doi_metadata/:user_id", function(request, response) {
 	
 });
 
-app.get("/search_results/:user_id", function(request, response) {
-	  //console.log('\n\n---------in search_results for ' + request.params.user_id + '----------');
-	  //curl -X GET 'http://techint-b117:8080/sws/search?uid=5112&query=v.name:tag*'
-	  var request_obj = request['query'];
-	  
-	  //alert("'http://localhost:8080/sws/search?uid=7827&query=v.name=OLCF+AND+v.type=8+AND+v.keywd:peru+AND+v.desc:new+AND+v.ctime:[0+TO+9999999999]'");
-		
-	  
-	  for(var key in request_obj) {
-		  //console.log('key: ' + key);
-	  }
-	  var text = request_obj['text'];
-	  
-	  var path = '';
-	  
-	  if(text == '*') {
-		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:tag*';
-			
-	  } else {
-		  path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + text;// + '*';
-	  }
-	  
-	  //console.log('path--->' + 'http://' + proxy.serviceHost + ':' + proxy.servicePort + path);
-	  
-	  
-	  console.log('sample search results array');
-	  //sample ... return one of each type
-	  var sample_search_results_obj_arr = sample_search_results.search_results_obj_arr;
-	  
 
-	  response.send(sample_search_results_obj_arr);
-	  /*
-	  for(var i=0;i<sample_search_results_obj_arr.length;i++) {
-		  var result = sample_search_results_obj_arr[i];
-		  console.log('result: ' + i);
-		  for(var key in result) {
-			  console.log('\tkey: ' + key + ' result: ' + result[key]);
-		  }
-	  }
-	  */
-	  
-	  
-	  /*
-		//query the userlist service here
-		var options = {
-				host: proxy.serviceHost,
-				port: proxy.servicePort,
-				path: path,
-				method: 'GET'
-			  };
-		
-		 var responseData = '';
+app.get("/basic_search/:user_id", function(request, response) {
+    var request_obj = request['query'];
 
-		 
-		 var req = http.request(options, function(res) {
-			  res.on('data', function (chunk) {
-				responseData += chunk;		
-			  });
-			  res.on('end',function() {
-				  
-				  
-				  console.log('search results response data\n' + responseData);
-				  
-				  var jsonObj = JSON.parse(responseData);
-			      response.send(jsonObj);
-				 
-				  
-			  });
-			  
-		  
-		 }).on('error', function(e) {
-			 
-			  console.log("Got error: " + e.message);
-		 
-		 });
-		 
-		 req.end();
-	  */
-	  
-	  
+    //console.log('basic search');
+    //for(var key in request_obj) {
+    //    console.log('params: ' + key);
+    //}
+
+    var path = '/sws/search?uid=' + request.params.user_id + '&query=v.name:' + request_obj['text'];
+
+    //query the userlist service here
+    var options = {
+        host: proxy.serviceHost,
+        port: proxy.servicePort,
+        path: path,
+        method: 'GET'
+    };
+
+    var responseData = '';
+
+    var req = http.request(options, function(res)
+    {
+        res.on('data', function (chunk)
+        {
+            responseData += chunk;
+        });
+
+        res.on('end',function()
+        {
+            //console.log('search results response data\n' + responseData);
+            var jsonObj = JSON.parse(responseData);
+            response.send(jsonObj);
+        });
+
+    }).on('error', function(e)
+    {
+        console.log("Got error: " + e.message);
+
+    });
+
+    req.end();
 });
 
+
+app.get("/adv_search/:user_id", function(request, response) {
+    var request_obj = request['query'];
+
+    //console.log('adv search');
+    //for(var key in request_obj) {
+    //    console.log('params: ' + key);
+    //}
+
+    var path = '/sws/search?uid=' + request.params.user_id + '&query=(';
+    var term = false;
+
+    if ( request_obj['name'] )
+    {
+        path = path + 'v.name:'+request_obj['name'];
+        term = true;
+    }
+
+    if ( request_obj['title'] )
+    {
+        if ( term == true )
+            path = path + '+OR+';
+
+        path = path + 'v.title:'+request_obj['title'];
+        term = true;
+    }
+
+    if ( request_obj['desc'] )
+    {
+        if ( term == true )
+            path = path + '+OR+';
+
+        path = path + 'v.desc:'+request_obj['desc'];
+        term = true;
+    }
+
+    if ( request_obj['keywords'] )
+    {
+        if ( term == true )
+            path = path + '+OR+';
+
+        path = path + 'v.keywd:'+request_obj['keywords'];
+        term = true;
+    }
+
+    path = path + ')';
+
+    if ( request_obj['types'] )
+    {
+        var types = request_obj['types'];
+        if ( types != 0x1FF )
+        {
+            //console.log('types: ' + types);
+            var start = 0;
+            var stop = 1;
+            var inblock = false;
+            var idx = 1;
+
+            term = false;
+            path = path + '+AND+(';
+
+            for ( bit = 1; bit < 0x200; bit = bit << 1, idx++ )
+            {
+                //console.log('bit: ' + bit + ", idx: " + idx );
+                //console.log('block: ' + inblock + ", mask: " + (types & bit) );
+
+                if ( inblock == true )
+                {
+                    if (( types & bit ) == 0 )
+                    {
+                        stop = idx - 2;
+                        inblock = false;
+                        if ( term == true )
+                            path = path + '+OR+';
+
+                        path = path + 'v.type:['+start+'+TO+'+stop+']';
+                        term = true;
+                    }
+                }
+                else
+                {
+                    if (( types & bit ) == bit )
+                    {
+                        start = idx - 1;
+                        inblock = true;
+                    }
+                }
+            }
+
+            if ( inblock == true )
+            {
+                stop = idx - 2;
+                if ( term == true )
+                    path = path + '+OR+';
+
+                path = path + 'v.type:['+start+'+TO+'+stop+']';
+            }
+
+            path = path + ')';
+        }
+    }
+
+    console.log('path (final): ' + path);
+
+    //query the userlist service here
+    var options = {
+        host: proxy.serviceHost,
+        port: proxy.servicePort,
+        path: path,
+        method: 'GET'
+    };
+
+    var responseData = '';
+
+    var req = http.request(options, function(res)
+    {
+        res.on('data', function (chunk)
+        {
+            responseData += chunk;
+        });
+
+        res.on('end',function()
+        {
+            //console.log('search results response data\n' + responseData);
+            var jsonObj = JSON.parse(responseData);
+            response.send(jsonObj);
+        });
+
+    }).on('error', function(e)
+    {
+        console.log("Got error: " + e.message);
+
+    });
+
+    req.end();
+});
 
 
 

@@ -1,250 +1,308 @@
+var g_titles = ["Users","Groups","Jobs","Applications","Files","Directories","Tags","Events","DOI"];
+var g_keys = ["name","gname","jid","aid","path","path","name","nid","name"];
+var g_kay_map =
+{
+    //"name": "Name",
+    "uid": "uid",
+    "gid": "gid",
+    "uname": "User ID",
+    "gname": "Group ID",
+    "jid": "Job ID",
+    "aid": "App ID",
+    //"path": "Path",
+    "fmode": "Mode",
+    "fsize": "Size",
+    "owner": "Owner",
+    "access": "Access",
+    "xuid": "Owner",
+    "xgid": "Group",
+    "desc": "Description",
+    "title": "Title",
+    "email": "E-mail",
+    "keywd": "Keywords",
+    "start": "Start time",
+    "stop": "Stop time",
+    "ctime": "Create time",
+    "mtime": "Modify time",
+    "host": "Hostname",
+    "cmd": "Command"
+};
 
 
 $(function(){
 
-	  console.log('<><><>SEARCH MAIN<><><>');
-	  
-	/* We transfer the current user data values stored in the document object to the 
-	* SW object, defined in core.js.                                                    */
-	SW.current_user_nid = $('#curUserNid').html();
-	SW.current_user_email = $('#curUserEmail').html();
-	SW.current_user_name = $('#curUserName').html();
-	SW.current_user_number = $('#curUserNumber').html();
-	SW.current_user_uname = $('#curUserUname').html();
-	
-	  //console.log('SW.current_user_nid: ' + SW.current_user_nid);
-	  //console.log('SW.current_user_email: ' + SW.current_user_email);
-	  //console.log('SW.current_user_name: ' + SW.current_user_name);
-	  //console.log('SW.current_user_number: ' + SW.current_user_number);
-	  //console.log('SW.current_user_uname: ' + SW.current_user_uname);
-	  
-	$('.type_checkbox').on('change', function() {
-		  
-		  if($(this).is(':checked')) {
-				
-			  console.log(this.id +' has been checked!');
-				
+    console.log('<><><>SEARCH MAIN<><><>');
 
-          	//empty the selected types array
-          	SW.type_bitmap = [0,0,0,0,0,0,0,0];
-	          
-          	$.each($('.type_checkbox'),function() {
-          		//empty global list here
-          		
-          		if($(this).is(':checked')) {
-          			
-              		//console.log('add id: ' + this.id + ' to the global list');
-              		//SW.selected_types.push(this.id);
-              		var index = SW.getTypeIndex(this.id);
-              		SW.type_bitmap[index] = 1;
-  	              
-          		} 
-          		
-          	});
-			
-			  console.log('bitmap: ' + SW.type_bitmap);
-          	console.log('selected_types: ' + SW.selected_types);
-			  
-				
-		  } else {
+    /* We transfer the current user data values stored in the document object to the 
+    * SW object, defined in core.js.                                                    */
+    SW.current_user_nid = $('#curUserNid').html();
+    SW.current_user_email = $('#curUserEmail').html();
+    SW.current_user_name = $('#curUserName').html();
+    SW.current_user_number = $('#curUserNumber').html();
+    SW.current_user_uname = $('#curUserUname').html();
 
-			//empty the selected types array
-	          //SW.selected_types = [];
-	          SW.type_bitmap = [0,0,0,0,0,0,0,0];
-	          
-			  console.log(this.id +' has been unchecked!');
-			  $.each($('.type_checkbox'),function() {
-	          		//empty global list here
-	          		
-				if($(this).is(':checked')) {
-	          			
-	          	  //console.log('add id: ' + this.id + ' to the global list');
-	              //SW.selected_types.push(this.id);
-	              var index = SW.getTypeIndex(this.id);
-	              SW.type_bitmap[index] = 1;
-	          	} 
-	          		
-			  });
-			
-			  console.log('bitmap: ' + SW.type_bitmap);
+    $('button#basic_srch_btn').click(function() {
+        var text = $('#search_text').val();
 
-			  
-		  } 
-	
-	});  
-	
-	
-	$('button#search_button').click(function() {
-		
+        if ( text != '' )
+        {
+            $('#results').empty();
+            $('#results').append('<div>Waiting for results...</div>');
+            $("#results_tree").dynatree("destroy");
+            $("#results_tree").empty();
 
-		
-		var text = 'tag';
-		
-		text = $('#search_text').val();
-		
-		var keyword = $('#keyword_text').val();
-		
-		console.log('text: ' + text);
-		
-		if(text == '') {
-			text = '*';
-		}
-		
-		var url = '';
-		
-		if(keyword != undefined) {
-			url = 'http://' + SW.hostname + ':' + SW.port + '/search_results/' + SW.current_user_number + '?text=' + text + '&keyword=' + keyword;
-		} else {
-			url = 'http://' + SW.hostname + ':' + SW.port + '/search_results/' + SW.current_user_number + '?text=' + text;
-		}
-		
-		
-		
-		//create the initial children
-		$.ajax({
-			url: url,
-			global: false,
-			type: 'GET',
-			dataType: 'json',
-			success: function(data) {
-				console.log('success');
-/*
-<<<<<<< HEAD
-				var search_arr = new Array();
-				// (0=user,1=group,2=job,3=app,4=file,5=dir,6=tag)
-				var usersChecked = $("#Users").is(':checked');
-				if(usersChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				var groupsChecked = $("#Groups").is(':checked');
-				if(groupsChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				var jobsChecked = $("#Jobs").is(':checked');
-				if(jobsChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				var appsChecked = $("#Apps").is(':checked');
-				if(appsChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-				
-				var filesChecked = $("#Files").is(':checked');
-				if(filesChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
+            var url = 'http://' + SW.hostname + ':' + SW.port + '/basic_search/' + SW.current_user_number + '?text=' + text;
 
-				var directoriesChecked = $("#Directories").is(':checked');
-				if(directoriesChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
+            console.log('basic: ' + url);
 
-				var tagsChecked = $("#Tags").is(':checked');
-				if(tagsChecked) {
-					search_arr.push('1');
-				} else {
-					search_arr.push('0');
-				}
-=======
-*/
-				$('#results').empty();
-				$criteria = $('<div class="row-fluid" style="margin-bottom:20px;"><div class="span12">Insert Criteria here</div></div>');
-				$('#results').append($criteria);
+            //create the initial children
+            $.ajax({
+                url: url,
+                global: false,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log('success');
 
-				
-				
-				processResults(data);
-				
-				console.log('append DOI result here');
-				//append doi results here
-				$('#results').append('<div>DDDDOI result here</div>');
+                    $('#results').empty();
+                    //$criteria = $('<div class="row-fluid" style="margin-bottom:20px;"><div class="span12">Insert Criteria here</div></div>');
+                    //$('#results').append($criteria);
 
-				var $separator = $('<hr>');	
-				$('#results').append($separator);
-				
-			},
-			error: function() {
-				console.log('error in getting search results');
-			}
-		});
-		
-		
-		
-		
-	});
-	
+                    processResultsToTree(data);
+
+                    //console.log('append DOI result here');
+                    //append doi results here
+                    //$('#results').append('<div>DOI result here</div>');
+
+                    //var $separator = $('<hr>'); 
+                    //$('#results').append($separator);
+                },
+                error: function() {
+                    console.log('error in getting search results');
+                }
+            });
+        }
+    });
+
+    $('button#adv_srch_btn').click(function() {
+        var name = $('#search_name').val();
+        var title = $('#search_title').val();
+        var desc = $('#search_desc').val();
+        var keywords = $('#search_keyw').val();
+        var params = false;
+
+        if ( name != '' || title != '' || desc != '' || keywords != '' )
+        {
+            var url = 'http://' + SW.hostname + ':' + SW.port + '/adv_search/' + SW.current_user_number + '?';
+
+            if ( name != '' )
+            {
+                url = url + 'name=' + name;
+                params = true;
+            }
+
+            if ( title != '' )
+            {
+                if ( params == true )
+                    url = url + '&';
+
+                url = url + 'title=' + title;
+                params = true;
+            }
+
+            if ( desc != '' )
+            {
+                if ( params == true )
+                    url = url + '&';
+
+                url = url + 'desc=' + desc;
+                params = true;
+            }
+
+            if ( keywords != '' )
+            {
+                if ( params == true )
+                    url = url + '&';
+
+                url = url + 'keywords=' + keywords;
+                params = true;
+            }
+
+            var types = 0;
+
+            if( $("#users").is(':checked') )
+                types = types | 0x01;
+            if( $("#groups").is(':checked') )
+                types = types | 0x02;
+            if( $("#jobs").is(':checked') )
+                types = types | 0x04;
+            if( $("#apps").is(':checked') )
+                types = types | 0x08;
+            if( $("#files").is(':checked') )
+                types = types | 0x10;
+            if( $("#dirs").is(':checked') )
+                types = types | 0x20;
+            if( $("#tags").is(':checked') )
+                types = types | 0x40;
+            if( $("#events").is(':checked') )
+                types = types | 0x80;
+            if( $("#dois").is(':checked') )
+                types = types | 0x100;
+
+            if ( types != 0 )
+            {
+                url = url + '&types=' + types;
+
+                console.log('adv: ' + url);
+
+
+                $('#results').empty();
+                $('#results').append('<div>Waiting for results...</div>');
+                $("#results_tree").dynatree("destroy");
+                $("#results_tree").empty();
+
+                //create the initial children
+                $.ajax({
+                    url: url,
+                    global: false,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log('success');
+                        $('#results').empty();
+                        //$criteria = $('<div class="row-fluid" style="margin-bottom:20px;"><div class="span12">Insert Criteria here</div></div>');
+                        //$('#results').append($criteria);
+
+                        processResultsToTree(data);
+
+                        //console.log('append DOI result here');
+                        //append doi results here
+                        //$('#results').append('<div>DDDDOI result here</div>');
+
+                        //var $separator = $('<hr>'); 
+                        //$('#results').append($separator);
+                    },
+                    error: function() {
+                        console.log('error in getting search results');
+                    }
+                });
+            }
+        }
+    });
 });
 
 
-function processResults(data) {
-	var bitmap = SW.type_bitmap;
-	
-	for(var i=0;i<data.length;i++) {
-		var result = data[i];
-		
-		//var type = result['type'];
-		
-		console.log('type: ' + result['type'] + ' bitmap: ' + bitmap[result['type']]);
-		if(bitmap[result['type']]==1) {
-			
-			var $record = $('<div class="row-fluid"></div>');
+function processResultsToTree(data)
+{
+    if ( data.length ==  0 )
+    {
+        $('#results').append('<div>No results found</div>');
+    }
+    else
+    {
+        var treedata = [];
+        var top_folders = [null,null,null,null,null,null,null,null,null];
+        var result;
+        var type;
+        var child;
 
-			//record content
-			var $content = recordContent(result);
-			
-			//record functionality
-			var $buttons = recordFunctionality(result);
-			
-			//append to the record
-			$record.append($content);
-			$record.append($buttons);
-			
-			$('#results').append($record);
-			
-			//separator for each record
-			var $separator = $('<hr>');	
-			$('#results').append($separator);
-			
-		}
-		
-	}
-	
-	
+        for(var i=0;i<data.length;i++)
+        {
+            result = data[i];
+            type = result['type'];
+
+            if ( top_folders[type] == null )
+            {
+                top_folders[type] = {};
+                top_folders[type].title = g_titles[type];
+                top_folders[type].isFolder = true;
+                top_folders[type].children = [];
+            }
+
+            child = {}
+            child.title = result[g_keys[type]];
+            child.isFolder = true;
+            child.children = [];
+
+            var label;
+            for( var key in result )
+            {
+                label = g_kay_map[key];
+                if ( label != null )
+                {
+                    child.children.push( "<span style='position:relative'>" + label + ":<span style='position:absolute; left:100px;'>" + translateValue( key, result[key] ) + "</span></span>" );
+                }
+            }
+
+            top_folders[type].children.push(child);
+        }
+
+        for(var i=0;i<data.length;i++)
+        {
+            if ( top_folders[i] != null )
+            {
+                top_folders[i].title = g_titles[i] + " (" + top_folders[i].children.length + ")";
+                treedata.push( top_folders[i] );
+            }
+        }
+
+        $("#results_tree").dynatree({
+            checkbox: false,
+            selectMode: 1,          // "1:single, 2:multi, 3:multi-hier"
+            children: treedata
+        });
+    }
+}
+
+
+function processResults(data)
+{
+    if ( data.length ==  0 )
+    {
+        $('#results').append('<div>No results found</div>');
+    }
+    else
+    {
+        $('#results').append('<div><b>' + data.length +'</b> result(s) found:</div><hr>');
+
+        for(var i=0;i<data.length;i++)
+        {
+            var result = data[i];
+
+            var $record = $('<div class="row-fluid"></div>');
+
+            //record content
+            //var $content = recordContent(result);
+
+            //record functionality
+            //var $buttons = recordFunctionality(result);
+
+            //append to the record
+            $record.append( recordContent( i+1, result )); //$content);
+            //$record.append( recordFunctionality( result )); //$buttons);
+
+            $('#results').append($record);
+
+            //separator for each record
+            //var $separator = $('<hr>');	
+            //$('#results').append($('<hr>')); //$separator);
+        }
+    }
 }
 
 
 function processStandardProperty (key, result) {
-	
-	var $property = $('<div class="row-fluid"></div>');
-	
-	var $space = $('<div class="span1"></div>');
-	var $key = $('<div class="span3">' + key + '</div>');
-	var $result = $('<div class="span8">' + result[key] + '</div>');
-	$property.append($space);
-	$property.append($key);
-	$property.append($result);
-	
-	
-	
-	return $property;
+    var $property = $('<div class="row-fluid"></div>');
+
+    var $space = $('<div class="span1"></div>');
+    var $key = $('<div class="span3">' + key + '</div>');
+    var $result = $('<div class="span8">' + result[key] + '</div>');
+    $property.append($space);
+    $property.append($key);
+    $property.append($result);
+
+    return $property;
 }
-
-
 
 
 //This needs to be implemented in the tags workspace as well...
@@ -305,120 +363,116 @@ function makeTagsContentListItem(nid,result) {
 }
 
 
-
 function processTaggedResources (result) {
-	var $property = $('<div class="row-fluid"></div>');
-	
-	
-	var $space = $('<div class="span1"></div>');
-	
-	//Tagged resources
-	var $key = $('<div class="span3" id="' + result['nid'] + '" style="cursor:pointer">' + 'Tagged Resources' + '</div>');
-	
-	
-	
-	//Result is a listing of resources that are tagged
-	var $result = $('<div class="span8"></div>');
-	
-	var $tag_contents_list = $('<ul id="ul_' + result['nid'] + '"></ul>');
-	
-	
-	var uid = SW.current_user_number;
-	var url = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/' + result['nid'];
-	
-	var funcs = [];
-	
-	$.ajax({
-	 	type: "GET",
-	  	url: url,
-	  	//async: false,
-	  	success: function(linksData) {
-	  		
-	  		
-	  		var linksArr = [];
+    var $property = $('<div class="row-fluid"></div>');
+    var $space = $('<div class="span1"></div>');
+    //Tagged resources
+    var $key = $('<div class="span3" id="' + result['nid'] + '" style="cursor:pointer">' + 'Tagged Resources' + '</div>');
+    //Result is a listing of resources that are tagged
+    var $result = $('<div class="span8"></div>');
+    var $tag_contents_list = $('<ul id="ul_' + result['nid'] + '"></ul>');
+    var uid = SW.current_user_number;
+    var url = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/' + result['nid'];
+    var funcs = [];
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        //async: false,
+        success: function(linksData) {
+            var linksArr = [];
             linksArr = JSON.parse(linksData);
             var linkCount = linksArr.length;
-            
+
             console.log('resultnid: ' + result['nid']);
-            
+
             $tag_contents_list = $('<ul id="tagContentsList"></ul>');
-            
+
             for(var i=0;i<linkCount;i++) {
-            	
-            	funcs[i] = makeTagsContentListItem(result['nid'],linksArr[i]);
-            	
-            } 
-            console.log('calling functions here');
-            
-            for(var j=0;j<linkCount;j++) {
-            	var $tag_resource_item_li = funcs[j]();
-            	
-            	$tag_contents_list.append($tag_resource_item_li);
-            	
+                funcs[i] = makeTagsContentListItem(result['nid'],linksArr[i]);
             }
 
-        	$result.append($tag_contents_list);
-        	
-        	
-        	
-        	$property.append($space);
-        	$property.append($key);
-        	$property.append($result);
-        	
-	  	},
-	  	error: function() {
-	  		
-	  	}
-	});
-	
-	return $property;
+            console.log('calling functions here');
+
+            for(var j=0;j<linkCount;j++) {
+                var $tag_resource_item_li = funcs[j]();
+                $tag_contents_list.append($tag_resource_item_li);
+            }
+
+            $result.append($tag_contents_list);
+
+            $property.append($space);
+            $property.append($key);
+            $property.append($result);
+        },
+        error: function() {
+        }
+    });
+
+    return $property;
 }
 
-function recordContent(result) {
-	
-	
-	var $content = $('<div class="span9" id="' + result['nid'] + '"></div>')
-	
-	var $type = $('<div class="row-fluid"><div class="span12">Type: ' + SW.type_str[result['type']] + ' ' + result['nid'] + '</div></div>');
-	$content.append($type);
-	
-	
-	//all others handled the same
-	if(result['type'] != 6 && result['type'] != 7) {
 
-		console.log('processing others');
-		
-		for(var key in result) {
-			var $property = processStandardProperty(key, result);
-			$content.append($property);
-		}		
-		
-		
-	} else if (result['type'] == 6) {
-		
-		console.log('processing tag');
-		
-		//standard properties
-		for(var key in result) {
-			var $property = processStandardProperty(key, result);
-			$content.append($property);
-		}		
-		
-		//associations
-		var $property = processTaggedResources(result);
-		$content.append($property);
-	} else if (result['type'] == 7) {
-		
-		console.log('processing doi');
-		
-	}
-	
-	return $content;
-	
+function recordContent(idx, result)
+{
+    var content = $('<div class="span12" id="' + result['nid'] + '"></div>')
+
+    var type = result['type'];
+
+    //console.log('type: ' + result['type']);
+
+    content.append( '<div class="row-fluid"><div class="span12"><b>' + idx +'.</b> ' + g_titles[type] + ': ' + result[g_keys[type]] + '</div></div>');
+
+    var label;
+    for( var key in result )
+    {
+        label = g_kay_map[key];
+        //if ( key != "nid" && key != "type" )
+        if ( label != null )
+        {
+            content.append('<div class="row-fluid"><div class="span1"></div><div class="span2">' + label + '</div><div class="span9">' + translateValue( key, result[key] ) + '</div></div>');
+        }
+    }
+
+    return content;
+}
+
+
+function translateValue( key, value )
+{
+    if ( key == "access" )
+    {
+        if ( value == 0 )
+            return "Private";
+        else if ( value == 1 )
+            return "Shared";
+        else
+            return "Public";
+    }
+    else if ( key == "ctime" || key == "mtime" || key == "start" || key == "stop" )
+    {
+        var date = new Date(value * 1000);
+        return date.toISOString();
+    }
+    else if ( key == "fmode" )
+    {
+        var out = "";
+        if ( value & 0400 ) out = out + "r"; else out = out + "-";
+        if ( value & 0200 ) out = out + "w"; else out = out + "-";
+        if ( value & 0100 ) out = out + "x"; else out = out + "-";
+        if ( value & 040) out = out + "r"; else out = out + "-";
+        if ( value & 020 ) out = out + "w"; else out = out + "-";
+        if ( value & 010 ) out = out + "x"; else out = out + "-";
+        if ( value & 04 ) out = out + "r"; else out = out + "-";
+        if ( value & 02 ) out = out + "w"; else out = out + "-";
+        if ( value & 01 ) out = out + "x"; else out = out + "-";
+        return out;
+    }
+    else
+        return value;
 }
 
 function recordFunctionality() {
-	
 	//functionality/buttons
 	var $buttons = $('<div class="span3"></div>');
 	$buttons.append($('<div>insert any functionality here</div>'));
