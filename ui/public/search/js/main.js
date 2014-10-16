@@ -194,6 +194,8 @@ $(function(){
 
 function processResultsToTree(data)
 {
+    console.log( 'proc results' );
+
     if ( data.length ==  0 )
     {
         $('#results').append('<div>No results found</div>');
@@ -208,6 +210,8 @@ function processResultsToTree(data)
 
         for(var i=0;i<data.length;i++)
         {
+            console.log( data[i] );
+
             result = data[i];
             type = result['type'];
 
@@ -234,10 +238,16 @@ function processResultsToTree(data)
                 }
             }
 
+
+            if ( type == 8 )
+            {
+                child.children.push( "<span style='position:relative'>Download:<span style='position:absolute; left:100px;'<a href='http://localhost:1337/workspace'>link</a></span></span>" );
+            }
+
             top_folders[type].children.push(child);
         }
 
-        for(var i=0;i<data.length;i++)
+        for(var i=0;i<9;i++)
         {
             if ( top_folders[i] != null )
             {
