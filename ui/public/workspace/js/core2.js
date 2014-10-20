@@ -4,7 +4,7 @@ SW.feedOn = false;
 SW.hostname = 'localhost';
 SW.port = '1337';
 
-SW.doiOfflineMode = true;   // Used for the DOI Tree in the User DOIs panel.
+SW.doiOfflineMode = false;   // Used for the DOI Tree in the User DOIs panel.
 
 /* These variables describe the current user. They are set in the ready event in main.js. */
 SW.current_user_nid = '';
@@ -43,8 +43,6 @@ SW.tagNidsInWorkspace = [];     // Tracks which tags are currently in Tags Works
 // These globals track the tags in the Tags Workspace whose checkboxes are currently checked.
 SW.selected_tag_names = [];
 SW.selected_tag_nids = [];
-
-SW.doiOfflineMode = false;
 
 SW.typeMap = ['user','group','job','app','file','directory','other'];
 

@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http');
 var https = require('https');
+var dois = require('./proxy/dois.js');
 var url = require('url');
 var proxy = require('./proxy/proxyConfig.js');
 
@@ -703,6 +704,30 @@ app.get('/files/:userNum', function(request, response) {
   
 });
 
+//--------DOIs API---------//    // New! Added 9-27-2014 by Mark.
+
+app.get('/dois/:userNum', function(request, response) {
+	
+  if(proxy.firewallMode) {
+		  
+    var res = dois.doisProxyHelperFirewall(request, response);
+  } 
+  else {
+ 
+    var res = dois.doisProxyHelper(request, response);
+		  
+  }	
+	
+});
+
+app.get('/dois/meta/:doiName', function(request, response) {
+	  var options = {
+			    host: 'doi1.ccs.ornl.gov',
+				port: 80,
+				path: '/doi/id/10.5072/OLCF/1260530/',
+				method: 'GET'
+			  };
+});
 
 /*************************************************************/
 
@@ -724,7 +749,7 @@ app.get('/dois/:userNum', function(request, response) {
 });
 
 // Given a single DOI name (10...), this call returns the metadata for that DOI from Doug's service.
-app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
+app.get('/doi/meta/:doiName1/:doiName2/:doiName3', function(request, response) {
 	console.log('DOI meta request has been received.');
 
   //var path = 'doi/id/10.5072%2FOLCF%2F1260530%2F'
@@ -732,17 +757,16 @@ app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
 
   var options = {
     host: 'doi1.ccs.ornl.gov',
-	port: 443,					// This is an https URL, so I am using port 443. 
-	path: path,
-	rejectUnauthorized: false,
-	method: 'GET'
+	  port: 443,					// This is an https URL, so I am using port 443. 
+	  path: path,
+	  rejectUnauthorized: false,
+	  method: 'GET'
   };
 
   var req = https.request(options, function(resp) {
   	var responseData = '';
     resp.on('data', function(chunk) {
-      responseData += chunk;
-      
+      responseData += chunk;  
     });
 		
     resp.on('end', function() {

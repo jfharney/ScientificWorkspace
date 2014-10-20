@@ -8,12 +8,13 @@ $(document).ready(function() {
     addTagLinksToGlobals();
     //$('#doiModalTagsField').html(''+SW.selected_tag_names);
     //$('#doiModal').modal();
-
+    
+    $('#doiModalTagsField').html(''+SW.selected_tag_names);
+    createDOI();
   });
     
   /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
   $('button#create_doi_button').click(function() {
-
     if($('#doiModalFilesField').html() == '')
       alert('At least one file must be selected to request a DOI.');
     else

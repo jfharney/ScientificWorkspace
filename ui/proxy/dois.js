@@ -85,7 +85,7 @@ var doisProxyHelperFirewall = function(request, response) {
 		var file = files[i];
 				
 		if(queriedPath == '|') {
-			dynatreeJSONObj['title'] = '|' + file['name'];
+			dynatreeJSONObj['title'] = '|'+file['name'];
 			
 			//directory if type is 5 otherwise it is a file
 			if(file['type'] == 5) {
