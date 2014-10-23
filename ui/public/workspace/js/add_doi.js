@@ -10,7 +10,7 @@ $(document).ready(function() {
     //$('#doiModal').modal();
     
     $('#doiModalTagsField').html(''+SW.selected_tag_names);
-    createDOI();
+    //createDOI();
   });
     
   /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
@@ -115,18 +115,13 @@ function addFiles() {
 function addCreator() {
 	  
   var input = '';
-	  
-  var creator_nid_Key = 'creator_nid';
-  var creator_email_Key = 'creator_email';
-  var creator_name_Key = 'creator_name';
-  var creator_uid_Key = 'creator_uid';
-  var creator_uname_Key = 'creator_uname';
-
-  input+='<input type="hidden" name="'+ creator_nid_Key +'" value="'+ SW.current_user_nid +'" />';
-  input+='<input type="hidden" name="'+ creator_email_Key +'" value="'+ SW.current_user_email +'" />';
-  input+='<input type="hidden" name="'+ creator_name_Key +'" value="'+ SW.current_user_name +'" />';
-  input+='<input type="hidden" name="'+ creator_uid_Key +'" value="'+ SW.current_user_number +'" />';
-  input+='<input type="hidden" name="'+ creator_uname_Key +'" value="'+ SW.current_user_uname +'" />';
+  
+  input+='<input type="hidden" name="creator_nid" value="'+ SW.current_user_nid +'" />';
+  input+='<input type="hidden" name="creator_email" value="'+ SW.current_user_email +'" />';
+  input+='<input type="hidden" name="creator_name" value="'+ SW.current_user_name +'" />';
+  input+='<input type="hidden" name="creator_uid" value="'+ SW.current_user_number +'" />';
+  input+='<input type="hidden" name="creator_uname" value="'+ SW.current_user_uname +'" />';
+  input+='<input type="hidden" name="contact_email" value="'+ SW.current_user_email +'" />';
 
   return input;
 }

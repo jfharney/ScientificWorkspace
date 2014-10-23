@@ -231,6 +231,9 @@ function processResultsToTree(data)
                 if ( label != null )
                 {
                     child.children.push( "<span style='position:relative'>" + label + ":<span style='position:absolute; left:100px;'>" + translateValue( key, result[key] ) + "</span></span>" );
+                    console.log('Here...');
+                    for (var key in child.children)
+                        console.log(key+': '+child.children[key]);
                 }
             }
 

@@ -753,7 +753,7 @@ app.get('/doi/meta/:doiName1/:doiName2/:doiName3', function(request, response) {
 	console.log('DOI meta request has been received.');
 
   //var path = 'doi/id/10.5072%2FOLCF%2F1260530%2F'
-  var path = '/doi/id?doi=10.5072/OLCF/1260530'
+  var path = '/doi/json?doi=10.5072/OLCF/1260530'
 
   var options = {
     host: 'doi1.ccs.ornl.gov',
