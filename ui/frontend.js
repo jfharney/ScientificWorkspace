@@ -348,17 +348,13 @@ app.post('/doi_submit',function(request,response) {
     var data = request['body'];
 
     var payload_str = JSON.stringify(data);
-    console.log(payload_str);
-    
-    // The following line is wrong, but we are keeping it now to prevent the POST of the form. 
-    //nids += ','+SW.selected_people_nids+SW.selected_group_nids;
+    console.log('payload_str: '+payload_str);
     
     var options = {
       host: proxy.serviceHost,
       port: proxy.servicePort,
       path: "/sws/doi/new/",
       method: 'POST',
-      //rejectUnauthorized: false, 
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': payload_str.length
@@ -655,15 +651,13 @@ app.get('/tags', function(request, response)
 });
 
 //gets info for one tag
-app.get('/tags/:tag_name', function(request, response) 
-{
+app.get('/tags/:tag_name', function(request, response) {
 	
 	var res = tags.taginfoHelper(request, response);		// tag. needed? 
 	
 });
 
-app.post('/associationproxy/:user_id', function(request, response)        // Commented out by Mark on 9-02-14. 
-{
+app.post('/associationproxy/:user_id', function(request, response) {
 	
 	var res = tags.associationsproxyHelper(request, response);
 	
@@ -704,7 +698,7 @@ app.get('/files/:userNum', function(request, response) {
   
 });
 
-//--------DOIs API---------//    // New! Added 9-27-2014 by Mark.
+//--------DOIs API---------//
 
 app.get('/dois/:userNum', function(request, response) {
 	
@@ -720,22 +714,13 @@ app.get('/dois/:userNum', function(request, response) {
 	
 });
 
-app.get('/dois/meta/:doiName', function(request, response) {
-	  var options = {
-			    host: 'doi1.ccs.ornl.gov',
-				port: 80,
-				path: '/doi/id/10.5072/OLCF/1260530/',
-				method: 'GET'
-			  };
-});
-
 /*************************************************************/
 
-//--------DOIs API---------//    // New! Added 9-27-2014 by Mark.
+//--------DOIs API---------//
 
 app.get('/dois/:userNum', function(request, response) {
 	
-  if(proxy.firewallMode) {
+  if (proxy.firewallMode) {
 		  
     var res = dois.doisProxyHelperFirewall(request, response);
 		  
@@ -749,11 +734,14 @@ app.get('/dois/:userNum', function(request, response) {
 });
 
 // Given a single DOI name (10...), this call returns the metadata for that DOI from Doug's service.
-app.get('/doi/meta/:doiName1/:doiName2/:doiName3', function(request, response) {
-	console.log('DOI meta request has been received.');
+app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
 
-  //var path = 'doi/id/10.5072%2FOLCF%2F1260530%2F'
-  var path = '/doi/json?doi=10.5072/OLCF/1260530'
+  // Note: In production, we will need the third doiName variable, but in Dev right now we don't.
+  var doiName1 = request.params.doiName1;
+  var doiName2 = request.params.doiName2;
+  //var doiName3 = request.params.doiName3;
+
+  var path = '/doi/json?doi='+doiName1+'/'+doiName2;
 
   var options = {
     host: 'doi1.ccs.ornl.gov',
@@ -778,28 +766,24 @@ app.get('/doi/meta/:doiName1/:doiName2/:doiName3', function(request, response) {
       
       var respObj = [
         {    
-          title: 'DOI ID', 
-          isFolder: true,
-          isLazy: false,
-          children: { title: jsonObj[0]['fields']['doi'], isFolder: false }
+          title: '<span style="position:relative">DOI ID: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['doi']+'</span></span>', 
+          isFolder: false
         },
         {    
-          title: 'Language', 
-          isFolder: true,
-          isLazy: false,
-          children: { title: jsonObj[0]['fields']['language'], isFolder: false }
+          title: '<span style="position:relative">Language: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['language']+'</span></span>', 
+          isFolder: false
         },
         {    
-          title: 'Sponsor Org', 
-          isFolder: true,
-          isLazy: false,
-          children: { title: jsonObj[0]['fields']['sponsor_org'], isFolder: false }
+          title: '<span style="position:relative">Sponsor Org: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['sponsor_org']+'</span></span>', 
+          isFolder: false
         },
         {    
-          title: 'Keywords', 
-          isFolder: true,
-          isLazy: false,
-          children: { title: jsonObj[0]['fields']['keywords'], isFolder: false }
+          title: '<span style="position:relative">Keywords: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['keywords']+'</span></span>', 
+          isFolder: false
+        },
+        {    
+          title: '<span style="position:relative">Description: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['description']+'</span></span>', 
+          isFolder: false
         }
       ];
 

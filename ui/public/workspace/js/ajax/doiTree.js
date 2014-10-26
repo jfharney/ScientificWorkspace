@@ -20,15 +20,15 @@ function getUserDoiData(userNum) {
               isFolder: false 
             }, 
             {
-              title: 'Language: English', 
+              title: '<span style="position:relative">Language: <span style="position:absolute; left:100px;">English</span></span>', 
               isFolder: false 
             }, 
             {
-              title: 'Sponsor Org: USDOE', 
+              title: '<span style="position:relative">Sponsor Org: <span style="position:absolute; left:100px;">USDOE</span></span>', 
               isFolder: false 
             }, 
             {
-              title: 'Keywords: Science, Computers', 
+              title: '<span style="position:relative">Keywords: <span style="position:absolute; left:100px;">Science, Computers</span></span>', 
               isFolder: false 
             }
           ]
@@ -47,7 +47,7 @@ function getUserDoiData(userNum) {
 	  	  url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
 	  	  type: 'GET',
 	  	  success: function(data) {
-	  		console.log('Here is data: '+data);
+	  		  //console.log('Here is data: '+data);
 	  	    buildDoiTree(data);
 	  	  },
 	  	  error: function() {
@@ -65,9 +65,9 @@ function buildDoiTree(children) {
     onSelect: function(select, node) {},
     onLazyRead: function(node) {
       if(node.data.title == 'Metadata') {
-        var doiName = node.data.name;
+        var doiName = node.data.doiName;
         node.appendAjax({
-          url: 'http://localhost:1337/doi/meta/10.5072/OLCF/1260530'
+          url: 'http://localhost:1337/doi/meta/'+doiName
         });
       }
       else if(node.data.title == 'Linked Objects') {
