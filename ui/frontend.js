@@ -714,40 +714,22 @@ app.get('/dois/:userNum', function(request, response) {
 	
 });
 
-/*************************************************************/
-
-//--------DOIs API---------//
-
-app.get('/dois/:userNum', function(request, response) {
-	
-  if (proxy.firewallMode) {
-		  
-    var res = dois.doisProxyHelperFirewall(request, response);
-		  
-  } 
-  else {
- 
-    var res = dois.doisProxyHelper(request, response);
-		  
-  }	
-	
-});
-
 // Given a single DOI name (10...), this call returns the metadata for that DOI from Doug's service.
 app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
 
-  // Note: In production, we will need the third doiName variable, but in Dev right now we don't.
-  var doiName1 = request.params.doiName1;
-  var doiName2 = request.params.doiName2;
-  //var doiName3 = request.params.doiName3;
+//app.get('/doi/meta', function(request, response) {
 
-  var path = '/doi/json?doi='+doiName1+'/'+doiName2;
+  var path = '/doi/json?doi='+request.params.doiName1+'/'+request.params.doiName2;
+
+  //var args = request.query;
+  //var path = 'doi/json?doi='+args['doiId'];
+  //console.log('path is '+path);
 
   var options = {
     host: 'doi1.ccs.ornl.gov',
 	  port: 443,					// This is an https URL, so I am using port 443. 
 	  path: path,
-	  rejectUnauthorized: false,
+    rejectUnauthorized: false,
 	  method: 'GET'
   };
 
@@ -761,8 +743,8 @@ app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
     	console.log(responseData);
       var jsonObj = JSON.parse(responseData);
 
-      for(var key in jsonObj[0]['fields'])
-      	console.log(key+': '+jsonObj[0]['fields'][key]);
+      //for(var key in jsonObj[0]['fields'])
+      	//console.log(key+': '+jsonObj[0]['fields'][key]);
       
       var respObj = [
         {    
