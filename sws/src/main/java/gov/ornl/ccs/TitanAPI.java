@@ -1455,6 +1455,7 @@ public class TitanAPI
             Vertex dep = m_graph.getVertex( nid.longValue() );
             if ( dep == null )
                 throw new WebApplicationException( Response.Status.NOT_FOUND );
+            //System.out.println( "nid ok: " + nid );
             deps.add( dep );
         }
 
@@ -1471,7 +1472,10 @@ public class TitanAPI
 
         user.addEdge(Schema.ASSET, doi_vertex );
         for ( Vertex dep : deps )
+        {
+            //System.out.println( "add edge: " + dep.getId() );
             doi_vertex.addEdge( Schema.CTXT, dep );
+        }
 
         m_graph.commit();
 
@@ -1537,7 +1541,7 @@ public class TitanAPI
 
             // Add linked context objects
             e = doi.getEdges(Direction.OUT, Schema.CTXT).iterator();
-            if ( e.hasNext() )
+            while ( e.hasNext() )
                 processVertexResult( e.next().getVertex(Direction.IN), null, a_output );
 
             a_output.endArray();

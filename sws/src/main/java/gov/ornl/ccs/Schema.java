@@ -12,12 +12,14 @@ public class Schema
         DIR(5),
         TAG(6),
         EVENT(7),
-        DOI(8);
+        DOI(8),
+        DELETED(-1);
 
         public static Type fromInt( int val ) throws Exception
         {
             switch ( val )
             {
+            case -1: return DELETED;
             case 0: return USER;
             case 1: return GROUP;
             case 2: return JOB;

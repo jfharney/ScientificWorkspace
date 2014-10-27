@@ -48,5 +48,6 @@ public class SearchResource
         return output.toString();
     }
 
+
     private final TitanAPI m_api = TitanAPI.getInstance();
 }

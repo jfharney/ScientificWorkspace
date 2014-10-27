@@ -11,6 +11,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.lang.Runnable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+//import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.json.JSONStringer;
 
 import com.thinkaurelius.titan.core.TitanFactory;
@@ -18,12 +26,15 @@ import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanIndexQuery.Result;
 import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.TitanKey;
+import com.thinkaurelius.titan.core.TitanVertex;
+import com.thinkaurelius.titan.core.TitanEdge;
 import com.thinkaurelius.titan.core.Order;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.util.ElementHelper;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.pipes.PipeFunction;
+import com.tinkerpop.pipes.branch.LoopPipe;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -84,6 +95,7 @@ public class TitanAdminAPI
         m_graph.makeKey(Schema.DESC).dataType(String.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.TITLE).dataType(String.class).indexed(INDEX_NAME,Vertex.class).make();
         m_graph.makeKey(Schema.KEYWORDS).dataType(String.class).indexed(INDEX_NAME,Vertex.class).make();
+
         m_graph.makeKey(Schema.UID).dataType(Integer.class).indexed(Vertex.class).make(); //unique().make();
         m_graph.makeKey(Schema.UNAME).dataType(String.class).indexed(Vertex.class).make(); //.unique().make();
         m_graph.makeKey(Schema.EMAIL).dataType(String.class).make();
@@ -110,7 +122,8 @@ public class TitanAdminAPI
         m_graph.makeLabel(Schema.PROD).oneToMany().make();
         m_graph.makeLabel(Schema.META).manyToMany().make();
         m_graph.makeLabel(Schema.CTXT).manyToMany().make();
-        m_graph.makeKey(Schema.STATUS).dataType(Integer.class).indexed(INDEX_NAME,Edge.class).make();
+        //m_graph.makeKey(Schema.STATUS).dataType(Integer.class).indexed(INDEX_NAME,Edge.class).make();
+        m_graph.makeKey(Schema.STATUS).dataType(Integer.class).make();
 
         // Create root node of file system
         ElementHelper.setProperties( m_graph.addVertex(null), Schema.TYPE, Schema.Type.DIR.toInt(),
@@ -135,6 +148,11 @@ public class TitanAdminAPI
 
     public void loadUsers( String a_user_file, JSONStringer a_output  ) throws Exception
     {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
         class UserInfo
         {
             public UserInfo()
@@ -282,6 +300,11 @@ public class TitanAdminAPI
 
     public void loadGroups( String a_groups_file, JSONStringer a_output  ) throws Exception
     {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
         class GroupInfo
         {
             public GroupInfo()
@@ -451,6 +474,11 @@ public class TitanAdminAPI
 
     public void loadJobs( String a_jobs_file, JSONStringer a_output ) throws Exception
     {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
         // Get timestamp of latest job entry
         long latest = getLatestJob();
 
@@ -582,6 +610,11 @@ public class TitanAdminAPI
 
     public void loadApps( String a_apps_file, JSONStringer a_output  ) throws Exception
     {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
         // Get timestamp of latest job entry
         long latest = getLatestApp();
 
@@ -758,6 +791,11 @@ public class TitanAdminAPI
 
     public void loadFiles( String a_files, String a_path, JSONStringer a_output  ) throws Exception
     {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
         m_dir_size = 0;
         m_scratch_count = 0;
 
@@ -900,6 +938,8 @@ public class TitanAdminAPI
                 }
             }
 
+            m_graph.commit();
+
             reader.close();
         }
         finally
@@ -911,6 +951,611 @@ public class TitanAdminAPI
         a_output.key("files").object();
         a_output.key("new").value(count);
         a_output.endObject();
+        a_output.endObject();
+    }
+
+/*
+    private long deleteFileVertex( Vertex a_node, int a_level, int[] a_commit_info )
+    {
+        long count = 0;
+
+        if ( a_level < 2 )
+        {
+            System.out.println( "Deleting node: " + a_node.getId() + ", level: " + a_level );
+        }
+
+        while ( true )
+        {
+            Iterator<Edge> e = a_node.getEdges( Direction.OUT, Schema.COMP ).iterator();
+            while ( e.hasNext())
+            {
+                count += deleteFileVertex( e.next().getVertex( Direction.IN ), a_level + 1, a_commit_info );
+                // See if a commit occurred, if so stop
+                if ( a_commit_info[0] > a_level )
+                    break;
+            }
+
+            // If a commit happened below this level, restart edge loop
+            // Any child vertices that have already been deleted will no longer have edges in edge list
+            if ( a_commit_info[0] > a_level )
+            {
+                // refresh out vertex
+                a_node = m_graph.getVertex( a_node );
+                a_commit_info[0] = a_level;
+            }
+            else
+                break;
+        }
+
+        m_graph.removeVertex( a_node );
+        count++;
+
+        // See if commit is needed
+        if ( --a_commit_info[1] == 0 )
+        {
+            System.out.println( "Commit 10K deletes at level: " + a_level );
+
+            m_graph.commit();
+            a_commit_info[0] = a_level;
+            a_commit_info[1] = 10000;
+        }
+
+        return count;
+    }
+
+    public void deleteFile( long a_nid, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
+        Vertex node = m_graph.getVertex( a_nid );
+        if ( node == null )
+            throw new WebApplicationException( "No vertex found with specified NID.", Response.Status.NOT_FOUND );
+
+        int type = node.getProperty(Schema.TYPE);
+        if ( type != Schema.Type.FILE.toInt() && type != Schema.Type.DIR.toInt())
+            throw new WebApplicationException( "Incorrect vertex type.", Response.Status.CONFLICT );
+
+        long startTime = System.nanoTime();
+
+        int[] a_commit_info = new int[2];
+        a_commit_info[0] = 0;
+        a_commit_info[1] = 10000;
+        long count = deleteFileVertex( node, 0, a_commit_info );
+        m_graph.commit();
+
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
+
+        a_output.object();
+        a_output.key("count:").value( count );
+        a_output.key("time:").value( duration );
+        a_output.key("rate:").value( count/duration );
+        a_output.endObject();
+    }
+*/
+
+    private void gatherFileVertices( Vertex a_node, ArrayList<Vertex> a_buffer )
+    {
+        a_buffer.add( a_node );
+        int start = a_buffer.size();
+
+        Iterator<Edge> e = a_node.getEdges( Direction.OUT, Schema.COMP ).iterator();
+        while ( e.hasNext() )
+        {
+            a_buffer.add( e.next().getVertex( Direction.IN ));
+        }
+        e = null;
+
+        int end = a_buffer.size();
+        for ( int i = start; i < end; ++i )
+            gatherFileVertices( a_buffer.get(i), a_buffer );
+    }
+
+    private long deleteFile( Vertex a_node )
+    {
+        ArrayList<Vertex>   buffer = new ArrayList<>(200000);
+
+        System.out.println( "Gathering..." );
+        long startTime = System.nanoTime();
+
+        gatherFileVertices( a_node, buffer );
+
+        long endTime = System.nanoTime();
+        long count = buffer.size();
+
+        System.out.println( "Got " + count + " in " + (endTime - startTime)*1e-9 + " sec" );
+
+        System.out.println( "Deleting..." );
+        startTime = System.nanoTime();
+
+        int i = 1;
+        int p = buffer.size();
+        while ( p-i >= 0 )
+        {
+            m_graph.removeVertex( buffer.get(p-i) );
+            if ( ++i == 10000 )
+            {
+                m_graph.commit();
+                buffer.subList( p-i, p ).clear();
+                p = buffer.size();
+                i = 1;
+                endTime = System.nanoTime();
+                System.out.println( "10K in " + (endTime - startTime)*1e-9 + " sec" );
+            }
+        }
+
+        m_graph.commit();
+        return count;
+    }
+
+    public void deleteFile( long a_nid, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+        Vertex node = m_graph.getVertex( a_nid );
+
+        if ( node == null )
+            throw new WebApplicationException( "No vertex found with specified NID.", Response.Status.NOT_FOUND );
+
+        int type = node.getProperty(Schema.TYPE);
+        if ( type != Schema.Type.FILE.toInt() && type != Schema.Type.DIR.toInt())
+            throw new WebApplicationException( "Incorrect vertex type.", Response.Status.CONFLICT );
+
+        long startTime = System.nanoTime();
+
+        long count = deleteFile( node );
+
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
+
+        a_output.object();
+        a_output.key("count:").value( count );
+        a_output.key("time:").value( duration );
+        a_output.key("rate:").value( count/duration );
+        a_output.endObject();
+    }
+
+    private long touchFiles( Vertex a_node )
+    {
+        long count = 1;
+        a_node.setProperty( Schema.MTIME, (long)a_node.getProperty( Schema.MTIME ) + 1 );
+        Iterator<Edge> e = a_node.getEdges( Direction.OUT, Schema.COMP ).iterator();
+        while ( e.hasNext() )
+        {
+            count += touchFiles( e.next().getVertex( Direction.IN ));
+        }
+
+        return count;
+    }
+/*
+    private long touchFile( Vertex a_node )
+    {
+        ArrayList<Vertex>   buffer = new ArrayList<>(200000);
+
+        System.out.println( "Gathering..." );
+        long startTime = System.nanoTime();
+
+        gatherFileVertices( a_node, buffer );
+
+        long endTime = System.nanoTime();
+        long count = buffer.size();
+
+        System.out.println( "Got " + count + " in " + (endTime - startTime)*1e-9 + " sec" );
+
+        System.out.println( "Touching..." );
+        startTime = System.nanoTime();
+
+        int i = 1;
+        int p = buffer.size();
+        Vertex v;
+        while ( p-i >= 0 )
+        {
+            v = buffer.get(p-i);
+
+            v.setProperty( Schema.MTIME, v.getProperty( Schema.MTIME ) + 1 );
+
+            if ( ++i == 10000 )
+            {
+                m_graph.commit();
+                buffer.subList( p-i, p ).clear();
+                p = buffer.size();
+                i = 1;
+                endTime = System.nanoTime();
+                System.out.println( "10K in " + (endTime - startTime)*1e-9 + " sec" );
+            }
+        }
+
+        m_graph.commit();
+        return count;
+    }
+*/
+
+    public void touchFile( long a_nid, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+        Vertex node = m_graph.getVertex( a_nid );
+
+        if ( node == null )
+            throw new WebApplicationException( "No vertex found with specified NID.", Response.Status.NOT_FOUND );
+
+        int type = node.getProperty(Schema.TYPE);
+        if ( type != Schema.Type.FILE.toInt() && type != Schema.Type.DIR.toInt())
+            throw new WebApplicationException( "Incorrect vertex type.", Response.Status.CONFLICT );
+
+        long startTime = System.nanoTime();
+
+        long count = touchFiles( node );
+        m_graph.commit();
+
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
+
+        a_output.object();
+        a_output.key("count:").value( count );
+        a_output.key("time:").value( duration );
+        a_output.key("rate:").value( count/duration );
+        a_output.endObject();
+    }
+
+    public void countAllFiles( JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
+        long startTime = System.nanoTime();
+
+        Iterator<Vertex> v = m_graph.getVertices(Schema.TYPE,Schema.Type.FILE.toInt()).iterator();
+
+        long fcount = 0;
+        long dcount = 0;
+        while ( v.hasNext() )
+        {
+            v.next();
+            fcount++;
+        }
+
+        v = m_graph.getVertices(Schema.TYPE,Schema.Type.DIR.toInt()).iterator();
+
+        while ( v.hasNext() )
+        {
+            v.next();
+            dcount++;
+        }
+
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
+
+        a_output.object();
+        a_output.key("count:").value( fcount + dcount );
+        a_output.key("files:").value( fcount );
+        a_output.key("dirs:").value( dcount );
+        a_output.key("time:").value( duration );
+        a_output.key("rate:").value( (fcount + dcount)/duration );
+        a_output.endObject();
+    }
+
+
+    private int countFilesByPath( Vertex a_node )
+    {
+        //final long[] count = new long[1];
+        //count[0] = 0;
+        int count = 1;
+
+        Iterator<Edge> e = a_node.getEdges( Direction.OUT, Schema.COMP ).iterator();
+        while ( e.hasNext())
+        {
+            count += countFilesByPath( e.next().getVertex( Direction.IN ));
+        }
+
+/*
+        Iterator<TitanEdge> e = a_node.getEdges().iterator();
+        TitanVertex v;
+        while ( e.hasNext())
+        {
+            v = e.next().getVertex( Direction.IN );
+            if ( v != a_node )
+                count += countFilesByPath( v );
+        }
+*/
+/*
+        GremlinPipeline<Vertex,Vertex> grem = new GremlinPipeline( a_node ).out(Schema.COMP)
+            .loop(1, new PipeFunction<LoopPipe.LoopBundle, Boolean>()
+            {
+                public Boolean compute(LoopPipe.LoopBundle bundle)
+                {
+                    count[0]++;
+                    return bundle.getLoops() < 20;
+                }
+            });
+
+        grem.iterate();
+        //count = grem.count();
+*/
+        //return count[0];
+
+        return count;
+    }
+
+    public void countFilesByPath( long a_nid, int a_threads, JSONStringer a_output ) throws Exception
+    {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
+        Vertex node = m_graph.getVertex( a_nid );
+        if ( node == null )
+            throw new WebApplicationException( "No vertex found with specified NID.", Response.Status.NOT_FOUND );
+
+        int type = node.getProperty(Schema.TYPE);
+        if ( type != Schema.Type.FILE.toInt() && type != Schema.Type.DIR.toInt())
+            throw new WebApplicationException( "Incorrect vertex type.", Response.Status.CONFLICT );
+
+        int count = 0;
+        long startTime = System.nanoTime();
+
+        if ( a_threads > 1 )
+        {
+            final int[] workdone = new int[a_threads];
+            final int[] filled = new int[a_threads];
+            final int[] blocked = new int[a_threads];
+            final AtomicInteger working = new AtomicInteger(1);
+            final AtomicInteger numThreads = new AtomicInteger(0);
+            final AtomicInteger numWorkers = new AtomicInteger(0);
+            final ArrayBlockingQueue<Vertex> workq = new ArrayBlockingQueue<>(100);
+            ExecutorService pool = Executors.newFixedThreadPool( a_threads );
+
+            workq.add( node );
+
+            class Counter implements Runnable
+            {
+                private int todo;
+                private int id;
+                private int fcount;
+                final static int work = 300;
+
+                private void countNode( Vertex v )
+                {
+                    workdone[id]++;
+                    todo--;
+
+                    Iterator<Edge> e = v.getEdges( Direction.OUT, Schema.COMP ).iterator();
+                    while ( e.hasNext())
+                    {
+                        if ( todo > 0 )
+                            countNode( e.next().getVertex( Direction.IN ) );
+                        else if ( todo > -20 ) // Add at most 10 new nodes to queue
+                        {
+                            Vertex newv = e.next().getVertex( Direction.IN );
+                            if ( workq.offer( newv ) == false )
+                            {
+                                // Queue is full, keep working
+                                blocked[id]++;
+                                fcount = 10;
+                                todo = work*fcount;
+                                countNode( newv );
+                            }
+                            else
+                            {
+                                //System.out.print("*");
+                                todo--;
+                            }
+                        }
+                        else
+                        {
+                            filled[id]++;
+                            if ( fcount < 10 )
+                                todo = work*(fcount++);
+                            else
+                                todo = work;
+
+                            countNode( e.next().getVertex( Direction.IN ) );
+                        }
+                    }
+                }
+
+                public void run()
+                {
+                    id = numThreads.getAndIncrement();
+                    if ( id == 0 )
+                        todo = 1; // First thread, priority is to fill queue
+                    else
+                        todo = work;
+
+                    System.out.print(id + " ");
+
+                    Vertex v;
+
+                    try
+                    {
+                        while ( true )
+                        {
+                            if (( v = workq.poll( 1, TimeUnit.SECONDS )) != null )
+                            {
+                                numWorkers.incrementAndGet();
+                                fcount = 1;
+                                countNode( v );
+                                numWorkers.decrementAndGet();
+                            }
+                            else
+                                System.out.print("!");
+
+                            // If there are no other threads working and no work left to do, exit
+                            if ( numWorkers.get() == 0 && workq.size() == 0 )
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    catch( Exception e )
+                    {
+                        System.out.println("E");
+                    }
+
+                    if ( numThreads.decrementAndGet() == 0 )
+                        working.decrementAndGet();
+                }
+            }
+
+            System.out.println( "Starting " + a_threads + " threads" );
+
+            int i;
+            for ( i = 0; i < a_threads; ++i )
+                pool.submit( new Counter() );
+
+            while ( working.get() > 0 )
+            {
+                System.out.println( "T: " + numThreads.get() + ", W: " + numWorkers.get() + ", Q: " + workq.size());
+
+                System.out.print( "count[] = { " );
+                for ( i = 0; i < a_threads; ++i )
+                    System.out.print( workdone[i] + "  " );
+                System.out.println( "}" );
+                System.out.print( "filled[] = { " );
+                for ( i = 0; i < a_threads; ++i )
+                    System.out.print( filled[i] + "  " );
+                System.out.println( "}" );
+                System.out.print( "blocked[] = { " );
+                for ( i = 0; i < a_threads; ++i )
+                    System.out.print( blocked[i] + "  " );
+                System.out.println( "}" );
+
+                Thread.sleep(2000);
+            }
+
+            System.out.println("No threads active...");
+
+            for ( i = 0; i < a_threads; ++i )
+                count += workdone[i];
+        }
+        else
+        {
+            count = countFilesByPath( node );
+        }
+
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
+
+        a_output.object();
+        a_output.key("count:").value( count );
+        a_output.key("time:").value( duration );
+        a_output.key("rate:").value( count/duration );
+        a_output.endObject();
+    }
+
+/*
+    private long killFilesByPath( Vertex a_node, int a_level, int[] a_commit_info )
+    {
+        long count = 0;
+
+        while ( true )
+        {
+            Iterator<Edge> e = a_node.getEdges( Direction.OUT, Schema.COMP ).iterator();
+            while ( e.hasNext())
+            {
+                count += killFilesByPath( e.next().getVertex( Direction.IN ), a_level + 1, a_commit_info );
+                // See if a commit occurred, if so stop
+                if ( a_commit_info[0] > a_level )
+                    break;
+            }
+
+            // If a commit happened below this level, restart edge loop
+            // Any child vertices that have already been deleted will no longer have edges in edge list
+            if ( a_commit_info[0] > a_level )
+            {
+                // refresh out vertex
+                a_node = m_graph.getVertex( a_node );
+                a_commit_info[0] = a_level;
+            }
+            else
+                break;
+        }
+
+        a_node.setProperty( Schema.TYPE, Schema.Type.DELETED.toInt() );
+        count++;
+
+        // See if commit is needed
+        if ( --a_commit_info[1] == 0 )
+        {
+            System.out.println( "Commit 10K kills at level: " + a_level );
+
+            m_graph.commit();
+            a_commit_info[0] = a_level;
+            a_commit_info[1] = 10000;
+        }
+
+        return count;
+    }
+
+    public void killFilesByPath( long a_nid, JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
+        Vertex node = m_graph.getVertex( a_nid );
+        if ( node == null )
+            throw new WebApplicationException( "No vertex found with specified NID.", Response.Status.NOT_FOUND );
+
+        int type = node.getProperty(Schema.TYPE);
+        if ( type != Schema.Type.FILE.toInt() && type != Schema.Type.DIR.toInt())
+            throw new WebApplicationException( "Incorrect vertex type.", Response.Status.CONFLICT );
+
+        long startTime = System.nanoTime();
+
+        int[] a_commit_info = new int[2];
+        a_commit_info[0] = 0;
+        a_commit_info[1] = 10000;
+        long count = killFilesByPath( node, 0, a_commit_info );
+        m_graph.commit();
+
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
+
+        a_output.object();
+        a_output.key("count:").value( count );
+        a_output.key("time:").value( duration );
+        a_output.key("rate:").value( count/duration );
+        a_output.endObject();
+    }
+*/
+
+    public void deleteZombieNodes( JSONStringer a_output )
+    {
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
+        long startTime = System.nanoTime();
+
+        Iterator<Vertex> v = m_graph.getVertices(Schema.TYPE,Schema.Type.DELETED.toInt()).iterator();
+
+        long count = 0;
+        while ( v.hasNext() )
+        {
+            m_graph.removeVertex( v.next());
+            count++;
+        }
+
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime)*1e-9;
+
+        a_output.object();
+        a_output.key("count:").value( count );
+        a_output.key("time:").value( duration );
+        a_output.key("rate:").value( count/duration );
         a_output.endObject();
     }
 

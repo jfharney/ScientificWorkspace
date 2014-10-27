@@ -47,7 +47,7 @@ public class DOIResource
     {
         // JSON payload contains everything...
         JSONObject data = new JSONObject( a_payload );
-/*
+
         String[] fields = JSONObject.getNames( data );
 
         System.out.println( "JSON fields: " );
@@ -55,7 +55,7 @@ public class DOIResource
         {
             System.out.println( f );
         }
-*/
+
         long user_nid = data.getLong("creator_nid");
 
         JSONArray array = data.getJSONArray("nids");
@@ -63,7 +63,10 @@ public class DOIResource
         // nids array may not contain unique values
         HashSet<Long>  nids = new HashSet<>();
         for ( int i = 0; i < array.length(); i++ )
+        {
+            System.out.println( "  adding nid: " + array.getLong(i) );
             nids.add(array.getLong(i));
+        }
 
         String title = data.getString("title");
         String desc = data.getString("description");
@@ -74,6 +77,7 @@ public class DOIResource
         payload += "<description>" + desc + "</description>";
         payload += "<creators>" + data.getString("creator_name") + "</creators>";
         payload += "<creators_email>" + data.getString("creator_email") + "</creators_email>";
+        payload += "<contact_email>" + data.getString("contact_email") + "</contact_email>";
         payload += "<files>" + data.getString("files") + "</files>";
         payload += "<resources>" + data.getString("resources") + "</resources>";
         payload += "<keywords>" + keywd + "</keywords>";

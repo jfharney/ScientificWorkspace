@@ -12,6 +12,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.WebApplicationException;
@@ -87,6 +88,104 @@ public class AdminResource
             m_api.loadFiles( a_files, a_path, output );
 
         output.endArray();
+        return output.toString();
+    }
+
+    @Path("file/{nid}")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public String deleteFile(
+        @PathParam("nid") long a_nid,
+        @QueryParam("pass") String a_password ) throws Exception
+    {
+        checkCredentials(a_password);
+
+        JSONStringer output = new JSONStringer();
+
+        m_api.deleteFile( a_nid, output );
+
+        return output.toString();
+    }
+
+    @Path("file/count")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String countAllFiles(
+        @QueryParam("pass") String a_password ) throws Exception
+    {
+        checkCredentials(a_password);
+
+        JSONStringer output = new JSONStringer();
+
+        m_api.countAllFiles( output );
+
+        return output.toString();
+    }
+
+    @Path("file/count/{nid}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String countFilesByPath(
+        @PathParam("nid") long a_nid,
+        @DefaultValue("1") @QueryParam("threads") int a_threads,
+        @QueryParam("pass") String a_password ) throws Exception
+    {
+        checkCredentials(a_password);
+
+        JSONStringer output = new JSONStringer();
+
+        if ( a_threads <= 0 )
+            a_threads = 1;
+
+        m_api.countFilesByPath( a_nid, a_threads, output );
+
+        return output.toString();
+    }
+
+    @Path("file/delete/{nid}")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String deleteFiles(
+        @PathParam("nid") long a_nid,
+        @QueryParam("pass") String a_password ) throws Exception
+    {
+        checkCredentials(a_password);
+
+        JSONStringer output = new JSONStringer();
+
+        m_api.deleteFile( a_nid, output );
+
+        return output.toString();
+    }
+
+    @Path("file/touch/{nid}")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String touchFiles(
+        @PathParam("nid") long a_nid,
+        @QueryParam("pass") String a_password ) throws Exception
+    {
+        checkCredentials(a_password);
+
+        JSONStringer output = new JSONStringer();
+
+        m_api.touchFile( a_nid, output );
+
+        return output.toString();
+    }
+
+    @Path("zombies")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public String deleteZombies(
+        @QueryParam("pass") String a_password ) throws Exception
+    {
+        checkCredentials(a_password);
+
+        JSONStringer output = new JSONStringer();
+
+        m_api.deleteZombieNodes( output );
+
         return output.toString();
     }
 
