@@ -42,15 +42,55 @@ var doisProxyHelper = function(request, response) {
                           title: 'Metadata', 
                           doiName: jsonObjArr[i]['name'],
                           isFolder: true,
-                          isLazy: true,
+                          isLazy: true
                         }, 
                         {
                           title: 'Linked Objects',
                           doiName: jsonObjArr[i]['name'], 
-                          isFolder: true
+                          isFolder: true,
+                          children: null
                         }
                       ]
     	};
+    	var linkedObjectsArr = [];
+    	var contextArr = jsonObjArr[i]['context'];
+    	for(var j = 0; j < contextArr.length; j++) {
+    	  var objType = '';
+    	  if(contextArr[j]['type'] == 0) {
+    	  	objType = 'User';
+    	  	objValue = contextArr[j]['name'];
+    	  }
+    	  else if(contextArr[j]['type'] == 1) {
+    	  	objType = 'Group';
+    	  	objValue = contextArr[j]['gname'];
+    	  }
+    	  else if(contextArr[j]['type'] == 2) {
+    	  	objType = 'Job';
+    	  	objValue = contextArr[j]['name'];
+    	  }
+    	  else if(contextArr[j]['type'] == 3) {
+    	  	objType = 'App';
+    	  	objValue = contextArr[j]['aid'];
+    	  }
+    	  else if(contextArr[j]['type'] == 4) {
+    	  	objType = 'File';
+    	  	objValue = contextArr[j]['name'];
+    	  }
+    	  else if(contextArr[j]['type'] == 6) {
+    	  	objType = 'Tag';
+    	  	objValue = contextArr[j]['name'];
+    	  }
+    	  else {
+    	  	objType = 'Other';
+    	  	objValue = contextArr[j]['type']; 	// Putting in type for development purposes. 
+    	  }
+    	  var childObj = {
+            title: '<span style="position:relative">'+objType+': <span style="position:absolute; left:100px;">'+objValue+'</span></span>',
+            isFolder: false
+    	  };
+    	  linkedObjectsArr.push(childObj);
+    	  respObj['children'][1].children = linkedObjectsArr;
+    	}
     	  
     	dynatreeJsonArr.push(respObj);
       }

@@ -715,15 +715,12 @@ app.get('/dois/:userNum', function(request, response) {
 });
 
 // Given a single DOI name (10...), this call returns the metadata for that DOI from Doug's service.
-app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
+app.get('/doi_meta', function(request, response) {
+  console.log('A /doi_meta request has been received.');
 
-//app.get('/doi/meta', function(request, response) {
+  var path = '/doi/json?doi='+request.query['doiName'];
 
-  var path = '/doi/json?doi='+request.params.doiName1+'/'+request.params.doiName2;
-
-  //var args = request.query;
-  //var path = 'doi/json?doi='+args['doiId'];
-  //console.log('path is '+path);
+  console.log('path is '+path);
 
   var options = {
     host: 'doi1.ccs.ornl.gov',
@@ -742,9 +739,6 @@ app.get('/doi/meta/:doiName1/:doiName2', function(request, response) {
     resp.on('end', function() {
     	console.log(responseData);
       var jsonObj = JSON.parse(responseData);
-
-      //for(var key in jsonObj[0]['fields'])
-      	//console.log(key+': '+jsonObj[0]['fields'][key]);
       
       var respObj = [
         {    

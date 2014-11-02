@@ -33,7 +33,24 @@ function getUserDoiData(userNum) {
             }
           ]
         }, 
-        {title: 'Linked Objects', isFolder: true}
+        {
+          title: 'Linked Objects', 
+          isFolder: true, 
+          children: [
+            {
+              title: '<span style="position:relative">File: <span style="position:absolute; left:100px;">/stf007/world-shared/xnetMPI_cula_works_serial_not_ll.tar</span></span>', 
+              isFolder: false
+            },
+            {
+              title: '<span style="position:relative">Job: <span style="position:absolute; left:100px;">swtc1</span></span>', 
+              isFolder: false
+            },
+            {
+              title: '<span style="position:relative">Group: <span style="position:absolute; left:100px;">cli017</span></span>', 
+              isFolder: false
+            }
+          ]
+        }
       ]
     });
     children.push({    title: 'DOI_Two',    isFolder: true,    isLazy: false,    doiId: '10-86X-234151235532',    tooltip: 'This is DOI Two.',     children: [{title: 'Metadata', isFolder: true}, {title: 'Linked Objects', isFolder: true}]  });  
@@ -66,8 +83,9 @@ function buildDoiTree(children) {
     onLazyRead: function(node) {
       if(node.data.title == 'Metadata') {
         var doiName = node.data.doiName;
+        console.log('doiName is '+doiName);
         node.appendAjax({
-          url: 'http://localhost:1337/doi/meta/'+doiName
+          url: 'http://localhost:1337/doi_meta?doiName='+doiName
         });
       }
       else if(node.data.title == 'Linked Objects') {
