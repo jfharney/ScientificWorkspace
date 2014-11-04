@@ -193,51 +193,58 @@ deleted.
 
 function handleTagRequest( method, path, query, payload, reply )
 {
-    // API:
-    // GET associations/uuid
-
-    if ( method === "GET" )
+    if ( path[1] === "tags" )
     {
-        if ( path.length === 2 )
+        // Plural subject only allows GET (query)
+        if ( method === "GET" )
         {
-            DB.tagQuery( reply, query );
-        }
-        else if ( path.length === 3 )
-        {
-            DB.tagGet( reply, path[2], query );
+            if ( path.length === 2 )
+                DB.tagQuery( reply, query );
+            else
+                throw Err.INVALID_REQUEST;
         }
         else
-            throw Err.INVALID_REQUEST;
-    }
-    else if ( method === "POST" )
-    {
-        if ( path.length === 3 )
-        {
-            DB.tagPost( reply, path[2], query );
-        }
-        else
-            throw Err.INVALID_REQUEST;
-    }
-    else if ( method === "PUT" )
-    {
-        if ( path.length === 3 )
-        {
-            DB.tagPut( reply, path[2], query );
-        }
-        else
-            throw Err.INVALID_REQUEST;
-    }
-    else if ( method === "DELETE" )
-    {
-        if ( path.length === 3 )
-        {
-            DB.tagDelete( reply, path[2], query );
-        }
-        else
-            throw Err.INVALID_REQUEST;
+            throw Err.INVALID_METHOD;
     }
     else
-        throw Err.INVALID_METHOD;
+    {
+        if ( method === "GET" )
+        {
+            if ( path.length === 2 )
+                DB.tagGet( reply, query );
+            else if ( path.length === 3 )
+                DB.tagGet( reply, query, path[2] );
+            else
+                throw Err.INVALID_REQUEST;
+        }
+        else if ( method === "POST" )
+        {
+            if ( path.length === 2 )
+                DB.tagPost( reply, query );
+            else
+                throw Err.INVALID_REQUEST;
+        }
+        else if ( method === "PUT" )
+        {
+            if ( path.length === 2 )
+                DB.tagPut( reply, query );
+            else if ( path.length === 3 )
+                DB.tagPut( reply, query, path[2] );
+            else
+                throw Err.INVALID_REQUEST;
+        }
+        else if ( method === "DELETE" )
+        {
+            if ( path.length === 2 )
+                DB.tagDelete( reply, query );
+            else if ( path.length === 3 )
+                DB.tagDelete( reply, query, path[2] );
+            else
+                throw Err.INVALID_REQUEST;
+        }
+        else
+            throw Err.INVALID_METHOD;
+    }
 }
 
 
@@ -268,6 +275,7 @@ function dispatchRequest( method, path, query, payload, reply )
         case "files":
             handleFileRequest( method, path, query, payload, reply );
             break;
+        case "tag":
         case "tags":
             handleTagRequest( method, path, query, payload, reply );
             break;

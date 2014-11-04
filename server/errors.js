@@ -8,9 +8,11 @@ const MISSING_REQUIRED_PARAM = -3;
 const NOT_AUTHORIZED = -4;
 const INVALID_METHOD = -5;
 const CONFLICTING_REQUEST = -6;
+const GENERAL_ERROR = -7;
 
 module.exports =
 {
+    GENERAL_ERROR: GENERAL_ERROR,
     INVALID_REQUEST: INVALID_REQUEST,
     INVALID_OBJECT: INVALID_OBJECT,
     MISSING_REQUIRED_PARAM: MISSING_REQUIRED_PARAM,
@@ -50,5 +52,7 @@ module.exports =
         }
         reply.write("\n");
         reply.end();
+
+        console.log("sent error: " + e );
     }
 }
