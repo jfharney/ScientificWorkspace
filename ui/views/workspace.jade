@@ -102,8 +102,7 @@ html(lang="en")
                 th Description
             tbody
         div.modal-footer
-          button#createDoiFromTagsButton.btn(data-dismiss="modal") Request DOI
-          button.btn.btn-default(data-dismiss="modal") Cancel
+          button.btn.btn-default(data-dismiss="modal") Dismiss
       
     // NAVIGATION BAR
     div.navbar
@@ -120,28 +119,6 @@ html(lang="en")
               li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
-          div.btn-group.pull-right
-            ul.nav
-              a.btn.dropdown-toggle(data-toggle="dropdown",href="#")
-                i.icon-user
-                span.hidden-phone #{uname}
-                span.caret
-              ul.dropdown-menu
-                li
-                  a(href="#") Profile
-                li.divider
-                li
-                  a(href="login.html") Logout
-                li.divider
-                li
-                  a.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 1qk
-                li(role="presentation")
-                  a.user_dropdown_list(role="menuitem",tabindex="-1",href="#") jamroz
-                li(role="presentation")
-                  a.user_dropdown_list(role="menuitem",tabindex="-1",href="#") 8xo
-                li(role="presentation")
-                  a.user_dropdown_list(role="menuitem",tabindex="-1",href="#") r2y
-
         
     div.container-fluid
       div.row-fluid
@@ -294,7 +271,7 @@ html(lang="en")
                     a.btn.btn-close.btn-round(href="#")
                       i.icon-remove
                 div.box-content
-                  div.tagInfoPane.row-fluid
+                  //div.tagInfoPane.row-fluid
                   h3 User Info
                   div#user_info
                   h3 Collaborators Info
@@ -309,14 +286,6 @@ html(lang="en")
         //feed
         div.span2
           h3 My Feed
-          div#feed1 
-            div feed 1 beginning
-          div#feed2 
-            div feed 2 beginning
-          div#feed3 
-            div feed 2 beginning
-          
-      
             
     script(src="js/jquery/jquery-1.7.2.min.js")
     script(src="js/jquery/jquery-ui-1.8.21.custom.min.js")

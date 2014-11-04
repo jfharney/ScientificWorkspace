@@ -21,6 +21,7 @@ var groupinfoHelper = function(request, response) {
   
   var args = url.parse(request.url, true).query;
   searchArg = args['search'];
+  if (searchArg == undefined) searchArg = '';
   var responseData = '';
 	
   var req = http.request(options, function(res) {
@@ -29,29 +30,30 @@ var groupinfoHelper = function(request, response) {
     });
     res.on('end', function() {
       try {
-		var groupObjsArr = [];
-	    groupObjsArr = JSON.parse(responseData);
-			
+		var groupObjArr = JSON.parse(responseData);
+		
+		//if(searchArg != '')
+		  //filterGroupsData(groupObjArr, searchArg);
+
         var respArr = [];
-        for(var i = 0; i < groupObjsArr.length; i++) {
-          for(var key in groupObjsArr[i])
-            var tooltip = 'Group ID: '+ groupObjsArr[i]['gid'] + '\nGroup Name: ' + groupObjsArr[i]['gname'];
+        for(var i = 0; i < groupObjArr.length; i++) {
+          for(var key in groupObjArr[i])
+            var tooltip = 'Group ID: '+ groupObjArr[i]['gid'] + '\nGroup Name: ' + groupObjArr[i]['gname'];
 				
           var child = {};
-          child['title'] = groupObjsArr[i]['gname'];
-          child['name'] = groupObjsArr[i]['gname'];
+          child['title'] = groupObjArr[i]['gname'];
+          child['name'] = groupObjArr[i]['gname'];
 		  child['isFolder'] = true;
 		  child['type'] = 1;
 		  child['isLazy'] = true;
 		  child['tooltip'] = tooltip;
-		  child['gid'] = groupObjsArr[i]['gid'];
-		  child['nid'] = groupObjsArr[i]['nid'];
+		  child['gid'] = groupObjArr[i]['gid'];
+		  child['nid'] = groupObjArr[i]['nid'];
 			     
 		  respArr.push(child);
 			      
 		}
 
-        var filteredGroupsObj = {};
         response.send(respArr);
 	      
       } 
@@ -69,6 +71,21 @@ var groupinfoHelper = function(request, response) {
 
 module.exports.groupinfoHelper = groupinfoHelper;
 
+/* We decided on 11-04-14 that tree refinement would not be implemented before the SC demo. 
+function filterGroupsData(groupObjArr, searchArg) {
+
+  filteredGroupObjArr = [];
+  
+  var pattern = new RegExp(searchArg);
+  
+  for(var i in groupObjArr['groups'])
+	if(pattern.test(groupObjArr['groups'][i]['gname'])) {
+	  filteredGroupObjArr['groups'].push(groupObjArr['groups'][i]);
+    }
+
+  groupObjArr = filteredGroupObjArr;
+  return;
+}*/
 
 
 var groupinfoHelperFirewall = function(request, response) {
@@ -217,7 +234,11 @@ var groupsHelperFirewall = function(request, response) {
 	        var respObj = {"title" : uidArr[i], "id" : uidArr[i] , 'username' : unameArr[i]};
 	        respArr.push(respObj);
 	      }
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> devel
 	      response.send(respArr);
 	   });
 		  
@@ -235,19 +256,4 @@ var groupsHelperFirewall = function(request, response) {
 
 module.exports.groupsHelperFirewall = groupsHelperFirewall;
 
-
-function filterGroupsProxyData(searchArg, jsonObj, filteredGroupsObj) {
-  if(searchArg == '') {
-	filteredGroupsObj = jsonObj;
-	return;
-  }
-  
-  var pattern = new RegExp(searchArg);
-  
-  for(var i in jsonObj['groups'])
-	if(pattern.test(jsonObj['groups'][i]['gname'])) {
-	  filteredGroupsObj['groups'].push(jsonObj['groups'][i]);
-    }
-  return;
-}
 
