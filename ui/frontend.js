@@ -562,11 +562,11 @@ app.get('/jobsproxy/:userNum', function(request, response) {
 
   if(proxy.firewallMode) {
 	
-	jobs.jobsproxyHelperFirewall(request, response);
+	  jobs.jobsproxyHelperFirewall(request, response);
 	
   } else {
 	  
-	jobs.jobsproxyHelper(request, response);
+	  jobs.jobsproxyHelper(request, response);
 	
   }
 
