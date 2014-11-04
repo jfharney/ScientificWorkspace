@@ -135,6 +135,246 @@ public class TitanAdminAPI
         m_graph.commit();
     }
 
+    public void setupDemo() throws Exception
+    {
+        System.out.println("setupDemo");
+
+        if ( m_graph == null )
+            throw new WebApplicationException( "Graph is unavailable.", Response.Status.SERVICE_UNAVAILABLE );
+
+        m_graph.rollback();
+
+        // This method creates a synthetic data set for demo purposes
+        // Creates users u1 to u100
+        // Creates groups for all users, creates groups for projects, creates organizational groups
+        // Users are allocated to projects linearly (1-10 in project1, 11-20 in project2, etc)
+        // Users are allocated to org groups linearly (1-20 in staff1, 21-40 in staff2, etc)
+        // File system...
+
+        // T0 = now - 7 days
+        long t0 = (System.currentTimeMillis()/1000) - (7*24*60*60);
+
+        // Create users, user groups, projects, and org groups
+        Vertex vert_user;
+        Vertex vert_group;
+        Vertex vert_proj = null;
+        Vertex vert_org = null;
+
+        int proj_num = 1;
+        int org_num = 1;
+
+        for ( int i = 1; i <= 100; ++i )
+        {
+            System.out.println("u"+i);
+
+            if ( (( i - 1 ) % 10) == 0 )
+            {
+                vert_proj = m_graph.addVertex(null);
+                ElementHelper.setProperties( vert_proj, Schema.TYPE, Schema.Type.GROUP.toInt(), Schema.GNAME, String.format("prj%03d", proj_num),
+                        Schema.GID, 3000 + proj_num );
+                proj_num++;
+            }
+            if ( (( i - 1 ) % 20) == 0 )
+            {
+                vert_org = m_graph.addVertex(null);
+                ElementHelper.setProperties( vert_org, Schema.TYPE, Schema.Type.GROUP.toInt(), Schema.GNAME, String.format("stf%03d", org_num),
+                        Schema.GID, 4000 + org_num );
+                org_num++;
+            }
+
+            vert_user = m_graph.addVertex(null);
+            vert_group = m_graph.addVertex(null);
+
+            ElementHelper.setProperties( vert_user, Schema.TYPE, Schema.Type.USER.toInt(), Schema.UNAME, "u" + i,
+                    Schema.UID, 1000 + i, Schema.NAME, "User Number" + i, Schema.EMAIL, "u" + i + "@ornl.gov" );
+
+            ElementHelper.setProperties( vert_group, Schema.TYPE, Schema.Type.GROUP.toInt(), Schema.GNAME, "u" + i,
+                    Schema.GID, 2000 + i );
+
+            vert_group.addEdge( Schema.MEMBER, vert_user );
+            vert_proj.addEdge( Schema.MEMBER, vert_user );
+            vert_org.addEdge( Schema.MEMBER, vert_user );
+        }
+
+        m_graph.commit();
+
+        // Build file system
+        Vertex root = null;
+        int uid;
+        int gid;
+        int mode;
+
+        Iterator<Vertex> it = m_graph.getVertices("fpath","root").iterator();
+        if ( it.hasNext())
+            root = it.next();
+        else
+            throw new Exception("Root file system node does not exist");
+
+        Vertex parent;
+        Vertex top,dir;
+        Vertex file;
+
+        // Make org areas
+        for ( org_num = 1; org_num <= 5; org_num++ )
+        {
+            System.out.println("org "+org_num);
+
+            gid = 4000 + org_num;
+            mode = 0775;
+
+            vert_org = m_graph.getVertices("gid",gid).iterator().next();
+
+            top = m_graph.addVertex(null);
+            ElementHelper.setProperties( top, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, vert_org.getProperty(Schema.GNAME), Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            root.addEdge( Schema.COMP, top );
+
+            dir = m_graph.addVertex(null);
+            ElementHelper.setProperties( dir, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, "scratch", Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            top.addEdge( Schema.COMP, dir );
+            makeUserFiles( dir, 1001 + (org_num-1)*20, 20 );
+
+            m_graph.commit();
+
+            dir = m_graph.addVertex(null);
+            ElementHelper.setProperties( dir, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, "proj-shared", Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            top.addEdge( Schema.COMP, dir );
+            makeUserFiles( dir, 1001 + (org_num-1)*20, 20  );
+
+            m_graph.commit();
+
+            dir = m_graph.addVertex(null);
+            ElementHelper.setProperties( dir, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, "world-shared", Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            top.addEdge( Schema.COMP, dir );
+            makeUserFiles( dir, 1001 + (org_num-1)*20, 20  );
+
+            m_graph.commit();
+        }
+
+        // Make project areas
+        for ( proj_num = 1; proj_num <= 10; proj_num++ )
+        {
+            System.out.println("proj "+proj_num);
+
+            gid = 3000 + proj_num;
+            mode = 0775;
+
+            vert_proj = m_graph.getVertices("gid",gid).iterator().next();
+
+            top = m_graph.addVertex(null);
+            ElementHelper.setProperties( top, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, vert_proj.getProperty(Schema.GNAME), Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            root.addEdge( Schema.COMP, top );
+
+            dir = m_graph.addVertex(null);
+            ElementHelper.setProperties( dir, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, "scratch", Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            top.addEdge( Schema.COMP, dir );
+            makeUserFiles( dir, 1001 + (proj_num-1)*10, 10 );
+
+            m_graph.commit();
+
+            dir = m_graph.addVertex(null);
+            ElementHelper.setProperties( dir, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, "proj-shared", Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            top.addEdge( Schema.COMP, dir );
+            makeUserFiles( dir, 1001 + (proj_num-1)*10, 10  );
+
+            m_graph.commit();
+
+            dir = m_graph.addVertex(null);
+            ElementHelper.setProperties( dir, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, "world-shared", Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, 0, Schema.XGID, gid, Schema.FMODE, mode );
+            top.addEdge( Schema.COMP, dir );
+            makeUserFiles( dir, 1001 + (proj_num-1)*10, 10  );
+
+            m_graph.commit();
+        }
+
+        // Make jobs and apps
+        Vertex vert_job, vert_app;
+        long start;
+        int u = 0;
+
+        for ( int j = 0; j < 2000; ++j )
+        {
+            gid = 3001 + (u / 10); // project group
+
+            vert_user = m_graph.getVertices("uid",1001 + u).iterator().next();
+            vert_group = m_graph.getVertices("gid",gid).iterator().next();
+
+            vert_job = m_graph.addVertex(null);
+            start = t0 + j*240;
+            ElementHelper.setProperties( vert_job, Schema.TYPE, Schema.Type.JOB.toInt(),
+                    Schema.JID, 10000 + j, Schema.NAME, "job" + (10000 + j),
+                    Schema.HOST, "titan", Schema.START, start, Schema.STOP, start + 3600,
+                    Schema.WALL, 2, Schema.NODES, 20, Schema.ERR, 0 );
+
+            vert_user.addEdge( Schema.PROD, vert_job );
+            vert_job.addEdge( Schema.CTXT, vert_group );
+
+            for ( int a = 0; a < 4; ++a )
+            {
+                vert_app = m_graph.addVertex(null);
+
+                ElementHelper.setProperties( vert_app, Schema.TYPE, Schema.Type.APP.toInt(),
+                        Schema.AID, 20000 + j*4 + a, Schema.HOST, "titan",
+                        Schema.START, start, Schema.STOP, start + 3600,
+                        Schema.CMD, "/usr/bin/aprun", Schema.NODES, 5, Schema.ERR, 0 );
+
+                vert_job.addEdge( Schema.COMP, vert_app );
+            }
+
+            if ( ++u == 100 )
+                u = 0;
+        }
+
+        m_graph.commit();
+    }
+
+    private void makeUserFiles( Vertex a_parent, int a_uid_start, int a_count ) throws Exception
+    {
+        long t0 = (System.currentTimeMillis()/1000) - (7*24*60*60);
+
+        Vertex dir;
+        Vertex file;
+        Vertex user;
+        int gid;
+
+        for ( int uid = a_uid_start; uid < a_uid_start + a_count; ++uid )
+        {
+            user = m_graph.getVertices("uid",uid).iterator().next();
+            gid = uid + 1000;
+
+            dir = m_graph.addVertex(null);
+            ElementHelper.setProperties( dir, Schema.TYPE, Schema.Type.DIR.toInt(),
+                    Schema.NAME, user.getProperty(Schema.UNAME), Schema.CTIME, t0, Schema.MTIME, t0,
+                    Schema.XUID, uid, Schema.XGID, gid, Schema.FMODE, 0775 );
+            a_parent.addEdge( Schema.COMP, dir );
+
+            for ( int f = 1; f <= 50; ++f )
+            {
+                file = m_graph.addVertex(null);
+                ElementHelper.setProperties( file, Schema.TYPE, Schema.Type.FILE.toInt(),
+                        Schema.NAME, "File" + f, Schema.CTIME, t0, Schema.MTIME, t0,
+                        Schema.XUID, uid, Schema.XGID, gid, Schema.FMODE, 0775 );
+                dir.addEdge( Schema.COMP, file );
+            }
+        }
+    }
+
+
     private ArrayList<Vertex> loadUsersRemote()
     {
         ArrayList<Vertex> results = new ArrayList<>(4000);
@@ -249,27 +489,27 @@ public class TitanAdminAPI
         }
 
         // Any remaining user records are either new (nid == 0) or updates (nide != 0)
-        for ( UserInfo ui : users.values())
-        {
-            Vertex usr;
-            if ( ui.nid == 0 )
+            for ( UserInfo ui : users.values())
             {
-                new_count++;
-                usr = m_graph.addVertex(null);
-                //System.out.println("Adding user: " + ui.name );
-            }
-            else if ( ui.nid > 0 )
-            {
-                upd_count++;
-                usr = m_graph.getVertex(ui.nid);
-                //System.out.println("Updating user: " + ui.name );
-            }
-            else // Negative NID means ignore (i.e. unchanged)
-                continue;
+                Vertex usr;
+                if ( ui.nid == 0 )
+                {
+                    new_count++;
+                    usr = m_graph.addVertex(null);
+                    //System.out.println("Adding user: " + ui.name );
+                }
+                else if ( ui.nid > 0 )
+                {
+                    upd_count++;
+                    usr = m_graph.getVertex(ui.nid);
+                    //System.out.println("Updating user: " + ui.name );
+                }
+                else // Negative NID means ignore (i.e. unchanged)
+                    continue;
 
-            ElementHelper.setProperties(usr, Schema.TYPE, Schema.Type.USER.toInt(), Schema.UNAME, ui.uname,
-                    Schema.UID, ui.uid, Schema.NAME, ui.name, Schema.EMAIL, ui.email );
-        }
+                ElementHelper.setProperties(usr, Schema.TYPE, Schema.Type.USER.toInt(), Schema.UNAME, ui.uname,
+                        Schema.UID, ui.uid, Schema.NAME, ui.name, Schema.EMAIL, ui.email );
+            }
 
         m_graph.commit();
 
