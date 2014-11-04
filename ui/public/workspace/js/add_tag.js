@@ -109,6 +109,7 @@ function createTag() {
   
   console.log('found: ' + found);
   
+  alert('adding a tag with the url: ' + url);
   
   if(found) {
 	  alert('A tag with the name: ' + tagName + ' exists.  Please use another name');
@@ -188,7 +189,7 @@ function associateGroups(tag_nid) {
 			 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_group_nids[i] + '&type=' + 'group';
 			 	
 			 
-			 //alert('association_url: ' + association_url);
+			 alert('group association_url: ' + association_url);
 			 $.ajax({
 				    url: association_url,
 				    global: false,
@@ -225,7 +226,7 @@ function associateUsers(tag_nid) {
 			  var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
 			  association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_user_nids[i] + '&type=' + 'user';
 				 
-			  //alert('association_url: ' + association_url);
+			  alert('user association_url: ' + association_url);
 			  $.ajax({
 				    url: association_url,
 				    global: false,
@@ -260,7 +261,8 @@ function associateFiles(tag_nid) {
 			 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
 			 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_file_nids[i] + '&type=' + 'file';
 				 
-			 
+			 alert('user association_url: ' + association_url);
+			  
 			 $.ajax({
 				    url: association_url,
 				    global: false,
@@ -291,6 +293,8 @@ function associateJobs(tag_nid) {
       var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
       association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_job_nids[i] + '&type=' + 'job';
       
+      alert('job association_url: ' + association_url);
+		 
       $.ajax({
         url: association_url,
         global: false,
@@ -319,6 +323,8 @@ function associateApps(tag_nid) {
       var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
       association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_app_nids[i] + '&type=' + 'app';
 
+      alert('app association_url: ' + association_url);
+		 
       $.ajax({
         url: association_url,
         global: false,
