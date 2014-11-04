@@ -10,6 +10,9 @@ var proxy = require('./proxyConfig.js');
  * the form: "/workspace/:user_id". 														*/
 var userHelper = function(request, response) {
 
+  //console.log('proxy.serviceHost is '+proxy.serviceHost+', proxy.servicePort is '+proxy.servicePort);
+  //console.log('request.params.user_id is '+request.params.user_id);
+
   var options = {
     host: proxy.serviceHost,
     port: proxy.servicePort,
@@ -19,18 +22,18 @@ var userHelper = function(request, response) {
 
   var req = http.request(options, function(resp) {
     
-	var responseData = '';
-	resp.on('data', function(chunk) {
+	  var responseData = '';
+	  resp.on('data', function(chunk) {
       responseData += chunk;
-	});
+	  });
 
-	resp.on('end', function() {
-	  console.log('users responseData: ' + responseData);
+	  resp.on('end', function() {
+	    console.log('users responseData: ' + responseData);
       var userObj = JSON.parse(responseData);
       response.render("workspace", userObj);
-	});
+	  });
 
-	resp.on('error', function(e) {
+	  resp.on('error', function(e) {
       response.send('error: ' + e);
     });
       

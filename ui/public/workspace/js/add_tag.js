@@ -67,7 +67,7 @@ function createTag() {
   var userName = SW.current_user_uname;
   var userNumber = SW.current_user_number;
 	  
-  console.log('userName: ' + userName + ' userNumber: ' + userNumber + ' file node ids: ' + SW.selected_file_nids);
+  //console.log('userName: ' + userName + ' userNumber: ' + userNumber + ' file node ids: ' + SW.selected_file_nids);
 	  
   //var selected_file_titles = SW.selected_file_titles;
 	  
@@ -96,18 +96,18 @@ function createTag() {
   }
 
   //replace with real description
-  var tagDescription = 'tagdesc' + timeStamp;
+  //var tagDescription = 'tagdesc' + timeStamp;
   //var tagDescription = $('textarea#tag_description').val();
   //var url = 'http://' + SW.hostname + ':' + SW.port + '/tagproxy/'+usernumber;
-  var url = 'http://' + SW.hostname + ':' + SW.port + '/tagproxy/'+userNumber + '?name=' + tagName + '&description=' + tagDescription;
+  var url = 'http://' + SW.hostname + ':' + SW.port + '/tagproxy/'+userNumber + '?name=' + tagName + '&description=' + $('#tag_description').val();
   
-  console.log('Issuing the URL: '+url);
+  //console.log('Issuing the URL: '+url);
 
   //first we need to check if the tag name exists
   //if it does, tell the user
   var found = tagExists(tagName); 
   
-  console.log('found: ' + found);
+  //console.log('found: ' + found);
   
   
   if(found) {
