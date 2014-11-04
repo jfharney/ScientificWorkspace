@@ -414,16 +414,17 @@ app.get("/", function(request, response) {
 
 
 app.get("/workspace/:user_id", function(request, response) {
-  
+
   if(proxy.firewallMode) {
 	  
-	var userObj = data.userObj;
+	  var userObj = data.userObj;
     response.render("workspace", userObj);
     
   } 
   else {
-	// userHelper is defined in the file proxy/users.js.   
-	var res = users.userHelper(request, response);  
+
+	  // userHelper is defined in the file proxy/users.js.   
+	  var res = users.userHelper(request, response);  
 	
   }  
 });
