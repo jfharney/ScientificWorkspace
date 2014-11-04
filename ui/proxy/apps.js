@@ -11,6 +11,8 @@ var servicePort = '8080';
 
 var data = require('../data/firewall_sources.js');
 
+var proxy = require('./proxyConfig.js');
+
 // appsproxyHelper is called in frontend.js.
 var appsproxyHelper = function(request, response) 
 {
@@ -92,8 +94,9 @@ var appsinfoHelper = function(request, response) {
 
 	var path = '/sws/app?aid='+request.params.app_id+"&jid="+request.query.jid;
 	
-	console.log('app path: ' + path);
-	
+	if(proxy.appDebug) {
+		console.log('app path: ' + path);
+	}
 	//query the userlist service here
 	var options = {
 			host: 'localhost',

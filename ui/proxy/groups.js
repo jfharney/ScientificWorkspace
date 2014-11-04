@@ -179,8 +179,9 @@ module.exports.groupsHelper = groupsHelper;
 var groupsHelperFirewall = function(request, response) {
 	
 	var path = '/sws/users?gid=' + request.params.gid;
-
-	console.log('group path --> ' + path);
+	if(proxy.groupDebug) {
+		console.log('group path --> ' + path);
+	}
 	  
 	var options = {
 	    host: proxy.serviceHost,
@@ -217,7 +218,6 @@ var groupsHelperFirewall = function(request, response) {
 	        respArr.push(respObj);
 	      }
 	
-	      //console.log('respArr[0]: ' + respArr[0]);
 	      response.send(respArr);
 	   });
 		  

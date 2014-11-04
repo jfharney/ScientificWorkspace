@@ -8,7 +8,9 @@ $(document).ready(function() {
 	  createTag();
 	  //$('#tagModal').modal('hide');
       /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
-	  location.reload();
+	  
+	  //alert('not reloading yet');
+	  //location.reload();
 	  
       /* Reset fields for next tag creation. */
       $('#tag_name').val('');
@@ -261,7 +263,7 @@ function associateFiles(tag_nid) {
 			 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
 			 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_file_nids[i] + '&type=' + 'file';
 				 
-			 alert('user association_url: ' + association_url);
+			 alert('file association_url: ' + association_url);
 			  
 			 $.ajax({
 				    url: association_url,
