@@ -117,6 +117,8 @@ html(lang="en")
               li
                 a(href="../doi/#{uname}") DOI
               li
+                a(href="../search/#{uname}") Search
+              li
                 form.navbar-search.pull-left
                   input(placeholder="Search this workspace",name="query",type="text").search-query.span2
         
@@ -227,6 +229,15 @@ html(lang="en")
                   button#clearJobsSearchTextButton Clear
                 div#jobs_tree(style="height:200px")
           
+          // DOI PANEL
+          div.row-fluid.sortable
+            div.span12
+              div.box.span12
+                div.box-header.well
+                  h2 User DOIs
+                div.box-content
+                  div#doi_tree
+                  
           // TAG WORKSPACE
           div.row-fluid.sortable
             div.box.span12
@@ -250,17 +261,10 @@ html(lang="en")
                   div.span6
                     div.tagInfoPane.row-fluid
 
-          // DOI PANEL
-          div.row-fluid.sortable
-            div.span12
-              div.box.span12
-                div.box-header.well
-                  h2 User DOIs
-                div.box-content
-                  div#doi_tree
 
           // INFO PANEL
-          div.row-fluid.sortable
+          //commented out for now
+          //div.row-fluid.sortable
             div.span12
               div.box.span12
                 div.box-header.well
