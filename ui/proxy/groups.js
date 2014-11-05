@@ -234,11 +234,7 @@ var groupsHelperFirewall = function(request, response) {
 	        var respObj = {"title" : uidArr[i], "id" : uidArr[i] , 'username' : unameArr[i]};
 	        respArr.push(respObj);
 	      }
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> devel
 	      response.send(respArr);
 	   });
 		  
