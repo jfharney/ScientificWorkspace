@@ -8,6 +8,6 @@ exports.userDebug = false;
 exports.groupDebug = false;
 exports.appDebug = false;
 exports.jobDebug = false;
-exports.tagDebug = false;
+exports.tagDebug = true;
 exports.fileDebug = false;
 exports.doiDebug = false;

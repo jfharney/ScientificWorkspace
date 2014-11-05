@@ -622,15 +622,17 @@ app.get('/appinfo/:appnum', function(request, response) {
 //-----------Tags-----------//
 
 app.del('/deletetagproxy/:user_id', function(request, response) {
-	
-	console.log('\n\n---------in /deletetagproxy/:user_id----------');
+	if(proxy.tagDebug) {
+		console.log('\n\n---------in /deletetagproxy/:user_id----------');
+	}
 	var res = tags.deletetagsHelper(request, response);
 	
 });
 
 app.del('/deletetaglinkproxy/:user_id', function(request, response) {
-	
-	console.log('\n\n---------in /deletetaglinkproxy/user_id----------');
+	if(proxy.tagDebug) {
+		console.log('\n\n---------in /deletetaglinkproxy/user_id----------');
+	}
 	var res = tags.deletetaglinksHelper(request, response);
 	
 });
@@ -638,7 +640,9 @@ app.del('/deletetaglinkproxy/:user_id', function(request, response) {
 /* Creates a new tag. user_id is the user number, or uid. */
 app.post('/tagproxy/:user_id', function(request, response) {
 
-	console.log('\n\n---------in /tagproxy/:user_id----------');
+	if(proxy.tagDebug) {
+		console.log('\n\n---------in /tagproxy/:user_id----------');
+	}
 	var res = tags.tagsProxyHelper(request, response);
 	
 });
@@ -646,39 +650,43 @@ app.post('/tagproxy/:user_id', function(request, response) {
 //gets all the tags given a user
 app.get('/tags', function(request, response) 
 {	
-
-	console.log('\n----in /tags ----\n');
+	if(proxy.tagDebug) {
+		console.log('\n----in /tags ----\n');
+	}
 	var res = tags.tagsHelper(request,response);
 	
 });
 
 //gets info for one tag
 app.get('/tags/:tag_name', function(request, response) {
-
-	console.log('\n----in tags/tag_name ----\n');
+	if(proxy.tagDebug) {
+		console.log('\n----in tags/tag_name ----\n');
+	}
 	var res = tags.taginfoHelper(request, response);		// tag. needed? 
 	
 });
 
 app.post('/associationproxy/:user_id', function(request, response) {
-
-	console.log('\n----in associationproxy/:user_id ----\n');
+	if(proxy.tagDebug) {
+		console.log('\n----in associationproxy/:user_id ----\n');
+	}
 	var res = tags.associationsproxyHelper(request, response);
 	
 });
 
 app.get('/tags/links/:tag_nid', function(request, response) {
-
-	console.log('\n----in tags/links/tag_nid ----\n');
+	if(proxy.tagDebug) {
+		console.log('\n----in tags/links/tag_nid ----\n');
+	}
 	var res = tags.tagLinksProxHelper(request, response);
 	
 		
 });
 
 app.get('/tagsTable/:uid', function(request, response) {
-	
-	console.log('\n----in tagsTable/uid ----\n');
-	
+	if(proxy.tagDebug) {
+		console.log('\n----in tagsTable/uid ----\n');
+	}
 	/* tagsTableProxy is defined in the file proxy/tags.js. */
 	var res = tags.tagsTableProxy(request, response);
 });
