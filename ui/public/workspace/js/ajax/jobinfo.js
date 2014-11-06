@@ -104,17 +104,16 @@ function buildJobsTree(children) {
 	  }
 	},
 	onActivate: function(node) {},
-    onLazyRead: function(node) {
-      var jid = node.data.jobid; 
-      var url = 'http://' + SW.hostname + ':' + SW.port + '/appsproxy?jid='+jid;
-      console.log(url);
-      node.appendAjax({
-        url:  url,
+  onLazyRead: function(node) {
+    var jid = node.data.jobid; 
+    var url = 'http://' + SW.hostname + ':' + SW.port + '/appsproxy?jid='+jid;
+    node.appendAjax({
+      url:  url,
 	    // We don't want the next line in production code:
-        debugLazyDelay: 50
-      });
+      debugLazyDelay: 50
+    });
       
-    },
+  },
     // The following options are only required if we have more than one tree on one page:
     // initId: "treeData",
     cookieId: "dynatree-Cb3",

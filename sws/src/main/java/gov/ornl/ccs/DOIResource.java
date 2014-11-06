@@ -48,13 +48,14 @@ public class DOIResource
         // JSON payload contains everything...
         JSONObject data = new JSONObject( a_payload );
 
+        /*
         String[] fields = JSONObject.getNames( data );
 
         System.out.println( "JSON fields: " );
         for ( String f : fields )
         {
             System.out.println( f );
-        }
+        }*/
 
         long user_nid = data.getLong("creator_nid");
 
@@ -64,7 +65,7 @@ public class DOIResource
         HashSet<Long>  nids = new HashSet<>();
         for ( int i = 0; i < array.length(); i++ )
         {
-            System.out.println( "  adding nid: " + array.getLong(i) );
+            //System.out.println( "  adding nid: " + array.getLong(i) );
             nids.add(array.getLong(i));
         }
 

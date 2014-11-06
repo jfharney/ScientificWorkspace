@@ -48,12 +48,17 @@ public class AdminResource
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public void initializeDb(
-        @QueryParam("pass") String a_password ) throws Exception
+        @QueryParam("pass") String a_password,
+        @QueryParam("demo") String a_demo ) throws Exception
     {
         checkCredentials(a_password);
 
         m_api.initializeDb();
+
+        if ( a_demo != null )
+            m_api.setupDemo();
     }
+
 
     @Path("load")
     @POST

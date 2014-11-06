@@ -84,6 +84,16 @@ function buildDoiTree(children) {
     autoFocus: false, 
     children: children,
     onSelect: function(select, node) {},
+    onClick: function(node, event) {
+      if(node.data.title == '<span style="color:blue;cursor:pointer">Download</span>'){
+        console.log('Clicking DOI tree download node.');
+        var win = window.open('https://doi1.ccs.ornl.gov/doi/download?doi='+node.data.doiName, '_blank');
+        win.focus();
+      }
+
+      //console.log('node.data.doiName is '+node.data.doiName);
+      //for(key in node.data) console.log(key+': '+node.data[key]);
+    },
     onLazyRead: function(node) {
       if(node.data.title == 'Metadata') {
         var doiName = node.data.doiName;
