@@ -1,7 +1,8 @@
 $('#show_table_button').click(function() {
 	
+  var url = 'http://' + SW.hostname + ':' + SW.port + '/tagsTable/' + SW.current_user_number;
   var table = $("#tagsTable").DataTable({
-    sAjaxSource: 'http://localhost:1337/tagsTable/' + SW.current_user_number,
+    sAjaxSource: url,
     sAjaxDataProp: "",
 	bDestroy: true,
 	aoColumns: [{ mData: "name" },

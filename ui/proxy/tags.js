@@ -116,8 +116,8 @@ var taginfoHelper = function(request,response) {
 	var args = url.parse(request.url, true).query;
 	
 	var options = {
-			host: 'localhost',
-			port: 8080,
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
 			path: "/tags/" + request.params.tag_name + "?uid=" + args['uid'],
 			method: 'GET'
 	};

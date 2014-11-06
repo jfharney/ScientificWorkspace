@@ -1,6 +1,6 @@
 
 $(function() {
-	var mvcURL = 'http://localhost:1337/tags';
+	var mvcURL = 'http://' + SW.hostname + ':' + SW.port + '/tags';
 	var user_id = '';
 	initiateTagsTree(mvcURL, user_id);
 });

@@ -1,6 +1,6 @@
 $(function() {
 		
-  var host = 'http://localhost:1337/doi/';
+  var host = 'http://' + SW.hostname + ':' + SW.port + '/doi/';
 	
   /* Change user option (admin only) */
   $('.user_dropdown_list').click(function() {
@@ -124,7 +124,7 @@ $(function() {
         //console.log( "payload: " + payload + "\n");
 
         jQuery.ajax({
-            url: "http://localhost:1337/doi_submit",
+            url: 'http://' + SW.hostname + ':' + SW.port + '/doi_submit',
             type: 'POST',
             data: data,
             dataType: "json",
@@ -139,7 +139,7 @@ $(function() {
 	
 	
 	$('button#return').click(function() {
-	  location.href = 'http://localhost:1337/workspace/'+$('span#user_id_label').html();
+	  location.href = 'http://' + SW.hostname + ':' + SW.port + '/workspace/'+$('span#user_id_label').html();
     });
 	
 	

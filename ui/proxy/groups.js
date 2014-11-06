@@ -120,7 +120,7 @@ module.exports.groupinfoHelperFirewall = groupinfoHelperFirewall;
 
 
 /* This function is called in frontend.js to GET requests of the form: 
- * 		http://localhost:1337/groups/:gid
+ * 		http://<host>:<port>/groups/:gid
  * Its purpose is to retrieve the constituents of a group when the group's 
  * Dynatree node is activated. 
  */

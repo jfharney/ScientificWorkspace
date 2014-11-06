@@ -200,8 +200,8 @@ var jobsinfoHelper = function(request, response)
 	
 	//query the userlist service here
 	var options = {
-			host: serviceHost,
-			port: servicePort,
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
 			path: path,
 			method: 'GET'
 		  };
@@ -243,8 +243,8 @@ var jobsUuidHelper = function(request, response) {
 
   var path = '/jobs?uuid='+request.params.job_uuid;
   var options = {
-	host: 'localhost',
-	port: servicePort,
+	host: proxy.serviceHost,
+	port: proxy.servicePort,
 	path: path,
 	method: 'GET'
   };

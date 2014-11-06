@@ -3,6 +3,7 @@ console.log('Loading associations js');
 var express = require('express');
 var app = express();
 var http = require('http');
+var proxy = require('./proxyConfig.js');
 
 var associationsproxyHelper = function(request, response) {
 	
@@ -20,8 +21,8 @@ var associationsproxyHelper = function(request, response) {
 	//console.log('issuing query to -> ' + associations_api_path);
 		
 	var associations_api_options = {
-		host: 'localhost',
-		port: servicePort,
+		host: proxy.serviceHost,
+		port: proxy.servicePort,
 		path: associations_api_path,
 		method: 'PUT'
 	};

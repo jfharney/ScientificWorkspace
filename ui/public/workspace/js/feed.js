@@ -5,7 +5,7 @@ console.log('in feed.js');
 /* Server side "push events"
 $.ajax({ 
     type: "GET",  
-	url: "http://localhost:1337/server3",  
+	url: "http://" + SW.hostname + ':' + SW.port + "/server3",  
 	success: function(data){
 		//Update your dashboard gauge
 		//salesGauge.setValue(data.value);
@@ -23,7 +23,7 @@ $.ajax({
 //check for browser support
 if(typeof(EventSource)!=="undefined") {
 	//create an object, passing it the name and location of the server side script
-	var eSource = new EventSource("http://localhost:1337/server3");
+	var eSource = new EventSource("http://" + SW.hostname + ':' + SW.port + "/server3");
 	//detect message receipt
 	eSource.onmessage = function(event) {
 		//write the received data to the page
@@ -50,7 +50,7 @@ if(SW.feedOn) {
 	setInterval(function(){
 	    $.ajax({ 
 	        type: "GET",  
-	    	url: "http://localhost:1337/server2",  
+	    	url: "http://" + SW.hostname + ':' + SW.port + "/server2",  
 	    	success: function(data){
 	    		//Update your dashboard gauge
 	    		//salesGauge.setValue(data.value);
@@ -73,7 +73,7 @@ var getMSG = function()
 {     
     $.ajax({  
         type: "GET",  
-        url: "http://localhost:1337/server1",  
+        url: "http://" + SW.hostname + ':' + SW.port + "/server1",  
         //data: {'chatID' : chatID},  
         //dataType: "json",  
         async: true,  

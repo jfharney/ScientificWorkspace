@@ -26,7 +26,7 @@ $(function() {
 	
   /* Enables the list box in the top right to change the current user. */
   /* (This feature will be admin-only in final version.) */
-  var host = 'http://localhost:1337/workspace/';
+  var host = 'http://' + SW.hostname + ':' + SW.port + '/workspace/';
   $('.user_dropdown_list').click(function() {
     var userName = $(this).html();
     location.href = host + userName;
@@ -100,7 +100,7 @@ $(function() {
   //put the selected collaborators in the hidden input fields (may be deprecated)
   $('#search_view').click(function() {
 	  
-	  var url = "http://" + "localhost" + ":" + "1337" + "/search/" + SW.current_user_uname + "";
+	  var url = "http://" + SW.hostname + ":" + SW.port + "/search/" + SW.current_user_uname + "";
 		
 	  var input = '';
 	  

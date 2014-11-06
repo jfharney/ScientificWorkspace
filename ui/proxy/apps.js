@@ -19,8 +19,8 @@ var appsproxyHelper = function(request, response)
   var path = '/sws/apps?jid=' + request.query.jid;
   
   var options = {
-    host: serviceHost,
-	port: servicePort,
+    host: proxy.serviceHost,
+	port: proxy.servicePort,
 	path: path,
 	method: 'GET'
   };
@@ -99,8 +99,8 @@ var appsinfoHelper = function(request, response) {
 	}
 	//query the userlist service here
 	var options = {
-			host: 'localhost',
-			port: servicePort,
+			host: proxy.serviceHost,
+			port: proxy.servicePort,
 			path: path,
 			method: 'GET'
 		  };

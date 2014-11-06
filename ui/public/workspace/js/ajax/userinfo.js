@@ -41,7 +41,7 @@ function getUserFromURL(docurl) {
 
 /* Gets all the information given a user. */
 function getUserInfo(user) {
-	var url = 'http://localhost:1337/userinfo/' + user;
+	var url = 'http://' + SW.hostname + ':' + SW.port + '/userinfo/' + user;
 	var queryString = '';
 
 	var data = '';
