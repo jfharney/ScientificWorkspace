@@ -266,7 +266,7 @@ function processResultsToTree(data)
                 if( node.data.command == 1 ) // Download a DOI node
                 {
                     console.log("Download DOI " + node.parent.data.title + " for email " + SW.current_user_email );
-                    console.log("https://doi1.ccs.ornl.gov:443/doi/download?doi=" + node.parent.data.title + "&email=" + SW.current_user_email);
+                    console.log("https://" + SW.doihostname + ":" + SW.doiport + "/doi/download?doi=" + node.parent.data.title + "&email=" + SW.current_user_email);
                     //window.open("https://doi1.ccs.ornl.gov:443/doi/download?doi=" + node.parent.data.title + "&email=" + SW.current_user_email );
                 }
             }

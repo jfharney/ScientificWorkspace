@@ -99,7 +99,7 @@ function buildDoiTree(children) {
         var doiName = node.data.doiName;
         console.log('doiName is '+doiName);
         node.appendAjax({
-          url: 'http://localhost:1337/doi_meta?doiName='+doiName
+          url: 'http://' + SW.hostname + ':' + SW.port + '/doi_meta?doiName='+doiName
         });
       }
       else if(node.data.title == 'Linked Objects') {
