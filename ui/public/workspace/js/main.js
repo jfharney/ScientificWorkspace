@@ -112,7 +112,7 @@ $(function() {
   
   renderTagCloud();		// defined in tagclouds.js
   displayAggregateTagWorkspaceButtons(); // to initially hide the tag workspace buttons
-  
+
 
 });		// End of Ready event.
 

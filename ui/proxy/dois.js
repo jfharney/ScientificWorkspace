@@ -15,9 +15,9 @@ var doisProxyHelper = function(request, response) {
   // arguments in the URL as key-value pairs. 
   var options = {
     host: proxy.serviceHost,
-	port: proxy.servicePort,
-	path: path,
-	method: 'GET'
+	  port: proxy.servicePort,
+	  path: path,
+	  method: 'GET'
   };
 	
   var req = http.request(options, function(resp) {
@@ -49,6 +49,11 @@ var doisProxyHelper = function(request, response) {
                           doiName: jsonObjArr[i]['name'], 
                           isFolder: true,
                           children: null
+                        },
+                        {
+                          title: '<span style="color:blue;cursor:pointer">Download</span>',
+                          isFolder: false,
+                          doiName: jsonObjArr[i]['name']
                         }
                       ]
     	};
