@@ -4,6 +4,9 @@ SW.feedOn = false;
 SW.hostname = 'localhost';
 SW.port = '1337';
 
+SW.doihostname = '';
+SW.doiport = '';
+
 /* These variables describe the current user. They are set in the ready event in main.js. */
 SW.current_user_nid = '';
 SW.current_user_name = '';
