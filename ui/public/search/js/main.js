@@ -241,7 +241,7 @@ function processResultsToTree(data)
             if ( type == 8 )
             {
                 var command = {}
-                command.title = "<span style='color:blue'>Download<span>";
+                command.title = '<span style="color:blue;cursor:pointer">Download</span>';
                 command.command = 1;
                 child.children.push( command );
             }
@@ -269,6 +269,12 @@ function processResultsToTree(data)
                     console.log("https://doi1.ccs.ornl.gov:443/doi/download?doi=" + node.parent.data.title + "&email=" + SW.current_user_email);
                     //window.open("https://doi1.ccs.ornl.gov:443/doi/download?doi=" + node.parent.data.title + "&email=" + SW.current_user_email );
                 }
+            },
+            onClick: function(node) {
+              if(node.data.title == '<span style="color:blue;cursor:pointer">Download</span>') {
+                var win = window.open('https://doi1.ccs.ornl.gov/doi/download?doi='+node.parent.data.title, '_blank');
+                win.focus();
+              }
             }
         });
     }

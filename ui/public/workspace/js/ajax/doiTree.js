@@ -64,11 +64,11 @@ function getUserDoiData(userNum) {
 	  	  url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
 	  	  type: 'GET',
 	  	  success: function(data) {
-	  		  //console.log('Here is data: '+data);
-	  		if(data.length > 0) {
-	  			buildDoiTree(data);
-	  		} else {
-	      	  $("#doi_tree").append('<div>This user has not created a DOI. </div>');
+	  		  if(data.length > 0) {
+	  			  buildDoiTree(data);
+	  		  } 
+          else {
+	      	  $("#doi_tree").append('<div>This user has not created a DOI.</div>');
 	        }
 	  	  },
 	  	  error: function() {
@@ -86,7 +86,6 @@ function buildDoiTree(children) {
     onSelect: function(select, node) {},
     onClick: function(node, event) {
       if(node.data.title == '<span style="color:blue;cursor:pointer">Download</span>'){
-        console.log('Clicking DOI tree download node.');
         var win = window.open('https://doi1.ccs.ornl.gov/doi/download?doi='+node.data.doiName, '_blank');
         win.focus();
       }

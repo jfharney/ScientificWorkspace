@@ -77,7 +77,6 @@ $(function() {
 		*/
 		html+='</div>';
 		
-		//alert('html: ' + html);
 		//$('#add_resouce_row').before('<div>hello</div>');
 		$('#add_creator_row').before(html);
 	
@@ -85,7 +84,6 @@ $(function() {
 
 	
     $('#submit_doi_request').click(function() {
-        //console.log( "submit DOI!" );
 
         var data = {}
 
@@ -96,6 +94,7 @@ $(function() {
         data.creator_name = $('[name="input_creator_name"]').val();
         data.creator_email = $('[name="input_creator_email"]').val();
         data.contact_email = data.creator_email;
+        var contact_email = data.contact_email;
         data.resources = $('[name="input_resources"]').val();
         data.keywords = $('[name="input_keywords"]').val();
         data.language = $('[name="input_language"]').val();
@@ -105,15 +104,7 @@ $(function() {
         data.nids = $('[name="input_nids"]').val();
         data.nids = data.nids.split(',');
         data.creator_nid = $('[name="creator_nid"]').val();
-        /*
-        data.file_nids = $('[name="file_nids"]').val();
-        data.group_nids = $('[name="group_nids"]').val();
 
-        data.tag_nids = $('[name="tag_nids"]').val();
-        */
-        
-        //console.log( "scraped" );
-        //console.log( data );
         data.personName = $('[name="personName"]').val();
         data.groupName = $('[name="groupName"]').val();
         // Submit to internal DOI submit service (proxy)
@@ -121,7 +112,6 @@ $(function() {
         // If NOT Ok, pop-up error dialog and stay here
 
         var payload = JSON.stringify( data );
-        //console.log( "payload: " + payload + "\n");
 
         jQuery.ajax({
             url: 'http://' + SW.hostname + ':' + SW.port + '/doi_submit',
@@ -129,7 +119,7 @@ $(function() {
             data: data,
             dataType: "json",
             success: function(data) {
-                alert("DOI submission succeeded.");
+                alert("DOI submission succeeded. An email has been sent to "+contact_email+" concerning this DOI.");
             },
             error: function() {
                 alert("DOI submission failed.");
