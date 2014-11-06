@@ -25,11 +25,11 @@ head
 html
   body
     // (style="display:none")
-    div#creator_nid Creator NID: #{creator_nid}
-    div#creator_uid Creator UID: #{creator_uid}
-    div#creator_uname Creator Username: #{creator_uname}
-    div#creator_name Creator Name: #{creator_name}
-    div#creator_email Creator Email: #{creator_email}
+    div#creator_nid(style="display:none") Creator NID: #{creator_nid}
+    div#creator_uid(style="display:none") Creator UID: #{creator_uid}
+    div#creator_uname(style="display:none") Creator Username: #{creator_uname}
+    div#creator_name(style="display:none") Creator Name: #{creator_name}
+    div#creator_email(style="display:none") Creator Email: #{creator_email}
     
     - if (typeof(personNames) !== 'undefined') { 
       - each p in personNames

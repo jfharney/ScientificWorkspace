@@ -8,7 +8,9 @@ $(document).ready(function() {
 	  createTag();
 	  //$('#tagModal').modal('hide');
       /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
-	  location.reload();
+	  
+	  //alert('not reloading yet');
+	  //location.reload();
 	  
       /* Reset fields for next tag creation. */
       $('#tag_name').val('');
@@ -109,6 +111,7 @@ function createTag() {
   
   //console.log('found: ' + found);
   
+  //alert('adding a tag with the url: ' + url);
   
   if(found) {
 	  alert('A tag with the name: ' + tagName + ' exists.  Please use another name');
@@ -149,6 +152,8 @@ function createTag() {
 	      //either reload the page or dynamically add tag
 	      //default is that the page will reload
 	      addTagToPage();
+	      
+	      
 	    },
 	    error: function(e) {
 	      alert('error in createTag() in add_tag.js: '+e);
@@ -171,7 +176,7 @@ function createTag() {
 function addTagToPage() {
 	
 	//location.href='http://' + SW.hostname + ':' + SW.port + '/workspace/' + SW.current_user_username;
-	
+	location.reload();
 }
 
 
@@ -188,7 +193,6 @@ function associateGroups(tag_nid) {
 			 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_group_nids[i] + '&type=' + 'group';
 			 	
 			 
-			 //alert('association_url: ' + association_url);
 			 $.ajax({
 				    url: association_url,
 				    global: false,
@@ -216,16 +220,17 @@ function associateGroups(tag_nid) {
 
 function associateUsers(tag_nid) {
 	
-	if(SW.selected_user_nids != undefined) {
-		
-		 for(var i=0;i<SW.selected_user_nids.length;i++) {
+	console.log('in associateUsers');
+	if(SW.selected_people_nids != undefined) {
+		console.log('people nids: ' + SW.selected_people_nids);
+		 
+		 for(var i=0;i<SW.selected_people_nids.length;i++) {
 			  
-			  //console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_user_nids[i]); //?name='+tagName+'&uid=5112');
+			  console.log('curl url -> ' + 'http://160.91.210.19:8080/sws/tag/' + tag_nid + '/link/' + SW.selected_people_nids[i]); //?name='+tagName+'&uid=5112');
 			  
 			  var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
-			  association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_user_nids[i] + '&type=' + 'user';
+			  association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_people_nids[i] + '&type=' + 'user';
 				 
-			  //alert('association_url: ' + association_url);
 			  $.ajax({
 				    url: association_url,
 				    global: false,
@@ -233,7 +238,7 @@ function associateUsers(tag_nid) {
 					success: function(data) {
 
 						for(var key in data) {
-							console.log('user key: ' + key + ' value: ' + data[key]);
+							console.log('user key: ' + key + ' value: ' + data[0][key]);
 						}
 						
 						console.log('assoc users success');
@@ -244,6 +249,7 @@ function associateUsers(tag_nid) {
 			 });
 		 
 		 }
+		 
 	 }
 	 
 }
@@ -260,7 +266,8 @@ function associateFiles(tag_nid) {
 			 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
 			 association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_file_nids[i] + '&type=' + 'file';
 				 
-			 
+			 //alert('file association_url: ' + association_url);
+			  
 			 $.ajax({
 				    url: association_url,
 				    global: false,
@@ -291,6 +298,8 @@ function associateJobs(tag_nid) {
       var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
       association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_job_nids[i] + '&type=' + 'job';
       
+      //alert('job association_url: ' + association_url);
+		 
       $.ajax({
         url: association_url,
         global: false,
@@ -319,6 +328,8 @@ function associateApps(tag_nid) {
       var association_url = 'http://' + SW.hostname + ':' + SW.port + '/associationproxy/' + SW.current_user_number;
       association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_app_nids[i] + '&type=' + 'app';
 
+      //alert('app association_url: ' + association_url);
+		 
       $.ajax({
         url: association_url,
         global: false,

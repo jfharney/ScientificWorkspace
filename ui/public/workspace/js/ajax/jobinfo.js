@@ -17,7 +17,12 @@ function getJobInfo(userNum, searchArg) {
       for(var i = 0; i < data.length; i++) {
         children.push(data[i]);
       } 
-	  buildJobsTree(children);			/* This function is defined below. */
+      console.log('children length: ' + children.length);
+      if(children.length > 0) {
+    	  buildJobsTree(children);			/* This function is defined below. */
+      } else {
+    	  $("#jobs_tree").append('<div>This user has not run any jobs. </div>');
+      }
     },
     error: function() { console.log('error in getting job info'); }
   });

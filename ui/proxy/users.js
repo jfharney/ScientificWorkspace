@@ -10,8 +10,6 @@ var proxy = require('./proxyConfig.js');
  * the form: "/workspace/:user_id". 														*/
 var userHelper = function(request, response) {
 
-  //console.log('proxy.serviceHost is '+proxy.serviceHost+', proxy.servicePort is '+proxy.servicePort);
-  //console.log('request.params.user_id is '+request.params.user_id);
 
   var options = {
     host: proxy.serviceHost,
@@ -28,14 +26,16 @@ var userHelper = function(request, response) {
 	  });
 
 	  resp.on('end', function() {
-	    console.log('users responseData: ' + responseData);
-      var userObj = JSON.parse(responseData);
-      response.render("workspace", userObj);
+		  if(proxy.tagDebug) {
+			  console.log('users responseData: ' + responseData);
+		  }
+		  var userObj = JSON.parse(responseData);
+		  response.render("workspace", userObj);
 	  });
 
 	  resp.on('error', function(e) {
-      response.send('error: ' + e);
-    });
+		  response.send('error: ' + e);
+	  });
       
   });
     	 
@@ -65,9 +65,11 @@ var userSearchHelper = function(request, response) {
 	});
 
 	resp.on('end', function() {
-	  console.log('users responseData: ' + responseData);
-      var userObj = JSON.parse(responseData);
-      response.render("search", userObj);
+		if(proxy.tagDebug) {	
+			console.log('users responseData: ' + responseData);
+		}
+		var userObj = JSON.parse(responseData);
+		response.render("search", userObj);
 	});
 
 	resp.on('error', function(e) {

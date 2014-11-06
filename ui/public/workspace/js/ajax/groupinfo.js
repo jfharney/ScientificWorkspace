@@ -1,4 +1,5 @@
 function getCollaboratorInfo(userNumber, searchArg) {
+
   var groupsArr = [];
   if(searchArg == undefined) searchArg = '';
   

@@ -49,7 +49,7 @@ $(function() {
   /* Take a provided search term and update the Collaborators tree accordingly. */ 
   $("#collabSearchButton").on("click", function() {
     $("#collaborators_tree").dynatree("destroy");
-    getCollaboratorInfo(userNumber, $('#collabSearchText').val());
+    getCollaboratorInfo(SW.current_user_number, $('#collabSearchText').val());
     $("#collabSearchPanel").slideToggle();
   });
 	  

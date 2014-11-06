@@ -7,11 +7,16 @@ function renderTagCloud() {
   var tags_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
   
+  
   // The outer Ajax call gets the set of tags for the current user.
   $.ajax({
     type: "GET",
     url: tags_url_prefix + 'uid=' + uid,
     success: function(tagsData) {
+    	
+    	for (var key in tagsData[0]) {
+    		console.log('tagsData key: ' + key + ' value: ' + tagsData[key]);
+    	}
       var tagsArr = [];
       tagsArr = JSON.parse(tagsData);
       
@@ -21,6 +26,7 @@ function renderTagCloud() {
         var tagNid = element['nid'];
         var tagName = element['name'];
         var tagDesc = element['desc'];
+        
         
         // The inner Ajax call gets the set of links for each tag retrieved. 
         $.ajax({
