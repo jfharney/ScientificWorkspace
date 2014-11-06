@@ -65,7 +65,11 @@ function getUserDoiData(userNum) {
 	  	  type: 'GET',
 	  	  success: function(data) {
 	  		  //console.log('Here is data: '+data);
-	  	    buildDoiTree(data);
+	  		if(data.length > 0) {
+	  			buildDoiTree(data);
+	  		} else {
+	      	  $("#doi_tree").append('<div>This user has not created a DOI. </div>');
+	        }
 	  	  },
 	  	  error: function() {
 	  	    console.log('error in getting group info');

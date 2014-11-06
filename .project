@@ -14,7 +14,9 @@
 		</buildCommand>
 	</buildSpec>
 	-->
+	<!--
 	<natures>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
+	-->
 </projectDescription>

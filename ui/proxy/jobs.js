@@ -88,13 +88,16 @@ var jobsproxyHelperFirewall = function(request, response) {
 	for(var i=0;i<jobsObjArr.length;i++) {
 		  
 	  var job = jobsObjArr[i];
-	  console.log('i: ' + i + ' temp[i]: ' + jobsObjArr[i]);
-	  for(var key in job) {
-		  console.log('key: ' + key + ' value: ' + job[key]);
+	  var nid = jobsObjArr[i]['nid'];
+	  if(proxy.jobDebug) {
+
+		  console.log('i: ' + i + ' temp[i]: ' + jobsObjArr[i]);
+		  for(var key in job) {
+			  console.log('key: ' + key + ' value: ' + job[key]);
+		  }
+		  console.log('nid: ' + nid);
 	  }
 	  
-	  var nid = jobsObjArr[i]['nid'];
-	  console.log('nid: ' + nid);
 	}
 	
 	var respArr = [];
@@ -204,16 +207,18 @@ var jobsinfoHelper = function(request, response)
 		  };
 	
 	 var responseData = '';
+	 if(proxy.jobDebug) {
 
-	 console.log('path-> ' + path);
-	 
+		 console.log('path-> ' + path);
+	 }
 	 var req = http.request(options, function(res) {
 		  res.on('data', function (chunk) {
 			  responseData += chunk;	
 		  });
 		  res.on('end',function() {
-			  
-			  console.log(responseData);
+			  if(proxy.jobDebug) {
+				  console.log(responseData);
+			  }
 			  var jsonObj = JSON.parse(responseData);
 		      response.send(jsonObj);
 			 
@@ -278,7 +283,6 @@ exports.doQueryJobs = function(responseData) {
 	  
 	var hasJobs = false;
 	for(var key in fileResponseJSONObj) {
-		//console.log('doqueryjobskey: ' + key + ' value: ' + fileResponseJSONObj[key] + ' LENGTH: ' + fileResponseJSONObj[key].length);
 		if(fileResponseJSONObj[key].length > 0) {
 			hasJobs = true;
 		}
@@ -288,9 +292,10 @@ exports.doQueryJobs = function(responseData) {
 		}
 	}
 	
+	if(proxy.jobDebug) {
 
-	console.log('---------------')
-	
+		console.log('---------------')
+	}
 	var jobsArr = fileResponseJSONObj['jobs'];
 	//console.log(jobsArr.length);
 	var jsonStr = '[';
