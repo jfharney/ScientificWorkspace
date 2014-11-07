@@ -272,7 +272,7 @@ function processResultsToTree(data)
             },
             onClick: function(node) {
               if(node.data.title == '<span style="color:blue;cursor:pointer">Download</span>') {
-                var win = window.open('https://doi1.ccs.ornl.gov/doi/download?doi='+node.parent.data.title, '_blank');
+                var win = window.open("https://" + SW.doihostname + ":" + SW.doiport + '/doi/download?doi='+node.parent.data.title, '_blank');
                 win.focus();
               }
             }

@@ -127,6 +127,7 @@ function createTag() {
 	  $.ajax({
 	    url: url,
 	    global: false,
+	    async: false,
 	    type: 'POST',
 	    success: function(data) {
 					
@@ -149,9 +150,7 @@ function createTag() {
 	      //associate tag to selected apps
 	      associateApps(tag_nid);
 					
-	      //either reload the page or dynamically add tag
-	      //default is that the page will reload
-	      addTagToPage();
+	      
 	      
 	      
 	    },
@@ -164,6 +163,10 @@ function createTag() {
       /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
 	  //location.reload();
 	  
+	  //either reload the page or dynamically add tag
+      //default is that the page will reload
+      addTagToPage();
+      
       /* Reset fields for next tag creation. */
       $('#tag_name').val('');
       $('#tag_description').val('');

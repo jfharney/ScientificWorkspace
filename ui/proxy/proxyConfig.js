@@ -11,6 +11,6 @@ exports.userDebug = false;
 exports.groupDebug = false;
 exports.appDebug = false;
 exports.jobDebug = false;
-exports.tagDebug = true;
+exports.tagDebug = false;
 exports.fileDebug = false;
 exports.doiDebug = false;
