@@ -4,6 +4,8 @@ SW.feedOn = false;
 SW.hostname = 'localhost';
 SW.port = '1337';
 
+SW.theme_prefix = 'http://' + SW.hostname + ':' + SW.port + '/workspace/';
+
 SW.doiOfflineMode = false;   // Used for the DOI Tree in the User DOIs panel.
 
 /* These variables describe the current user. They are set in the ready event in main.js. */
@@ -46,3 +48,25 @@ SW.selected_tag_nids = [];
 
 SW.typeMap = ['user','group','job','app','file','directory','other'];
 
+//SW.type_str = ['user','group','job','app','file','dir','tag'];
+
+//in search view
+
+//(0=user,1=group,2=job,3=app,4=file,5=dir,6=tag)
+
+SW.selected_types = [];
+SW.type_str = ['user','group','job','app','file','dir','tag','doi'];
+SW.type_bitmap = [1,1,1,1,1,1,1,1];
+
+SW.getTypeIndex = function(type) {
+	var index = -1;
+	
+	for(var i=0;i<SW.type_str.length;i++) {
+		if(type == SW.type_str[i]) {
+			index = i;
+			console.log('found index: ' + index + ' ' + SW.type_str[i] + ' for type: ' + type);
+		}
+	}
+	return index;
+	
+}
