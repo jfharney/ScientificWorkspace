@@ -113,6 +113,11 @@ $(function() {
   renderTagCloud();		// defined in tagclouds.js
   displayAggregateTagWorkspaceButtons(); // to initially hide the tag workspace buttons
 
+  $('a#create_tag').on('click', function() {
+    $('span#selectedFilesforTag').remove();
+    $('div#files_to_tag').append('<span id="selectedFilesforTag">'+SW.selected_file_paths+'</span>');
+  });
+
 
 });		// End of Ready event.
 
