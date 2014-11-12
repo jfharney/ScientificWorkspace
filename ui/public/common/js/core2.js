@@ -1,12 +1,40 @@
 var SW = SW || {};
 
-SW.feedOn = false;
-SW.hostname = 'localhost';
-SW.port = '1337';
+//get the configuration parameters
+$.ajax({
+  url: '/configuration',
+  global: false,
+  async: false,
+  type: 'GET',
+  success: function(data) {
+		
+		SW.hostname = data['swhostname'];
+		SW.port = data['swport'];
+		SW.theme_prefix = data['theme_prefix'];
+		
+		SW.feedOn = data['feed_on'];
+		if(SW.feedOn == 'false') {
+			SW.feedOn = false;
+		} else {
+			SW.feedOn = true;
+		}
 
-SW.theme_prefix = 'http://' + SW.hostname + ':' + SW.port + '/common/';
+		SW.doiOfflineMode = data['doiOfflineMode'];   // Used for the DOI Tree in the User DOIs panel.
+		if(SW.doiOfflineMode == 'false') {
+			SW.doiOfflineMode = false;
+		} else {
+			SW.doiOfflineMode = true;
+		}
+		
+  },
+  error: function() {
+		alert('error in getting configuration parameters');
+  }
 
-SW.doiOfflineMode = false;   // Used for the DOI Tree in the User DOIs panel.
+});
+
+
+
 
 /* These variables describe the current user. They are set in the ready event in main.js. */
 SW.current_user_nid = '';
@@ -46,14 +74,14 @@ SW.tagNidsInWorkspace = [];     // Tracks which tags are currently in Tags Works
 SW.selected_tag_names = [];
 SW.selected_tag_nids = [];
 
+
+
+
+/*****Search page params? - not sure if these are needed anymore *****/
+
 SW.typeMap = ['user','group','job','app','file','directory','other'];
 
-//SW.type_str = ['user','group','job','app','file','dir','tag'];
-
-//in search view
-
 //(0=user,1=group,2=job,3=app,4=file,5=dir,6=tag)
-
 SW.selected_types = [];
 SW.type_str = ['user','group','job','app','file','dir','tag','doi'];
 SW.type_bitmap = [1,1,1,1,1,1,1,1];

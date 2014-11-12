@@ -41,6 +41,27 @@ if(proxy.firewallMode)
 
 
 /*************************************************************/
+app.get('/configuration', function(request,response){
+	
+	
+	var obj = {};
+    obj['swhostname'] = proxy.proxyHost;
+    obj['swport'] = proxy.proxyPort;
+    obj['theme_prefix'] = 'http://' + proxy.proxyHost + ':' + proxy.proxyPort + '/common/';
+    obj['feed_on'] = proxy.feed_on;
+    obj['doiOfflineMode'] = proxy.doiOfflineMode;
+    
+    
+    
+    
+    
+    response.send(obj);
+		     
+	
+});
+
+
+/*************************************************************/
 
 app.get('/search/:user_id', function(request,response) {
 	console.log('\n\n---------in get search for ' + request.params.user_id + '----------');
