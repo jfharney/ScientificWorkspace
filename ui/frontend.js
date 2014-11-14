@@ -68,6 +68,23 @@ app.get('/search/:user_id', function(request,response) {
 	
 	console.log('A GET for /searc/'+request.params.user_id+' has been issued.');
 	
+	console.log('\n\n')
+	
+	var model = {};		/* model is the JSON object we will pass to the page doi.jade. */
+		
+	if(request.query.query == undefined || request.query.query == null) {
+		
+		console.log('undefined')
+		
+	} else {
+		console.log('defined - ' + request.query.query);
+		model['query'] = request.query.query;
+		  
+	}
+	console.log('\n\n')
+	
+	
+	
 	if(proxy.firewallMode) {
 		  
 		var userObj = data.userObj;
@@ -75,9 +92,57 @@ app.get('/search/:user_id', function(request,response) {
     
 	} 
 	else {
-		// userHelper is defined in the file proxy/users.js.   
-		var res = users.userSearchHelper(request, response);  
+		
+		
+		var options = {
+			    host: proxy.serviceHost,
+			    port: proxy.servicePort,
+			    path: "/sws/user?uname=" + request.params.user_id,
+			    method: 'GET'
+		};
+
+		var req = http.request(options, function(resp) {
+		    
+			var responseData = '';
+			resp.on('data', function(chunk) {
+		      responseData += chunk;
+			});
 	
+			resp.on('end', function() {
+				if(proxy.tagDebug) {	
+					console.log('users responseData: ' + responseData);
+				}
+				
+				
+				var userObj = JSON.parse(responseData);
+				
+				for (var key in userObj) {
+					//console.log('key: ' + key + ' value: ' + userObj[key]);
+					model[key] = userObj[key];
+				}
+				
+				for(var key in model) {
+					console.log('key: ' + key + ' value: ' + model[key]);
+				}
+				
+				
+				response.render("search", model);
+				//response.render("search",model);
+			});
+	
+			resp.on('error', function(e) {
+		      response.send('error: ' + e);
+		    });
+	      
+		});
+	    	 
+		req.end();
+		
+		
+		
+		// userHelper is defined in the file proxy/users.js.   
+		//var res = users.userSearchHelper(request, response);  
+		
 	}  
 	
 	

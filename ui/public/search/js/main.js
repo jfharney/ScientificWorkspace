@@ -33,6 +33,8 @@ $(function(){
 
     console.log('<><><>SEARCH MAIN<><><>');
 
+    
+    
     /* We transfer the current user data values stored in the document object to the 
     * SW object, defined in core.js.                                                    */
     SW.current_user_nid = $('#curUserNid').html();
@@ -41,47 +43,25 @@ $(function(){
     SW.current_user_number = $('#curUserNumber').html();
     SW.current_user_uname = $('#curUserUname').html();
 
+    $('#search_button').on('click',function() {
+  	  var search_terms = $('#search_terms').val();
+  	  alert('search_terms: ' + search_terms);
+  	  window.location = "http://" + SW.hostname + ":" + SW.port + "/search/" + SW.current_user_uname + "?query=" + search_terms;
+    });
+    
+    if($('#query').html() != undefined || $('#query').html() != null) {
+    	$('#search_text').val($('#query').html());
+    	var text = $('#search_text').val();
+    	basic_search(text);
+        
+    }
+    
+    
     $('button#basic_srch_btn').click(function() {
         var text = $('#search_text').val();
 
-        if ( text != '' )
-        {
-            $('#results').empty();
-            $('#results').append('<div>Waiting for results...</div>');
-            $("#results_tree").dynatree("destroy");
-            $("#results_tree").empty();
-
-            var url = 'http://' + SW.hostname + ':' + SW.port + '/basic_search/' + SW.current_user_number + '?text=' + text;
-
-            console.log('basic: ' + url);
-
-            //create the initial children
-            $.ajax({
-                url: url,
-                global: false,
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    console.log('success');
-
-                    $('#results').empty();
-                    //$criteria = $('<div class="row-fluid" style="margin-bottom:20px;"><div class="span12">Insert Criteria here</div></div>');
-                    //$('#results').append($criteria);
-
-                    processResultsToTree(data);
-
-                    //console.log('append DOI result here');
-                    //append doi results here
-                    //$('#results').append('<div>DOI result here</div>');
-
-                    //var $separator = $('<hr>'); 
-                    //$('#results').append($separator);
-                },
-                error: function() {
-                    console.log('error in getting search results');
-                }
-            });
-        }
+        basic_search(text);
+        
     });
 
     $('button#adv_srch_btn').click(function() {
@@ -191,6 +171,46 @@ $(function(){
     });
 });
 
+function basic_search(text) {
+	if ( text != '' )
+    {
+        $('#results').empty();
+        $('#results').append('<div>Waiting for results...</div>');
+        $("#results_tree").dynatree("destroy");
+        $("#results_tree").empty();
+
+        var url = 'http://' + SW.hostname + ':' + SW.port + '/basic_search/' + SW.current_user_number + '?text=' + text;
+
+        console.log('basic: ' + url);
+
+        //create the initial children
+        $.ajax({
+            url: url,
+            global: false,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('success');
+
+                $('#results').empty();
+                //$criteria = $('<div class="row-fluid" style="margin-bottom:20px;"><div class="span12">Insert Criteria here</div></div>');
+                //$('#results').append($criteria);
+
+                processResultsToTree(data);
+
+                //console.log('append DOI result here');
+                //append doi results here
+                //$('#results').append('<div>DOI result here</div>');
+
+                //var $separator = $('<hr>'); 
+                //$('#results').append($separator);
+            },
+            error: function() {
+                console.log('error in getting search results');
+            }
+        });
+    }
+}
 
 function processResultsToTree(data)
 {

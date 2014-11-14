@@ -26,6 +26,9 @@ head
 
 html
   body
+    div 
+      span#query(style="display:none") #{query}
+    
     div.navbar
       div.navbar-inner 
         div.container-fluid
@@ -38,8 +41,11 @@ html
               li
                 a(href="../doi/#{uname}") DOI
               li
+                a(href="#")#search_button Search
+                //a(href="../search/#{uname}")#search_button Search
+              li
                 form.navbar-search.pull-left
-                  input(placeholder="Search this workspace",name="query",type="text").search-query.span2
+                  input(placeholder="Search this workspace",name="query",type="text").search-query.span2#search_terms
 
           div.btn-group.pull-right
             ul.nav

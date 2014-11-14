@@ -113,6 +113,11 @@ $(function() {
   renderTagCloud();		// defined in tagclouds.js
   displayAggregateTagWorkspaceButtons(); // to initially hide the tag workspace buttons
 
+  
+  $('#search_button').on('click',function() {
+	  var search_terms = $('#search_terms').val();
+	  window.location = "http://" + SW.hostname + ":" + SW.port + "/search/" + SW.current_user_uname + "?query=" + search_terms;
+  })
 
 });		// End of Ready event.
 
