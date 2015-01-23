@@ -253,11 +253,15 @@ function createDOI() {
 	  
   input += addTags();
 
-  url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
+  url = "http://" + SW.hostname + ":" + SW.port + "/constellation/doi/" + username;
 	
   //alert('input: ' + input);
+  console.log('url: ' + url);
   
   /* Send request. */
+  /*
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();
+  */
+
 }

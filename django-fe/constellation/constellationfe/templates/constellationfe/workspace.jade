@@ -1,0 +1,112 @@
+{% load staticfiles %}
+doctype html
+head
+  title ORNL Constellate
+  //link(id="bs-css", href="/common/css/bootstrap-cerulean.css", rel="stylesheet", type="text/css")
+  link(id="bs-css", href="{% static 'common/css/bootstrap-cerulean.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/bootstrap-responsive.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/charisma-app.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/jquery-ui-1.8.21.custom.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/fullcalendar.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/fullcalendar.print.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/chosen.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/uniform.default.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/colorbox.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/jquery.cleditor.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/jquery.noty.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/noty_theme_default.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/elfinder.min.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/elfinder.theme.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/jquery.iphone.toggle.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/opa-icons.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/uploadify.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/dynatree/ui.dynatree.css' %}", rel="stylesheet", type="text/css")
+  link(href="{% static 'common/css/modal.css' %}" rel="stylesheet")
+  
+  link(href="{% static 'common/css/DataTables/jquery.dataTables_themeroller.css' %}", rel="stylesheet")
+  link(href="{% static 'common/css/DataTables/jquery.dataTables.css' %}", rel="stylesheet")
+  link(href="{% static 'common/css/DataTables/ColVis/ColVis.css' %}", rel="stylesheet")
+  
+  script(src="{% static 'common/js/jquery/jquery-1.7.2.min.js' %}")
+  script(src="{% static 'common/js/jquery/jquery-ui-1.8.21.custom.min.js' %}")
+    
+  script(src="{% static 'common/js/core2.js' %}")
+  script(src="{% static 'common/js/sampledata.js' %}")
+    
+html(lang="en")
+  body
+    
+    
+    // NAVIGATION BAR
+    div.navbar
+      div.navbar-inner 
+        div.container-fluid
+          div.top-nav.nav-collapse
+            ul.nav
+              li 
+                a(href="../settings/#{uname}") #{uname}
+              li
+                a(href="../workspace/#{uname}") Workspace
+              li
+                a(href="../doi/#{uname}") DOI
+              li
+                a(href="#")#search_button Search
+                //a(href="../search/#{uname}")#search_button Search
+              li
+                form.navbar-search.pull-left
+                  input(placeholder="Search this workspace",name="query",type="text").search-query.span2#search_terms
+        
+    
+            
+    script(src="{% static 'common/js/bootstrap/bootstrap-transition.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-alert.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-modal.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-dropdown.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-scrollspy.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-tab.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-tooltip.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-popover.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-button.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-collapse.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-carousel.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-typeahead.js' %}")
+    script(src="{% static 'common/js/bootstrap/bootstrap-tour.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.cookie.js' %}")
+    script(src="{% static 'common/js/fullcalendar.min.js' %}")
+    
+    script(src="{% static 'common/js/jquery/DataTables/jquery.dataTables.js' %}")
+    script(src="{% static 'common/js/jquery/DataTables/ColVis/ColVis.js' %}")
+    
+    script(src="{% static 'common/js/excanvas.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.flot.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.flot.pie.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.flot.stack.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.flot.resize.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.chosen.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.uniform.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.colorbox.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.cleditor.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.noty.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.elfinder.min.js' %}")  
+    script(src="{% static 'common/js/jquery/jquery.raty.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.iphone.toggle.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.autogrow-textarea.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.uploadify-3.1.min.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.history.js' %}")
+    script(src="{% static 'common/js/charisma.js' %}")
+    script(src="{% static 'common/js/jquery/jquery.dynatree.min.js' %}")
+    
+    //script(src="{% static 'workspace/js/ajax/userinfo.js' %}")
+    //script(src="{% static 'workspace/js/ajax/groupinfo.js' %}")
+    //script(src="{% static 'workspace/js/ajax/fileinfo.js' %}")
+    //script(src="{% static 'workspace/js/ajax/jobinfo.js' %}")
+    //script(src="{% static 'workspace/js/ajax/doiTree.js' %}")
+    
+    //script(src="{% static 'workspace/js/feed.js' %}")
+    
+    //script(src="{% static 'workspace/js/ajax/tagstable.js' %}")
+    //script(src="{% static 'workspace/js/ajax/tagclouds.js' %}")
+    //script(src="{% static 'workspace/js/add_tag.js' %}")
+    //script(src="{% static 'workspace/js/add_doi.js' %}")
+    
+    //script(src="{% static 'workspace/js/main.js' %}")

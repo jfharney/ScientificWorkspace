@@ -7,18 +7,24 @@ function renderTagCloud() {
   var tags_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags?';
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/tags/links/';
   
+  console.log('tags_url_prefixx: ' + tags_url_prefix + 'uid=' + uid);
+  console.log('tagLinks_url_prefix: ' + tagLinks_url_prefix);
   
   // The outer Ajax call gets the set of tags for the current user.
   $.ajax({
     type: "GET",
     url: tags_url_prefix + 'uid=' + uid,
     success: function(tagsData) {
-    	
+    	/*
     	for (var key in tagsData[0]) {
     		console.log('tagsData key: ' + key + ' value: ' + tagsData[key]);
     	}
+    	*/
+    	
       var tagsArr = [];
       tagsArr = JSON.parse(tagsData);
+      
+      console.log('tagsArr length: ' + tagsArr.length);
       
       // Then, for each tag returned, we get an array of that tag's links.
       $.each(tagsArr, function(index, element) {
@@ -90,6 +96,7 @@ function renderTagCloud() {
                   // TAGS WORKSPACE BUTTON
                   $tag_button = $('<button id="tagWsButton_'+tagNid+'" class="btn btn-primary">'+tagName+'</button>')
                     .click(function() {
+                    	console.log('clicking')
                       // tag information pane
                       $('.tagInfoPane').empty();
                     

@@ -5,6 +5,8 @@ function getCollaboratorInfo(userNumber, searchArg) {
   
   var url = 'http://'+SW.hostname+':'+SW.port+'/groupinfo/'+userNumber+'?search='+searchArg;
   
+  console.log('get collaborator url: ' + url);
+  
   // Grab the group info for the user with uid (number).
   $.ajax({
 	  
@@ -24,6 +26,8 @@ function getGroupInfo(uid) {
 	
 	var url = 'http://' + SW.hostname + ':' + SW.port + '/groupinfo/'+uid;
 	var queryString = '';
+	
+	console.log('get groupinfo url: ' + url);
 	
 	var groupsArr = [];
 	
@@ -91,6 +95,7 @@ function buildCollaboratorTree(children) {
     },
     onLazyRead: function(node) {
 	  //console.log('collaborators lazy read --> title: ' + node.data.title + ' gid: ' + node.data.gid);
+    	console.log('node append ajax url: ' + 'http://' + SW.hostname + ':' + SW.port + '/groups/' + node.data.gid);
       node.appendAjax({
 		url: 'http://' + SW.hostname + ':' + SW.port + '/groups/' + node.data.gid,
 		// We don't want the next line in production code:

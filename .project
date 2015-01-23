@@ -5,18 +5,14 @@
 	<projects>
 		<project>Servers</project>
 	</projects>
-	<!--
 	<buildSpec>
 		<buildCommand>
-			<name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
+			<name>org.python.pydev.PyDevBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
-	-->
-	<!--
 	<natures>
-		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
+		<nature>org.python.pydev.pythonNature</nature>
 	</natures>
-	-->
 </projectDescription>

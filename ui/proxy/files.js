@@ -35,7 +35,19 @@ var filesproxyHelper = function(request, response) {
 			var jsonObj = JSON.parse(responseData);
 			var files = jsonObj['files'];
 			var dynatreeJSONArr = [];
-				
+			/*
+			console.log('files.length: ' + files.length);
+			for(var i=0;i<files.length;i++) {
+				var file = files[i];
+				console.log('file: ' + file);
+				for (var key in file) {
+					
+						console.log('  key: ' + key + ' value: ' + file[key]);
+					
+					
+				}
+			}
+			*/
 			if(files != undefined) {
 				for(var i = 0; i < files.length; i++) {
 					var dynatreeJSONObj = {};
@@ -74,6 +86,13 @@ var filesproxyHelper = function(request, response) {
 				}
 			} 
 			else {}
+			console.log('What am i sending back?\n');
+			for(var i=0;i<dynatreeJSONArr.length;i++) {
+				console.log('i: ' + dynatreeJSONArr[i]);
+				for(var key in dynatreeJSONArr[i]) {
+					console.log('key: ' + key + ' value: ' + dynatreeJSONArr[i][key]);
+				}
+			}
 			response.send(dynatreeJSONArr);
 		});
 			

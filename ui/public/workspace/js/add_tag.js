@@ -1,8 +1,9 @@
 $(document).ready(function() {
 	
+	
   /* Click event for the Create Tag button in the Add Tag modal. */
-  $('#create_tag1').click(function() {
-
+  $('#create_tag').click(function() {
+	  console.log('in create tag');
     /* For now, we are only checking to see whether the tag name is an empty string. */
     if($('input#tag_name').val() != '') {
 	  createTag();
@@ -69,7 +70,7 @@ function createTag() {
   var userName = SW.current_user_uname;
   var userNumber = SW.current_user_number;
 	  
-  //console.log('userName: ' + userName + ' userNumber: ' + userNumber + ' file node ids: ' + SW.selected_file_nids);
+  console.log('userName: ' + userName + ' userNumber: ' + userNumber + ' file node ids: ' + SW.selected_file_nids);
 	  
   //var selected_file_titles = SW.selected_file_titles;
 	  

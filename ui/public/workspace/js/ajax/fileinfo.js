@@ -1,6 +1,9 @@
 function getFileInfo(uid) {
 
   var url = 'http://' + SW.hostname + ':' + SW.port + '/files/'+uid+ '?path=|';
+  
+  console.log('getFileInfo: ' + url);
+  
   var children = [];
 
   //create the initial children

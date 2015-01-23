@@ -1,0 +1,741 @@
+
+=INFO REPORT==== 18-Dec-2014::18:07:27 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 18-Dec-2014::18:07:27 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 18-Dec-2014::18:07:28 ===
+Limiting to approx 156 file handles (138 sockets)
+
+=INFO REPORT==== 18-Dec-2014::18:07:33 ===
+Memory limit set to 3262MB of 8156MB total.
+
+=INFO REPORT==== 18-Dec-2014::18:07:33 ===
+Disk free limit set to 50MB
+
+=INFO REPORT==== 18-Dec-2014::18:07:33 ===
+Adding vhost '/'
+
+=INFO REPORT==== 18-Dec-2014::18:07:35 ===
+Creating user 'guest'
+
+=INFO REPORT==== 18-Dec-2014::18:07:35 ===
+Setting user tags for user 'guest' to [administrator]
+
+=INFO REPORT==== 18-Dec-2014::18:07:35 ===
+Setting permissions for 'guest' in '/' to '.*', '.*', '.*'
+
+=INFO REPORT==== 18-Dec-2014::18:07:36 ===
+msg_store_transient: using rabbit_msg_store_ets_index to provide index
+
+=INFO REPORT==== 18-Dec-2014::18:07:36 ===
+msg_store_persistent: using rabbit_msg_store_ets_index to provide index
+
+=WARNING REPORT==== 18-Dec-2014::18:07:36 ===
+msg_store_persistent: rebuilding indices from scratch
+
+=INFO REPORT==== 18-Dec-2014::18:07:36 ===
+started TCP Listener on [::]:5672
+
+=INFO REPORT==== 18-Dec-2014::18:07:36 ===
+Server startup complete; 0 plugins started.
+
+=INFO REPORT==== 18-Dec-2014::18:07:40 ===
+accepting AMQP connection <0.307.0> (127.0.0.1:52421 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 18-Dec-2014::18:07:41 ===
+closing AMQP connection <0.307.0> (127.0.0.1:52421 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 18-Dec-2014::18:13:57 ===
+accepting AMQP connection <0.381.0> (127.0.0.1:52730 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 18-Dec-2014::18:26:11 ===
+closing AMQP connection <0.381.0> (127.0.0.1:52730 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 18-Dec-2014::18:26:25 ===
+accepting AMQP connection <0.470.0> (127.0.0.1:53991 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 18-Dec-2014::18:26:26 ===
+closing AMQP connection <0.470.0> (127.0.0.1:53991 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 18-Dec-2014::18:27:07 ===
+accepting AMQP connection <0.486.0> (127.0.0.1:53993 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 18-Dec-2014::18:27:08 ===
+closing AMQP connection <0.486.0> (127.0.0.1:53993 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 18-Dec-2014::18:36:00 ===
+accepting AMQP connection <0.553.0> (127.0.0.1:54003 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 18-Dec-2014::18:36:14 ===
+accepting AMQP connection <0.565.0> (127.0.0.1:54004 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 18-Dec-2014::18:36:15 ===
+closing AMQP connection <0.565.0> (127.0.0.1:54004 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 18-Dec-2014::19:03:03 ===
+closing AMQP connection <0.553.0> (127.0.0.1:54003 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::11:07:44 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 19-Dec-2014::11:07:44 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 19-Dec-2014::11:07:45 ===
+Limiting to approx 156 file handles (138 sockets)
+
+=INFO REPORT==== 19-Dec-2014::11:07:46 ===
+Memory limit set to 3216MB of 8040MB total.
+
+=INFO REPORT==== 19-Dec-2014::11:07:46 ===
+Disk free limit set to 50MB
+
+=INFO REPORT==== 19-Dec-2014::11:07:46 ===
+msg_store_transient: using rabbit_msg_store_ets_index to provide index
+
+=INFO REPORT==== 19-Dec-2014::11:07:46 ===
+msg_store_persistent: using rabbit_msg_store_ets_index to provide index
+
+=WARNING REPORT==== 19-Dec-2014::11:07:46 ===
+msg_store_persistent: rebuilding indices from scratch
+
+=INFO REPORT==== 19-Dec-2014::11:07:46 ===
+started TCP Listener on [::]:5672
+
+=INFO REPORT==== 19-Dec-2014::11:07:46 ===
+Server startup complete; 0 plugins started.
+
+=INFO REPORT==== 19-Dec-2014::11:20:18 ===
+accepting AMQP connection <0.317.0> (127.0.0.1:60777 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::11:20:25 ===
+accepting AMQP connection <0.333.0> (127.0.0.1:60778 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::11:21:37 ===
+accepting AMQP connection <0.351.0> (127.0.0.1:60779 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::11:21:37 ===
+closing AMQP connection <0.317.0> (127.0.0.1:60777 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::11:21:37 ===
+closing AMQP connection <0.333.0> (127.0.0.1:60778 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::11:21:37 ===
+closing AMQP connection <0.351.0> (127.0.0.1:60779 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::11:24:45 ===
+accepting AMQP connection <0.382.0> (127.0.0.1:60841 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::11:24:47 ===
+accepting AMQP connection <0.394.0> (127.0.0.1:60842 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::11:24:52 ===
+accepting AMQP connection <0.405.0> (127.0.0.1:60843 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::11:24:53 ===
+closing AMQP connection <0.405.0> (127.0.0.1:60843 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::11:25:30 ===
+accepting AMQP connection <0.420.0> (127.0.0.1:60848 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::11:25:31 ===
+closing AMQP connection <0.420.0> (127.0.0.1:60848 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::11:25:35 ===
+accepting AMQP connection <0.431.0> (127.0.0.1:60849 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::11:25:36 ===
+closing AMQP connection <0.431.0> (127.0.0.1:60849 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::11:25:40 ===
+closing AMQP connection <0.382.0> (127.0.0.1:60841 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::11:25:41 ===
+closing AMQP connection <0.394.0> (127.0.0.1:60842 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::11:25:48 ===
+accepting AMQP connection <0.445.0> (127.0.0.1:60850 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::11:25:51 ===
+accepting AMQP connection <0.456.0> (127.0.0.1:60851 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::11:25:54 ===
+accepting AMQP connection <0.467.0> (127.0.0.1:60852 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::11:25:55 ===
+closing AMQP connection <0.467.0> (127.0.0.1:60852 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:00:30 ===
+accepting AMQP connection <0.655.0> (127.0.0.1:62410 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:00:31 ===
+closing AMQP connection <0.655.0> (127.0.0.1:62410 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::12:03:17 ===
+closing AMQP connection <0.445.0> (127.0.0.1:60850 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:03:22 ===
+accepting AMQP connection <0.684.0> (127.0.0.1:62864 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:03:22 ===
+closing AMQP connection <0.684.0> (127.0.0.1:62864 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::12:04:43 ===
+closing AMQP connection <0.456.0> (127.0.0.1:60851 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:04:57 ===
+accepting AMQP connection <0.697.0> (127.0.0.1:62867 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:05:02 ===
+accepting AMQP connection <0.709.0> (127.0.0.1:62870 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:05:05 ===
+accepting AMQP connection <0.720.0> (127.0.0.1:62871 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:05:10 ===
+accepting AMQP connection <0.732.0> (127.0.0.1:62872 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:05:11 ===
+closing AMQP connection <0.732.0> (127.0.0.1:62872 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:05:17 ===
+accepting AMQP connection <0.743.0> (127.0.0.1:62873 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:05:18 ===
+closing AMQP connection <0.743.0> (127.0.0.1:62873 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:05:22 ===
+accepting AMQP connection <0.755.0> (127.0.0.1:62874 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:05:23 ===
+closing AMQP connection <0.755.0> (127.0.0.1:62874 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::12:05:24 ===
+closing AMQP connection <0.720.0> (127.0.0.1:62871 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::12:07:15 ===
+closing AMQP connection <0.697.0> (127.0.0.1:62867 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 19-Dec-2014::12:23:25 ===
+closing AMQP connection <0.709.0> (127.0.0.1:62870 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:23:25 ===
+accepting AMQP connection <0.879.0> (127.0.0.1:63625 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:23:28 ===
+accepting AMQP connection <0.895.0> (127.0.0.1:63626 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:23:30 ===
+accepting AMQP connection <0.906.0> (127.0.0.1:63627 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:23:41 ===
+accepting AMQP connection <0.918.0> (127.0.0.1:63628 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:23:41 ===
+closing AMQP connection <0.918.0> (127.0.0.1:63628 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:23:47 ===
+accepting AMQP connection <0.930.0> (127.0.0.1:63629 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:23:47 ===
+closing AMQP connection <0.930.0> (127.0.0.1:63629 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:23:59 ===
+accepting AMQP connection <0.942.0> (127.0.0.1:63630 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::12:24:00 ===
+closing AMQP connection <0.942.0> (127.0.0.1:63630 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 19-Dec-2014::12:24:20 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 19-Dec-2014::12:24:20 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 19-Dec-2014::12:24:21 ===
+Limiting to approx 156 file handles (138 sockets)
+
+=INFO REPORT==== 19-Dec-2014::12:24:22 ===
+Memory limit set to 3259MB of 8148MB total.
+
+=INFO REPORT==== 19-Dec-2014::12:24:22 ===
+Disk free limit set to 50MB
+
+=INFO REPORT==== 19-Dec-2014::12:24:22 ===
+msg_store_transient: using rabbit_msg_store_ets_index to provide index
+
+=INFO REPORT==== 19-Dec-2014::12:24:22 ===
+msg_store_persistent: using rabbit_msg_store_ets_index to provide index
+
+=WARNING REPORT==== 19-Dec-2014::12:24:22 ===
+msg_store_persistent: rebuilding indices from scratch
+
+=INFO REPORT==== 19-Dec-2014::12:24:23 ===
+started TCP Listener on [::]:5672
+
+=INFO REPORT==== 19-Dec-2014::12:24:23 ===
+Server startup complete; 0 plugins started.
+
+=INFO REPORT==== 19-Dec-2014::12:24:24 ===
+accepting AMQP connection <0.235.0> (127.0.0.1:63642 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:24:30 ===
+accepting AMQP connection <0.247.0> (127.0.0.1:63643 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:24:32 ===
+accepting AMQP connection <0.259.0> (127.0.0.1:63644 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:50:30 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 19-Dec-2014::12:50:30 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 19-Dec-2014::12:50:31 ===
+Limiting to approx 156 file handles (138 sockets)
+
+=INFO REPORT==== 19-Dec-2014::12:50:32 ===
+Memory limit set to 3176MB of 7942MB total.
+
+=INFO REPORT==== 19-Dec-2014::12:50:32 ===
+Disk free limit set to 50MB
+
+=INFO REPORT==== 19-Dec-2014::12:50:32 ===
+msg_store_transient: using rabbit_msg_store_ets_index to provide index
+
+=INFO REPORT==== 19-Dec-2014::12:50:32 ===
+msg_store_persistent: using rabbit_msg_store_ets_index to provide index
+
+=WARNING REPORT==== 19-Dec-2014::12:50:32 ===
+msg_store_persistent: rebuilding indices from scratch
+
+=INFO REPORT==== 19-Dec-2014::12:50:32 ===
+started TCP Listener on [::]:5672
+
+=INFO REPORT==== 19-Dec-2014::12:50:32 ===
+Server startup complete; 0 plugins started.
+
+=INFO REPORT==== 19-Dec-2014::12:50:36 ===
+accepting AMQP connection <0.227.0> (127.0.0.1:64386 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:50:36 ===
+accepting AMQP connection <0.233.0> (127.0.0.1:64387 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::12:55:40 ===
+accepting AMQP connection <0.321.0> (127.0.0.1:64760 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::13:03:03 ===
+closing AMQP connection <0.233.0> (127.0.0.1:64387 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::13:03:03 ===
+closing AMQP connection <0.227.0> (127.0.0.1:64386 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::13:03:05 ===
+accepting AMQP connection <0.381.0> (127.0.0.1:65273 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::13:03:05 ===
+accepting AMQP connection <0.386.0> (127.0.0.1:65274 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::14:58:12 ===
+closing AMQP connection <0.386.0> (127.0.0.1:65274 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 19-Dec-2014::14:58:12 ===
+closing AMQP connection <0.381.0> (127.0.0.1:65273 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 19-Dec-2014::14:58:13 ===
+closing AMQP connection <0.321.0> (127.0.0.1:64760 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::11:55:42 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 5-Jan-2015::11:55:42 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 5-Jan-2015::11:55:43 ===
+Limiting to approx 156 file handles (138 sockets)
+
+=INFO REPORT==== 5-Jan-2015::11:55:44 ===
+Memory limit set to 3244MB of 8111MB total.
+
+=INFO REPORT==== 5-Jan-2015::11:55:44 ===
+Disk free limit set to 50MB
+
+=INFO REPORT==== 5-Jan-2015::11:55:44 ===
+msg_store_transient: using rabbit_msg_store_ets_index to provide index
+
+=INFO REPORT==== 5-Jan-2015::11:55:44 ===
+msg_store_persistent: using rabbit_msg_store_ets_index to provide index
+
+=WARNING REPORT==== 5-Jan-2015::11:55:44 ===
+msg_store_persistent: rebuilding indices from scratch
+
+=INFO REPORT==== 5-Jan-2015::11:55:45 ===
+started TCP Listener on [::]:5672
+
+=INFO REPORT==== 5-Jan-2015::11:55:45 ===
+Server startup complete; 0 plugins started.
+
+=INFO REPORT==== 5-Jan-2015::11:55:50 ===
+accepting AMQP connection <0.241.0> (127.0.0.1:52995 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::11:55:50 ===
+accepting AMQP connection <0.247.0> (127.0.0.1:52996 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::11:57:49 ===
+accepting AMQP connection <0.300.0> (127.0.0.1:52998 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::11:57:49 ===
+closing AMQP connection <0.300.0> (127.0.0.1:52998 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::11:58:17 ===
+accepting AMQP connection <0.313.0> (127.0.0.1:53000 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::11:58:17 ===
+closing AMQP connection <0.313.0> (127.0.0.1:53000 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::11:59:05 ===
+accepting AMQP connection <0.335.0> (127.0.0.1:53001 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::11:59:05 ===
+closing AMQP connection <0.335.0> (127.0.0.1:53001 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::11:59:38 ===
+accepting AMQP connection <0.348.0> (127.0.0.1:53004 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::11:59:38 ===
+closing AMQP connection <0.348.0> (127.0.0.1:53004 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::12:00:13 ===
+accepting AMQP connection <0.361.0> (127.0.0.1:53005 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::12:00:13 ===
+closing AMQP connection <0.361.0> (127.0.0.1:53005 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::12:01:50 ===
+accepting AMQP connection <0.382.0> (127.0.0.1:53021 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::12:01:50 ===
+closing AMQP connection <0.382.0> (127.0.0.1:53021 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::12:02:43 ===
+accepting AMQP connection <0.397.0> (127.0.0.1:53036 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::12:02:43 ===
+closing AMQP connection <0.397.0> (127.0.0.1:53036 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::12:07:24 ===
+accepting AMQP connection <0.436.0> (127.0.0.1:53430 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::12:07:24 ===
+closing AMQP connection <0.436.0> (127.0.0.1:53430 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::12:09:56 ===
+closing AMQP connection <0.247.0> (127.0.0.1:52996 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:09:56 ===
+closing AMQP connection <0.241.0> (127.0.0.1:52995 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:10:04 ===
+accepting AMQP connection <0.465.0> (127.0.0.1:53475 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:10:04 ===
+accepting AMQP connection <0.470.0> (127.0.0.1:53476 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:10:10 ===
+accepting AMQP connection <0.510.0> (127.0.0.1:53477 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::12:10:11 ===
+closing AMQP connection <0.510.0> (127.0.0.1:53477 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::12:11:37 ===
+closing AMQP connection <0.470.0> (127.0.0.1:53476 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:11:37 ===
+closing AMQP connection <0.465.0> (127.0.0.1:53475 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:12:14 ===
+accepting AMQP connection <0.535.0> (127.0.0.1:53482 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:12:15 ===
+accepting AMQP connection <0.540.0> (127.0.0.1:53483 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:12:23 ===
+accepting AMQP connection <0.580.0> (127.0.0.1:53484 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::12:12:25 ===
+closing AMQP connection <0.580.0> (127.0.0.1:53484 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::12:12:28 ===
+accepting AMQP connection <0.597.0> (127.0.0.1:53485 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:12:46 ===
+accepting AMQP connection <0.608.0> (127.0.0.1:53489 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::12:12:50 ===
+accepting AMQP connection <0.624.0> (127.0.0.1:53490 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 5-Jan-2015::12:12:50 ===
+closing AMQP connection <0.608.0> (127.0.0.1:53489 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 5-Jan-2015::14:15:27 ===
+closing AMQP connection <0.624.0> (127.0.0.1:53490 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 5-Jan-2015::14:15:27 ===
+closing AMQP connection <0.597.0> (127.0.0.1:53485 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 5-Jan-2015::14:15:27 ===
+closing AMQP connection <0.540.0> (127.0.0.1:53483 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::14:15:27 ===
+closing AMQP connection <0.535.0> (127.0.0.1:53482 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::15:32:25 ===
+accepting AMQP connection <0.1338.0> (127.0.0.1:59743 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 5-Jan-2015::15:32:25 ===
+accepting AMQP connection <0.1343.0> (127.0.0.1:59744 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 7-Jan-2015::12:52:46 ===
+closing AMQP connection <0.1343.0> (127.0.0.1:59744 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=WARNING REPORT==== 7-Jan-2015::12:52:47 ===
+closing AMQP connection <0.1338.0> (127.0.0.1:59743 -> 127.0.0.1:5672):
+connection_closed_abruptly
+
+=INFO REPORT==== 7-Jan-2015::12:53:05 ===
+accepting AMQP connection <0.8090.0> (127.0.0.1:60136 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 7-Jan-2015::12:53:06 ===
+accepting AMQP connection <0.8095.0> (127.0.0.1:60137 -> 127.0.0.1:5672)
+
+=WARNING REPORT==== 9-Jan-2015::23:59:04 ===
+Mnesia(rabbit@lap00091497): ** WARNING ** Mnesia is overloaded: {dump_log,time_threshold}
+
+=INFO REPORT==== 21-Jan-2015::11:43:22 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 21-Jan-2015::11:43:22 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 21-Jan-2015::11:43:32 ===
+Error description:
+   {boot_step,file_handle_cache,
+       {noproc,
+           {gen_server,call,
+               [rabbit_sup,
+                {start_child,
+                    {file_handle_cache_sup,
+                        {rabbit_restartable_sup,start_link,
+                            [file_handle_cache_sup,
+                             {file_handle_cache,start_link,
+                                 [#Fun<rabbit_alarm.set_alarm.1>,
+                                  #Fun<rabbit_alarm.clear_alarm.1>]},
+                             false]},
+                        transient,infinity,supervisor,
+                        [rabbit_restartable_sup]}},
+                infinity]}}}
+
+Log files (may contain more information):
+   ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+   ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+
+Stack trace:
+   [{gen_server,call,3,[{file,"gen_server.erl"},{line,190}]},
+    {rabbit_sup,start_restartable_child,3,
+                [{file,"src/rabbit_sup.erl"},{line,84}]},
+    {rabbit,'-run_step/3-lc$^1/1-1-',2,[{file,"src/rabbit.erl"},{line,539}]},
+    {rabbit,run_step,3,[{file,"src/rabbit.erl"},{line,538}]},
+    {rabbit,'-run_boot_steps/1-lc$^0/1-0-',1,
+            [{file,"src/rabbit.erl"},{line,525}]},
+    {rabbit,run_boot_steps,1,[{file,"src/rabbit.erl"},{line,525}]},
+    {rabbit,start,2,[{file,"src/rabbit.erl"},{line,504}]},
+    {application_master,start_it_old,4,
+                        [{file,"application_master.erl"},{line,272}]}]
+
+
+=INFO REPORT==== 21-Jan-2015::11:43:47 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 21-Jan-2015::11:43:47 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 21-Jan-2015::11:43:47 ===
+Limiting to approx 156 file handles (138 sockets)
+
+=INFO REPORT==== 21-Jan-2015::11:43:48 ===
+Memory limit set to 3104MB of 7761MB total.
+
+=INFO REPORT==== 21-Jan-2015::11:43:48 ===
+Disk free limit set to 50MB
+
+=INFO REPORT==== 21-Jan-2015::11:43:48 ===
+msg_store_transient: using rabbit_msg_store_ets_index to provide index
+
+=INFO REPORT==== 21-Jan-2015::11:43:48 ===
+msg_store_persistent: using rabbit_msg_store_ets_index to provide index
+
+=WARNING REPORT==== 21-Jan-2015::11:43:48 ===
+msg_store_persistent: rebuilding indices from scratch
+
+=INFO REPORT==== 21-Jan-2015::11:43:48 ===
+started TCP Listener on [::]:5672
+
+=INFO REPORT==== 21-Jan-2015::11:43:48 ===
+Server startup complete; 0 plugins started.
+
+=INFO REPORT==== 21-Jan-2015::11:44:01 ===
+accepting AMQP connection <0.237.0> (127.0.0.1:58464 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 21-Jan-2015::11:44:01 ===
+accepting AMQP connection <0.243.0> (127.0.0.1:58465 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 21-Jan-2015::12:21:42 ===
+Starting RabbitMQ 3.4.2 on Erlang 17
+Copyright (C) 2007-2014 GoPivotal, Inc.
+Licensed under the MPL.  See http://www.rabbitmq.com/
+
+=INFO REPORT==== 21-Jan-2015::12:21:42 ===
+node           : rabbit@lap00091497
+home dir       : /Users/8xo
+config file(s) : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../etc/rabbitmq/rabbitmq.config (not found)
+cookie hash    : 00SKsMgtGPUnPN0JMOB82A==
+log            : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497.log
+sasl log       : ./rabbitmq_server-3.4.2/sbin/../var/log/rabbitmq/rabbit@lap00091497-sasl.log
+database dir   : /Users/8xo/sciworkspace/2-26/ScientificWorkspace/rabbitmq/rabbitmq_server-3.4.2/sbin/../var/lib/rabbitmq/mnesia/rabbit@lap00091497
+
+=INFO REPORT==== 21-Jan-2015::12:21:46 ===
+Limiting to approx 156 file handles (138 sockets)
+
+=INFO REPORT==== 21-Jan-2015::12:21:49 ===
+Memory limit set to 3157MB of 7893MB total.
+
+=INFO REPORT==== 21-Jan-2015::12:21:49 ===
+Disk free limit set to 50MB
+
+=INFO REPORT==== 21-Jan-2015::12:21:51 ===
+msg_store_transient: using rabbit_msg_store_ets_index to provide index
+
+=INFO REPORT==== 21-Jan-2015::12:21:51 ===
+msg_store_persistent: using rabbit_msg_store_ets_index to provide index
+
+=WARNING REPORT==== 21-Jan-2015::12:21:51 ===
+msg_store_persistent: rebuilding indices from scratch
+
+=INFO REPORT==== 21-Jan-2015::12:21:52 ===
+started TCP Listener on [::]:5672
+
+=INFO REPORT==== 21-Jan-2015::12:21:52 ===
+Server startup complete; 0 plugins started.
+
+=INFO REPORT==== 21-Jan-2015::12:21:56 ===
+accepting AMQP connection <0.236.0> (127.0.0.1:61018 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 21-Jan-2015::12:21:56 ===
+accepting AMQP connection <0.242.0> (127.0.0.1:61019 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 21-Jan-2015::12:22:11 ===
+accepting AMQP connection <0.285.0> (127.0.0.1:61204 -> 127.0.0.1:5672)
+
+=INFO REPORT==== 21-Jan-2015::12:22:11 ===
+accepting AMQP connection <0.290.0> (127.0.0.1:61205 -> 127.0.0.1:5672)

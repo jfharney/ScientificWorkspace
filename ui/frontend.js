@@ -40,6 +40,10 @@ if(proxy.firewallMode)
   console.log('firewall: ' + proxy.firewallMode);
 
 
+
+
+
+
 /*************************************************************/
 app.get('/configuration', function(request,response){
 	
@@ -786,6 +790,7 @@ app.get('/tagsTable/:uid', function(request, response) {
 
 app.get('/files/:userNum', function(request, response) {
 	
+	console.log('usernum: ' + request.params.userNum);
   if(proxy.firewallMode) {
 	  
 	  var res = files.filesproxyHelperFirewall(request, response);

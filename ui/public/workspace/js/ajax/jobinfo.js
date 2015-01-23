@@ -7,6 +7,8 @@ function getJobInfo(userNum, searchArg) {
   
   var children = [];
 
+  
+  //console.log('job info url: ' + url);
   /* Create the initial children. */
   $.ajax({
     url: url,
@@ -14,6 +16,14 @@ function getJobInfo(userNum, searchArg) {
     type: 'GET',
 	success: function(data) 
 	{
+		//console.log('job info url response: ');
+		for(var i=0;i<data.length;i++) {
+			var d = data[i];
+			//console.log('I: ' + i);
+			for(var key in d) {
+				//console.log('  key: ' + key + ' value: ' + d[key]);
+			}
+		}
       for(var i = 0; i < data.length; i++) {
         children.push(data[i]);
       } 
@@ -107,6 +117,7 @@ function buildJobsTree(children) {
   onLazyRead: function(node) {
     var jid = node.data.jobid; 
     var url = 'http://' + SW.hostname + ':' + SW.port + '/appsproxy?jid='+jid;
+    //console.log('onlazyread apps for jid: ' + jid + ' url: ' + url);
     node.appendAjax({
       url:  url,
 	    // We don't want the next line in production code:
