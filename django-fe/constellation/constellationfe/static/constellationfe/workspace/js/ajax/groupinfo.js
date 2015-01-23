@@ -100,10 +100,14 @@ function buildCollaboratorTree(children) {
     },
     onLazyRead: function(node) {
 	  //console.log('collaborators lazy read --> title: ' + node.data.title + ' gid: ' + node.data.gid);
-    	console.log('node append ajax url: ' + 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gid);
+    	//console.log('node append ajax url: ' + 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gid);
+      console.log('node append ajax url: ' + 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gname);
       node.appendAjax({
-		url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gid,
-		// We don't want the next line in production code:
+		//url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gid,
+    	  url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.title,
+  		
+    	  
+    	// We don't want the next line in production code:
 		debugLazyDelay: 50
       });
     }

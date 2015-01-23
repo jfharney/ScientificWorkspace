@@ -382,9 +382,11 @@ def groupinfo(request,user_id):
     
   print 'search: ' + request.GET.get('search')
 
-  from groups import useGetGroupInfoHttp
+  print '\n\nIn group info\n\n'
+  from groups import useGetGroupInfoHttp, useGetGroupInfoZmq
   
-  respArr = useGetGroupInfoHttp(request,user_id)
+  #respArr = useGetGroupInfoHttp(request,user_id)
+  respArr = useGetGroupInfoZmq(request,user_id)
   
   return HttpResponse(json.dumps(respArr))
   
@@ -392,10 +394,13 @@ def groupinfo(request,user_id):
   
 def groups(request,group_id):
   
-  from groups import useGetGroupHttp
+  from groups import useGetGroupHttp, useGetGroupZmq
     
-  respArr = useGetGroupHttp(request,group_id)
-  print 'respArr: ' + respArr
+  #respArr = useGetGroupHttp(request,group_id)
+  
+  respArr = useGetGroupZmq(request,group_id)
+  
+  #print 'groups respArr: ' + respArr
   return HttpResponse(respArr)
   return HttpResponse(json.dumps(respArr))
   

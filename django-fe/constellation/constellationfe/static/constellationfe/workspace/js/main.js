@@ -13,7 +13,9 @@ $(function() {
   getJobInfo(SW.current_user_number);
   
   /* This function is defined in ajax/groupinfo.js. */
-  getCollaboratorInfo(SW.current_user_number);
+  //getCollaboratorInfo(SW.current_user_number);
+  getCollaboratorInfo(SW.current_user_uname);
+  
   
   /* This function is defined in public/workspace/js/ajax/userinfo.js. */
   postUserData('#user_info');
