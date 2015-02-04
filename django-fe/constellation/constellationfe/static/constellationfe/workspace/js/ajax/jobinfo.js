@@ -117,6 +117,7 @@ function buildJobsTree(children) {
 	onActivate: function(node) {},
   onLazyRead: function(node) {
     var jid = node.data.jobid; 
+    jid = node.data.nid;
     var url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/appsproxy?jid='+jid;
     console.log('onlazyread apps for jid: ' + jid + ' url: ' + url);
     node.appendAjax({

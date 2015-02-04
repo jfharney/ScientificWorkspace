@@ -4,22 +4,19 @@
 function renderTagCloud() {
 
   var uid = SW.current_user_number;
+  var uname = SW.current_user_uname;
   var tags_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/constellation/tags?';
   var tagLinks_url_prefix = 'http://' + SW.hostname + ':' + SW.port + '/constellation/tags/links/';
   
-  console.log('tags_url_prefixx: ' + tags_url_prefix + 'uid=' + uid);
+  console.log('tags_url_prefixx: ' + tags_url_prefix + 'user_id=' + uname);
   console.log('tagLinks_url_prefix: ' + tagLinks_url_prefix);
   
   // The outer Ajax call gets the set of tags for the current user.
   $.ajax({
     type: "GET",
-    url: tags_url_prefix + 'uid=' + uid,
+    url: tags_url_prefix + 'user_id=' + uname,
     success: function(tagsData) {
-    /*
-    	for (var key in tagsData[0]) {
-    		console.log('tagsData key: ' + key + ' value: ' + tagsData[key]);
-    	}
-    */
+    
       var tagsArr = [];
       tagsArr = JSON.parse(tagsData);
       
@@ -31,19 +28,33 @@ function renderTagCloud() {
         var tagName = element['name'];
         var tagDesc = element['desc'];
         
+        //alert('tag: ' + tagNid);
         
         // The inner Ajax call gets the set of links for each tag retrieved. 
         $.ajax({
           type: "GET",
           url: tagLinks_url_prefix + tagNid,
-          success: function(linksData) {        	  
+          success: function(linksData) {        	
+        	//  alert('success')
+        	
+        	var newLinksArr = JSON.parse(linksData);
+        	//alert('newLinksArr: ' + newLinksArr);
+        	  
             var linksArr = [];
-            linksArr = JSON.parse(linksData);
-            var linkCount = linksArr.length;
             
+            linksArr = [{"user":9328,"nid":88388,"nodes":1,"jid":1722972,"err":0,"stop":1378024278,"host":"titan","start":1378024199,"name":"swtc1","type":2,"wall":0},{"path":"/stf008/world-shared/tmp","nid":101324,"xuid":2912,"xgid":2329,"name":"tmp","fmode":436,"ctime":1396888768,"type":4,"mtime":1396888768}]
+
+            //linksArr.append({"user":9328,"nid":88388,"nodes":1,"jid":1722972,"err":0,"stop":1378024278,"host":"titan","start":1378024199,"name":"swtc1","type":2,"wall":0})
+            //alert('linksArr: ' + linksArr);
+            
+            //linksArr = JSON.parse(linksData);
+            var linkCount = linksArr.length;
+            //console.log('linkCount: ' + linkCount);
+            //linkCount = 2;
             // If the tag has at least one link, we add it to the tag cloud in the lower left panel. We don't care about displaying tags with no links. The interface should prevent such tags from being created anyway. 
             if(linkCount > 0) {
               var fontSize = 8;
+              console.log('adding tag element')
               var $tag = $('<a class="tagcloud" id="'+tagNid+'" style="font-size:'+(fontSize+linkCount)+'px;cursor:pointer" title="'+tagDesc+'">'+tagName+'</a><span> </span>')
                 .on('click', function() {
                   $('.tagInfoPane').empty();

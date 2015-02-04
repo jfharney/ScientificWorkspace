@@ -10,7 +10,8 @@ $(function() {
   SW.current_user_uname = $('#curUserUname').html();
   
   /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
-  getJobInfo(SW.current_user_number);
+  //getJobInfo(SW.current_user_number);
+  getJobInfo(SW.current_user_uname);
   
   /* This function is defined in ajax/groupinfo.js. */
   //getCollaboratorInfo(SW.current_user_number);
@@ -21,7 +22,8 @@ $(function() {
   postUserData('#user_info');
   
   /* This function is defined in ajax/fileinfo.js. */
-  getFileInfo(SW.current_user_number);
+  //getFileInfo(SW.current_user_number);
+  getFileInfo(SW.current_user_uname);
   
   /* This function is defined in ajax/doiTree.js. */
   //getUserDoiData(SW.current_user_number);
@@ -125,7 +127,7 @@ $(function() {
   
   
   renderTagCloud();		// defined in tagclouds.js
-  displayAggregateTagWorkspaceButtons(); // to initially hide the tag workspace buttons
+  //displayAggregateTagWorkspaceButtons(); // to initially hide the tag workspace buttons
 
   
   

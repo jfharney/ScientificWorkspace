@@ -180,7 +180,11 @@ message DOIData
     optional string     number      = 2;
     repeated uint64     linked_oid  = 3;
     optional string     metadata    = 4;
-}
+} 
+
+---
+XML needed for the metadata field
+---
 
 message DOIDataMsg
 {

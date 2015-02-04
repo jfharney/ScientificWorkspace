@@ -63,10 +63,13 @@ function buildFileTree(treeData) {
 	  }
     },
 	onLazyRead: function(node) {
-			
-      var url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/files/'+SW.current_user_number;
-      url = url + '?path=' + node.data.path;
-		     
+	  console.log('node nid: ' + node.data.nid);
+      //var url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/files/'+SW.current_user_number;
+	  //var url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/files/'+SW.current_user_uname;
+	  var url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/filesOID/'+SW.current_user_uname;
+	  url = url + '?path=' + node.data.path;
+	  	
+	  url = url + '&file_oid=' + node.data.nid;
       console.log('onlazyread file url: ' + url);
       node.appendAjax({
     	  success: function(response) {

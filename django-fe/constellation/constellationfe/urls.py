@@ -20,11 +20,14 @@ urlpatterns = patterns('',
     
     url(r'^files/(?P<user_id>\w+)/$',views.files,name='files'),
     
+    url(r'^filesOID/(?P<user_id>\w+)/$',views.filesOID,name='filesOID'),
+    
     url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
     
     url(r'^tags/links/(?P<tag_id>\w+)/$',views.taglinks,name='taglinks'),
     
     url(r'^tags/$',views.tags,name='tags'),
+    
     
     url(r'^tagproxy/(?P<user_id>\w+)/$',views.tagproxy,name='tagproxy'),
     
