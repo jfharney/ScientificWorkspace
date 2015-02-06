@@ -15,6 +15,7 @@ $(document).ready(function() {
     
   /* This is the button INSIDE the DOI modal, labeled Create DOI Form. */ 
   $('button#create_doi_button').click(function() {
+	  alert('in create_doi_button');
     if($('#doiModalFilesField').html() == '')
       alert('At least one file must be selected to request a DOI.');
     else
@@ -253,15 +254,15 @@ function createDOI() {
 	  
   input += addTags();
 
-  url = "http://" + SW.hostname + ":" + SW.port + "/constellation/doi/" + username;
+  url = "http://" + SW.hostname + ":" + SW.port + "/doi/" + username;
 	
   //alert('input: ' + input);
   console.log('url: ' + url);
   
   /* Send request. */
-  /*
+  
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();
-  */
+  
 
 }

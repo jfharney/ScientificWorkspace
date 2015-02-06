@@ -1,5 +1,6 @@
 function getUserDoiData(userNum) {
-  console.log('userNum is '+userNum);
+  //console.log('userNum is '+userNum);
+  console.log('username is ' + userNum);
   var children = [];
   
   if(SW.doiOfflineMode == true) { 
@@ -60,9 +61,10 @@ function getUserDoiData(userNum) {
     buildDoiTree(children);
   }
   else { 
-	    console.log('doi url: ' + 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum);
-	  	$.ajax({
-	  	  url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
+	  	var url = 'http://'+SW.hostname+':'+SW.port+'/constellation/dois/'+userNum;
+	    console.log('doi url: ' + url);
+	    $.ajax({
+	  	  url: url,
 	  	  type: 'GET',
 	  	  success: function(data) {
 	  		  if(data.length > 0) {

@@ -60,11 +60,17 @@ function getUserDoiData(userNum) {
     buildDoiTree(children);
   }
   else { 
-	    console.log('doi url: ' + 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum);
+	  	var url = 'http://'+SW.hostname+':'+SW.port+'/constellation/dois/'+userNum
+	    console.log('doi url: ' + 'http://'+SW.hostname+':'+SW.port+'/constellation/dois/'+userNum);
 	  	$.ajax({
-	  	  url: 'http://'+SW.hostname+':'+SW.port+'/dois/'+userNum,
+	  	  url: url,
 	  	  type: 'GET',
 	  	  success: function(data) {
+	  		  
+	  		  //alert('success ' + data);
+	  		  
+	  		  data = JSON.parse(data);
+	  		  
 	  		  if(data.length > 0) {
 	  			  buildDoiTree(data);
 	  		  } 

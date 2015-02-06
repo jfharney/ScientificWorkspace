@@ -113,6 +113,8 @@ $(function() {
 
         var payload = JSON.stringify( data );
 
+        console.log('payload: ' + payload + '\n\n');
+        
         jQuery.ajax({
             url: 'http://' + SW.hostname + ':' + SW.port + '/doi_submit',
             type: 'POST',

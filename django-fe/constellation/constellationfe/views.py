@@ -27,7 +27,43 @@ sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/cons
 
 
 from msgschema import MsgSchema_pb2, Connection
-  
+ 
+ 
+
+#---------------Test Wrapper-----------------
+
+def testWrapper(request):
+    
+    print 'in test wrapper'
+    usernames = ['dmartin','fannie','csafta','w44','jshollen' \
+                 #'csafta','w44','jshollen','milena', \
+                 #'jiangzhu','bates','lixu011','hannay','mickelso','efischer', \
+                 #'cfischer','bakercg','divanova','jiaxu','kruss','vivi7799' \
+                 ]
+    #usernames = ['dmartin','fannie']
+    
+    usernamesMap = {'dmartin' : 0, 'fannie' : 1, 'csafta' : 2, 'w44' : 3, 'jshollen' : 4} 
+    useroidsMap = {'1328192' : 0, '716864' : 1,'1521984' : 2, '1770304' : 3, '1564992' : 4} 
+    
+    usersMap = useroidsMap
+    
+    randNum = request.GET.get('randNum')
+    randNum = int(randNum)
+    user_id = request.GET.get('user_id')
+    #user_id = int(user_id)
+    
+    if user_id is None:
+        return HttpResponse('user_id problem')
+    if randNum is None:
+        return HttpResponse('randNum problem')
+    
+    print 'getUser input...header: ' + str(randNum) + ' user_id: ' + str(user_id) 
+    #user_oid = utils.getOidFromUserId(user_id)
+    #user_oid = utils.getOidFromUserIdRandHeader(user_id,randNum)
+    utils.getOidFromUserIdRandHeader(user_id,randNum,usersMap)
+    
+    return HttpResponse('hello')
+
 
 #---------------Views-----------------
 
@@ -127,6 +163,7 @@ def doi(request,user_id):
 
 
 
+#---------------User information-----------------
 
 
 
@@ -254,6 +291,89 @@ def files(request,user_id):
 
 #---------------DOI information-----------------
 
+def doiPut(request,user_id):
+    
+    print '\n\ndoiPut...\n\n'
+    
+    from msgschema import MsgSchema_pb2, Connection
+
+        
+    api = Connection.cdsapi('tcp://techint-b117:5555')   
+    
+    user_oid = utils.getOidFromUserId(user_id)
+    
+    print 'user_oid: ' + str(user_oid)
+    
+    
+    
+    
+    #create a doi data object
+    
+    doidatamsg = MsgSchema_pb2.DOIData()
+    
+    linked_oids = ["5956768"]
+    for i in range(0,len(linked_oids)):
+            #resource_oids[i] = int(resource_oids[i])
+            #msg.object_oids[i] = resource_oids[i]
+            print 'appending ' + str(int(linked_oids[i]))
+            doidatamsg.linked_oid.append(int(linked_oids[i]))
+    
+    payload = {"title":"","description":"","creator_name":"John F. Harney","creator_email":"harneyjf@ornl.gov","contact_email":"harneyjf@ornl.gov","resources":"","keywords":"","language":"English","sponsor_org":"Oak Ridge National Laboratory","files":"/stf007/world-shared/xnetMPI_cula_works_serial_not_ll.tar","nids":["5956768"],"creator_nid":"16476"}
+    
+    payload_string = json.dumps(payload,sort_keys=False,indent=2)
+    
+    doidatamsg.metadata = payload_string
+    
+    
+    '''
+      {"title":"","description":"","creator_name":"John F. Harney","creator_email":"harneyjf@ornl.gov","contact_email":"harneyjf@ornl.gov","resources":"","keywords":"","language":"English","sponsor_org":"Oak Ridge National Laboratory","files":"/stf007/world-shared/xnetMPI_cula_works_serial_not_ll.tar","nids":["5956768"],"creator_nid":"16476"}
+      {"title":"","description":"","creator_name":"John F. Harney","creator_email":"harneyjf@ornl.gov","contact_email":"harneyjf@ornl.gov","resources":"","keywords":"","language":"English","sponsor_org":"Oak Ridge National Laboratory","files":"/stf007/world-shared/xnetMPI_cula_works_serial_not_ll.tar,/stf007/world-shared/maier_3d_soup_6lvls_16cmgap.tar","nids":["74468","54824","5956768","5956516"],"creator_nid":"16476"}
+
+      
+    '''
+    
+    msg = MsgSchema_pb2.DOICmd_Create()
+    msg.user_oid = user_oid
+    msg.header.token = 133121
+    msg.doi_data.CopyFrom(doidatamsg)
+      
+    #submit to the 
+    api.send( msg )
+    reply_type, reply = api.recv( 10000 )
+    
+    if reply_type > 0:
+          #print 'there is a reply for file command list'
+          classname = api.getMessageTypeName( reply_type )
+          print 'doi put resylt classname: ' + str(classname)
+          
+       
+    
+    '''
+    message DOIData
+{
+    optional uint64     oid         = 1;
+    optional string     number      = 2;
+    repeated uint64     linked_oid  = 3;
+    optional string     metadata    = 4;
+} 
+    
+    '''
+    
+    '''
+    message DOICmd_Create
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    required DOIData    doi_data    = 3;
+}
+    '''
+    
+    
+    print '\n\nend doiPut...\n\n'
+    
+    return HttpResponse("hello")
+
+
 def dois(request,user_id):
     
     data_arr = []
@@ -306,6 +426,191 @@ def dois(request,user_id):
       return HttpResponse(data_string)
     
     else:
+        
+      print 'in dois...'  
+      
+      '''
+      message DOICmd_GetByUser
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    optional bool       inc_links   = 3;
+    optional bool       inc_meta    = 4;
+}
+      '''
+        
+      from msgschema import MsgSchema_pb2, Connection
+
+        
+      api = Connection.cdsapi('tcp://techint-b117:5555')   
+    
+      user_oid = utils.getOidFromUserId(user_id)
+      
+      print 'user_oid: ' + str(user_oid)
+    
+      msg = MsgSchema_pb2.DOICmd_GetByUser()
+      msg.header.token = 1121
+      msg.user_oid = user_oid  
+        
+      api.send( msg )
+      reply_type, reply = api.recv( 10000 )
+    
+      res = []
+      
+      if reply_type > 0:
+          #print 'there is a reply for file command list'
+          classname = api.getMessageTypeName( reply_type )
+          print 'classname: ' + str(classname)
+          
+          if classname == 'DOIDataMsg':
+              print 'dirrr: ' + str(dir(reply.dois))
+              for doi in reply.dois:
+                  print 'doi: ' + doi 
+       
+      '''
+      message DOIData
+{
+    optional uint64     oid         = 1;
+    optional string     number      = 2;
+    repeated uint64     linked_oid  = 3;
+    optional string     metadata    = 4;
+} 
+      '''
+                  
+      #resObj = {'type' : 8, 'nid' : 1000, 'name' : 'doi number' , 'title' : 'doi title', 'desc' : 'doi description' , 'keywd' : 'doi keywords', 'ctime' : 10000000}
+
+      resObj =  \
+        { 'title': 'DOI_One', \
+          'isFolder': 'true', \
+          'isLazy': 'false', \
+          'doiId': '10.5072/OLCF/1260530', \
+          'tooltip': 'This is DOI One.', \
+          'children': [ \
+            { \
+             'title': 'Metadata', \
+             'isFolder': 'true', \
+             'children': [ \
+                { \
+                    'title': '<span style="position:relative">DOI ID: <span style="position:absolute; left:100px;">10.5072/OLCF/1260530</span></span>', \
+                    'isFolder': 'false' \
+                 }, \
+                { \
+                    'title': '<span style="position:relative">Language: <span style="position:absolute; left:100px;">English</span></span>', \
+                    'isFolder': 'false' \
+                }, \
+                { \
+                    'title': '<span style="position:relative">Sponsor Org: <span style="position:absolute; left:100px;">USDOE</span></span>', \
+                    'isFolder': 'false' \
+                }, \
+                { \
+                    'title': '<span style="position:relative">Keywords: <span style="position:absolute; left:100px;">Science, Computers</span></span>', \
+                    'isFolder': 'false' \
+                } \
+             ] \
+            
+            }, \
+            { \
+             'title': 'Linked Objects', \
+             'isFolder': 'true', \
+             'children': [ \
+                { \
+                  'title' : '<span style="position:relative">Job: <span style="position:absolute; left:100px;">swtc2</span></span>', \
+                  #'title' : '<span style="position:relative">File: <span style="position:absolute; left:100px;">/stf007/world-shared/xnetMPI_cula_works_serial_not_ll.tar</span></span>', \ 
+                  'isFolder': 'false' \
+                } \
+              ] \
+            } \
+                       
+          ] \
+        } \
+      
+      
+      
+      '''
+      
+// Loop through the response array and map the data to the required Dynatree fields. 
+      for(var i = 0; i < jsonObjArr.length; i++) {
+        var respObj = {
+          'title' : jsonObjArr[i]['title'],        // Just a coincidence that these two fields have the same name.
+          'name': jsonObjArr[i]['name'],
+          'isFolder': true,
+          'children': [
+                        {
+                          title: 'Metadata', 
+                          doiName: jsonObjArr[i]['name'],
+                          isFolder: true,
+                          isLazy: true
+                        }, 
+                        {
+                          title: 'Linked Objects',
+                          doiName: jsonObjArr[i]['name'], 
+                          isFolder: true,
+                          children: null
+                        },
+                        {
+                          title: '<span style="color:blue;cursor:pointer">Download</span>',
+                          isFolder: false,
+                          doiName: jsonObjArr[i]['name']
+                        }
+                      ]
+        };
+        var linkedObjectsArr = [];
+        var contextArr = jsonObjArr[i]['context'];
+        for(var j = 0; j < contextArr.length; j++) {
+          var objType = '';
+          if(contextArr[j]['type'] == 0) {
+              objType = 'User';
+              objValue = contextArr[j]['name'];
+          }
+          else if(contextArr[j]['type'] == 1) {
+              objType = 'Group';
+              objValue = contextArr[j]['gname'];
+          }
+          else if(contextArr[j]['type'] == 2) {
+              objType = 'Job';
+              objValue = contextArr[j]['name'];
+          }
+          else if(contextArr[j]['type'] == 3) {
+              objType = 'App';
+              objValue = contextArr[j]['aid'];
+          }
+          else if(contextArr[j]['type'] == 4) {
+              objType = 'File';
+              objValue = contextArr[j]['name'];
+          }
+          else if(contextArr[j]['type'] == 6) {
+              objType = 'Tag';
+              objValue = contextArr[j]['name'];
+          }
+          else {
+              objType = 'Other';
+              objValue = contextArr[j]['type'];     // Putting in type for development purposes. 
+          }
+          var childObj = {
+            title: '<span style="position:relative">'+objType+': <span style="position:absolute; left:100px;">'+objValue+'</span></span>',
+            isFolder: false
+          };
+          linkedObjectsArr.push(childObj);
+          respObj['children'][1].children = linkedObjectsArr;
+        }
+          
+        dynatreeJsonArr.push(respObj);
+      }
+      
+      response.send(dynatreeJsonArr);
+    });
+
+      '''
+
+
+      res.append(resObj)
+
+      
+
+      data_string = json.dumps(res,sort_keys=False,indent=2)
+      
+      return HttpResponse(data_string)
+  
       return HttpResponse("dois for " + user_id + "\n")
 
 

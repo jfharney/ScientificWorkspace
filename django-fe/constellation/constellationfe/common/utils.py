@@ -33,6 +33,65 @@ def printReplyErrorInfo(reply):
         print 'header.error_code: ', reply.header.error_code
     if reply.header.HasField('error_msg'):
         print 'header.error_msg: ', reply.header.error_code
+
+
+def getOidFromUserIdRandHeader(user_id,randNum,usersMap):
+    
+    import time
+    if randNum % 3 == 0:
+        time.sleep(3)
+    
+    #print 'in getOidFromUserId'
+    
+    api = Connection.cdsapi('tcp://techint-b117:5555')
+    
+   
+    
+    numLoops = 998
+    for i in range(numLoops):
+        msg = MsgSchema_pb2.UserCmd_GetByUNAME()
+        msg.header.token = randNum + i
+        msg.uname = user_id    
+        #print 'before message sent...' + 'header: ' + str(msg.header.token) + ' user_id: ' + user_id + '\n'
+    
+        api.send( msg )
+        
+        reply_type, reply = api.recv( 10000 )
+        
+        user_oid = ''  
+      
+        if reply_type > 0:
+            #print 'there is a reply'
+        
+            classname = api.getMessageTypeName( reply_type )
+            
+            #print 'message type: ', classname
+            if userFlag:
+                printReplyErrorInfo(reply)
+            
+            #if randNum % 2 == 0:
+            #    time.sleep(2)
+    
+            
+            if classname == 'UserDataMsg':
+                #print '\n\n\nUser message\n\n\n'
+                for user in reply.users:
+                    user_oid = user.oid
+                    #print 'user_oid: ' + str(user_oid)
+            else:
+                print 'No print code for this message type yet'
+        else:
+            print 'there is no reply for the user id'
+    
+        test = (usersMap[str(int(user_oid))] == int(reply.header.token)/1000)
+        
+        if not test:
+            print 'after message sent...' + 'header: ' + str(reply.header.token) + ' user_id: ' + user_id + ' user_oid: ' + str(user_oid) + ' usersMap: ' + str(usersMap[str(int(user_oid))]) + ' isvalid: ' +  str(test) + '\n'
+    
+        
+    
+    #return user_oid
+
       
       
 #'8xo' -> number
@@ -75,6 +134,10 @@ def getOidFromUserId(user_id):
     #print 'end in getOidFromUserId'
     
     return user_oid
+
+
+
+
 
 
 
@@ -210,3 +273,50 @@ def replace_all(text, dic):
     for i, j in dic.iteritems():
         text = text.replace(i, j)
     return text
+
+
+
+
+    
+    
+    
+    
+    '''
+    #define a function for the thread
+    def print_time( threadName, delay):
+        count = 0
+        while count < 5:
+            time.sleep(delay)
+            count += 1
+            print '%s: %s' % ( threadName, time.ctime(time.time() ))
+        
+    
+    
+    
+    try:
+        thread.start_new_thread(print_time, ('Thread-1', 2, ))
+        thread.start_new_thread(print_time, ('Thread-2', 4, ))
+    except Exception, err:
+        print 'print_exc():'
+        traceback.print_exc(file=sys.stdout)
+        print
+        print 'print_exc(1):'
+        traceback.print_exc(limit=1, file=sys.stdout)
+        print 'Error: unable to start thread'
+        
+    
+    while 1:
+        pass
+    
+    '''
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

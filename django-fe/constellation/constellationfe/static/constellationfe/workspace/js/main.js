@@ -27,6 +27,7 @@ $(function() {
   
   /* This function is defined in ajax/doiTree.js. */
   //getUserDoiData(SW.current_user_number);
+  getUserDoiData(SW.current_user_uname);
 	
   
   

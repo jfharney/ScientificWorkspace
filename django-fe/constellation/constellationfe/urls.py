@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     
     url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
     
+    url(r'^doiPut/(?P<user_id>\w+)/$',views.doiPut,name='doiPut'),
+    
     url(r'^tags/links/(?P<tag_id>\w+)/$',views.taglinks,name='taglinks'),
     
     url(r'^tags/$',views.tags,name='tags'),
@@ -37,5 +39,8 @@ urlpatterns = patterns('',
       
     url(r'^celeryEx/$',views.celeryEx,name='celeryEx'),      
     url(r'^groupEx/$',views.groupEx,name='groupEx'),        
-    url(r'^jobEx/$',views.groupEx,name='jobEx'),      
+    url(r'^jobEx/$',views.groupEx,name='jobEx'), 
+    
+    url(r'^testWrapper/$',views.testWrapper,name='testWrapper'),
+         
 )
