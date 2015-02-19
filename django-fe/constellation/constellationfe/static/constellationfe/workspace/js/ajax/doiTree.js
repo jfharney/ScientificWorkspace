@@ -2,6 +2,23 @@ function getUserDoiData(userNum) {
   console.log('userNum is '+userNum);
   var children = [];
   
+  var url = 'http://'+SW.hostname+':'+SW.port+'/constellation/doiGet/'+userNum
+  console.log('doi get url: ' + 'http://'+SW.hostname+':'+SW.port+'/constellation/doiGet/'+userNum);
+
+  SW.doiOfflineMode = false;
+  /*
+  $.ajax({
+  	  url: url,
+  	  type: 'GET',
+  	  success: function(data) {
+  		  alert('success');
+  	  },
+  	  error: function() {
+  		  alert('error;');
+  	  }
+  });
+  */
+  
   if(SW.doiOfflineMode == true) { 
 	  console.log();
     children.push({
@@ -60,23 +77,44 @@ function getUserDoiData(userNum) {
     buildDoiTree(children);
   }
   else { 
-	  	var url = 'http://'+SW.hostname+':'+SW.port+'/constellation/dois/'+userNum
-	    console.log('doi url: ' + 'http://'+SW.hostname+':'+SW.port+'/constellation/dois/'+userNum);
+//	  	var url = 'http://'+SW.hostname+':'+SW.port+'/constellation/dois/'+userNum
+//	    console.log('doi url: ' + 'http://'+SW.hostname+':'+SW.port+'/constellation/dois/'+userNum);
+	  	
+	  	var url = 'http://'+SW.hostname+':'+SW.port+'/constellation/doiGet/'+userNum
+	    console.log('doi get url: ' + 'http://'+SW.hostname+':'+SW.port+'/constellation/doiGet/'+userNum);
+
 	  	$.ajax({
 	  	  url: url,
 	  	  type: 'GET',
 	  	  success: function(data) {
 	  		  
-	  		  //alert('success ' + data);
+	  		  //alert('successss ' + data);
+	  		  
 	  		  
 	  		  data = JSON.parse(data);
+	  		  
+	  		  console.log('data: ' + data);
+	  		  
+	  		  for (key in data) {
+	  			  var value = data[key];
+	  			  console.log('key: ' + key + ' data[key] ' + data[key])
+	  			  
+	  			  for (key2 in value) {
+	  				  console.log('key2: ' + key2 + ' value: ' + value[key2]);
+	  			  }
+	  		  }
+	  		  
+	  		  
 	  		  
 	  		  if(data.length > 0) {
 	  			  buildDoiTree(data);
 	  		  } 
-          else {
-	      	  $("#doi_tree").append('<div>This user has not created a DOI.</div>');
-	        }
+	  		  
+	  		  
+	  		  else {
+	  			  $("#doi_tree").append('<div>This user has not created a DOI.</div>');
+	  		  }
+	  		  
 	  	  },
 	  	  error: function() {
 	  	    console.log('error in getting group info');

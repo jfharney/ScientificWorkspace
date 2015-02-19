@@ -6,8 +6,8 @@ urlpatterns = patterns('',
     
     
     url(r'^workspace/(?P<user_id>\w+)/$',views.workspace,name='workspace'),
-    
     url(r'^doi/(?P<user_id>\w+)/$',views.doi,name='doi'),
+    
     
     #collaborators API
     url(r'^groupinfo/(?P<user_id>\w+)/$',views.groupinfo,name='groupinfo'),
@@ -19,28 +19,34 @@ urlpatterns = patterns('',
     
     
     url(r'^files/(?P<user_id>\w+)/$',views.files,name='files'),
-    
     url(r'^filesOID/(?P<user_id>\w+)/$',views.filesOID,name='filesOID'),
     
-    url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
     
+    url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
     url(r'^doiPut/(?P<user_id>\w+)/$',views.doiPut,name='doiPut'),
+    url(r'^doiGet/(?P<user_id>\w+)/$',views.doiGet,name='doiGet'),
+    
     
     url(r'^tags/links/(?P<tag_id>\w+)/$',views.taglinks,name='taglinks'),
-    
     url(r'^tags/$',views.tags,name='tags'),
-    
-    
     url(r'^tagproxy/(?P<user_id>\w+)/$',views.tagproxy,name='tagproxy'),
-    
     url(r'^associationproxy/(?P<user_id>\w+)/$',views.associationproxy,name='associationproxy'),
       
       
       
-    url(r'^celeryEx/$',views.celeryEx,name='celeryEx'),      
-    url(r'^groupEx/$',views.groupEx,name='groupEx'),        
-    url(r'^jobEx/$',views.groupEx,name='jobEx'), 
-    
+      
     url(r'^testWrapper/$',views.testWrapper,name='testWrapper'),
+      
+      
+      
+      
+    #Misc examples
+     
+    #url(r'^celeryEx/$',views.celeryEx,name='celeryEx'),      
+    #url(r'^groupEx/$',views.groupEx,name='groupEx'),        
+    #url(r'^jobEx/$',views.groupEx,name='jobEx'), 
+    
+    
+    
          
 )

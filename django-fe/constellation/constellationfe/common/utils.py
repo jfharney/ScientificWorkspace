@@ -8,8 +8,8 @@ jobFlag = False
 appFlag = False
 userFlag = True
 groupFlag = True
-tagFlag = True
-fileFlag = False
+tagFlag = False
+fileFlag = True
 
 userFlag = False
 
@@ -19,6 +19,9 @@ sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/cons
 
 from msgschema import MsgSchema_pb2, Connection
     
+
+
+
 
 def printReplyErrorInfo(reply):  
     
@@ -97,9 +100,11 @@ def getOidFromUserIdRandHeader(user_id,randNum,usersMap):
 #'8xo' -> number
 def getOidFromUserId(user_id):
     
-    #print 'in getOidFromUserId'
+    #print 'in getOidFromUserId getting user_id: ' + user_id
     
     api = Connection.cdsapi('tcp://techint-b117:5555')
+    
+    
     
     msg = MsgSchema_pb2.UserCmd_GetByUNAME()
     msg.header.token = 1
@@ -121,10 +126,10 @@ def getOidFromUserId(user_id):
             printReplyErrorInfo(reply)
         
         if classname == 'UserDataMsg':
-            #print '\n\n\nUser message\n\n\n'
+            #print '\nUser message\n'
             for user in reply.users:
                 user_oid = user.oid
-                #print 'user_oid: ' + str(user_oid)
+                
         else:
             print 'No print code for this message type yet'
     else:
@@ -132,6 +137,7 @@ def getOidFromUserId(user_id):
     
     
     #print 'end in getOidFromUserId'
+    print '\n\n\n\n\n\nuser_oid: ' + str(user_oid) + '\n\n\n\n\n'
     
     return user_oid
 

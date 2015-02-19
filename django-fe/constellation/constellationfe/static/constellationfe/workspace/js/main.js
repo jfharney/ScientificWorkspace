@@ -11,7 +11,7 @@ $(function() {
   
   /* This function, defined in jobinfo.js, indirectly initializes the jobs tree. */
   //getJobInfo(SW.current_user_number);
-  getJobInfo(SW.current_user_uname);
+  //getJobInfo(SW.current_user_uname);
   
   /* This function is defined in ajax/groupinfo.js. */
   //getCollaboratorInfo(SW.current_user_number);

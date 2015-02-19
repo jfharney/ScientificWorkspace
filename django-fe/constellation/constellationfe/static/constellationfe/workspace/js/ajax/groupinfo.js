@@ -99,9 +99,12 @@ function buildCollaboratorTree(children) {
       var user_info_obj = '';
     },
     onLazyRead: function(node) {
+    	for (var key in node.data) {
+    		console.log('key: ' + key + ' ' + node.data[key]);
+    	}
 	  //console.log('collaborators lazy read --> title: ' + node.data.title + ' gid: ' + node.data.gid);
     	//console.log('node append ajax url: ' + 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gid);
-      console.log('node append ajax url: ' + 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gname);
+      console.log('node append ajax url: ' + 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.title);
       node.appendAjax({
 		//url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.gid,
     	  url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/groups/' + node.data.title,
