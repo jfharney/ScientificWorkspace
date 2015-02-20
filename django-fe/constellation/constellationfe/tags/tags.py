@@ -10,7 +10,8 @@ from common import utils
 
 import sys
 sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
-tcp_connection = 'tcp://techint-b117:5555'
+
+tcp_connection = utils.tcp_connection
 
 import services
 import transform
@@ -24,24 +25,25 @@ def createTag(request,user_id):
         
         print 'creating a new tag here...'
         
-        from msgschema import MsgSchema_pb2, Connection
-        api = Connection.cdsapi(tcp_connection)  
+    from msgschema import MsgSchema_pb2, Connection
+    api = Connection.cdsapi(tcp_connection)  
         
-        tag_name = request.GET.get('name')
-        tag_description = request.GET.get('description')
-        user_oid = utils.getOidFromUserId(user_id)
-        header_token = 111221 
+    tag_name = request.GET.get(utils.TAG_NAME)
+    tag_description = request.GET.get(utils.TAG_DESCRIPTION)
+    
+    user_oid = utils.getOidFromUserId(user_id)
+    header_token = int(utils.TAGS_TagCmd_Create_TOKEN)
         
         
-        if utils.tagFlag:
+    if utils.tagFlag:
             print 'tag_name: ' + tag_name
             print 'tag_description: ' + tag_description
             print 'user_oid: ' + str(user_oid)
         
-        reply_type, reply = services.TagCmd_CreateWrapper(api,tag_name,tag_description,user_oid,header_token)
+    reply_type, reply = services.TagCmd_CreateWrapper(api,tag_name,tag_description,user_oid,header_token)
         
         
-        if reply_type > 0:
+    if reply_type > 0:
             #print 'there is a reply for file command list'
             classname = api.getMessageTypeName( reply_type )
         
@@ -52,11 +54,11 @@ def createTag(request,user_id):
                 print 'tag oid: ' + str(tag.oid)
                 res['nid'] = tag.oid
             
-        else:
+    else:
             print 'there was an error in creating the tag'
         
         
-        if utils.tagFlag:
+    if utils.tagFlag:
             print '-----end tagproxy (i.e. posting a new tag)-----'
     
     return res      
@@ -66,11 +68,11 @@ def associate(request,user_id):
     
     resource_oids = []
         
-    tag_oid = request.GET.get('tag_nid')
-    resource_oid = request.GET.get('resource_nid')
-    type = request.GET.get('type')
+    #tag_oid = request.GET.get(str(utils.TAG_OID))
+    tag_oid = request.GET.get(utils.TAG_OID)
+    resource_oid = request.GET.get(utils.TAG_RESOURCE_OID)
+    type = request.GET.get(utils.TAG_TYPE)
     
-    print 'resource_oid: ' + resource_oid
     
     resource_oids.append(resource_oid)
     
@@ -79,7 +81,7 @@ def associate(request,user_id):
 
     api = Connection.cdsapi(tcp_connection)   
 
-    header_token = 7876
+    header_token = int(utils.TAGS_TagCmd_Attach_TOKEN)
     
     reply_type, reply = services.TagCmd_AttachWrapper(api,tag_oid,resource_oids,header_token)
         
@@ -107,7 +109,7 @@ def useGetTagZmq(request,user_id):
         print '-----in get useGetTagZmq-----'
         print 'user_oid: ' + str(user_oid)
        
-    header_token = 888
+    header_token = int(utils.TAGS_TagCmd_GetByUser_TOKEN)
     
     reply_type, reply = services.TagCmd_GetByUserWrapper(api,user_oid,header_token)
     
@@ -161,7 +163,7 @@ def useGetTagLinkZmq(request,tag_id):
         print 'tag_oid: ' + str(tag_oid)
       
     #send a message with tag_oid that will get all the attached objects
-    header_token = 8884
+    header_token = int(utils.TAGS_TagCmd_GetAttachedObject_TOKEN)
     reply_type, reply = services.TagCmd_GetAttachedObjectWrapper(api,tag_oid,header_token)  
     
     
@@ -269,7 +271,7 @@ def useGetTagDefault(request,uid):
 
 def useGetTagHttp(request,uid):
     
-    path = request.GET.get('path')
+    path = request.GET.get(utils.TAG_PATH)
     
     url = "http://" + utils.serviceHost + ":" + utils.servicePort + "/sws/tags?uid=" + str(uid)
     
@@ -394,7 +396,7 @@ def getTagLinks(tag_oid):
   msg.header.token = 8884
       
   api.send( msg )
-  reply_type, reply = api.recv( 10000 )
+  reply_type, reply = api.recv( utils.messaging_timeout )
   
   return reply
 '''  
@@ -408,7 +410,7 @@ def getTagLinks(tag_oid):
         print 'taglinks msg.header.token input: ' + str(msg.header.token)  
         
     api.send( msg )
-    reply_type, reply = api.recv( 10000 )
+    reply_type, reply = api.recv( utils.messaging_timeout )
       
     #print '\n\nDir Reply_type: ' + str(dir(reply_type)) + '\n'
     #print '\nDir Reply: ' + str(dir(reply)) + '\n'
@@ -451,6 +453,6 @@ def getTagLinks(tag_oid):
             print 'user_oid: ' + str(user_oid)
         
         api.send( msg )
-        reply_type, reply = api.recv( 10000 )
+        reply_type, reply = api.recv( utils.messaging_timeout )
 '''
             

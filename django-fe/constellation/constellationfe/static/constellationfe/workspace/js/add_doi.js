@@ -18,26 +18,25 @@ $(document).ready(function() {
 
 	  var username = SW.current_user_uname;
 	  
+	  /*
 	  var url = "http://" + SW.hostname + ":" + SW.port + "/constellation/doiPut/" + username + '/';
 		
 	  alert('input: ' + input);
 	  
 	  var input = '';
-	  
-	  /* Send request. */
-	  jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
-	    .appendTo('body').submit().remove();
+	  */
 	  /*
 	  jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
 	    .appendTo('body').submit().remove();
+	  
 	  */
 	  
-	  /*
+	  
     if($('#doiModalFilesField').html() == '')
       alert('At least one file must be selected to request a DOI.');
     else
       createDOI();
-		*/
+		
   });
 	  
 });
@@ -276,6 +275,8 @@ function createDOI() {
   alert('input: ' + input);
   
   /* Send request. */
+  
   jQuery('<form action="'+ url +'" method="post">'+input+'</form>')
     .appendTo('body').submit().remove();
+  
 }

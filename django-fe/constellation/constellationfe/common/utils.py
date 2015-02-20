@@ -19,9 +19,43 @@ sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/cons
 
 from msgschema import MsgSchema_pb2, Connection
     
+import ConfigParser
+config = ConfigParser.ConfigParser()
+config.read('constellationconfig.cfg')    
+    
+tcp_connection = str(config.get("options", "tcp_connection"))
+messaging_timeout = str(config.get("options", "messaging_timeout"))
 
+TAG_OID = str(config.get("request_parameters", "TAG_OID"))
+TAG_RESOURCE_OID = str(config.get("request_parameters", "TAG_RESOURCE_OID"))
+TAG_TYPE = str(config.get("request_parameters", "TAG_TYPE"))
+TAG_NAME = str(config.get("request_parameters", "TAG_NAME"))
+TAG_DESCRIPTION = str(config.get("request_parameters", "TAG_DESCRIPTION"))
+TAG_PATH = str(config.get("request_parameters", "TAG_PATH"))
+TAG_USERID = str(config.get("request_parameters", "TAG_USERID"))
 
+FILE_PATH = str(config.get("request_parameters", "FILE_PATH"))
+FILE_OID = str(config.get("request_parameters", "FILE_OID"))
 
+JOB_ID = str(config.get("request_parameters", "JOB_ID"))
+
+APPS_AppCmd_GetByJob_TOKEN = str(config.get("header_tokens", 'APPS_AppCmd_GetByJob_TOKEN'))
+
+DOIS_DOICmd_Create_TOKEN = str(config.get("header_tokens", 'DOIS_DOICmd_Create_TOKEN'))
+DOIS_DOICmd_GetByUser_TOKEN = str(config.get("header_tokens", 'DOIS_DOICmd_GetByUser_TOKEN'))
+
+GROUPS_UserCmd_GetByGroup_TOKEN = str(config.get("header_tokens", 'GROUPS_UserCmd_GetByGroup_TOKEN'))
+GROUPS_GroupCmd_GetByUser_TOKEN = str(config.get("header_tokens", 'GROUPS_GroupCmd_GetByUser_TOKEN'))
+
+JOBS_JobCmd_GetByUser_TOKEN = str(config.get("header_tokens", 'JOBS_JobCmd_GetByUser_TOKEN'))
+
+TAGS_TagCmd_Create_TOKEN = str(config.get("header_tokens", 'TAGS_TagCmd_Create_TOKEN'))
+TAGS_TagCmd_Attach_TOKEN = str(config.get("header_tokens", 'TAGS_TagCmd_Attach_TOKEN'))
+TAGS_TagCmd_GetByUser_TOKEN = str(config.get("header_tokens", 'TAGS_TagCmd_GetByUser_TOKEN'))
+TAGS_TagCmd_GetAttachedObject_TOKEN = str(config.get("header_tokens", 'TAGS_TagCmd_GetAttachedObject_TOKEN'))
+
+FILES_FileCmd_GetByPath_TOKEN = str(config.get("header_tokens", 'FILES_FileCmd_GetByPath_TOKEN'))
+FILES_FileCmd_List_TOKEN = str(config.get("header_tokens", 'FILES_FileCmd_List_TOKEN'))
 
 def printReplyErrorInfo(reply):  
     
@@ -46,7 +80,7 @@ def getOidFromUserIdRandHeader(user_id,randNum,usersMap):
     
     #print 'in getOidFromUserId'
     
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
    
     
@@ -59,7 +93,7 @@ def getOidFromUserIdRandHeader(user_id,randNum,usersMap):
     
         api.send( msg )
         
-        reply_type, reply = api.recv( 10000 )
+        reply_type, reply = api.recv( messaging_timeout )
         
         user_oid = ''  
       
@@ -102,7 +136,7 @@ def getOidFromUserId(user_id):
     
     #print 'in getOidFromUserId getting user_id: ' + user_id
     
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
     
     
@@ -112,7 +146,7 @@ def getOidFromUserId(user_id):
     
     api.send( msg )
     
-    reply_type, reply = api.recv( 10000 )
+    reply_type, reply = api.recv( messaging_timeout )
     
     user_oid = ''  
   
@@ -158,7 +192,7 @@ def getOidFromGroupId(group_id):
     #from Connection import cdsapi
     #from Connection import printMessage
      
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
     #print 'group id before sebnding ' + group_id
     
@@ -168,7 +202,7 @@ def getOidFromGroupId(group_id):
     
     api.send( msg )
     
-    reply_type, reply = api.recv( 10000 )
+    reply_type, reply = api.recv( messaging_timeout )
     
     if reply_type > 0:
         classname = api.getMessageTypeName( reply_type )
@@ -203,7 +237,7 @@ def getOidFromGroupId(group_id):
 def getOidFromJobId(job_id):
     
      
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
     msg = MsgSchema_pb2.UserCmd_GetByUNAME()
     msg.header.token = 1
@@ -211,7 +245,7 @@ def getOidFromJobId(job_id):
     
     api.send( msg )
     
-    reply_type, reply = api.recv( 10000 )
+    reply_type, reply = api.recv( messaging_timeout )
     
     user_oid = ''  
   
@@ -240,14 +274,14 @@ def getOidFromJobId(job_id):
 #'8xo' -> number
 def getFileSysList():
     
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
     msg = MsgSchema_pb2.FileSystemCmd_List()
     msg.header.token = 222
     
     api.send( msg )
     
-    reply_type, reply = api.recv( 10000 )
+    reply_type, reply = api.recv( messaging_timeout )
     
     filesys_oids = []
     filesys_names = []

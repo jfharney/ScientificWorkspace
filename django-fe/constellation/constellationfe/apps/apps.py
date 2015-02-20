@@ -13,6 +13,7 @@ from msgschema import MsgSchema_pb2, Connection
 import services
 import transform
 
+tcp_connection = utils.tcp_connection
 
 def useAppDefault(request,user_id):
     data_arr = []
@@ -39,12 +40,12 @@ def useGetAppZmq(request,job_id):
     
     
     #bind to the socket
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
   
     #print 'dir...' + str(dir(MsgSchema_pb2))
     
     
-    header_token = 91
+    header_token = int(utils.APPS_AppCmd_GetByJob_TOKEN) #91
     reply_type, reply = services.AppCmd_GetByJobWrapper(api,job_id,header_token)
 
     app_oids = []

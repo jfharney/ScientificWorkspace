@@ -4,20 +4,78 @@ tcp_connection = 'tcp://techint-b117:5555'
 
 from msgschema import MsgSchema_pb2, Connection
 
-def trasnformMetadataToXML():
+from common import utils
+
+def trasnformMetadataToXML(metadata):
+    
+    print 'str: ' + str(metadata)
+    content = metadata.POST
+    
+    description = None
+    creators = None
+    creators_email = None
+    contact_email = None
+    files = None
+    resources = None
+    keywords = None
+    language = None
+    sponsor_org = None
+    
+    for key in content:
+        print 'key: ' + key
+        if key == 'title':
+            title = content[key] 
+        elif key == 'description':
+            description = content[key]
+        elif key == 'creator_name':
+            creator_name = content[key]
+        elif key == 'language':
+            language = content[key]
+        elif key == 'contact_email':
+            contact_email = content[key]
+        elif key == 'keywords':
+            keywords = content[key]
+        elif key == 'sponsor_org':
+            sponsor_org = content[key]
+        elif key == 'creator_nid':
+            creator_nid = content[key]
+    
+    
+    
+    if title == None:
+        title = 'Sample'
+    if description == None:
+        description = 'This is a test'
+    if creators == None:
+        creators = 'DS'
+    if creators_email == None:
+        creators_email = 'stas@gmail.com'
+    if contact_email == None:
+        contact_email = 'stas@gmail.com'
+    if files == None:
+        files = '<files>/lustre/atlas2/stf008/world-shared/d3s/doi_input</files>'
+    if resources == None:
+        resources = ''
+    if keywords == None:
+        keywords = 'test'
+    if language == None:
+        language = 'English'
+    if sponsor_org == None:
+        sponsor_org = 'ORNL'
+    
     m_doi_metadata = \
     '<records>' + \
     '<record>' + \
-    '<title>Sample</title>' + \
-    '<description>This is a test</description>' + \
-    '<creators>DS</creators>' + \
-    '<creators_email>stas@gmail.com</creators_email>' + \
-    '<contact_email>stas@gmail.com</contact_email>' + \
-    '<files>/lustre/atlas2/stf008/world-shared/d3s/doi_input</files>' + \
-    '<resources></resources>' + \
-    '<keywords>test</keywords>' + \
-    '<language>English</language>' + \
-    '<sponsor_org>ORNL</sponsor_org>' + \
+    '<title>' + title + '</title>' + \
+    '<description>' + description + '</description>' + \
+    '<creators>' + creators + '</creators>' + \
+    '<creators_email>' + creators_email + '</creators_email>' + \
+    '<contact_email>' + contact_email + '</contact_email>' + \
+    '<files>' + files + '</files>' + \
+    '<resources>' + resources + '</resources>' + \
+    '<keywords>' + keywords + '</keywords>' + \
+    '<language>' + language + '</language>' + \
+    '<sponsor_org>' + sponsor_org + '</sponsor_org>' + \
     '</record>' + \
     '</records>'
     
@@ -31,8 +89,8 @@ def convertReplyToString(reply,user_oid):
     counter = 0    
     for i in range(0,(len(reply.dois))):
         
-        print 'reply doi ' + str(i)
-        print str(reply.dois[i])
+        #print 'reply doi ' + str(i)
+        #print str(reply.dois[i])
         
         
         tempres = '{' + '\n'
@@ -118,8 +176,7 @@ def getMetadataChildren(metadata_properties):
 
 
 def getLinkedChildren(linked_objs,user_oid):
-
-    #print '\n\n\n\n\nlinked: ' + str(linked_objs)
+ 
     tempres = ''
     
     api = Connection.cdsapi(tcp_connection)  
@@ -135,7 +192,7 @@ def getLinkedChildren(linked_objs,user_oid):
     #submit to the 
     api.send( msg )
         
-    reply_type, reply = api.recv( 10000 )
+    reply_type, reply = api.recv( utils.messaging_timeout )
     
     numRecords = 0
     
@@ -207,24 +264,6 @@ def getLinkedChildren(linked_objs,user_oid):
             
             
             
-            
-             '''
-             repeated UserData   users  = 2;
-             repeated GroupData  groups = 3;
-             repeated JobData    jobs   = 4;
-             repeated AppData    apps   = 5;
-             repeated FileData   files  = 6;
-             repeated TagData    tags   = 7;
-             repeated DOIData    dois   = 8;    
-             '''
-                     
-             
-    
-    #print 'tempres: ' + tempres + '\n'
-    
-    
-    #I have to take tempres and insert commas
-    
     #print 'numRecords: ' + str(numRecords)
     tempres = tempres.replace('}','},',(numRecords-1))
     #print '\n\ntempres:\n' + tempres + '\n\n'
@@ -237,104 +276,4 @@ def getLinkedChildren(linked_objs,user_oid):
 
         
         
-        
-    #for property in linked_properties:
-    #    print str(property)
-    '''
-    tempres +=   '{' + '\n'
-    tempres +=     '"title" : "span stuff here", ' + '\n'
-    tempres +=     '"isFolder" : "false" ' + '\n'
-    tempres +=   '}' + '\n'
-    '''
-
-    '''
-    message CompoundDataMsg
-{
-    required Header     header = 1;
-    repeated UserData   users  = 2;
-    repeated GroupData  groups = 3;
-    repeated JobData    jobs   = 4;
-    repeated AppData    apps   = 5;
-    repeated FileData   files  = 6;
-    repeated TagData    tags   = 7;
-    repeated DOIData    dois   = 8;
-}
-    for linked_obj in linked_objs:
-        
-        msg = MsgSchema_pb2.Cmd_GetByOID()
-        msg.header.token = 3333
-        #msg.oids.CopyFrom(linked_objs)
-        msg.oids = linked_objs
-        
-        #submit to the 
-        api.send( msg )
-        
-        reply_type, reply = api.recv( 10000 )
-        
-        if reply_type > 0:
-          #print 'there is a reply for file command list'
-          classname = api.getMessageTypeName( reply_type )
-          print 'dget linked children classname: ' + str(classname)
-     
-          print '\n\n\n\n\nend linked: '
-    '''
-    '''
-        message Cmd_GetByOID
-{
-    required Header     header      = 1;
-    repeated uint64     oids        = 2;
-}
-    '''
-        
-    '''
-        #issue a message for users
-        
-        
-        #issue a message for groups
-        
-        #issue a message for apps
-        
-        #issue a message for jobs
-        
-        #issue a message for files
-        
-        
-        api = Connection.cdsapi(tcp_connection)
-        
-        file_oid = int(linked_obj)
-    
-        msg = MsgSchema_pb2.FileCmd_List()
-        msg.header.token = 1111
-        msg.user_oid = user_oid
-        msg.dir_oid = file_oid
-        
-        api.send( msg )
-        
-        reply_type, reply = api.recv( 10000 )
-        
-        
-        file_names = []
-        file_oids = []
-        
-        
-        if reply_type > 0:
-    
-            classname = api.getMessageTypeName( reply_type )
-            
-            print 'message type: ' + classname
-            print 'returned header token: ' + str(reply.header)
-            
-            if classname == 'FileDataMsg':
-                for file in reply.files:
-                    print '\tfile oid: ' + str(file.oid)
-                    print '\t\tfile name: ' + str(file.name)
-                    file_names.append(file.name)
-                    file_oids.append(file.oid)
-            
-        else:
-            print 'there is no reply for file command list'
-        
-        
-        #res = getFileListStrFromOID(header_token,file_oid,user_oid,path)
-    '''
         

@@ -1,5 +1,5 @@
 from msgschema import MsgSchema_pb2, Connection
-
+from common import utils
 def TagCmd_GetByUserWrapper(api,user_oid,header_token):
     msg = MsgSchema_pb2.TagCmd_GetByUser()
     msg.header.token = header_token
@@ -7,7 +7,7 @@ def TagCmd_GetByUserWrapper(api,user_oid,header_token):
     
     api.send( msg )
     
-    return api.recv( 10000 )
+    return api.recv( utils.messaging_timeout )
 
 def TagCmd_AttachWrapper(api,tag_oid,resource_oids,header_token):
     
@@ -28,8 +28,8 @@ def TagCmd_AttachWrapper(api,tag_oid,resource_oids,header_token):
     #submit to the 
     api.send( msg )
     
-    #reply_type, reply = api.recv( 10000 )
-    return api.recv( 10000 )
+    #reply_type, reply = api.recv( utils.messaging_timeout )
+    return api.recv( utils.messaging_timeout )
 
 def TagCmd_GetAttachedObjectWrapper(api,tag_oid,header_token):
     
@@ -40,7 +40,7 @@ def TagCmd_GetAttachedObjectWrapper(api,tag_oid,header_token):
       
     api.send( msg )
     
-    return api.recv( 10000 )
+    return api.recv( utils.messaging_timeout )
 
 
 def TagCmd_CreateWrapper(api,tag_name,tag_description,user_oid,header_token):
@@ -55,4 +55,4 @@ def TagCmd_CreateWrapper(api,tag_name,tag_description,user_oid,header_token):
     
     
     api.send( msg )
-    return api.recv( 10000 )
+    return api.recv( utils.messaging_timeout )

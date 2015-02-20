@@ -1,5 +1,6 @@
 from msgschema import MsgSchema_pb2, Connection
 
+from common import utils
 
 def FileCmd_GetByPathWrapper(api,fsys_oid,path,user_oid,header_token):
     
@@ -12,7 +13,7 @@ def FileCmd_GetByPathWrapper(api,fsys_oid,path,user_oid,header_token):
     
     api.send( msg )
     
-    return api.recv( 10000 )
+    return api.recv( utils.messaging_timeout )
 
 def FileCmd_ListWrapper(api,user_oid,file_oid,header_token):
     
@@ -25,5 +26,5 @@ def FileCmd_ListWrapper(api,user_oid,file_oid,header_token):
     
   api.send( msg )
     
-  return api.recv( 10000 )
+  return api.recv( utils.messaging_timeout )
 

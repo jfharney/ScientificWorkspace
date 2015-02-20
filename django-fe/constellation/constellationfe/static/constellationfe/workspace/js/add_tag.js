@@ -150,9 +150,11 @@ function createTag() {
 
 	      var tag_nid = data['nid'];
 	      
+	      
 	      //associate tag to groups
 	      associateGroups(tag_nid);
 			
+	      
 	      //associate tag to selected files
 	      associateFiles(tag_nid);
 		  

@@ -11,6 +11,8 @@ sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/cons
 
 from msgschema import MsgSchema_pb2, Connection
 
+tcp_connection = utils.tcp_connection
+
 import services
 import transform
 
@@ -24,18 +26,18 @@ def useGetFileZmqByOID(request,user_id):
         print 'in filesOID'
     
     user_oid = utils.getOidFromUserId(user_id)
-    file_oid = int(request.GET.get('file_oid'))
-    path = request.GET.get('path')
+    file_oid = int(request.GET.get(utils.FILE_OID))
+    path = request.GET.get(utils.FILE_PATH)
     
     #file_oid = 69
     if utils.fileFlag:
         print 'file_oid: ' + str(file_oid)
         print 'path: ' + str(path)
     
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
     
-    header_token = 11112
+    header_token = int(utils.FILES_FileCmd_List_TOKEN)
     res = getFileListStrFromOID(header_token,file_oid,user_oid,path)
     
     
@@ -49,14 +51,14 @@ def useGetFileZmq(request,user_id):
     
     print 'user_id?????: ' + user_id
     
-    path = request.GET.get('path')
+    path = request.GET.get(utils.FILE_PATH)
     
     if utils.fileFlag:
         print '-----in use get FileZMQ by Path-----'
         print 'user_id: ' + user_id + ' path: ' + path
     
     #bind to the socket
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
   
   
     #get the filesys list
@@ -76,7 +78,7 @@ def useGetFileZmq(request,user_id):
     path = utils.replace_all(path, dic)
     
     
-    header_token = 111
+    header_token = int(utils.FILES_FileCmd_GetByPath_TOKEN)
     fsys_oid = filesys_oids[0]
     
     #get the file_oids for the root
@@ -84,7 +86,7 @@ def useGetFileZmq(request,user_id):
     
     
     
-    header_token = 1111
+    header_token = int(utils.FILES_FileCmd_List_TOKEN)
     file_oid = file_oids[0]
     
     if utils.fileFlag:
@@ -107,9 +109,8 @@ def useGetFileZmq(request,user_id):
 def getFileListStrFromOID(header_token,file_oid,user_oid,path):
        
        
-    api = Connection.cdsapi('tcp://techint-b117:5555')   
+    api = Connection.cdsapi(tcp_connection)   
     
-    header_token = 45454
     
     reply_type, reply = services.FileCmd_ListWrapper(api,user_oid,file_oid,header_token)
     
@@ -201,7 +202,7 @@ def getFileOidsPath(header_token,fsys_oid,path,user_oid):
     
     file_oids = []
     
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
     print 'user_oid>>>: ' + str(user_oid)
     
@@ -239,7 +240,7 @@ def getFileOidsPath(header_token,fsys_oid,path,user_oid):
     
     
 def useGetFileHttp(request,user_id):
-      path = request.GET.get('path')
+      path = request.GET.get(utils.FILE_PATH)
       
       print 'URL: ' + "http://" + utils.serviceHost + ":" + utils.servicePort + "/sws/files?uid=" + user_id + '&path=' + path + '&list=retrieve'
       

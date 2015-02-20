@@ -15,11 +15,10 @@ def DOICmd_GetByUserWrapper(api,user_oid,include_meta,include_links,header_token
     #submit to the 
     api.send( msg )
     
-    #reply_type, reply = api.recv( 10000 )
-    return api.recv( 10000 )
+    return api.recv( utils.messaging_timeout )
     
     
-def DOICmd_CreateWrapper(api,user_oid,linked_oids,header_token):
+def DOICmd_CreateWrapper(api,user_oid,linked_oids,metadata,header_token):
     
     doidatamsg = MsgSchema_pb2.DOIData()
     
@@ -32,7 +31,13 @@ def DOICmd_CreateWrapper(api,user_oid,linked_oids,header_token):
     
     print 'linkd_oids: ' + str(doidatamsg.linked_oid)
     
-    m_doi_metadata = transform.trasnformMetadataToXML()
+    
+    
+    
+    #m_doi_metadata = transform.trasnformMetadataToXML()
+    m_doi_metadata = transform.trasnformMetadataToXML(metadata)
+    #m_doi_metadata = transform.trasnformMetadataToXML(title,description,creators,creators_email,contact_email,files,resources,keywords,language,sponsor_org)
+    
     doidatamsg.metadata = m_doi_metadata
     
     
@@ -47,5 +52,7 @@ def DOICmd_CreateWrapper(api,user_oid,linked_oids,header_token):
     #submit to the 
     api.send( msg )
     
-    #reply_type, reply = api.recv( 10000 )
-    return api.recv( 10000 )
+    return api.recv( utils.messaging_timeout )
+
+
+

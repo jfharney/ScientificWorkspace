@@ -9,6 +9,8 @@ from common import utils
 import sys
 sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
 
+tcp_connection = utils.tcp_connection
+
 from msgschema import MsgSchema_pb2, Connection
 
 import services
@@ -20,11 +22,11 @@ def useGetJobZmq(request,user_id):
         print '-----in use get JobZMQ-----'
     
     #bind to the socket
-    api = Connection.cdsapi('tcp://techint-b117:5555')
+    api = Connection.cdsapi(tcp_connection)
     
     #get the user_oid
     user_oid = utils.getOidFromUserId(user_id)
-    header_token = 9
+    header_token = int(utils.JOBS_JobCmd_GetByUser_TOKEN)
     
     reply_type, reply = services.JobCmd_GetByUserWrapper(api,user_oid,header_token)
     

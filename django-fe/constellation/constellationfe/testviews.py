@@ -1,3 +1,5 @@
+tcp_connection = 'tcp://techint-b117:5555'
+
 
 #---------------Miscellaneous information-----------------  
   
@@ -9,7 +11,7 @@ def groupEx(request):
     from Connection import cdsapi
     from Connection import printMessage
     
-    api = cdsapi('tcp://techint-b117:5555')
+    api = cdsapi('tcp_connection')
     
     print '\n'
     print dir(MsgSchema_pb2)
@@ -140,7 +142,7 @@ def celeryEx(request):
     from Connection import cdsapi
     from Connection import printMessage
     
-    api = cdsapi('tcp://techint-b117:5555')
+    api = cdsapi('tcp_connection')
     
     msg = MsgSchema_pb2.UserCmd_GetByUNAME()
     msg.header.token = 1

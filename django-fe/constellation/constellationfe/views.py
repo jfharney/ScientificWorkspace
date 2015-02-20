@@ -18,6 +18,8 @@ import urllib
 serviceHost = 'techint-b117.ornl.gov';
 servicePort = '8080';
 
+tcp_connection = 'tcp://techint-b117:5555'
+
 celeryFlag = False
 import time
 
@@ -29,45 +31,12 @@ from msgschema import MsgSchema_pb2, Connection
  
  
 
-#---------------Test Wrapper-----------------
-
-def testWrapper(request):
-    
-    print 'in test wrapper'
-    usernames = ['dmartin','fannie','csafta','w44','jshollen' \
-                 #'csafta','w44','jshollen','milena', \
-                 #'jiangzhu','bates','lixu011','hannay','mickelso','efischer', \
-                 #'cfischer','bakercg','divanova','jiaxu','kruss','vivi7799' \
-                 ]
-    #usernames = ['dmartin','fannie']
-    
-    usernamesMap = {'dmartin' : 0, 'fannie' : 1, 'csafta' : 2, 'w44' : 3, 'jshollen' : 4} 
-    useroidsMap = {'1328192' : 0, '716864' : 1,'1521984' : 2, '1770304' : 3, '1564992' : 4} 
-    
-    usersMap = useroidsMap
-    
-    randNum = request.GET.get('randNum')
-    randNum = int(randNum)
-    user_id = request.GET.get('user_id')
-    #user_id = int(user_id)
-    
-    if user_id is None:
-        return HttpResponse('user_id problem')
-    if randNum is None:
-        return HttpResponse('randNum problem')
-    
-    print 'getUser input...header: ' + str(randNum) + ' user_id: ' + str(user_id) 
-    #user_oid = utils.getOidFromUserId(user_id)
-    #user_oid = utils.getOidFromUserIdRandHeader(user_id,randNum)
-    utils.getOidFromUserIdRandHeader(user_id,randNum,usersMap)
-    
-    return HttpResponse('hello')
-
 
 #---------------Views-----------------
 
 def index(request):
 
+    
     #template = loader.get_template('constellationfe/index.html')
     template = loader.get_template('constellationfe/workspace.jade')
     context = RequestContext(request, {
@@ -78,6 +47,8 @@ def index(request):
 
 
 def workspace(request,user_id):
+
+    
     template = loader.get_template('constellationfe/index.html')
     
     context = RequestContext(request, {
@@ -136,6 +107,7 @@ def doi(request,user_id):
     creator_nid = ''
     
     resp = {}
+    resp['uname'] = uname
     for key in request.POST:
         if key == 'fileNames':
             resp[key] = request.POST.getlist('fileNames')
@@ -182,9 +154,232 @@ def doiPut(request,user_id):
     
     
     #send response to DOI page?
-    return HttpResponse("hello")
+    return HttpResponse(res)
 
 
+def doiGet(request,user_id):
+    from msgschema import MsgSchema_pb2, Connection
+
+    from dois import dois#getMetadataChildren, convertReplyToString, DOICmd_GetByUserWrapper
+  
+    res = dois.doGetDoiZmq(request,user_id)
+    
+    return HttpResponse(res)
+
+
+
+#---------------User information-----------------
+
+
+
+#---------------Group information-----------------
+  
+def groupinfo(request,user_id): 
+    
+  from groups import groups
+  
+  respArr = groups.useGetGroupInfoZmq(request,user_id)
+  
+  return HttpResponse(json.dumps(respArr))
+  
+  
+  
+def groups(request,group_id):
+  
+  from groups import groups#useGetGroupHttp, useGetGroupZmq
+  
+  respArr = groups.useGetGroupZmq(request,group_id)
+  
+  #print 'groups respArr: ' + respArr
+  return HttpResponse(respArr)
+  return HttpResponse(json.dumps(respArr))
+  
+
+  
+  
+#---------------Job information-----------------
+  
+  
+def jobsproxy(request,user_id):
+    
+    from jobs import jobs#useGetJobHttp, useGetJobZmq
+    
+    res = {}
+    if testFlag:
+        res = jobs.useJobDefault(request,user_id)
+    else:
+        #res = useGetJobHttp(request,user_id)
+        res = jobs.useGetJobZmq(request,user_id)
+        
+      
+    return HttpResponse(res)
+    return HttpResponse(json.dumps(res))
+
+    
+    
+#---------------App information-----------------
+    
+def appsproxy(request):
+    
+    job_id = request.GET.get(utils.JOB_ID)
+    
+    from apps import apps#useAppDefault, useGetAppHttp, useGetAppZmq
+    
+    if testFlag:
+    
+      data_arr = apps.useAppDefault(request,user_id)
+      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
+      return HttpResponse(data_string)
+    
+    else:
+         
+      #respArr = useGetAppHttp(request,job_id)
+      res = apps.useGetAppZmq(request,job_id)
+      
+      return HttpResponse(res)
+  
+    
+#---------------File information-----------------
+
+def filesOID(request,user_id): 
+
+    from files import files
+    
+    res = files.useGetFileZmqByOID(request,user_id)
+    
+    return HttpResponse(res)
+
+
+#
+def files(request,user_id): 
+  
+    from files import files #useGetFileHttp, useGetFileZmq
+    
+    path = request.GET.get(utils.FILE_PATH)
+    
+    
+    if testFlag:
+      data_arr = useDefault(request,user_id)
+      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
+      return HttpResponse(data_string)
+    
+    else:
+      
+      res = files.useGetFileZmq(request,user_id)
+      return HttpResponse(res)
+
+
+
+#---------------Tag information-----------------
+'''
+var association_url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/associationproxy/' + SW.current_user_number + '/';
+             association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_group_nids[i] + '&type=' + 'group';
+'''             
+def associationproxy(request,user_id):
+    
+    if utils.tagFlag:
+            print '-----in associationproxy (i.e. posting a new tag)-----'
+    
+    the_page = ''
+    
+    from tags import tags
+    
+    if request.method == 'POST':
+        
+        tags.associate(request,user_id)
+        
+        
+    the_page = ''   
+    
+    if utils.tagFlag:
+            print '-----end associationproxy (i.e. posting a new tag)-----'
+            
+    return HttpResponse(the_page)
+
+
+#url(r'^tagproxy/(?P<user_id>\w+)/$',views.tagproxy,name='tagproxy'),
+def tagproxy(request,user_id):
+    
+    from tags import tags
+    
+    res = {}
+    
+    if request.method == 'POST':
+        
+        res = tags.createTag(request,user_id)
+        
+    data_string = json.dumps(res,sort_keys=False,indent=2)
+      
+    return HttpResponse(data_string)
+
+
+
+def tags(request):
+    
+    from tags import tags#useGetTagHttp, useGetTagZmq
+    
+    user_id = request.GET.get(utils.TAG_USERID)
+    data_arr = []
+    
+    data = {}
+    
+    if testFlag:
+    
+      data_arr = tags.useGetTagDefault(request,user_id)
+      
+      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
+      
+      return HttpResponse(data_string)
+  
+    else:  
+        
+      
+      
+      
+      res = tags.useGetTagZmq(request,user_id)
+      
+      data_string = json.dumps(res,sort_keys=False,indent=2)
+      
+      return HttpResponse(data_string)
+      
+      
+      # for http request  
+      uid = '5112'
+      res = tags.useGetTagHttp(request,uid)
+      
+      data_arr.append(data)
+      data_string = json.dumps(res,sort_keys=False,indent=2)
+    
+      return HttpResponse(data_string)
+      
+      
+      
+
+def taglinks(request,tag_id):
+    
+    from tags import tags#useGetTagHttp, useGetTagZmq, useGetTagDefault, useGetTagLinkZmq
+    
+    if testFlag:
+    
+      data_arr = tags.useGetTagLinkDefault(request,tag_id)
+      
+      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
+      
+      return HttpResponse(data_string)
+  
+    else:
+      
+      res = tags.useGetTagLinkZmq(request,tag_id)
+    
+      
+      data_string = json.dumps(res,sort_keys=False,indent=2)
+    
+      return HttpResponse(data_string)
+  
+
+
+
+'''
 def dois(request,user_id):
     
     data_arr = []
@@ -240,20 +435,12 @@ def dois(request,user_id):
         
       print 'in dois...'  
       
-      '''
-      message DOICmd_GetByUser
-{
-    required Header     header      = 1;
-    required uint64     user_oid    = 2;
-    optional bool       inc_links   = 3;
-    optional bool       inc_meta    = 4;
-}
-      '''
+      
         
       from msgschema import MsgSchema_pb2, Connection
 
         
-      api = Connection.cdsapi('tcp://techint-b117:5555')   
+      api = Connection.cdsapi(tcp_connection)   
     
       user_oid = utils.getOidFromUserId(user_id)
       
@@ -264,7 +451,7 @@ def dois(request,user_id):
       msg.user_oid = user_oid  
         
       api.send( msg )
-      reply_type, reply = api.recv( 10000 )
+      reply_type, reply = api.recv( utils.messaging_timeout )
     
       res = []
       
@@ -278,18 +465,8 @@ def dois(request,user_id):
               for doi in reply.dois:
                   print 'doi: ' + doi 
        
-      '''
-      message DOIData
-{
-    optional uint64     oid         = 1;
-    optional string     number      = 2;
-    repeated uint64     linked_oid  = 3;
-    optional string     metadata    = 4;
-} 
-      '''
-                  
-      #resObj = {'type' : 8, 'nid' : 1000, 'name' : 'doi number' , 'title' : 'doi title', 'desc' : 'doi description' , 'keywd' : 'doi keywords', 'ctime' : 10000000}
-
+     
+       
       resObj =  \
         { 'title': 'DOI_One', \
           'isFolder': 'true', \
@@ -336,8 +513,41 @@ def dois(request,user_id):
         } \
       
       
+
+      res.append(resObj)
+
       
-      '''
+
+      data_string = json.dumps(res,sort_keys=False,indent=2)
+      
+      return HttpResponse(data_string)
+  
+      return HttpResponse("dois for " + user_id + "\n")
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+'''
       
 // Loop through the response array and map the data to the required Dynatree fields. 
       for(var i = 0; i < jsonObjArr.length; i++) {
@@ -411,265 +621,7 @@ def dois(request,user_id):
       response.send(dynatreeJsonArr);
     });
 
-      '''
-
-
-      res.append(resObj)
-
-      
-
-      data_string = json.dumps(res,sort_keys=False,indent=2)
-      
-      return HttpResponse(data_string)
-  
-      return HttpResponse("dois for " + user_id + "\n")
-
-
-def doiGet(request,user_id):
-    from msgschema import MsgSchema_pb2, Connection
-
-    from dois import dois#getMetadataChildren, convertReplyToString, DOICmd_GetByUserWrapper
-  
-    res = dois.doGetDoiZmq(request,user_id)
-    
-    return HttpResponse(res)
-
-
-
-#---------------User information-----------------
-
-
-
-#---------------Group information-----------------
-  
-def groupinfo(request,user_id): 
-    
-  print 'search: ' + request.GET.get('search')
-
-  from groups import groups
-  
-  respArr = groups.useGetGroupInfoZmq(request,user_id)
-  
-  return HttpResponse(json.dumps(respArr))
-  
-  
-  
-def groups(request,group_id):
-  
-  from groups import groups#useGetGroupHttp, useGetGroupZmq
-  
-  respArr = groups.useGetGroupZmq(request,group_id)
-  
-  #print 'groups respArr: ' + respArr
-  return HttpResponse(respArr)
-  return HttpResponse(json.dumps(respArr))
-  
-
-  
-  
-#---------------Job information-----------------
-  
-  
-def jobsproxy(request,user_id):
-    
-    from jobs import jobs#useGetJobHttp, useGetJobZmq
-    
-    res = {}
-    if testFlag:
-        res = jobs.useJobDefault(request,user_id)
-    else:
-        #res = useGetJobHttp(request,user_id)
-        res = jobs.useGetJobZmq(request,user_id)
-        
-      
-    return HttpResponse(res)
-    return HttpResponse(json.dumps(res))
-
-    
-    
-#---------------App information-----------------
-    
-def appsproxy(request):
-    
-    job_id = request.GET.get('jid')
-    
-    from apps import apps#useAppDefault, useGetAppHttp, useGetAppZmq
-    
-    if testFlag:
-    
-      data_arr = apps.useAppDefault(request,user_id)
-      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
-      return HttpResponse(data_string)
-    
-    else:
-         
-      #respArr = useGetAppHttp(request,job_id)
-      res = apps.useGetAppZmq(request,job_id)
-      
-      return HttpResponse(res)
-  
-    
-#---------------File information-----------------
-
-def filesOID(request,user_id): 
-
-    from files import files
-    
-    res = files.useGetFileZmqByOID(request,user_id)
-    
-    return HttpResponse(res)
-
-
-#
-def files(request,user_id): 
-  
-    from files import files #useGetFileHttp, useGetFileZmq
-    
-    path = request.GET.get('path')
-    
-    
-    if testFlag:
-      data_arr = useDefault(request,user_id)
-      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
-      return HttpResponse(data_string)
-    
-    else:
-      
-      res = files.useGetFileZmq(request,user_id)
-      return HttpResponse(res)
-
-
-
-#---------------Tag information-----------------
 '''
-var association_url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/associationproxy/' + SW.current_user_number + '/';
-             association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_group_nids[i] + '&type=' + 'group';
-'''             
-def associationproxy(request,user_id):
-    
-    if utils.tagFlag:
-            print '-----in associationproxy (i.e. posting a new tag)-----'
-    
-    the_page = ''
-    
-    from tags import tags
-    
-    if request.method == 'POST':
-        
-        tags.associate(request,user_id)
-        
-        
-    the_page = ''   
-    
-    if utils.tagFlag:
-            print '-----end associationproxy (i.e. posting a new tag)-----'
-            
-    return HttpResponse(the_page)
-
-
- 
-def tagproxy(request,user_id):
-    
-    from tags import tags
-    
-    res = {}
-    
-    if request.method == 'POST':
-        
-        res = tags.createTag(request,user_id)
-        
-    data_string = json.dumps(res,sort_keys=False,indent=2)
-      
-    return HttpResponse(data_string)
-
-
-
-def tags(request):
-    
-    from tags import tags#useGetTagHttp, useGetTagZmq
-    
-    user_id = request.GET.get('user_id')
-    data_arr = []
-    
-    data = {}
-    
-    if testFlag:
-    
-      data_arr = tags.useGetTagDefault(request,user_id)
-      
-      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
-      
-      return HttpResponse(data_string)
-  
-    else:  
-        
-      
-      
-      
-      res = tags.useGetTagZmq(request,user_id)
-      
-      data_string = json.dumps(res,sort_keys=False,indent=2)
-      
-      return HttpResponse(data_string)
-      
-      
-      # for http request  
-      uid = '5112'
-      res = tags.useGetTagHttp(request,uid)
-      
-      data_arr.append(data)
-      data_string = json.dumps(res,sort_keys=False,indent=2)
-    
-      return HttpResponse(data_string)
-      
-      
-      
-
-def taglinks(request,tag_id):
-    
-    from tags import tags#useGetTagHttp, useGetTagZmq, useGetTagDefault, useGetTagLinkZmq
-    
-    if testFlag:
-    
-      data_arr = tags.useGetTagLinkDefault(request,tag_id)
-      
-      data_string = json.dumps(data_arr,sort_keys=False,indent=2)
-      
-      return HttpResponse(data_string)
-  
-    else:
-      
-      res = tags.useGetTagLinkZmq(request,tag_id)
-    
-      
-      data_string = json.dumps(res,sort_keys=False,indent=2)
-    
-      return HttpResponse(data_string)
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -678,347 +630,3 @@ def taglinks(request,tag_id):
  
  
  
- 
- 
-  
-  
-    '''
-    msg = MsgSchema_pb2.FileCmd_List()
-    msg.header.token = 11112
-    msg.user_oid = user_oid
-    msg.dir_oid = file_oid
-    
-    api.send( msg )
-    
-    reply_type, reply = api.recv( 10000 )
-    
-    file_names = []
-    file_oids = []
-    
-    if reply_type > 0:
-        print 'there is a reply for file command list'
-        
-        classname = api.getMessageTypeName( reply_type )
-        
-        print 'message type: ' + classname + '\n\n'
-        
-        
-        if classname == 'FileDataMsg':
-            print 'strdir\n\n' + str(dir(reply.files))
-            for file in reply.files:
-                print 'str file: ' + str(file)
-                print 'file name: ' + str(file.name)
-                print 'file oid: ' + str(file.oid)
-                file_names.append(file.name)
-                file_oids.append(file.oid)
-        
-    
-    print 'file_oids: ' + str(file_oids)
-    print 'file_names: ' + str(file_names)
-    
-    
-    
-    
-    counter = 0
-    res = '['
-  
-    print 'len: ' + str(len(file_oids))
-    for i in range(0,(len(file_oids)-1)):
-        
-        if path == '|':
-            
-          counter = counter + 1
- 
-    
-          tempres = '{' 
-          tempres += '"title" : "' + '|' + str(file_names[i]) + '",'   
-          tempres += '"isFolder" : ' + 'true, '
-          tempres += '"isLazy" : ' + 'true, '
-          #tempres += '"type" : ' + '2, '
-          tempres += '"path" : "' + '|' + str(file_names[i]) + '",'   
-          tempres += '"nid" : "' + str(file_oids[i]) + '"'
-          tempres += '}'
-        
-        
-          if counter == len(file_oids)-1:
-              res += tempres
-          else:
-              res += tempres + ' , '
-  
-        else:
-          counter = counter + 1
- 
-    
-          tempres = '{' 
-          tempres += '"title" : "' + '' + path + '|' + str(file_names[i]) + '",'   
-          tempres += '"isFolder" : ' + 'true, '
-          tempres += '"isLazy" : ' + 'true, '
-          #tempres += '"type" : ' + '2, '
-          tempres += '"path" : "' + '' + path + '|' + str(file_names[i]) + '",'   
-          tempres += '"nid" : "' + str(file_oids[i]) + '"'
-          tempres += '}'
-        
-        
-          if counter == len(file_oids)-1:
-              res += tempres
-          else:
-              res += tempres + ' , '
-            
-    res += ']'  
-    
-    print 'res: ' + res
-    '''
-
-
-
-    '''
-message TagCmd_Attach
-{
-    required Header     header      = 1;
-    required uint64     tag_oid     = 2;
-    repeated uint64     object_oids = 3;
-}
-    '''
-
-
-    '''
-        
-    
-        #url = "http://" + serviceHost + ":" + servicePort + "/sws/tags?uid=" + str(uid)
-        values = { }
-        
-        url = "http://" + utils.serviceHost + ":" + utils.servicePort + '/sws/tag/' + tag_nid + '/link/' + resource_nid #, + user_id + "&name=" + tag_name + "&description=" + tag_description
-        
-        print 'calling association url: ' + url
-        
-        data = urllib.urlencode(values)
-        req = urllib2.Request(url,data)
-        response = urllib2.urlopen(req)
-        
-        the_page = response.read()
-        
-        print 'the_page: ' + str(the_page)
-    '''
-
-
-
-
-''' added 2-16
-    res = '[' + '\n'
-
-    counter = 0    
-    for i in range(0,(len(reply.dois))):
-        
-        print 'reply doi ' + str(i)
-        print str(reply.dois[i])
-        
-        
-        tempres = '{' + '\n'
-            #title: 'DOI_Two',    isFolder: true,    isLazy: false,    doiId: '10-86X-234151235532',    tooltip: 'This is DOI Two.',     children: [
-        tempres += '"title" : ' + '"' + reply.dois[i].number  + '",' + '\n'# + '"DOITwo",' + '\n'
-        tempres += '"isFolder" : ' + '"true",' + '\n'
-        tempres += '"isLazy" : ' + '"true",' + '\n'
-        tempres += '"doiId" : ' + '"' + reply.dois[i].number  + '",' + '\n' #10-86X-234151235532",' + '\n'
-        tempres += '"tooltip" : ' + '"This is ' + reply.dois[i].number + '",' + '\n'
-        
-        
-        tempres += '"children" : ' + '[' + '\n'
-        
-        #metadata
-        
-        metadata = reply.dois[i].metadata
-        d = json.loads(metadata)
-        metadata_properties = d[0]
-        
-        tempres += '{' + '\n'
-        tempres +=   '"title" : "Metadata", ' + '\n'
-        tempres +=   '"isFolder" : "true", ' + '\n'
-        tempres +=   '"children" : [' + '\n'
-        tempres += getMetadataChildren(metadata_properties)
-        tempres +=   ']' + '\n'
-        tempres += '} ,' + '\n'
-        
-        #linked objects
-        tempres += '{' + '\n'
-        tempres +=   '"title" : "Linked Objects", ' + '\n'
-        tempres +=   '"isFolder" : "true", ' + '\n'
-        tempres +=   '"children" : ' + '[' + '\n'
-        linked_objs = reply.dois[i].linked_oid
-        #d = json.loads()
-        #tempres += getLinkedChildren(linked_objs,user_oid)
-        tempres +=   ']' + '\n'
-        tempres += '}' + '\n'
-        
-        
-        tempres += ']' + '\n'
-        
-        tempres += '}' + '\n'
-        
-        print '------'
-        
-        if i != len(reply.dois)-1:
-            tempres += ','
-            
-        res += tempres
-        
-    res += ']' + '\n'
-    #print 'result\n' + res
-'''  
-
-'''
-api = Connection.cdsapi('tcp://techint-b117:5555')   
-
-#user_oid = utils.getOidFromUserId(user_id)
-
-
-msg = MsgSchema_pb2.DOICmd_GetByUser()
-msg.user_oid = user_oid
-msg.header.token = 13366121
-msg.inc_meta = True
-msg.inc_links = True
-
-    
-#submit to the 
-api.send( msg )
-reply_type, reply = api.recv( 10000 )
-
-
-reply_type, reply = messageCall(user_id)
-
-if reply_type > 0:
-      #print 'there is a reply for file command list'
-      classname = api.getMessageTypeName( reply_type )
-      print 'doi get result classname: ' + str(classname)
-      print 'dirr... reply: ' + str((reply))
-'''  
-
-#added Feb 18
-'''
-        if utils.tagFlag:
-            print '-----in tagproxy (i.e. posting a new tag)-----'
-        
-        print 'creating a new tag here...'
-        
-        tag_name = request.GET.get('name')
-        tag_description = request.GET.get('description')
-        user_oid = utils.getOidFromUserId(user_id)
-        
-        
-        
-        from msgschema import MsgSchema_pb2, Connection
-
-        
-        api = Connection.cdsapi('tcp://techint-b117:5555')   
-    
-    
-        tag_data = MsgSchema_pb2.TagData()
-        tag_data.name = tag_name
-        tag_data.desc = tag_description
-    
-        msg = MsgSchema_pb2.TagCmd_Create()
-        msg.header.token = 111221
-        msg.user_oid = user_oid
-        msg.tag_data.CopyFrom(tag_data)
-        
-        if utils.tagFlag:
-            print 'tag_name: ' + tag_name
-            print 'tag_description: ' + tag_description
-            print 'user_oid: ' + str(user_oid)
-        
-        api.send( msg )
-        reply_type, reply = api.recv( 10000 )
-    
-        
-        if reply_type > 0:
-            #print 'there is a reply for file command list'
-            classname = api.getMessageTypeName( reply_type )
-        
-            print '\t\tmmmmmessage type: ' + classname + '\n\n'
-            #print 'header: ' + str(reply.header)
-            for tag in reply.tags:
-                print 'tag name: ' + tag.name
-                print 'tag oid: ' + str(tag.oid)
-                res['nid'] = tag.oid
-            
-        else:
-            print 'there was an error in creating the tag'
-        
-        
-        if utils.tagFlag:
-            print '-----end tagproxy (i.e. posting a new tag)-----'
-            
-'''  
-
-'''
-        
-    api = Connection.cdsapi('tcp://techint-b117:5555')   
-    
-    user_oid = utils.getOidFromUserId(user_id)
-    
-    print 'user_oid: ' + str(user_oid)
-    
-    
-    #create a doi data object
-    
-    doidatamsg = MsgSchema_pb2.DOIData()
-    
-    linked_oids = ["374898756"]
-    for i in range(0,len(linked_oids)):
-            print 'appending ' + str(int(linked_oids[i]))
-            doidatamsg.linked_oid.append(int(linked_oids[i]))
-    
-    print 'linkd_oids: ' + str(doidatamsg.linked_oid)
-    
-    payload = {
-               "title":"","description":"","creator_name":"John F. Harney","creator_email":"harneyjf@ornl.gov", \
-               "contact_email":"harneyjf@ornl.gov","resources":"","keywords":"","language":"English", \
-               "sponsor_org":"Oak Ridge National Laboratory","files":"/stf007/world-shared/xnetMPI_cula_works_serial_not_ll.tar", \
-               "nids":["5956768"],"creator_nid":"16476"
-    }
-    
-    m_doi_metadata = \
-    '<records>' + \
-    '<record>' + \
-    '<title>Sample</title>' + \
-    '<description>This is a test</description>' + \
-    '<creators>DS</creators>' + \
-    '<creators_email>stas@gmail.com</creators_email>' + \
-    '<contact_email>stas@gmail.com</contact_email>' + \
-    '<files>/lustre/atlas2/stf008/world-shared/d3s/doi_input</files>' + \
-    '<resources></resources>' + \
-    '<keywords>test</keywords>' + \
-    '<language>English</language>' + \
-    '<sponsor_org>ORNL</sponsor_org>' + \
-    '</record>' + \
-    '</records>'
-    
-    
-    #payload_string = json.dumps(payload,sort_keys=False,indent=2)
-    
-    doidatamsg.metadata = m_doi_metadata#payload_string
-    
-    
-    msg = MsgSchema_pb2.DOICmd_Create()
-    msg.user_oid = user_oid
-    msg.header.token = 133121
-    msg.doi_data.CopyFrom(doidatamsg)
-      
-    print '\n\nmsg\n' + str(msg)
-    
-    #submit to the 
-    api.send( msg )
-    reply_type, reply = api.recv( 10000 )
-    
-    if reply_type > 0:
-          #print 'there is a reply for file command list'
-          classname = api.getMessageTypeName( reply_type )
-          print 'doi put resylt classname: ' + str(classname)
-          print 'header: \n' + str((reply.header))
-          print 'doi put reply: \n' + str((reply))
-       
-    
-    
-    
-    print '\n\nend doiPut...\n\n'
-'''      
-      

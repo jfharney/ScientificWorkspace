@@ -85,6 +85,7 @@ $(function() {
 	
     $('#submit_doi_request').click(function() {
 
+    	alert('submitting...');
         var data = {}
 
         // Scrape data from UI, place in object
@@ -114,19 +115,29 @@ $(function() {
         var payload = JSON.stringify( data );
 
         console.log('payload: ' + payload + '\n\n');
+        //SW.current_user_name
+        username = $('#creator_uname').html();
+        var url = "http://" + SW.hostname + ":" + SW.port + "/constellation/doiPut/" + username + '/';
+
+        //alert('url: ' + url);
         
         jQuery.ajax({
-            url: 'http://' + SW.hostname + ':' + SW.port + '/doi_submit',
-            type: 'POST',
+            //url: 'http://' + SW.hostname + ':' + SW.port + '/doi_submit',
+            url: url,
+        	type: 'POST',
             data: data,
-            dataType: "json",
+            //contentType: 'application/json; charset=utf-8',
+            //dataType: "json",
             success: function(data) {
                 alert("DOI submission succeeded. An email has been sent to "+contact_email+" concerning this DOI.");
+                alert('data: ' + data);
             },
-            error: function() {
+            error: function(request, status, error) {
                 alert("DOI submission failed.");
+                alert('request.responseText: ' + request.responseText);
             }
         });
+        
     });
 	
 	

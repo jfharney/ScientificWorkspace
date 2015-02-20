@@ -1,6 +1,8 @@
 
 from msgschema import MsgSchema_pb2, Connection
 
+from common import utils
+
 def AppCmd_GetByJobWrapper(api,job_id,header_token):
     
     #obtain message object and bind the group oid and header token
@@ -11,5 +13,4 @@ def AppCmd_GetByJobWrapper(api,job_id,header_token):
     #submit to the 
     api.send( msg )
     
-    #reply_type, reply = api.recv( 10000 )
-    return api.recv( 10000 )
+    return api.recv( utils.messaging_timeout )

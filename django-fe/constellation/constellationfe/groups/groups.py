@@ -13,6 +13,8 @@ from msgschema import MsgSchema_pb2, Connection
 import services
 import transform
 
+tcp_connection = utils.tcp_connection
+
 def useGetGroupZmq(request,group_id):
     
   print 'in use get groupZmq'
@@ -21,10 +23,10 @@ def useGetGroupZmq(request,group_id):
   group_oid = utils.getOidFromGroupId(group_id)
      
   #bind to the socket
-  api = Connection.cdsapi('tcp://techint-b117:5555')
+  api = Connection.cdsapi(utils.tcp_connection)
   
   
-  header_token = 5
+  header_token = int(utils.GROUPS_UserCmd_GetByGroup_TOKEN)
   reply_type, reply = services.UserCmd_GetByGroupWrapper(api,group_oid,header_token)
 
 
@@ -111,9 +113,9 @@ def useGetGroupInfoZmq(request,user_id):
   
   user_oid = utils.getOidFromUserId(user_id)
      
-  api = Connection.cdsapi('tcp://techint-b117:5555')
+  api = Connection.cdsapi(tcp_connection)
   
-  header_token = 5
+  header_token = int(utils.GROUPS_GroupCmd_GetByUser_TOKEN)
   
   reply_type, reply = services.GroupCmd_GetByUserWrapper(api,user_oid,header_token)
   

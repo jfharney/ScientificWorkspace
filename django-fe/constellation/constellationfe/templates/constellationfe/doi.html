@@ -51,11 +51,12 @@
 
 <body>
 
-	<div id="creator_nid" >Creator NID: {{ creator_nid }} </div>
-	<div id="creator_uid">Creator UID: {{ creator_uid }} </div>
-	<div id="creator_uname">Creator Username: {{ creator_uname }} </div>
-	<div id="creator_name" >Creator Name: {{ creator_name }} </div>
-	<div id="creator_email">Creator Email: {{ creator_email }} </div>
+	<div>Creator NID: <span id="creator_nid">{{ creator_nid }}</span></div>
+	<div>Creator UID: <span id="creator_uid">{{ creator_uid }}</span></div>
+	<div>Creator Username: <span id="creator_uname">{{ creator_uname }}</span></div>
+	<div>Creator Name: <span id="creator_name">{{ creator_name }}</span></div>
+	<div>Creator Email: <span id="creator_email">{{ creator_email }}</span></div>
+	
 	<!-- style="display:none" -->
 	{# <div>hello</div> #}
 	{% if personNames %}
@@ -336,8 +337,10 @@
 	
 	
 	
-
-
+	<script src="{% static 'doi/js/main.js' %}"></script>
+	<!--  
+	<script src="{% static '/doi/js/ajax/doi.js' %}"></script>
+ 	-->
 
 
 

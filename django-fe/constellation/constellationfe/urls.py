@@ -22,20 +22,25 @@ urlpatterns = patterns('',
     url(r'^filesOID/(?P<user_id>\w+)/$',views.filesOID,name='filesOID'),
     
     
-    url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
+    #url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
+    
     url(r'^doiPut/(?P<user_id>\w+)/$',views.doiPut,name='doiPut'),
     url(r'^doiGet/(?P<user_id>\w+)/$',views.doiGet,name='doiGet'),
     
     
     url(r'^tags/links/(?P<tag_id>\w+)/$',views.taglinks,name='taglinks'),
     url(r'^tags/$',views.tags,name='tags'),
+    
+    #creates a new tag
     url(r'^tagproxy/(?P<user_id>\w+)/$',views.tagproxy,name='tagproxy'),
+    
+    #creates assocations with a new tag
     url(r'^associationproxy/(?P<user_id>\w+)/$',views.associationproxy,name='associationproxy'),
       
       
       
       
-    url(r'^testWrapper/$',views.testWrapper,name='testWrapper'),
+    #url(r'^testWrapper/$',views.testWrapper,name='testWrapper'),
       
       
       
