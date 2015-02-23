@@ -11,7 +11,7 @@ def GroupCmd_GetByUserWrapper(api,user_oid,header_token):
   #Send request (asynchronous, will fail if required fields are missing)
   api.send( msg )
   
-  return api.recv( utils.messaging_timeout )
+  return api.recv( int(utils.messaging_timeout) )
 
 def UserCmd_GetByGroupWrapper(api,group_oid,header_token):
   print 'UserCmd_GetByGroupWrapper'
@@ -26,4 +26,4 @@ def UserCmd_GetByGroupWrapper(api,group_oid,header_token):
 
   #Get a reply (wait up to 10 seconds)
     
-  return api.recv( utils.messaging_timeout )
+  return api.recv( int(utils.messaging_timeout) )

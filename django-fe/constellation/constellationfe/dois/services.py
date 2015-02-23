@@ -1,21 +1,32 @@
 from msgschema import MsgSchema_pb2, Connection
 
 import transform
+
+from common import utils
     
 def DOICmd_GetByUserWrapper(api,user_oid,include_meta,include_links,header_token):
     
     
     msg = MsgSchema_pb2.DOICmd_GetByUser()
+    
+    
+    if include_links == False:
+        header_token = 222
+    else:
+        header_token = 333
+    
+    
     msg.user_oid = user_oid
     msg.header.token = header_token
     msg.inc_meta = include_meta
     msg.inc_links = include_links
     
+    print 'printoing msg: ' + str(msg)
         
     #submit to the 
     api.send( msg )
     
-    return api.recv( utils.messaging_timeout )
+    return api.recv( int(utils.messaging_timeout) )
     
     
 def DOICmd_CreateWrapper(api,user_oid,linked_oids,metadata,header_token):
@@ -52,7 +63,7 @@ def DOICmd_CreateWrapper(api,user_oid,linked_oids,metadata,header_token):
     #submit to the 
     api.send( msg )
     
-    return api.recv( utils.messaging_timeout )
+    return api.recv( int(utils.messaging_timeout) )
 
 
 

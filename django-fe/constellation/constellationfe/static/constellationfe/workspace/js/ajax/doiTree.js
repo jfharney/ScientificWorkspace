@@ -130,20 +130,24 @@ function buildDoiTree(children) {
     children: children,
     onSelect: function(select, node) {},
     onClick: function(node, event) {
+    	/*
       if(node.data.title == '<span style="color:blue;cursor:pointer">Download</span>'){
         var win = window.open('https://doi1.ccs.ornl.gov/doi/download?doi='+node.data.doiName, '_blank');
         win.focus();
       }
-
+	*/
       //console.log('node.data.doiName is '+node.data.doiName);
       //for(key in node.data) console.log(key+': '+node.data[key]);
     },
     onLazyRead: function(node) {
       if(node.data.title == 'Metadata') {
-        var doiName = node.data.doiName;
+
+          var doiName = node.data.doiName;
+          var doi_oid = node.data.doi_oid;
         console.log('doiName is '+doiName);
+        console.log('doi_oid is '+doi_oid);
         node.appendAjax({
-          url: 'http://' + SW.hostname + ':' + SW.port + '/doi_meta?doiName='+doiName
+          url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/doi_meta/' +SW.current_user_uname + '?doiName='+doiName+'&doi_oid='+doi_oid
         });
       }
       else if(node.data.title == 'Linked Objects') {

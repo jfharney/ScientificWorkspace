@@ -9,7 +9,7 @@ from msgschema import MsgSchema_pb2, Connection
 from common import utils
 
 import sys
-sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
+sys.path.append(utils.path_append)
 
 tcp_connection = utils.tcp_connection
 
@@ -396,7 +396,7 @@ def getTagLinks(tag_oid):
   msg.header.token = 8884
       
   api.send( msg )
-  reply_type, reply = api.recv( utils.messaging_timeout )
+  reply_type, reply = api.recv( int(utils.messaging_timeout) )
   
   return reply
 '''  
@@ -410,7 +410,7 @@ def getTagLinks(tag_oid):
         print 'taglinks msg.header.token input: ' + str(msg.header.token)  
         
     api.send( msg )
-    reply_type, reply = api.recv( utils.messaging_timeout )
+    reply_type, reply = api.recv( int(utils.messaging_timeout) )
       
     #print '\n\nDir Reply_type: ' + str(dir(reply_type)) + '\n'
     #print '\nDir Reply: ' + str(dir(reply)) + '\n'
@@ -453,6 +453,6 @@ def getTagLinks(tag_oid):
             print 'user_oid: ' + str(user_oid)
         
         api.send( msg )
-        reply_type, reply = api.recv( utils.messaging_timeout )
+        reply_type, reply = api.recv( int(utils.messaging_timeout) )
 '''
             

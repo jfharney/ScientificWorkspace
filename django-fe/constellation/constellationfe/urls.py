@@ -8,6 +8,11 @@ urlpatterns = patterns('',
     url(r'^workspace/(?P<user_id>\w+)/$',views.workspace,name='workspace'),
     url(r'^doi/(?P<user_id>\w+)/$',views.doi,name='doi'),
     
+    #dois API
+    #url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
+    url(r'^doiPut/(?P<user_id>\w+)/$',views.doiPut,name='doiPut'),
+    url(r'^doiGet/(?P<user_id>\w+)/$',views.doiGet,name='doiGet'),
+    url(r'^doi_meta/(?P<user_id>\w+)/$',views.doi_meta,name='doi_meta'),
     
     #collaborators API
     url(r'^groupinfo/(?P<user_id>\w+)/$',views.groupinfo,name='groupinfo'),
@@ -21,21 +26,17 @@ urlpatterns = patterns('',
     url(r'^files/(?P<user_id>\w+)/$',views.files,name='files'),
     url(r'^filesOID/(?P<user_id>\w+)/$',views.filesOID,name='filesOID'),
     
+    #creates assocations with a new tag
+    url(r'^associationproxy/(?P<user_id>\w+)/$',views.associationproxy,name='associationproxy'),
     
-    #url(r'^dois/(?P<user_id>\w+)/$',views.dois,name='dois'),
-    
-    url(r'^doiPut/(?P<user_id>\w+)/$',views.doiPut,name='doiPut'),
-    url(r'^doiGet/(?P<user_id>\w+)/$',views.doiGet,name='doiGet'),
+    #creates a new tag
+    url(r'^tagproxy/(?P<user_id>\w+)/$',views.tagproxy,name='tagproxy'),
     
     
     url(r'^tags/links/(?P<tag_id>\w+)/$',views.taglinks,name='taglinks'),
     url(r'^tags/$',views.tags,name='tags'),
     
-    #creates a new tag
-    url(r'^tagproxy/(?P<user_id>\w+)/$',views.tagproxy,name='tagproxy'),
     
-    #creates assocations with a new tag
-    url(r'^associationproxy/(?P<user_id>\w+)/$',views.associationproxy,name='associationproxy'),
       
       
       

@@ -6,7 +6,7 @@ import urllib2
 from common import utils
 
 import sys
-sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
+sys.path.append(utils.path_append)
 
 
 from msgschema import MsgSchema_pb2, Connection
@@ -26,14 +26,35 @@ def doGetDoiZmq(request,user_id):
     include_meta = False
     include_links = True
      
+    msg = MsgSchema_pb2.DOICmd_GetByUser()
     
-    reply_type, reply = services.DOICmd_GetByUserWrapper(api,user_oid,header_token,include_meta,include_links)
+    
+    if include_links == False:
+        header_token = 222
+    else:
+        header_token = 333
+    
+    
+    msg.user_oid = user_oid
+    msg.header.token = header_token
+    msg.inc_meta = include_meta
+    msg.inc_links = include_links 
+     
+    print 'printoing msg: ' + str(msg)
+        
+    #submit to the 
+    api.send( msg )
+    
+    #return api.recv( int(utils.messaging_timeout) )
+    reply_type, reply = api.recv( int(utils.messaging_timeout) )
+    
+    #reply_type, reply = services.DOICmd_GetByUserWrapper(api,user_oid,include_meta,include_links,header_token)
     
     if reply_type > 0:
           #print 'there is a reply for file command list'
           classname = api.getMessageTypeName( reply_type )
           print 'doi get result classname: ' + str(classname)
-          #print 'dirr... reply: ' + str((reply))
+          print 'dirr... reply: ' + str((reply))
     
           #convert to string here
           res = transform.convertReplyToString(reply,user_oid)

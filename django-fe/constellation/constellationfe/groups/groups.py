@@ -6,7 +6,7 @@ import urllib2
 from common import utils
 
 import sys
-sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
+sys.path.append(utils.path_append)
 
 from msgschema import MsgSchema_pb2, Connection
 

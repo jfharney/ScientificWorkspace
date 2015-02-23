@@ -25,6 +25,10 @@ config.read('constellationconfig.cfg')
     
 tcp_connection = str(config.get("options", "tcp_connection"))
 messaging_timeout = str(config.get("options", "messaging_timeout"))
+workspace_page = str(config.get("options", "workspace_page"))
+doi_page = str(config.get("options", "doi_page"))
+path_append = str(config.get("options", "path_append"))
+
 
 TAG_OID = str(config.get("request_parameters", "TAG_OID"))
 TAG_RESOURCE_OID = str(config.get("request_parameters", "TAG_RESOURCE_OID"))
@@ -93,7 +97,7 @@ def getOidFromUserIdRandHeader(user_id,randNum,usersMap):
     
         api.send( msg )
         
-        reply_type, reply = api.recv( messaging_timeout )
+        reply_type, reply = api.recv( int(messaging_timeout) )
         
         user_oid = ''  
       
@@ -146,7 +150,7 @@ def getOidFromUserId(user_id):
     
     api.send( msg )
     
-    reply_type, reply = api.recv( messaging_timeout )
+    reply_type, reply = api.recv( int(messaging_timeout) )
     
     user_oid = ''  
   
@@ -202,7 +206,7 @@ def getOidFromGroupId(group_id):
     
     api.send( msg )
     
-    reply_type, reply = api.recv( messaging_timeout )
+    reply_type, reply = api.recv( int(messaging_timeout) )
     
     if reply_type > 0:
         classname = api.getMessageTypeName( reply_type )
@@ -245,7 +249,7 @@ def getOidFromJobId(job_id):
     
     api.send( msg )
     
-    reply_type, reply = api.recv( messaging_timeout )
+    reply_type, reply = api.recv( int(messaging_timeout) )
     
     user_oid = ''  
   
@@ -281,7 +285,7 @@ def getFileSysList():
     
     api.send( msg )
     
-    reply_type, reply = api.recv( messaging_timeout )
+    reply_type, reply = api.recv( int(messaging_timeout) )
     
     filesys_oids = []
     filesys_names = []

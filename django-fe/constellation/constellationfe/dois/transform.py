@@ -1,14 +1,15 @@
 import json
 
-tcp_connection = 'tcp://techint-b117:5555'
 
 from msgschema import MsgSchema_pb2, Connection
 
 from common import utils
 
+tcp_connection = utils.tcp_connection
+
 def trasnformMetadataToXML(metadata):
     
-    print 'str: ' + str(metadata)
+    #print 'str: ' + str(metadata)
     content = metadata.POST
     
     description = None
@@ -85,13 +86,13 @@ def trasnformMetadataToXML(metadata):
 def convertReplyToString(reply,user_oid):
     
     res = '[' + '\n'
-
+    #print 'len: ' + str(len(reply.dois))
     counter = 0    
     for i in range(0,(len(reply.dois))):
         
         #print 'reply doi ' + str(i)
-        #print str(reply.dois[i])
-        
+        #print str(reply.dois[i].number + ' isMetadata? ' + str(reply.dois[i].metadata))
+        #print str('reply:\n\n\n ' + str(reply.dois[i]) + '\n\n\n')
         
         tempres = '{' + '\n'
             #title: 'DOI_Two',    isFolder: true,    isLazy: false,    doiId: '10-86X-234151235532',    tooltip: 'This is DOI Two.',     children: [
@@ -106,16 +107,29 @@ def convertReplyToString(reply,user_oid):
         
         #metadata
         
-        metadata = reply.dois[i].metadata
-        d = json.loads(metadata)
-        metadata_properties = d[0]
+        
         
         tempres += '{' + '\n'
         tempres +=   '"title" : "Metadata", ' + '\n'
+        tempres +=   '"doiName" : "' + reply.dois[i].number  + '", ' + '\n'
+        tempres +=   '"doi_oid" : "' + str(reply.dois[i].oid)  + '", ' + '\n'
         tempres +=   '"isFolder" : "true", ' + '\n'
-        tempres +=   '"children" : [' + '\n'
-        tempres += getMetadataChildren(metadata_properties)
-        tempres +=   ']' + '\n'
+        
+        
+        if not reply.dois[i].metadata:
+            tempres += '"isLazy" : "true"'
+            #tempres +=   '"children" : [' + '\n'
+            #tempres += '{}'
+            #tempres +=   ']' + '\n'
+        else:
+            metadata = reply.dois[i].metadata
+            print 'metadata: ' + str(metadata)
+            d = json.loads(metadata)
+            metadata_properties = d[0]
+            tempres +=   '"children" : [' + '\n'
+            tempres += getMetadataChildren(metadata_properties)
+            tempres +=   ']' + '\n'
+        
         tempres += '} ,' + '\n'
         
         #linked objects
@@ -192,7 +206,7 @@ def getLinkedChildren(linked_objs,user_oid):
     #submit to the 
     api.send( msg )
         
-    reply_type, reply = api.recv( utils.messaging_timeout )
+    reply_type, reply = api.recv( int(utils.messaging_timeout) )
     
     numRecords = 0
     

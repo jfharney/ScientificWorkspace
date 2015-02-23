@@ -18,13 +18,13 @@ import urllib
 serviceHost = 'techint-b117.ornl.gov';
 servicePort = '8080';
 
-tcp_connection = 'tcp://techint-b117:5555'
+tcp_connection = utils.tcp_connection
 
 celeryFlag = False
 import time
 
 import sys
-sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
+sys.path.append(utils.path_append)
 
 
 from msgschema import MsgSchema_pb2, Connection
@@ -46,6 +46,8 @@ def index(request):
     return HttpResponse(template.render(context))
 
 
+#Mapped from url(r'^workspace/(?P<user_id>\w+)/$',views.workspace,name='workspace'),
+#Example url 
 def workspace(request,user_id):
 
     
@@ -87,6 +89,8 @@ def workspace(request,user_id):
     
     return HttpResponse(template.render(context))
 
+#Mapped from url(r'^doi/(?P<user_id>\w+)/$',views.doi,name='doi'),
+#Example url
 def doi(request,user_id):
     
     print 'in doi for user_id: ' + user_id
@@ -137,26 +141,20 @@ def doi(request,user_id):
 #####
 
 #---------------DOI information-----------------
-
+#url(r'^doiPut/(?P<user_id>\w+)/$',views.doiPut,name='doiPut'),
 def doiPut(request,user_id):
-    
-    print '\n\ndoiPut...\n\n'
     
     from msgschema import MsgSchema_pb2, Connection
 
-
-
     from dois import dois
   
-    
     res = dois.doPutDoiZmq(request,user_id)
-    
-    
     
     #send response to DOI page?
     return HttpResponse(res)
 
 
+#url(r'^doiGet/(?P<user_id>\w+)/$',views.doiGet,name='doiGet'),
 def doiGet(request,user_id):
     from msgschema import MsgSchema_pb2, Connection
 
@@ -167,13 +165,157 @@ def doiGet(request,user_id):
     return HttpResponse(res)
 
 
+#url(r'^doi_meta/$',views.doi_meta,name='doi_meta'),
+def doi_meta(request,user_id):
+    
+    from dois import dois,services,transform
+    
+    print 'tcp_connection: ' + tcp_connection
+    #bind to the socket
+    api = Connection.cdsapi(str(tcp_connection))
+    
+    
+    doi_oid = request.GET.get('doi_oid')
+    print 'doi_oid<><><><><>: ' + doi_oid
+    
+    user_oid = utils.getOidFromUserId(user_id)   
+    header_token = int(utils.DOIS_DOICmd_GetByUser_TOKEN)
+    print 'header_token: ' + str(header_token)
+    include_meta = True
+    include_links = True
+     
+    msg = MsgSchema_pb2.DOICmd_GetByUser()
+    
+    
+    if include_links == False:
+        header_token = 222
+    else:
+        header_token = 333
+    
+    
+    msg.user_oid = user_oid
+    msg.header.token = header_token
+    msg.inc_meta = include_meta
+    msg.inc_links = include_links
+    
+    print 'printoing msg: ' + str(msg)
+        
+    #submit to the 
+    api.send( msg )
+    
+    reply_type, reply = api.recv( int(utils.messaging_timeout) )
+    
+    
+    print 'reply header: ' + str(reply.header)
+    
+    
+    #reply_type, reply = services.DOICmd_GetByUserWrapper(api,user_oid,include_meta,include_links,header_token)
+    for i in range(0,(len(reply.dois))):
+        print 'doi_oid: ' + str(doi_oid) + ' ' + str(reply.dois[i].oid)
+        if str(reply.dois[i].number) == str(doi_oid):
+            print 'here' 
+        else:
+            print 'not here'
+            
+    
+    '''
+    metadata = reply.dois[i].metadata
+            print 'metadata: ' + str(metadata)
+            d = json.loads(metadata)
+            metadata_properties = d[0]
+            tempres +=   '"children" : [' + '\n'
+            tempres += getMetadataChildren(metadata_properties)
+            tempres +=   ']' + '\n'
+    '''
+    
+    res = '['
+    
+ 
+    res += '{' 
+    res += '"title" : "' + 'title' + '", '
+    res += '"type" : ' + '2, '
+    res += '"appid" : "' + 'appid' + '", '
+    res += '"job_id" : "' + 'job_id' + '", '
+    res += '"nid" : "' + 'nid' + '"'
+    res += '}'
+
+    
+  
+    res += ']'  
+    
+    print 'result: ' + str(res)
+    return HttpResponse(res)
+
+'''
+app.get('/doi_meta', function(request, response) {
+  console.log('A /doi_meta request has been received.');
+
+  var path = '/doi/json?doi='+request.query['doiName'];
+
+  console.log('path is '+path);
+
+  var options = {
+    host: 'doi1.ccs.ornl.gov',
+      port: 443,                    // This is an https URL, so I am using port 443. 
+      path: path,
+    rejectUnauthorized: false,
+      method: 'GET'
+  };
+
+  var req = https.request(options, function(resp) {
+      var responseData = '';
+    resp.on('data', function(chunk) {
+      responseData += chunk;  
+    });
+        
+    resp.on('end', function() {
+        console.log(responseData);
+      var jsonObj = JSON.parse(responseData);
+      
+      var respObj = [
+        {    
+          title: '<span style="position:relative">DOI ID: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['doi']+'</span></span>', 
+          isFolder: false
+        },
+        {    
+          title: '<span style="position:relative">Language: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['language']+'</span></span>', 
+          isFolder: false
+        },
+        {    
+          title: '<span style="position:relative">Sponsor Org: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['sponsor_org']+'</span></span>', 
+          isFolder: false
+        },
+        {    
+          title: '<span style="position:relative">Keywords: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['keywords']+'</span></span>', 
+          isFolder: false
+        },
+        {    
+          title: '<span style="position:relative">Description: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['description']+'</span></span>', 
+          isFolder: false
+        }
+      ];
+
+      response.send(respObj);
+    });
+
+    resp.on('error', function(e) {
+      response.send('error: ' + e);
+    });
+  });
+
+  req.end();
+
+});
+'''
+
+
+
+
 
 #---------------User information-----------------
 
-
-
 #---------------Group information-----------------
-  
+#url(r'^groupinfo/(?P<user_id>\w+)/$',views.groupinfo,name='groupinfo'),
 def groupinfo(request,user_id): 
     
   from groups import groups
@@ -183,23 +325,20 @@ def groupinfo(request,user_id):
   return HttpResponse(json.dumps(respArr))
   
   
-  
+#url(r'^groups/(?P<group_id>\w+)/$',views.groups,name='groups'),  
 def groups(request,group_id):
   
   from groups import groups#useGetGroupHttp, useGetGroupZmq
   
   respArr = groups.useGetGroupZmq(request,group_id)
   
-  #print 'groups respArr: ' + respArr
   return HttpResponse(respArr)
-  return HttpResponse(json.dumps(respArr))
   
 
   
   
 #---------------Job information-----------------
-  
-  
+#url(r'^jobsproxy/(?P<user_id>\w+)/$',views.jobsproxy,name='jobsproxy'),  
 def jobsproxy(request,user_id):
     
     from jobs import jobs#useGetJobHttp, useGetJobZmq
@@ -218,7 +357,7 @@ def jobsproxy(request,user_id):
     
     
 #---------------App information-----------------
-    
+#url(r'^appsproxy/$',views.appsproxy,name='appsproxy'),
 def appsproxy(request):
     
     job_id = request.GET.get(utils.JOB_ID)
@@ -241,16 +380,7 @@ def appsproxy(request):
     
 #---------------File information-----------------
 
-def filesOID(request,user_id): 
-
-    from files import files
-    
-    res = files.useGetFileZmqByOID(request,user_id)
-    
-    return HttpResponse(res)
-
-
-#
+#url(r'^files/(?P<user_id>\w+)/$',views.files,name='files'),
 def files(request,user_id): 
   
     from files import files #useGetFileHttp, useGetFileZmq
@@ -269,12 +399,26 @@ def files(request,user_id):
       return HttpResponse(res)
 
 
+#url(r'^filesOID/(?P<user_id>\w+)/$',views.filesOID,name='filesOID'),
+def filesOID(request,user_id): 
+
+    from files import files
+    
+    res = files.useGetFileZmqByOID(request,user_id)
+    
+    return HttpResponse(res)
+
+
+
+
 
 #---------------Tag information-----------------
 '''
 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/associationproxy/' + SW.current_user_number + '/';
              association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_group_nids[i] + '&type=' + 'group';
-'''             
+'''  
+#creates assocations with a new tag
+#url(r'^associationproxy/(?P<user_id>\w+)/$',views.associationproxy,name='associationproxy'),
 def associationproxy(request,user_id):
     
     if utils.tagFlag:
@@ -313,7 +457,7 @@ def tagproxy(request,user_id):
     return HttpResponse(data_string)
 
 
-
+#url(r'^tags/$',views.tags,name='tags'),   
 def tags(request):
     
     from tags import tags#useGetTagHttp, useGetTagZmq
@@ -333,9 +477,6 @@ def tags(request):
   
     else:  
         
-      
-      
-      
       res = tags.useGetTagZmq(request,user_id)
       
       data_string = json.dumps(res,sort_keys=False,indent=2)
@@ -353,11 +494,10 @@ def tags(request):
       return HttpResponse(data_string)
       
       
-      
-
+#url(r'^tags/links/(?P<tag_id>\w+)/$',views.taglinks,name='taglinks'),      
 def taglinks(request,tag_id):
     
-    from tags import tags#useGetTagHttp, useGetTagZmq, useGetTagDefault, useGetTagLinkZmq
+    from tags import tags
     
     if testFlag:
     
@@ -375,6 +515,12 @@ def taglinks(request,tag_id):
       data_string = json.dumps(res,sort_keys=False,indent=2)
     
       return HttpResponse(data_string)
+ 
+ 
+ 
+ 
+ 
+ 
   
 
 
@@ -451,7 +597,7 @@ def dois(request,user_id):
       msg.user_oid = user_oid  
         
       api.send( msg )
-      reply_type, reply = api.recv( utils.messaging_timeout )
+      reply_type, reply = api.recv( int(utils.messaging_timeout) )
     
       res = []
       
