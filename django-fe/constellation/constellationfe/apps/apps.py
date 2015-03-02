@@ -74,7 +74,7 @@ def useGetAppZmq(request,job_id):
     else:
         print 'there is no reply'
     
-    
+    print 'app_oids: ' + str(app_oids) + ' appnames: ' + str(app_names)
     res = transform.convertJobMsgToJSONString(app_names,app_oids,job_id)
     
     if utils.appFlag:

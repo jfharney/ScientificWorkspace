@@ -20,8 +20,8 @@ import struct
 class cdsapi:
     # Initialize CDS API instance
     def __init__(self, a_address ):
-        print 'initializing cdsapi'
-        print 'a_address: ' + a_address + ' len: ' + str(len(a_address))
+        #print 'initializing cdsapi'
+        #print 'a_address: ' + a_address + ' len: ' + str(len(a_address))
         # Must build a message type (integer) to descriptor table for
         # automatic message creation/parsing on receive
 
@@ -77,7 +77,7 @@ class cdsapi:
     # Sends a protobuf message (may throw zeromq/protobuf exceptions)
     def send( self, a_message ):
         # Find msg type by descriptor look-up
-        print 'a_message.DESCRIPTOR: ' + str(a_message.DESCRIPTOR)
+        #print 'a_message.DESCRIPTOR: ' + str(a_message.DESCRIPTOR)
         msg_type = self._msg_type_by_desc[a_message.DESCRIPTOR]
         # Serialize
         data = a_message.SerializeToString()

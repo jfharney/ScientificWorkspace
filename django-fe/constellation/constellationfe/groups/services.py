@@ -3,7 +3,7 @@ from common import utils
 
 def GroupCmd_GetByUserWrapper(api,user_oid,header_token):
     
-  print 'GroupCmd_GetByUserWrapper'
+  #print 'GroupCmd_GetByUserWrapper'
   msg = MsgSchema_pb2.GroupCmd_GetByUser()
   msg.header.token = header_token
   msg.user_oid = user_oid
@@ -14,7 +14,7 @@ def GroupCmd_GetByUserWrapper(api,user_oid,header_token):
   return api.recv( int(utils.messaging_timeout) )
 
 def UserCmd_GetByGroupWrapper(api,group_oid,header_token):
-  print 'UserCmd_GetByGroupWrapper'
+  #print 'UserCmd_GetByGroupWrapper'
     
   #obtain message object and bind the group oid and header token
   msg = MsgSchema_pb2.UserCmd_GetByGroup()

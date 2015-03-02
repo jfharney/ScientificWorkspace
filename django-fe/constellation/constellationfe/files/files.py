@@ -49,7 +49,7 @@ def useGetFileZmqByOID(request,user_id):
 
 def useGetFileZmq(request,user_id):
     
-    print 'user_id?????: ' + user_id
+    #print 'user_id?????: ' + user_id
     
     path = request.GET.get(utils.FILE_PATH)
     
@@ -67,7 +67,7 @@ def useGetFileZmq(request,user_id):
     if utils.fileFlag:
         print 'fsys_oid: ' + str(filesys_oids[0])
     
-    print 'getting user oid'
+    #print 'getting user oid'
     #get the user oid
     user_oid = utils.getOidFromUserId(user_id)
     
@@ -204,7 +204,7 @@ def getFileOidsPath(header_token,fsys_oid,path,user_oid):
     
     api = Connection.cdsapi(tcp_connection)
     
-    print 'user_oid>>>: ' + str(user_oid)
+    #print 'user_oid>>>: ' + str(user_oid)
     
     reply_type, reply = services.FileCmd_GetByPathWrapper(api,fsys_oid,path,user_oid,header_token)
     

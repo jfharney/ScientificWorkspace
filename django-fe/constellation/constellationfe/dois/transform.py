@@ -23,7 +23,7 @@ def trasnformMetadataToXML(metadata):
     sponsor_org = None
     
     for key in content:
-        print 'key: ' + key
+        print 'key: ' + key + ' value: ' + content[key]
         if key == 'title':
             title = content[key] 
         elif key == 'description':
@@ -54,7 +54,7 @@ def trasnformMetadataToXML(metadata):
     if contact_email == None:
         contact_email = 'stas@gmail.com'
     if files == None:
-        files = '<files>/lustre/atlas2/stf008/world-shared/d3s/doi_input</files>'
+        files = '/lustre/atlas2/stf008/world-shared/d3s/doi_input'
     if resources == None:
         resources = ''
     if keywords == None:
@@ -84,6 +84,7 @@ def trasnformMetadataToXML(metadata):
 
 
 def convertReplyToString(reply,user_oid):
+    import time
     
     res = '[' + '\n'
     #print 'len: ' + str(len(reply.dois))
@@ -93,6 +94,9 @@ def convertReplyToString(reply,user_oid):
         #print 'reply doi ' + str(i)
         #print str(reply.dois[i].number + ' isMetadata? ' + str(reply.dois[i].metadata))
         #print str('reply:\n\n\n ' + str(reply.dois[i]) + '\n\n\n')
+        
+        start = int(round(time.time() * 1000))
+        #print 'start>>> ' + str(start)
         
         tempres = '{' + '\n'
             #title: 'DOI_Two',    isFolder: true,    isLazy: false,    doiId: '10-86X-234151235532',    tooltip: 'This is DOI Two.',     children: [
@@ -106,9 +110,6 @@ def convertReplyToString(reply,user_oid):
         tempres += '"children" : ' + '[' + '\n'
         
         #metadata
-        
-        
-        
         tempres += '{' + '\n'
         tempres +=   '"title" : "Metadata", ' + '\n'
         tempres +=   '"doiName" : "' + reply.dois[i].number  + '", ' + '\n'
@@ -130,17 +131,27 @@ def convertReplyToString(reply,user_oid):
             tempres += getMetadataChildren(metadata_properties)
             tempres +=   ']' + '\n'
         
-        tempres += '} ,' + '\n'
+        tempres += '},' + '\n'
         
         #linked objects
         tempres += '{' + '\n'
-        tempres +=   '"title" : "Linked Objects", ' + '\n'
+        tempres +=   '"title" : "LinkedObjects", ' + '\n'
+        tempres +=   '"doiName" : "' + reply.dois[i].number  + '", ' + '\n'
+        tempres +=   '"doi_oid" : "' + str(reply.dois[i].oid)  + '", ' + '\n'
         tempres +=   '"isFolder" : "true", ' + '\n'
-        tempres +=   '"children" : ' + '[' + '\n'
-        linked_objs = reply.dois[i].linked_oid
-        #d = json.loads()
-        tempres += getLinkedChildren(linked_objs,user_oid)
-        tempres +=   ']' + '\n'
+        
+        if not reply.dois[i].linked_oid:
+            tempres += '"isLazy" : "true"'
+        else:
+            tempres +=   '"children" : ' + '[' + '\n'
+            linked_objs = reply.dois[i].linked_oid
+            #d = json.loads()
+            #linked_children_begin = int(round(time.time() * 1000))
+            tempres += getLinkedChildren(linked_objs,user_oid)
+            #linked_children_end = int(round(time.time() * 1000))
+            #print 'linked_children time: ' + str(linked_children_end-linked_children_begin)
+            tempres +=   ']' + '\n'
+        
         tempres += '}' + '\n'
         
         
@@ -148,7 +159,11 @@ def convertReplyToString(reply,user_oid):
         
         tempres += '}' + '\n'
         
-        print '------'
+        end = int(round(time.time() * 1000))
+        #print 'end>>> ' + str(end)
+        
+        print 'total time: ' + str(end-start)
+        print '------posting ' + reply.dois[i].number + '------'
         
         if i != len(reply.dois)-1:
             tempres += ','
@@ -191,97 +206,108 @@ def getMetadataChildren(metadata_properties):
 
 def getLinkedChildren(linked_objs,user_oid):
  
+    oid_test = False
+ 
     tempres = ''
     
-    api = Connection.cdsapi(tcp_connection)  
+    print 'linked_objs: ' + str(linked_objs)
     
-    msg = MsgSchema_pb2.Cmd_GetByOID()
-    msg.header.token = 3333
-    for linked_obj in linked_objs:
-        #resource_oids[i] = int(resource_oids[i])
-        #msg.object_oids[i] = resource_oids[i]
-        #print 'appending ' + str(int(linked_obj))
-        msg.oids.append(int(linked_obj))
-      
-    #submit to the 
-    api.send( msg )
+    if oid_test:
+        api = Connection.cdsapi(tcp_connection)  
         
-    reply_type, reply = api.recv( int(utils.messaging_timeout) )
-    
-    numRecords = 0
-    
-    if reply_type > 0:
-          #print 'there is a reply for file command list'
-          classname = api.getMessageTypeName( reply_type )
-          #print 'dget linked children classname: ' + str(classname)
-          if classname == 'CompoundDataMsg':
-             #print 'CompoundDataMsg'
-             #print 'reply: ' + str(reply)   
-             i = 0
-             
-             
-             #users   
-             for i in range(0,(len(reply.users))):
-                 numRecords = numRecords + 1
-                 tempres +=   '{' + '\n'
-                 tempres +=     '"title" : "' + 'user: ' + str(reply.users[i].name) + '", ' + '\n'
-                 tempres +=     '"isFolder" : false ' + '\n'
-                 tempres += '}' + '\n'    
-             
-             #groups
-             for i in range(0,(len(reply.groups))):
-                 numRecords = numRecords + 1
-                 tempres +=   '{' + '\n'
-                 tempres +=     '"title" : "' + 'group: ' + str(reply.users[i].name) + '", ' + '\n'
-                 tempres +=     '"isFolder" : false ' + '\n'
-                 tempres += '}' + '\n'    
-             
-             #jobs
-             for i in range(0,(len(reply.jobs))):
-                 numRecords = numRecords + 1
-                 tempres +=   '{' + '\n'
-                 tempres +=     '"title" : "' + 'job: ' + str(reply.jobs[i].name) + '", ' + '\n'
-                 tempres +=     '"isFolder" : false ' + '\n'
-                 tempres += '}' + '\n'  
+        msg = MsgSchema_pb2.Cmd_GetByOID()
+        msg.header.token = 3333
+        for linked_obj in linked_objs:
+            #resource_oids[i] = int(resource_oids[i])
+            #msg.object_oids[i] = resource_oids[i]
+            #print 'appending ' + str(int(linked_obj))
+            msg.oids.append(int(linked_obj))
+          
+        #submit to the 
+        api.send( msg )
             
-             #apps
-             for i in range(0,(len(reply.apps))):
-                 numRecords = numRecords + 1
-                 tempres +=   '{' + '\n'
-                 tempres +=     '"title" : "' + 'job: ' + str(reply.apps[i].name) + '", ' + '\n'
-                 tempres +=     '"isFolder" : false ' + '\n'
-                 tempres += '}' + '\n'  
-            
-             #files
-             for i in range(0,(len(reply.files))):
-                 numRecords = numRecords + 1
-                 tempres +=   '{' + '\n'
-                 tempres +=     '"title" : "' + 'file: ' + str(reply.files[i].name) + '", ' + '\n'
-                 tempres +=     '"isFolder" : false ' + '\n'
-                 tempres += '}' + '\n'
-            
-             #tags
-             for i in range(0,(len(reply.tags))):
-                 numRecords = numRecords + 1
-                 tempres +=   '{' + '\n'
-                 tempres +=     '"title" : "' + 'tag: ' + str(reply.tags[i].name) + '", ' + '\n'
-                 tempres +=     '"isFolder" : false ' + '\n'
-                 tempres += '}' + '\n'  
-            
-             #dois
-             for i in range(0,(len(reply.dois))):
-                 numRecords = numRecords + 1
-                 tempres +=   '{' + '\n'
-                 tempres +=     '"title" : "' + 'doi: ' + str(reply.dois[i].name) + '", ' + '\n'
-                 tempres +=     '"isFolder" : false ' + '\n'
-                 tempres += '}' + '\n'  
-            
-            
+        reply_type, reply = api.recv( int(utils.messaging_timeout) )
+        
+        numRecords = 0
+        
+        if reply_type > 0:
+              #print 'there is a reply for file command list'
+              classname = api.getMessageTypeName( reply_type )
+              #print 'dget linked children classname: ' + str(classname)
+              if classname == 'CompoundDataMsg':
+                 #print 'CompoundDataMsg'
+                 #print 'reply: ' + str(reply)   
+                 i = 0
+                 
+                 
+                 #users   
+                 for i in range(0,(len(reply.users))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'user: ' + str(reply.users[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'    
+                 
+                 #groups
+                 for i in range(0,(len(reply.groups))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'group: ' + str(reply.groups[i].gname) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'    
+                 
+                 #jobs
+                 for i in range(0,(len(reply.jobs))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'job: ' + str(reply.jobs[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+                 #apps
+                 for i in range(0,(len(reply.apps))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'job: ' + str(reply.apps[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+                 #files
+                 for i in range(0,(len(reply.files))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'file: ' + str(reply.files[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'
+                
+                 #tags
+                 for i in range(0,(len(reply.tags))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'tag: ' + str(reply.tags[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+                 #dois
+                 for i in range(0,(len(reply.dois))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'doi: ' + str(reply.dois[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+    else:
+       print 'in oid test'
+       numRecords = len(linked_objs)
+       for i in range(0,(len(linked_objs))):
+           tempres +=   '{' + '\n'
+           tempres +=     '"title" : "' + 'doi: ' + str(linked_objs[i]) + '", ' + '\n'
+           tempres +=     '"isFolder" : false ' + '\n'
+           tempres += '}' + '\n' 
             
     #print 'numRecords: ' + str(numRecords)
     tempres = tempres.replace('}','},',(numRecords-1))
     #print '\n\ntempres:\n' + tempres + '\n\n'
-    
     
     
     return tempres

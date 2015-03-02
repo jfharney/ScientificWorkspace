@@ -17,7 +17,7 @@ def FileCmd_GetByPathWrapper(api,fsys_oid,path,user_oid,header_token):
 
 def FileCmd_ListWrapper(api,user_oid,file_oid,header_token):
     
-  print 'FileCmd_ListWrapper'
+  #print 'FileCmd_ListWrapper'
   msg = MsgSchema_pb2.FileCmd_List()
     
   msg.header.token = header_token

@@ -17,7 +17,7 @@ tcp_connection = utils.tcp_connection
 
 def useGetGroupZmq(request,group_id):
     
-  print 'in use get groupZmq'
+  #print 'in use get groupZmq'
   
   #get the group oid from the group_id
   group_oid = utils.getOidFromGroupId(group_id)
@@ -36,7 +36,7 @@ def useGetGroupZmq(request,group_id):
   user_unames = []
 
   if reply_type > 0:
-    print 'there is a reply'
+    #print 'there is a reply'
     classname = api.getMessageTypeName( reply_type )
     if classname == 'UserDataMsg':
         for user in reply.users:
@@ -45,7 +45,7 @@ def useGetGroupZmq(request,group_id):
             user_unames.append(user.uname)
             
   else:
-    print 'there is no reply'
+    print 'there is no group service reply'
   
   
   
@@ -109,7 +109,7 @@ def useGetGroupHttp(request,group_id):
 #called upon the initial load of the page
 def useGetGroupInfoZmq(request,user_id):
 
-  print 'in use get group info Zmq'
+  #print 'in use get group info Zmq'
   
   user_oid = utils.getOidFromUserId(user_id)
      
@@ -127,11 +127,11 @@ def useGetGroupInfoZmq(request,user_id):
 
   #See if we got a reply (return value > 0)
   if reply_type > 0:
-    print 'there is a reply'
+    #print 'there is a reply'
     
     classname = api.getMessageTypeName( reply_type )
         
-    print 'message type: ', classname
+    #print 'message type: ', classname
     
     if not reply.HasField('header'):
         print 'Not a valid message instance'
@@ -162,9 +162,9 @@ def useGetGroupInfoZmq(request,user_id):
             #print '  dir(group): ' + str(dir(group))
             #for key in dir(group):
             #    print 'key: ' + key
-    elif classname == 'DOIDataMsg':
-        for doi in reply.dois:
-            print ' oid : ', doi.oid
+    #elif classname == 'DOIDataMsg':
+    #    for doi in reply.dois:
+    #        print ' oid : ', doi.oid
     else:
         print 'No print code for this message type yet'
 

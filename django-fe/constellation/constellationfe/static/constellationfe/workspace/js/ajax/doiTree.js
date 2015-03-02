@@ -140,6 +140,7 @@ function buildDoiTree(children) {
       //for(key in node.data) console.log(key+': '+node.data[key]);
     },
     onLazyRead: function(node) {
+      console.log('node.data.title: ' + node.data.title);
       if(node.data.title == 'Metadata') {
 
           var doiName = node.data.doiName;
@@ -150,7 +151,17 @@ function buildDoiTree(children) {
           url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/doi_meta/' +SW.current_user_uname + '?doiName='+doiName+'&doi_oid='+doi_oid
         });
       }
-      else if(node.data.title == 'Linked Objects') {
+      else if(node.data.title == 'LinkedObjects') {
+    	  console.log("in linked objects");
+
+          var doiName = node.data.doiName;
+          var doi_oid = node.data.doi_oid;
+          
+          console.log('doiName is '+doiName);
+          console.log('doi_oid is '+doi_oid);
+          node.appendAjax({
+              url: 'http://' + SW.hostname + ':' + SW.port + '/constellation/doi_linkedobjs/' +SW.current_user_uname + '?doiName='+doiName+'&doi_oid='+doi_oid
+          });
         //node.appendAjax({
           //url: ''
         //});

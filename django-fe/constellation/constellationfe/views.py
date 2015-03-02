@@ -165,149 +165,260 @@ def doiGet(request,user_id):
     return HttpResponse(res)
 
 
-#url(r'^doi_meta/$',views.doi_meta,name='doi_meta'),
-def doi_meta(request,user_id):
-    
+def doi_linkedobjs(request,user_id):
+
     from dois import dois,services,transform
     
-    print 'tcp_connection: ' + tcp_connection
     #bind to the socket
     api = Connection.cdsapi(str(tcp_connection))
-    
     
     doi_oid = request.GET.get('doi_oid')
     print 'doi_oid<><><><><>: ' + doi_oid
     
     user_oid = utils.getOidFromUserId(user_id)   
     header_token = int(utils.DOIS_DOICmd_GetByUser_TOKEN)
-    print 'header_token: ' + str(header_token)
-    include_meta = True
+    #print 'header_token: ' + str(header_token)
+    include_meta = False
     include_links = True
-     
-    msg = MsgSchema_pb2.DOICmd_GetByUser()
     
+    msg = MsgSchema_pb2.DOICmd_Get()
     
-    if include_links == False:
-        header_token = 222
-    else:
-        header_token = 333
-    
-    
-    msg.user_oid = user_oid
-    msg.header.token = header_token
-    msg.inc_meta = include_meta
+    msg.doi_oid = int(doi_oid)
     msg.inc_links = include_links
+    msg.inc_meta = include_meta
+    msg.header.token = header_token
     
-    print 'printoing msg: ' + str(msg)
-        
+    
     #submit to the 
     api.send( msg )
     
     reply_type, reply = api.recv( int(utils.messaging_timeout) )
     
-    
-    print 'reply header: ' + str(reply.header)
-    
-    
-    #reply_type, reply = services.DOICmd_GetByUserWrapper(api,user_oid,include_meta,include_links,header_token)
-    for i in range(0,(len(reply.dois))):
-        print 'doi_oid: ' + str(doi_oid) + ' ' + str(reply.dois[i].oid)
-        if str(reply.dois[i].number) == str(doi_oid):
-            print 'here' 
-        else:
-            print 'not here'
+    if reply_type > 0:
+        print '\n\nlen: ' + str(len(reply.dois)) + '\n\n\n'
+        
+        for i in range(0,(len(reply.dois))):
+            res = '['
+                
+            linked_objs = reply.dois[i].linked_oid
+            print 'linked_objs: ' + str(linked_objs)
+            tempres = ''
+            tempres += getLinkedChildren(linked_objs,user_oid)
             
-    
-    '''
-    metadata = reply.dois[i].metadata
-            print 'metadata: ' + str(metadata)
-            d = json.loads(metadata)
-            metadata_properties = d[0]
-            tempres +=   '"children" : [' + '\n'
-            tempres += getMetadataChildren(metadata_properties)
-            tempres +=   ']' + '\n'
-    '''
-    
-    res = '['
-    
- 
-    res += '{' 
-    res += '"title" : "' + 'title' + '", '
-    res += '"type" : ' + '2, '
-    res += '"appid" : "' + 'appid' + '", '
-    res += '"job_id" : "' + 'job_id' + '", '
-    res += '"nid" : "' + 'nid' + '"'
-    res += '}'
-
-    
-  
-    res += ']'  
-    
-    print 'result: ' + str(res)
+            res += tempres
+            res += ']'
+       
+        
+    else:
+        print 'no reply.dois'
+     
+    #print 'result: ' + str(res)
     return HttpResponse(res)
 
-'''
-app.get('/doi_meta', function(request, response) {
-  console.log('A /doi_meta request has been received.');
 
-  var path = '/doi/json?doi='+request.query['doiName'];
-
-  console.log('path is '+path);
-
-  var options = {
-    host: 'doi1.ccs.ornl.gov',
-      port: 443,                    // This is an https URL, so I am using port 443. 
-      path: path,
-    rejectUnauthorized: false,
-      method: 'GET'
-  };
-
-  var req = https.request(options, function(resp) {
-      var responseData = '';
-    resp.on('data', function(chunk) {
-      responseData += chunk;  
-    });
+def getLinkedChildren(linked_objs,user_oid):
+ 
+    oid_test = True
+ 
+    tempres = ''
+    
+    print 'linked_objs: ' + str(linked_objs)
+    
+    if oid_test:
+        api = Connection.cdsapi(tcp_connection)  
         
-    resp.on('end', function() {
-        console.log(responseData);
-      var jsonObj = JSON.parse(responseData);
-      
-      var respObj = [
-        {    
-          title: '<span style="position:relative">DOI ID: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['doi']+'</span></span>', 
-          isFolder: false
-        },
-        {    
-          title: '<span style="position:relative">Language: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['language']+'</span></span>', 
-          isFolder: false
-        },
-        {    
-          title: '<span style="position:relative">Sponsor Org: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['sponsor_org']+'</span></span>', 
-          isFolder: false
-        },
-        {    
-          title: '<span style="position:relative">Keywords: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['keywords']+'</span></span>', 
-          isFolder: false
-        },
-        {    
-          title: '<span style="position:relative">Description: <span style="position:absolute; left:100px;">'+jsonObj[0]['fields']['description']+'</span></span>', 
-          isFolder: false
-        }
-      ];
+        msg = MsgSchema_pb2.Cmd_GetByOID()
+        msg.header.token = 3333
+        for linked_obj in linked_objs:
+            #resource_oids[i] = int(resource_oids[i])
+            #msg.object_oids[i] = resource_oids[i]
+            #print 'appending ' + str(int(linked_obj))
+            msg.oids.append(int(linked_obj))
+          
+        #submit to the 
+        api.send( msg )
+            
+        reply_type, reply = api.recv( int(utils.messaging_timeout) )
+        
+        numRecords = 0
+        
+        if reply_type > 0:
+              #print 'there is a reply for file command list'
+              classname = api.getMessageTypeName( reply_type )
+              #print 'dget linked children classname: ' + str(classname)
+              if classname == 'CompoundDataMsg':
+                 #print 'CompoundDataMsg'
+                 #print 'reply: ' + str(reply)   
+                 i = 0
+                 
+                 
+                 #users   
+                 for i in range(0,(len(reply.users))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'user: ' + str(reply.users[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'    
+                 
+                 #groups
+                 for i in range(0,(len(reply.groups))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'group: ' + str(reply.groups[i].gname) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'    
+                 
+                 #jobs
+                 for i in range(0,(len(reply.jobs))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'job: ' + str(reply.jobs[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+                 #apps
+                 for i in range(0,(len(reply.apps))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'app: ' + str(reply.apps[i].aid) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+                 #files
+                 for i in range(0,(len(reply.files))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'file: ' + str(reply.files[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'
+                
+                 #tags
+                 for i in range(0,(len(reply.tags))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'tag: ' + str(reply.tags[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+                 #dois
+                 for i in range(0,(len(reply.dois))):
+                     numRecords = numRecords + 1
+                     tempres +=   '{' + '\n'
+                     tempres +=     '"title" : "' + 'doi: ' + str(reply.dois[i].name) + '", ' + '\n'
+                     tempres +=     '"isFolder" : false ' + '\n'
+                     tempres += '}' + '\n'  
+                
+    else:
+       print 'in oid test'
+       numRecords = len(linked_objs)
+       for i in range(0,(len(linked_objs))):
+           tempres +=   '{' + '\n'
+           tempres +=     '"title" : "' + 'doi: ' + str(linked_objs[i]) + '", ' + '\n'
+           tempres +=     '"isFolder" : false ' + '\n'
+           tempres += '}' + '\n' 
+            
+    #print 'numRecords: ' + str(numRecords)
+    tempres = tempres.replace('}','},',(numRecords-1))
+    #print '\n\ntempres:\n' + tempres + '\n\n'
+    
+    
+    return tempres
 
-      response.send(respObj);
-    });
 
-    resp.on('error', function(e) {
-      response.send('error: ' + e);
-    });
-  });
 
-  req.end();
 
-});
-'''
 
+#url(r'^doi_meta/$',views.doi_meta,name='doi_meta'),
+def doi_meta(request,user_id):
+    
+    from dois import dois,services,transform
+    
+    #bind to the socket
+    api = Connection.cdsapi(str(tcp_connection))
+    
+    doi_oid = request.GET.get('doi_oid')
+    print 'doi_oid<><><><><>: ' + doi_oid
+    
+    user_oid = utils.getOidFromUserId(user_id)   
+    header_token = int(utils.DOIS_DOICmd_GetByUser_TOKEN)
+    #print 'header_token: ' + str(header_token)
+    include_meta = True
+    include_links = False
+    
+    msg = MsgSchema_pb2.DOICmd_Get()
+    
+    msg.doi_oid = int(doi_oid)
+    msg.inc_links = include_links
+    msg.inc_meta = include_meta
+    msg.header.token = header_token
+    
+    #submit to the 
+    api.send( msg )
+    
+    reply_type, reply = api.recv( int(utils.messaging_timeout) )
+    
+    if reply_type > 0:
+        metadata = reply.dois[0].metadata
+        #print '\n\nlen: ' + str(len(reply.dois)) + '\n\n\n'
+        
+        for i in range(0,(len(reply.dois))):
+            #print 'doi_oid: ' + str(doi_oid) + ' ' + str(len(str(doi_oid))) + ' dois[i].oid: ' + str(reply.dois[i].oid) + ' ' + str(len(str(reply.dois[i].oid)))
+            if str(reply.dois[i].oid) == str(doi_oid):
+                #print 'here' 
+                res = '['
+                
+                metadata = reply.dois[i].metadata
+                d = json.loads(metadata)
+                metadata_properties = d[0]
+                tempres = ''
+                tempres += getMetadataChildren(metadata_properties)
+                res += tempres
+                
+                res += ']'  
+                
+                
+            else:
+                print 'the dois dont match'
+                
+        
+        
+    else:
+        print 'no reply.dois'
+     
+    #print 'result: ' + str(res)
+    return HttpResponse(res)
+
+
+
+
+
+
+def getMetadataChildren(metadata_properties):
+    
+    tempres = ''
+    for property in metadata_properties:
+            #print 'property: ' + property
+            if property == 'fields':
+                
+                #print str(len(metadata_properties['fields']))
+                counter = 0
+                for field in metadata_properties['fields']:
+                    #print '\tfield: ' + field
+        
+                    counter = counter+1
+                    tempres +=   '{' + '\n'
+                    span = '<span style="position:relative">Language: <span style="position:absolute; left:100px;">English</span></span>'
+                    tempres +=       '"title" : "' + field + ' : ' + str(metadata_properties['fields'][field]) + '" , ' + '\n'
+                    #tempres +=       '"title" : "span stuff here" , ' + '\n'
+                    tempres +=       '"isFolder" : false'  + '\n'
+                    tempres +=   '}'
+                    if counter < len(metadata_properties['fields']):
+                        tempres += ','
+                    else:
+                        tempres += '\n'
+        
+    
+    return tempres
 
 
 
@@ -413,6 +524,72 @@ def filesOID(request,user_id):
 
 
 #---------------Tag information-----------------
+
+def associationallproxy(request,user_id):
+    
+    print 'in associationallproxy'
+    
+    for key in request.POST:
+        print 'key: ' + key
+    
+    resource_oids = []
+    for nid in request.POST.getlist("resource_nid[]"):
+        #linked_oids.append(str(nid))
+        print 'nid: ' + nid
+        resource_oids.append(nid)
+    
+    
+    #bind to the socket
+    api = Connection.cdsapi(str(tcp_connection))
+    
+    tag_oid = request.GET.get(utils.TAG_OID)
+    header_token = 11143
+    
+    msg = MsgSchema_pb2.TagCmd_Attach()
+    msg.header.token = header_token
+    msg.tag_oid = int(tag_oid)
+    
+    for i in range(0,len(resource_oids)):
+        #resource_oids[i] = int(resource_oids[i])
+        #msg.object_oids[i] = resource_oids[i]
+        #print 'appending ' + str(int(resource_oids[i]))
+        msg.object_oids.append(int(resource_oids[i]))
+                
+        
+    #submit to the 
+    api.send( msg )
+    
+    reply_type, reply =  api.recv( int(utils.messaging_timeout) )
+    
+    if reply_type > 0:
+        #print 'there is a reply for file command list'
+        classname = api.getMessageTypeName( reply_type )
+        #if utils.tagFlag:
+        print '\tmessage type: ' + classname
+        print '\tTags Message output : ' + str(reply)
+    
+    
+    '''
+    tag_oid = request.GET.get(utils.TAG_OID)
+    resource_oid = request.GET.get(utils.TAG_RESOURCE_OID)
+    type = request.GET.get(utils.TAG_TYPE)
+    
+    print 'associating resource_oid>>> ' + resource_oid
+    '''
+        
+    '''
+    msg = MsgSchema_pb2.TagCmd_GetByUser()
+    msg.header.token = header_token
+    msg.user_oid = user_oid
+    
+    api.send( msg )
+    
+    return api.recv( int(utils.messaging_timeout) )
+    '''
+    
+    return HttpResponse('hello')
+
+
 '''
 var association_url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/associationproxy/' + SW.current_user_number + '/';
              association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_group_nids[i] + '&type=' + 'group';

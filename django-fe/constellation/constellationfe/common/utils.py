@@ -5,11 +5,11 @@ brokerHost = 'localhost'
 brokerPort = '5555'
 
 jobFlag = False
-appFlag = False
-userFlag = True
-groupFlag = True
+appFlag = True
+userFlag = False
+groupFlag = False
 tagFlag = False
-fileFlag = True
+fileFlag = False
 
 userFlag = False
 
@@ -175,7 +175,7 @@ def getOidFromUserId(user_id):
     
     
     #print 'end in getOidFromUserId'
-    print '\n\n\n\n\n\nuser_oid: ' + str(user_oid) + '\n\n\n\n\n'
+    #print '\n\n\n\n\n\nuser_oid: ' + str(user_oid) + '\n\n\n\n\n'
     
     return user_oid
 

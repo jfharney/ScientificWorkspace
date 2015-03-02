@@ -18,7 +18,7 @@ def TagCmd_AttachWrapper(api,tag_oid,resource_oids,header_token):
     for i in range(0,len(resource_oids)):
         #resource_oids[i] = int(resource_oids[i])
         #msg.object_oids[i] = resource_oids[i]
-        print 'appending ' + str(int(resource_oids[i]))
+        #print 'appending ' + str(int(resource_oids[i]))
         msg.object_oids.append(int(resource_oids[i]))
                 
     
@@ -32,7 +32,7 @@ def TagCmd_AttachWrapper(api,tag_oid,resource_oids,header_token):
 
 def TagCmd_GetAttachedObjectWrapper(api,tag_oid,header_token):
     
-    
+    #print 'in attached obj wrapper for ' + str(tag_oid) + '...'
     msg = MsgSchema_pb2.TagCmd_GetAttachedObject()
     msg.tag_oid = tag_oid
     msg.header.token = header_token

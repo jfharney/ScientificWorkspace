@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^doiPut/(?P<user_id>\w+)/$',views.doiPut,name='doiPut'),
     url(r'^doiGet/(?P<user_id>\w+)/$',views.doiGet,name='doiGet'),
     url(r'^doi_meta/(?P<user_id>\w+)/$',views.doi_meta,name='doi_meta'),
+    url(r'^doi_linkedobjs/(?P<user_id>\w+)/$',views.doi_linkedobjs,name='doi_linkedobjs'),
     
     #collaborators API
     url(r'^groupinfo/(?P<user_id>\w+)/$',views.groupinfo,name='groupinfo'),
@@ -28,6 +29,7 @@ urlpatterns = patterns('',
     
     #creates assocations with a new tag
     url(r'^associationproxy/(?P<user_id>\w+)/$',views.associationproxy,name='associationproxy'),
+    url(r'^associationallproxy/(?P<user_id>\w+)/$',views.associationallproxy,name='associationallproxy'),
     
     #creates a new tag
     url(r'^tagproxy/(?P<user_id>\w+)/$',views.tagproxy,name='tagproxy'),

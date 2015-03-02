@@ -18,13 +18,13 @@ tcp_connection = utils.tcp_connection
 
 def doGetDoiZmq(request,user_id):
     
-    print '-----use doiGet -----'
+    #print '-----use doiGet -----'
         
     api = Connection.cdsapi(tcp_connection)  
     user_oid = utils.getOidFromUserId(user_id)    
     header_token = int(utils.DOIS_DOICmd_GetByUser_TOKEN)
     include_meta = False
-    include_links = True
+    include_links = False
      
     msg = MsgSchema_pb2.DOICmd_GetByUser()
     
@@ -40,7 +40,7 @@ def doGetDoiZmq(request,user_id):
     msg.inc_meta = include_meta
     msg.inc_links = include_links 
      
-    print 'printoing msg: ' + str(msg)
+    #print 'printoing msg: ' + str(msg)
         
     #submit to the 
     api.send( msg )
@@ -53,8 +53,8 @@ def doGetDoiZmq(request,user_id):
     if reply_type > 0:
           #print 'there is a reply for file command list'
           classname = api.getMessageTypeName( reply_type )
-          print 'doi get result classname: ' + str(classname)
-          print 'dirr... reply: ' + str((reply))
+          #print 'doi get result classname: ' + str(classname)
+          #print 'dirr... reply: ' + str((reply))
     
           #convert to string here
           res = transform.convertReplyToString(reply,user_oid)
@@ -68,38 +68,31 @@ def doGetDoiZmq(request,user_id):
 def doPutDoiZmq(request,user_id):
     
     api = Connection.cdsapi(tcp_connection)   
-    
     user_oid = utils.getOidFromUserId(user_id)
-    
     metadata = request
     
-    print 'user_oid: ' + str(user_oid)
+    
+    #print 'user_oid: ' + str(user_oid)
+    
+    #print 'request.body: ' + str(metadata.body)
+    #for key in content:
+    #    print 'key:>>>>> ' + key + ' value>>>> ' + str(content[key])
     
     #get the linked_oids here
+    
     content = metadata.POST
     
-    print 'request.body: ' + str(metadata.body)
+    linked_oids = []
     
-    for key in content:
-        print 'key:>>>>> ' + key + ' value>>>> ' + str(content[key])
-        
-    from django.utils import simplejson
-
-    #array = simplejson.loads(request.POST['nids[]'])
-    print 'array nids: ' + str(request.POST.getlist("nids[]"))
+                                             
     
     for nid in request.POST.getlist("nids[]"):
-        print 'nid: ' + str(nid)
+        linked_oids.append(str(nid))
     
+
+    #array = simplejson.loads(request.POST['nids[]'])
+    #print 'new_linked_oids: ' + str(linked_oids)
     
-    
-    #get oids here
-    #payload: {"title":"","description":"","creator_name":"Benjamin Jamroz","creator_email":"jamroz@ucar.edu","contact_email":"jamroz@ucar.edu","resources":"","keywords":"","language":"English","sponsor_org":"Oak Ridge National Laboratory","files":"[u'/stf006']","nids":["[u'324']"],"creator_nid":"35460"}
-   
-    #linked_oids = ["374898756"]
-    linked_oids = ["580","1348","1860"]
-    linked_oids = ["580","1348","2108992"] # last one is the user oid
-    #create a doi data object
     
     
     header_token = int(utils.DOIS_DOICmd_Create_TOKEN)
@@ -111,11 +104,11 @@ def doPutDoiZmq(request,user_id):
     if reply_type > 0:
           #print 'there is a reply for file command list'
           classname = api.getMessageTypeName( reply_type )
-          print 'doi put resylt classname: ' + str(classname)
+          #print 'doi put resylt classname: ' + str(classname)
           #print 'header: \n' + str((reply.header))
-          print 'doi put reply: \n' + str((reply))
+          #print 'doi put reply: \n' + str((reply))
           doi_number = reply.dois[0].number
-       
+     
     
     
     
@@ -124,4 +117,5 @@ def doPutDoiZmq(request,user_id):
     return doi_number
 
 
-
+def convertUtoStr():
+    return ''

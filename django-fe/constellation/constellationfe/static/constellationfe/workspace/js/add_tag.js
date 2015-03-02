@@ -114,6 +114,13 @@ function createTag() {
   //first we need to check if the tag name exists
   //if it does, tell the user
   //var found = tagExists(tagName); 
+  //$('#tagModal').modal('hide');
+  
+  $('#tag_name').val('');
+  $('#tag_description').val('');
+  
+  
+  //$('.spinner').show();
   
   var found = false;
   
@@ -150,7 +157,117 @@ function createTag() {
 
 	      var tag_nid = data['nid'];
 	      
+	      //console.log('associate tag_nid' + tag_nid + ' with nids of length: ' + SW.selected_file_nids.length);
 	      
+	      
+	      
+	      //SW.selected_file_nids
+	      //SW.selected_group_nids
+	      //SW.selected_people_nids
+	      //SW.selected_job_nids
+	      //SW.selected_app_nids
+	      
+	      var all_nids = new Array()
+	      if(SW.selected_file_nids != undefined) {
+	    	  //console.log('file_nids ' + SW.selected_file_nids + ' length: ' + SW.selected_file_nids.length + ' all: ' + all_nids);
+	    	  for (var i=0;i<SW.selected_file_nids.length;i++) {
+	    		  //all_nids.append(SW.selected_file_nids[i]);
+	    		  all_nids.push(SW.selected_file_nids[i])
+	    	  }
+		      
+	      }
+	      if(SW.selected_group_nids != undefined) {
+	    	  console.log('here2');
+	    	  for (var i=0;i<SW.selected_group_nids.length;i++) {
+	    		  //all_nids.append(SW.selected_file_nids[i]);
+	    		  all_nids.push(SW.selected_group_nids[i])
+	    	  }
+	      }
+	      if(SW.selected_people_nids != undefined) {
+		      console.log('here3');
+		      for (var i=0;i<SW.selected_people_nids.length;i++) {
+	    		  //all_nids.append(SW.selected_file_nids[i]);
+	    		  all_nids.push(SW.selected_people_nids[i])
+	    	  }
+	      }
+	      if(SW.selected_job_nids != undefined) {
+	    	  console.log('here4');
+	    	  for (var i=0;i<SW.selected_job_nids.length;i++) {
+	    		  //all_nids.append(SW.selected_file_nids[i]);
+	    		  all_nids.push(SW.selected_job_nids[i])
+	    	  }
+	      }
+	      if(SW.selected_app_nids != undefined) {
+	    	  console.log('here5');
+	    	  for (var i=0;i<SW.selected_app_nids.length;i++) {
+	    		  //all_nids.append(SW.selected_file_nids[i]);
+	    		  all_nids.push(SW.selected_app_nids[i])
+	    	  }
+	      }
+	      
+	      
+	      
+	      
+	      
+	      
+	      
+	      
+	      var association_url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/associationallproxy/' + SW.current_user_number + '/';
+	      //association_url += '?tag_nid=' + tag_nid + '&resource_nid=' + SW.selected_app_nids[i] + '&type=' + 'app';
+	      association_url += '?tag_nid=' + tag_nid;
+	      
+	      var input = '';
+	  	
+	  	  for(var i = 0; i < SW.selected_tag_names.length; i++)
+	  		  input += '<input type="hidden" name="resource_nid=" value="'+ all_nids[i] +'" />';
+	  	  
+	  	  var resource_nid = [];
+	  	  for(var i=0;i<all_nids.length;i++) {
+	  		  resource_nid.push(all_nids[i]);
+	  	  }
+	  	  
+	  	  /*
+	      for(var i=0;i<all_nids.length;i++) {
+	    	  console.log('adding: ' + all_nids[i] + 'to url');
+	    	  association_url += '&resource_nid=' + all_nids[i];
+	      }
+	      */
+	      
+	      console.log('association_url: ' + association_url);
+	      
+	      $.ajax({
+	          url: association_url,
+	          global: false,
+	          async: false,
+	          data: {"resource_nid" : resource_nid},
+	          type: 'POST',
+	          success: function(data) {
+	            console.log('assoc apps success');
+	            
+	            $('#tagModal').modal('hide');
+	  	      	
+	  		  	
+	  	      	/* Reset fields for next tag creation. */
+	  	      	$('#tag_name').val('');
+	  	      	$('#tag_description').val('');
+	  	      
+	  	      	//either reload the page or dynamically add tag
+	  	      	//default is that the page will reload
+	  	      	//addTagToPage();
+	  	      
+	  	      	/* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
+	  		  	location.reload();
+	  		  
+	            
+	          },
+	          error: function() {
+	            console.log('assoc apps error');
+	            alert('There was an error in tagging resources. Please try again.')
+	          }
+	      });
+	      
+	      
+	      /*
 	      //associate tag to groups
 	      associateGroups(tag_nid);
 			
@@ -169,7 +286,9 @@ function createTag() {
 	      //associate tag to selected apps
 	      associateApps(tag_nid);
 		  
-	      
+	      //$('.spinner').hide();
+	      //alert('everything associated...');
+	      */
 	      
 	      
 	    },
@@ -179,17 +298,7 @@ function createTag() {
 	  });
 	  
 	  
-	  $('#tagModal').modal('hide');
-      /* Cause current window to reload so tag cloud is refreshed. May wish to update cloud asynchronously later. */ 
-	  //location.reload();
 	  
-	  //either reload the page or dynamically add tag
-      //default is that the page will reload
-      //addTagToPage();
-      
-      /* Reset fields for next tag creation. */
-      $('#tag_name').val('');
-      $('#tag_description').val('');
   } 
   
   
@@ -221,6 +330,7 @@ function associateGroups(tag_nid) {
 			 $.ajax({
 				    url: association_url,
 				    global: false,
+				    async: false,
 					type: 'POST',
 					success: function(data) {
 						
@@ -259,6 +369,7 @@ function associateUsers(tag_nid) {
 			  $.ajax({
 				    url: association_url,
 				    global: false,
+				    async: false,
 					type: 'POST',
 					success: function(data) {
 
@@ -296,6 +407,7 @@ function associateFiles(tag_nid) {
 			 $.ajax({
 				    url: association_url,
 				    global: false,
+				    async: false,
 					type: 'POST',
 					success: function(data) {
 
@@ -328,6 +440,7 @@ function associateJobs(tag_nid) {
       $.ajax({
         url: association_url,
         global: false,
+        async: false,
         type: 'POST',
         success: function(data) {
           for(var key in data) {
@@ -358,6 +471,7 @@ function associateApps(tag_nid) {
       $.ajax({
         url: association_url,
         global: false,
+        async: false,
         type: 'POST',
         success: function(data) {
           console.log('assoc apps success');

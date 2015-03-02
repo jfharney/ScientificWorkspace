@@ -272,7 +272,7 @@ function createDOI() {
 
   url = "http://" + SW.hostname + ":" + SW.port + "/constellation/doi/" + username + '/';
 	
-  alert('input: ' + input);
+  //alert('input: ' + input);
   
   /* Send request. */
   

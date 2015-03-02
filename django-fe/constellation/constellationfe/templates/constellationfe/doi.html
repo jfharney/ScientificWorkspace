@@ -51,13 +51,17 @@
 
 <body>
 
+	
+	<!-- style="display:none" -->
+	<div style="display:none">
+	
+	
 	<div>Creator NID: <span id="creator_nid">{{ creator_nid }}</span></div>
 	<div>Creator UID: <span id="creator_uid">{{ creator_uid }}</span></div>
 	<div>Creator Username: <span id="creator_uname">{{ creator_uname }}</span></div>
 	<div>Creator Name: <span id="creator_name">{{ creator_name }}</span></div>
 	<div>Creator Email: <span id="creator_email">{{ creator_email }}</span></div>
 	
-	<!-- style="display:none" -->
 	{# <div>hello</div> #}
 	{% if personNames %}
 		<ul class="">
@@ -102,38 +106,67 @@
 	{% endif %}
 	
 	{% if nids %}
-		<ul class="">
+		<ul class="nids">
 		{% for nid in nids %}
-    		<li>{{ nid }}</li>
+    		<li class="nid">{{ nid }}</li>
 		{% endfor %}
 		</ul>
 	{% endif %}
-	
+	</div>
     
     
 	<div class="navbar">
 		<div class="navbar-inner">
 			<div class="container-fluid">
 				<div class="top-nav nav-collapse">
-					<ul class="nav">
-						<li>
-							<a href="../../settings/{{creator_uname}}">{{creator_uname}}</a>
-						</li>
-						<li>
-							<a href="../../workspace/{{creator_uname}}">Workspace</a>
-						</li>
-						<li>
-							<a href="../../doi/{{creator_uname}}">DOI</a>
-						</li>
-						<li>
-							<a href="../../search/{{creator_uname}}">Search</a>
-						</li>
-						<li>
-							<form class="navbar-search pull-left">
-								<input class="search-query span2" placeholder="Search this workspace" name="query" type="text">
-							</form>
-						</li>
-					</ul>
+					<div class="row-fluid">
+					
+						<div class="span12">
+							<div class="span11">
+								<ul class="nav" style="font-size:15px">
+								<li>
+		    						<img src="{% static 'common/img/Pleiades.JPG' %}" style="max-width:50px; max-height:40px;"/></link>
+			  
+		    					</li>
+								<li>
+		    						<a href="../../settings/{{uname}}">Constellation</a> 
+		    					</li>
+		    					<!--  
+		    					<li>
+		    						<a href="../../settings/{{uname}}">{{uname}}</a> 
+		    					</li>
+		    					-->
+								<li>
+									<a href="../../workspace/{{creator_uname}}">Workspace</a>
+								</li>
+								<li>
+									<a href="../../doi/{{creator_uname}}">DOI</a>
+								</li>
+								
+								<li>
+									<a href="../../search/{{creator_uname}}">Search</a>
+								</li>
+								<!-- 
+								<li>
+									<form class="navbar-search pull-left">
+										<input class="search-query span2" placeholder="Search this workspace" name="query" type="text">
+									</form>
+								</li>
+								 -->
+								</ul>
+							</div>
+							<div class="span1">
+							<ul class="nav" style="font-size:15px">
+								<li>
+									<a href="../../search/{{creator_uname}}">{{uname}}</a>
+								</li>
+							</ul>
+							</div>
+						</div>
+					
+					
+					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -212,11 +245,13 @@
 							
 							<div class="box-content">
 								<div class="row-fluid">
+								<!-- 
 									<div class="span12">
 										<fieldset>
 											legend DOI Submission Form
 										</fieldset>
 									</div>
+								 -->
 								</div>
 								<div class="row-fluid" style="margin-bottom:20px;">
 									<div class="span12">
@@ -265,11 +300,12 @@
 										<br />
 									</div>
 								</div>
-								<div class="row-fluid">
+								<div class="row-fluid" style="display:none">
 									<div class="span4">Files</div>
 									<div class="span6">
 										<input id="text" name="input_files" value="{{fileNames}}"></input>
-										<input id="text" name="input_nids" value="{{nids}}"></input>
+										<!--  --><!-- <input id="text" name="input_nids" value="{{nids}}"></input>   -->
+										
 										<input id="text" name="creator_nid" value="{{creator_nid}}"></input>
 									</div>
 								</div>
@@ -313,12 +349,14 @@
 										<input id="text" name="input_sponsor_org" value="Oak Ridge National Laboratory"></input>
 									</div>
 								</div>
+								<!-- 
 								<div class="row-fluid">
 									<div class="span4">Jobs and Applications</div>
 									<div class="span6">
 										<textarea>{{personNames}} | {{groupNames}}</textarea>
 									</div>
 								</div>
+								 -->
 								<hr>
 								<div class="row-fluid">
 									<button id="submit_doi_request">Submit DOI Request</button>

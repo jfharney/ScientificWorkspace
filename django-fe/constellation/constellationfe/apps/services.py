@@ -13,4 +13,4 @@ def AppCmd_GetByJobWrapper(api,job_id,header_token):
     #submit to the 
     api.send( msg )
     
-    return api.recv( utils.messaging_timeout )
+    return api.recv( int(utils.messaging_timeout) )

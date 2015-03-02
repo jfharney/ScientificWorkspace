@@ -41,11 +41,59 @@
 	    
 	    <script src="{% static 'common/js/core2.js' %}"></script>
 	    <script src="{% static 'common/js/sampledata.js' %}"></script>
- 	
+ 		<style type="text/css" media="screen">
+ 		
+ 		/*
+ 		#spinner {
+ 			position: fixed;
+ 			top: 50%;
+ 			left: 50%;
+ 		}
+ 		*/
+ 		.spinner {
+		   position: absolute;
+		   left: 50%;
+		   top: 50%;
+		   height:60px;
+		   width:60px;
+		   margin:0px auto;
+		   -webkit-animation: rotation .6s infinite linear;
+		   -moz-animation: rotation .6s infinite linear;
+		   -o-animation: rotation .6s infinite linear;
+		   animation: rotation .6s infinite linear;
+		   border-left:6px solid rgba(0,174,239,.15);
+		   border-right:6px solid rgba(0,174,239,.15);
+		   border-bottom:6px solid rgba(0,174,239,.15);
+		   border-top:6px solid rgba(0,174,239,.8);
+		   border-radius:100%;
+		}
+
+		@-webkit-keyframes rotation {
+		   from {-webkit-transform: rotate(0deg);}
+		   to {-webkit-transform: rotate(359deg);}
+		}
+		@-moz-keyframes rotation {
+		   from {-moz-transform: rotate(0deg);}
+		   to {-moz-transform: rotate(359deg);}
+		}
+		@-o-keyframes rotation {
+		   from {-o-transform: rotate(0deg);}
+		   to {-o-transform: rotate(359deg);}
+		}
+		@keyframes rotation {
+		   from {transform: rotate(0deg);}
+		   to {transform: rotate(359deg);}
+		}
+ 		
+ 		</style>
  	</head>
  
  	<body>
- 	
+ 		
+ 		
+ 		<div class="spinner" style="display:none">
+ 		</div>
+ 		
  		<div id="tagModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
  			<div class="modal-dialog">
  				<div class="modal-header">
@@ -127,10 +175,66 @@
     		<div class="navbar-inner">
     			<div class="container-fluid">
     				<div class="top-nav.nav-collapse">
-    					<ul class="nav">
-	    					<li>
-	    						<a href="../../settings/{{uname}}">8xo</a> 
+    				
+    					<div class="row-fluid">
+					
+						<div class="span12">
+							<div class="span11">
+								<ul class="nav" style="font-size:15px">
+								  
+									<li>
+			    						<img src="{% static 'common/img/Pleiades.JPG' %}" style="max-width:50px; max-height:40px;"/></link>
+			    					</li>
+			    				
+									<li>
+			    						<a href="../../settings/{{uname}}">Constellation</a> 
+			    					</li>
+			    					<!--  
+			    					<li>
+			    						<a href="../../settings/{{uname}}">{{uname}}</a> 
+			    					</li>
+			    					-->
+									<li>
+										<a href="../../workspace/{{creator_uname}}">Workspace</a>
+									</li>
+									<li>
+										<a href="../../doi/{{creator_uname}}">DOI</a>
+									</li>
+									
+									<li>
+										<a href="../../search/{{creator_uname}}">Search</a>
+									</li>
+									<!-- 
+									<li>
+										<form class="navbar-search pull-left">
+											<input class="search-query span2" placeholder="Search this workspace" name="query" type="text">
+										</form>
+									</li>
+									 -->
+								</ul>
+							</div>
+							<div class="span1">
+							<ul class="nav" style="font-size:15px">
+								<li>
+									<a href="../../search/{{creator_uname}}">{{uname}}</a>
+								</li>
+							</ul>
+							</div>
+						</div>
+					
+					
+					</div>
+    				<!--  
+    					<ul class="nav"  style="font-size:15px">
+    						<li>
+    							<img src="{% static 'common/img/Pleiades.JPG' %}" style="max-width:50px; max-height:40px;"/></link>
+	  
+    						</li>
+    						
+    						<li>
+	    						<a href="../../settings/{{uname}}">Constellation</a> 
 	    					</li>
+	    					
     						<li>
 	    						<a href="../../workspace/{{uname}}">Workspace</a> 
 	    					</li>
@@ -140,16 +244,11 @@
     						<li>
 	    						<a href="#" id="search_button">Search</a> 
 	    					</li>
-    						<li>
-	    						 <form class="navbar-search pull-left">
-	    						 	<input placeholder="Search this workspace" name="query" type="text" class="search-query span2" id="search_terms" />
-        
-	    						 </form>
-                  
-	    					</li>
-    				
+	    					
+	    					
     				
     					</ul>
+    					-->
     				</div>
     			</div>
     		
@@ -165,7 +264,7 @@
     						<li>
     							<a href="#">
     								<span id="user_id_label">
-    									uname
+    									{{ uname }}
     								</span>
     							</a>
     							<span>/</span>
@@ -204,7 +303,7 @@
     	
 	    		<div class="span2 main-menu-span">
 	    			
-	    			<div class="well nav-collapse sidebar-nav">
+	    			<div class="well nav-collapse sidebar-nav" style="padding-bottom:10px;">
 	    				<ui class="nav nav-tabs nav-stacked main-menu">
 	    					<li class="nav-header hidden-tablet">
 	    						Main
@@ -223,7 +322,7 @@
 	    						</a>
 	    					</li>
 	    					<li>
-	    						<a id="show_table_button" class="ajax-link" data-toggle="modal" data-target="#tableModal" style="margin-bottom:50px" href="#">
+	    						<a id="show_table_button" class="ajax-link" data-toggle="modal" data-target="#tableModal" style="margin-bottom:20px" href="#">
 	    							<span class="hidden-tablet">Review Tags</span>
 	    						</a>
 	    					</li>
@@ -235,10 +334,18 @@
 	    							<span class="hidden-tablet">Search Workspace</span>
 	    						</a>
 	    					</li>
+	    					<li class="nav-header hidden-tablet">
+	    						Archive
+	    					</li>
+	    					<li>
+	    						<a href="#" id="archive">
+	    							<span class="hidden-tablet">Save to HPSS</span>
+	    						</a>
+	    					</li>
 	    				</ui>
 	    			</div>
 	    			
-	    			<div id="tagCloud" class="well nav-collapse sidebar-nav" style="margin-top:15px">
+	    			<div id="tagCloud" class="well nav-collapse sidebar-nav" style="margin-top:15px;padding:7px;">
 	    			
 	    			</div>
 	    		
@@ -249,7 +356,7 @@
 	    			<div class="row-fluid sortable">
 	    			
 	    				<!-- Collaborators -->
-	    				<div id="collabBox" class="box span4">
+	    				<div id="collabBox" class="box span3">
 	    				
 	    					<div class="box-header well">
 	    					
@@ -283,9 +390,9 @@
 	    				</div>
 	    			
 	    				<!-- PROJECT SPACE -->
-	    				<div id="projectsBox" class="box span4">
+	    				<div id="projectsBox" class="box span6">
 	    					<div class="box-header well">
-	    						<h2 id="myProjectHeader"> Project Space	</h2>
+	    						<h2 id="myProjectHeader"> OLCF Project Space	</h2>
 	    						<div class="box-icon">
 	    							<a class="btn btn-minimize btn-round" href="#">
 	    								<i class="icon-chevron-up"></i>
@@ -301,10 +408,10 @@
 	    				</div>
 	    				
 	    				<!--  JOBS SPACE -->
-	    				<div class="box span4">
+	    				<div class="box span3">
 	    					<div class="box-header well">
 	    						<span id="jobSearchIcon" style="cursor:default">
-	    							<h2>Jobs</h2>
+	    							<h2>Titan Jobs</h2>
 	    							<i class="icon-search" title="Search Jobs" style="margin-top:5px;margin-bottom:12px;margin-left:12px;margin-right:12px"></i>
 	    						</span>
 	    						<div class="box-icon">

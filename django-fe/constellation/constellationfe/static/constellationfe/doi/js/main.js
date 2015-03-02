@@ -85,7 +85,7 @@ $(function() {
 	
     $('#submit_doi_request').click(function() {
 
-    	alert('submitting...');
+    	//alert('submitting...');
         var data = {}
 
         // Scrape data from UI, place in object
@@ -103,7 +103,13 @@ $(function() {
         data.files = $('[name="input_files"]').val();
         
         data.nids = $('[name="input_nids"]').val();
-        data.nids = data.nids.split(',');
+        data.nids = []
+        $('li.nid').each(function( index ) {
+        	console.log( 'index: ' + index + ' ' + $(this).html());
+        	data.nids.push($(this).html());
+        });
+        
+        //data.nids = data.nids.split(',');
         data.creator_nid = $('[name="creator_nid"]').val();
 
         data.personName = $('[name="personName"]').val();
@@ -113,30 +119,41 @@ $(function() {
         // If NOT Ok, pop-up error dialog and stay here
 
         var payload = JSON.stringify( data );
-
+        //payload = data;
         console.log('payload: ' + payload + '\n\n');
         //SW.current_user_name
         username = $('#creator_uname').html();
         var url = "http://" + SW.hostname + ":" + SW.port + "/constellation/doiPut/" + username + '/';
 
-        //alert('url: ' + url);
+        //alert('data_nids: ' + data.nids);
         
-        jQuery.ajax({
-            //url: 'http://' + SW.hostname + ':' + SW.port + '/doi_submit',
-            url: url,
-        	type: 'POST',
-            data: data,
-            //contentType: 'application/json; charset=utf-8',
-            //dataType: "json",
-            success: function(data) {
-                alert("DOI submission succeeded. An email has been sent to "+contact_email+" concerning this DOI.");
-                alert('data: ' + data);
-            },
-            error: function(request, status, error) {
-                alert("DOI submission failed.");
-                alert('request.responseText: ' + request.responseText);
-            }
-        });
+        if (data.title == '' || data.title == undefined) {
+          alert('Please enter a title for your DOI');
+        } else {
+        	jQuery.ajax({
+                //url: 'http://' + SW.hostname + ':' + SW.port + '/doi_submit',
+                url: url,
+            	type: 'POST',
+                data: data,
+                //contentType: 'application/json; charset=utf-8',
+                //dataType: "json",
+                success: function(data) {
+                    console.log('data returned (should be the DOI number): ' + data);
+                    alert("DOI submission number " + data + " has succeeded.  An email has been sent to "+contact_email+" concerning this DOI.");
+                    //alert('data: ' + data);
+                    //take back to the workspace page
+                    location.href = "http://" + SW.hostname + ":" + SW.port + "/constellation/workspace/" + username + '/';
+                },
+                error: function(request, status, error) {
+                    alert("DOI submission failed.");
+                    alert('request.responseText: ' + request.responseText);
+                    console.log('DOI submission failed');
+                    console.log('request.responseText: ' + request.responseText);
+                    
+                }
+            });
+            
+        }
         
     });
 	

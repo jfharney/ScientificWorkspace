@@ -47,11 +47,11 @@ def createTag(request,user_id):
             #print 'there is a reply for file command list'
             classname = api.getMessageTypeName( reply_type )
         
-            print '\t\tmmmmmessage type: ' + classname + '\n\n'
+            #print '\t\tmmmmmessage type: ' + classname + '\n\n'
             #print 'header: ' + str(reply.header)
             for tag in reply.tags:
-                print 'tag name: ' + tag.name
-                print 'tag oid: ' + str(tag.oid)
+                #print 'tag name: ' + tag.name
+                #print 'tag oid: ' + str(tag.oid)
                 res['nid'] = tag.oid
             
     else:
@@ -73,6 +73,8 @@ def associate(request,user_id):
     resource_oid = request.GET.get(utils.TAG_RESOURCE_OID)
     type = request.GET.get(utils.TAG_TYPE)
     
+    
+    print 'associating resource_oid>>> ' + resource_oid
     
     resource_oids.append(resource_oid)
     
@@ -188,13 +190,6 @@ def useGetTagLinkZmq(request,tag_id):
               
               #print 'strrr: ' + strrr
               for group in reply.groups:
-                  '''
-                  #print 'dir groups... ' + str(group) + '\n'
-                  group_oids.append(group.oid)
-                  group_gids.append(group.gid)
-                  group_gnames.append(group.gname)
-                  '''
-                  
                   resObj = {'nid' : group.oid, 'name' : group.gname, 'type' : '1' , 'group_oid' : group.oid, 'group_gid' : group.gid, 'group_name' : group.gname }
                   res.append(resObj)
                   
@@ -224,8 +219,6 @@ def useGetTagLinkZmq(request,tag_id):
                   
                   
               for user in reply.users:
-                  #print 'dir users... \n' + str(user) + '\n'
-                  
                   resObj = {'nid' : user.oid, 'name' : user.name, 'type' : '0' , 'user_oid' : user.oid, 'user_uid' : user.uid, 'user_uname' : user.uname, 'user_name' : user.name, 'user_email' : user.email }
                   res.append(resObj)
               
@@ -268,6 +261,14 @@ def useGetTagDefault(request,uid):
     data_arr.append(data)
       
     return data_arr
+
+
+
+
+
+
+
+
 
 def useGetTagHttp(request,uid):
     
