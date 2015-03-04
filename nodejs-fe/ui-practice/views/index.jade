@@ -1,0 +1,65 @@
+
+doctype 5
+head
+  title Example add tag app
+
+  link(href="css/dynatree/ui.dynatree.css" rel="stylesheet" type="text/css")
+  link(href="css/bootstrap/bootstrap.css" rel="stylesheet")
+  link(href="css/modal.css" rel="stylesheet")
+  
+html
+  body
+    button#add_tag_button.btn.btn-primary.btn-lg(data-toggle="modal",data-target="#myModal",style="margin-bottom:50px") Launch demo modal
+    div#myModal.modal.fade(tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true")
+      div.modal-dialog
+        div.modal-header
+          button.close(type="button",data-dismiss="modal",aria-hidden="true")&times;
+          h4#myModalLabel.modal-title Modal title
+        div.modal-body
+          div Tag Name:
+            input#tag_name.form-control.create_tree_options
+          br Tag Description:
+          textarea#tag_description.form-control(rows="3",placeholder="Tag description")
+          br Resources:
+          div#resources_to_tag
+          br Share with:
+          div#shared_users Insert Options for people, groups, etc
+        div.modal-footer
+          button.btn.btn-default(data-dismiss="modal") Cancel
+          button#create_tag.btn.btn-primary Create Tag
+    p.description This tree has checkboxes...
+    div#tree3
+    div Selected keys:
+      span#echoSelection3
+    div Selected root keys:
+      span#echoSelectionRootKeys3
+    div Selected root nodes:
+      span#echoSelectionRoots3
+    hr
+    
+    div(style="min-height:200px;margin-top:50px")
+      div.ui-widget
+        h2 Search Tags
+        input#tags
+        button#search_tags.btn.btn-primary(type="button")
+      hr
+      div
+        h2 Tag information
+        div#tag_results
+        
+     
+    script(src='js/core.js')
+    script(src='js/jquery-1.7.2.min.js')
+    script(src='js/jquery-ui-1.8.21.custom.min.js')
+    script(src='js/jquery.dynatree.min.js')
+    script(src="js/bootstrap/bootstrap.min.js") 
+    script(src='js/bootstrap/bootstrap-combobox.js')
+    script(src="js/tree_options/multiselect.js") 
+    script(src="js/tag_autocomplete.js") 
+    script(src="js/Addtag.js") 
+    
+           
+          
+          
+  
+    
