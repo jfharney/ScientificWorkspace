@@ -1,0 +1,392 @@
+package MsgSchema;
+
+// Rquired for message factory
+message Stub
+{
+}
+
+// ----- General Messages and Replies ----------------------------------------
+
+enum ErrorCode
+{
+    ERR_OK              = 0;
+    ERR_NOT_AUTHORIZED  = 1;
+    ERR_INPUT_NOT_FOUND = 2;
+    ERR_INPUT_INVALID   = 3;
+    ERR_INTERNAL_ERROR  = 4;
+}
+
+enum TagUpdateFlags
+{
+    TUF_NAME      = 1;
+    TUF_DESC      = 2;
+    TUF_ACCESS    = 4;
+    TUF_ACL_USER  = 8;
+    TUF_ACL_GROUP = 16;
+}
+
+message Header
+{
+    optional uint32     token      = 1;
+    optional ErrorCode  error_code = 2;
+    optional string     error_msg  = 3;
+}
+
+message AckMsg
+{
+    required Header     header  = 1;
+}
+
+message Cmd_GetByOID
+{
+    required Header     header      = 1;
+    repeated uint64     oids        = 2;
+}
+
+
+message Cmd_Shutdown
+{
+    required Header     header      = 1;
+    optional bool       immediate   = 2;
+}
+
+message Cmd_SetTrace
+{
+    required Header     header      = 1;
+    required int32      level       = 2;
+}
+
+message Cmd_Update
+{
+    required Header     header      = 1;
+    required string     filename    = 2;
+}
+
+message Cmd_Save
+{
+    required Header     header      = 1;
+}
+
+// ----- Data Messages -------------------------------------------------------
+
+message UserData
+{
+    required uint64     oid     = 1;
+    required uint32     uid     = 2;
+    required string     uname   = 3;
+    required string     name    = 4;
+    required string     email   = 5;
+}
+
+message UserDataMsg
+{
+    required Header     header  = 1;
+    repeated UserData   users   = 2;
+}
+
+message GroupData
+{
+    required uint64     oid     = 1;
+    required uint32     gid     = 2;
+    required string     gname   = 3;
+}
+
+message GroupDataMsg
+{
+    required Header     header  = 1;
+    repeated GroupData  groups  = 2;
+}
+
+
+message JobData
+{
+    required uint64     oid         = 1;
+    required uint32     jid         = 2;
+    required string     name        = 3;
+    required string     host        = 4;
+    required uint32     start_time  = 5;
+    required uint32     stop_time   = 6;
+}
+
+message JobDataMsg
+{
+    required Header     header  = 1;
+    repeated JobData    jobs    = 2;
+}
+
+message AppData
+{
+    required uint64     oid         = 1;
+    required uint32     aid         = 2;
+    required uint32     start_time  = 3;
+    required uint32     stop_time   = 4;
+    required int32      exit_code   = 5;
+}
+
+message AppDataMsg
+{
+    required Header     header  = 1;
+    repeated AppData    apps    = 2;
+}
+
+message FileSystemData
+{
+    required uint64     oid     = 1;
+    required string     name    = 2;
+}
+
+message FileSystemDataMsg
+{
+    required Header         header  = 1;
+    repeated FileSystemData filesys = 2;
+}
+
+message FileData
+{
+    required uint64     oid     = 1;
+    required string     name    = 2;
+    required uint32     uid     = 3;
+    required uint32     gid     = 4;
+    required uint32     mode    = 5;
+    required uint32     ctime   = 6;
+    required uint32     mtime   = 7;
+}
+
+message FileDataMsg
+{
+    required Header     header      = 1;
+    repeated FileData   files       = 2;
+}
+
+message TagData
+{
+    optional uint64     oid         = 1;
+    optional string     name        = 2;
+    optional string     desc        = 3;
+    optional uint32     access      = 4;
+    repeated uint64     acl_usr_oid = 5;
+    repeated uint64     acl_grp_oid = 6;
+}
+
+message TagDataMsg
+{
+    required Header     header      = 1;
+    repeated TagData    tags        = 2;
+}
+
+message DOIData
+{
+    optional uint64     oid         = 1;
+    optional string     number      = 2;
+    repeated uint64     linked_oid  = 3;
+    optional string     metadata    = 4;
+} 
+
+---
+XML needed for the metadata field
+---
+
+message DOIDataMsg
+{
+    required Header     header      = 1;
+    repeated DOIData    dois        = 2;
+}
+
+message CompoundDataMsg
+{
+    required Header     header = 1;
+    repeated UserData   users  = 2;
+    repeated GroupData  groups = 3;
+    repeated JobData    jobs   = 4;
+    repeated AppData    apps   = 5;
+    repeated FileData   files  = 6;
+    repeated TagData    tags   = 7;
+    repeated DOIData    dois   = 8;
+}
+
+
+// ----- User commands and replies -------------------------------------------
+
+message UserCmd_GetByUID
+{
+    required Header     header  = 1;
+    required uint32     uid     = 2;
+}
+
+message UserCmd_GetByUNAME
+{
+    required Header     header  = 1;
+    required string     uname   = 2;
+}
+
+message UserCmd_GetByGroup
+{
+    required Header     header    = 1;
+    required uint64     group_oid = 2;
+}
+
+
+// ----- Group commands and replies -------------------------------------------
+
+message GroupCmd_GetByGID
+{
+    required Header     header  = 1;
+    required uint32     gid     = 2;
+}
+
+message GroupCmd_GetByGNAME
+{
+    required Header     header  = 1;
+    required string     gname   = 2;
+}
+
+message GroupCmd_GetByUser
+{
+    required Header     header   = 1;
+    required uint64     user_oid = 2;
+}
+
+
+// ----- Job commands and replies --------------------------------------------
+
+message JobCmd_GetByUser
+{
+    required Header     header   = 1;
+    required uint64     user_oid = 2;
+}
+
+
+
+// ----- App commands and replies --------------------------------------------
+
+message AppCmd_GetByJob
+{
+    required Header     header  = 1;
+    required uint32     job_oid = 2;
+}
+
+
+
+// ----- File System commands and replies ------------------------------------
+
+message FileSystemCmd_List
+{
+    required Header     header      = 1;
+}
+
+
+
+// ----- File commands and replies -------------------------------------------
+
+message FileCmd_GetByPath
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    required uint64     fsys_oid    = 3;
+    required string     path        = 4;
+}
+
+message FileCmd_List
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    required uint64     dir_oid     = 3;
+    optional uint32     offset      = 4;
+    optional uint32     count       = 5;
+}
+
+
+// ----- Tag commands and replies -------------------------------------------
+
+message TagCmd_GetByUser
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+}
+
+message TagCmd_Create
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    required TagData    tag_data    = 3;
+}
+
+message TagCmd_Update
+{
+    required Header     header          = 1;
+    required uint32     tag_upd_flags   = 2;
+    required TagData    tag_data        = 3;
+}
+
+message TagCmd_Delete
+{
+    required Header     header      = 1;
+    required uint64     tag_oid     = 2;
+}
+
+message TagCmd_Attach
+{
+    required Header     header      = 1;
+    required uint64     tag_oid     = 2;
+    repeated uint64     object_oids = 3;
+}
+
+message TagCmd_Detach
+{
+    required Header     header      = 1;
+    required uint64     tag_oid     = 2;
+    repeated uint64     object_oids = 3;
+}
+
+message TagCmd_GetAttachedObject
+{
+    required Header     header      = 1;
+    required uint64     tag_oid     = 2;
+}
+
+message TagCmd_GetAttachedTag
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    required uint64     object_oid  = 3;
+}
+
+
+// ----- DOI commands and replies -------------------------------------------
+
+message DOICmd_GetByUser
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    optional bool       inc_links   = 3;
+    optional bool       inc_meta    = 4;
+}
+
+message DOICmd_Get
+{
+    required Header     header      = 1;
+    required uint64     doi_oid     = 2;
+    optional bool       inc_links   = 3;
+    optional bool       inc_meta    = 4;
+}
+
+message DOICmd_Create
+{
+    required Header     header      = 1;
+    required uint64     user_oid    = 2;
+    required DOIData    doi_data    = 3;
+}
+
+message DOICmd_Update
+{
+    required Header     header      = 1;
+    required DOIData    doi_data    = 2;
+    required bool       upd_links   = 3;
+    required bool       upd_meta    = 4;
+}
+
+message DOICmd_Delete
+{
+    required Header     header      = 1;
+    required uint64     doi_oid     = 2;
+}

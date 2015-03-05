@@ -1,0 +1,48 @@
+
+doctype 5
+head
+  title Example add tag app
+
+  link(href="css/dynatree/ui.dynatree.css" rel="stylesheet" type="text/css")
+  link(href="css/bootstrap/bootstrap.css" rel="stylesheet")
+  link(href="css/modal.css" rel="stylesheet")
+  
+html
+  body
+    
+    div 
+      label(style='margin-right:10px') First Name 
+      input#text1(name="input_title")
+    div 
+      label(style='margin-right:10px') Last Name 
+      input#text2(name="input_title")
+    
+    div
+      button#submit_form(type="button") Submit DOI Request
+                      
+    //div(style="min-height:200px;margin-top:50px")
+      div.ui-widget
+        h2 Search Tags
+        input#tags
+        button#search_tags.btn.btn-primary(type="button")
+      hr
+      div
+        h2 Tag information
+        div#tag_results
+        
+      
+    script(src='js/core.js')
+    script(src='js/jquery-1.7.2.min.js')
+    script(src='js/jquery-ui-1.8.21.custom.min.js')
+    script(src='js/jquery.dynatree.min.js')
+    script(src="js/bootstrap/bootstrap.min.js") 
+    script(src='js/bootstrap/bootstrap-combobox.js')
+    script(src="js/tree_options/multiselect.js") 
+    script(src="js/tag_autocomplete.js") 
+    script(src="js/formtest.js") 
+    
+           
+          
+          
+  
+    

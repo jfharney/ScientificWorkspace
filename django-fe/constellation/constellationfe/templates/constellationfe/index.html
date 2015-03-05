@@ -1,0 +1,610 @@
+{% load staticfiles %}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+	<meta content="utf-8" http-equiv="encoding" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="" />
+	<meta name="author" content="" />
+
+ 	<head>
+ 	
+ 		<title>ORNL Constellation</title> 
+ 		<link id="bs-css", href="{% static 'common/css/bootstrap-cerulean.css' %}", rel="stylesheet", type="text/css" ></link>
+		
+	  	<link id="bs-css", href="{% static 'common/css/bootstrap-cerulean.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/bootstrap-responsive.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/charisma-app.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery-ui-1.8.21.custom.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/fullcalendar.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/fullcalendar.print.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/chosen.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/uniform.default.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/colorbox.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery.cleditor.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery.noty.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/noty_theme_default.css' %}", rel="stylesheet", type="text/css"></link>
+	    <link href="{% static 'common/css/elfinder.min.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/elfinder.theme.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery.iphone.toggle.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/opa-icons.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/uploadify.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/dynatree/ui.dynatree.css' %}", rel="stylesheet", type="text/css"></link>
+	    <link href="{% static 'common/css/modal.css' %}" rel="stylesheet"></link>
+	  
+	    <link href="{% static 'common/css/DataTables/jquery.dataTables_themeroller.css' %}", rel="stylesheet"></link>
+	    <link href="{% static 'common/css/DataTables/jquery.dataTables.css' %}", rel="stylesheet" ></link>
+	    <link href="{% static 'common/css/DataTables/ColVis/ColVis.css' %}", rel="stylesheet"></link>
+	  
+	    <script src="{% static 'common/js/jquery/jquery-1.7.2.min.js' %}"></script> 
+	    <script src="{% static 'common/js/jquery/jquery-ui-1.8.21.custom.min.js' %}"></script>
+	    
+	    <script src="{% static 'common/js/core2.js' %}"></script>
+	    <script src="{% static 'common/js/sampledata.js' %}"></script>
+ 		<style type="text/css" media="screen">
+ 		
+ 		/*
+ 		#spinner {
+ 			position: fixed;
+ 			top: 50%;
+ 			left: 50%;
+ 		}
+ 		*/
+ 		.spinner {
+		   position: absolute;
+		   left: 50%;
+		   top: 50%;
+		   height:60px;
+		   width:60px;
+		   margin:0px auto;
+		   -webkit-animation: rotation .6s infinite linear;
+		   -moz-animation: rotation .6s infinite linear;
+		   -o-animation: rotation .6s infinite linear;
+		   animation: rotation .6s infinite linear;
+		   border-left:6px solid rgba(0,174,239,.15);
+		   border-right:6px solid rgba(0,174,239,.15);
+		   border-bottom:6px solid rgba(0,174,239,.15);
+		   border-top:6px solid rgba(0,174,239,.8);
+		   border-radius:100%;
+		}
+
+		@-webkit-keyframes rotation {
+		   from {-webkit-transform: rotate(0deg);}
+		   to {-webkit-transform: rotate(359deg);}
+		}
+		@-moz-keyframes rotation {
+		   from {-moz-transform: rotate(0deg);}
+		   to {-moz-transform: rotate(359deg);}
+		}
+		@-o-keyframes rotation {
+		   from {-o-transform: rotate(0deg);}
+		   to {-o-transform: rotate(359deg);}
+		}
+		@keyframes rotation {
+		   from {transform: rotate(0deg);}
+		   to {transform: rotate(359deg);}
+		}
+ 		
+ 		</style>
+ 	</head>
+ 
+ 	<body>
+ 		
+ 		
+ 		<div class="spinner" style="display:none">
+ 		</div>
+ 		
+ 		<div id="tagModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+ 			<div class="modal-dialog">
+ 				<div class="modal-header">
+ 					<button class="close" type="button" data-dismiss="modal" aria-hidden="true"></button>
+ 					<h4 id="myModalLabel" class="modal-title">Tag Information</h4>
+ 				</div>
+ 				<div class="modal-body">
+ 				  
+ 					<div>Tag Name:</div>
+ 					<input id="tag_name" class="form-control create_tree_options" placeholder="Tag name" style="margin-bottom:10px;margin-top:10px" />
+ 					<div>Tag Description:</div>
+ 						<textarea id="tag_description" class="form-control" rows="3" placeholder="Tag description" style="margin-bottom:10px;margin-top:10px"> </textarea> 
+					<div>Resources:</div> 
+          			<div id="resources_to_tag" style="margin-bottom:10px"></div>
+          			<div>Types:</div>
+          			<div id="resources_types_to_tag" style="margin-bottom:10px"></div>
+          			<div>Share with:</div>
+          			<div id="shared_users" style="margin-bottom:10px"></div>
+          			<div>Files:</div>
+          			<div id="files_to_tag" style="margin-bottom:10px"></div>
+				
+ 				</div>
+ 				<div class="modal-footer">
+ 					<button class="btn btn-defqult" data-dismiss="modal">Cancel</button>
+ 					<button id="create_tag1" class="btn btn-prmiary" data-dismiss="modal">Create Tag</button>
+ 				</div>
+ 				
+ 			</div>
+ 		</div>
+ 		
+ 		<div id="doiModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="doiModalLabel" aria-hidden="true">
+ 			<div class="modal-dialog">
+ 				<div class="modal-header">
+ 					<button class="close" type="button" data-dismiss="modal" aria-hidden="true"></button>
+ 					<h4 id="myModalLabel" class="modal-title">DOI Submission Items</h4>
+ 				</div>
+ 				<div class="modal-body">
+ 					<div>Add the following resources to DOI form?</div>
+ 					<br />
+ 					<table>
+ 						<tr valign="top">
+ 							<td width="15%">Files</td>
+ 							<td id="doiModalFilesField" style="padding-left:15px"></td>
+ 						</tr>
+ 						<tr valign="top">
+ 							<td width="15%">Groups</td>
+ 							<td id="doiModalGroupsField" style="padding-left:15px"></td>
+ 						</tr>
+ 						<tr valign="top">
+ 							<td width="15%">People</td>
+ 							<td id="doiModalPeopleField" style="padding-left:15px"></td>
+ 						</tr>
+ 						<tr valign="top">
+ 							<td width="15%">Jobs</td>
+ 							<td id="doiModalJobsField" style="padding-left:15px"></td>
+ 						</tr>
+ 						<tr valign="top">
+ 							<td width="15%">Apps</td>
+ 							<td id="doiModalAppsField" style="padding-left:15px"></td>
+ 						</tr>
+ 						<tr valign="top">
+ 							<td width="15%">Tags</td>
+ 							<td id="doiModalTagsField" style="padding-left:15px"></td>
+ 						</tr>
+ 					</table>
+ 				</div>
+ 				<div class="modal-footer">
+ 					<button class="btn btn-defqult" data-dismiss="modal">Cancel</button>
+ 					<button id="create_doi_button" class="btn btn-prmiary" data-dismiss="modal">Create DOI Form</button>
+ 				</div>
+ 				
+ 			</div>
+ 		</div>
+ 	
+ 	
+          
+ 		<!--  NAVIGATION BAR -->
+    	<div class="navbar">
+    		<div class="navbar-inner">
+    			<div class="container-fluid">
+    				<div class="top-nav.nav-collapse">
+    				
+    					<div class="row-fluid">
+					
+						<div class="span12">
+							<div class="span11">
+								<ul class="nav" style="font-size:15px">
+								  
+									<li>
+			    						<img src="{% static 'common/img/Pleiades.JPG' %}" style="max-width:50px; max-height:40px;"/></link>
+			    					</li>
+			    				
+									<li>
+			    						<a href="../../settings/{{uname}}">Constellation</a> 
+			    					</li>
+			    					<!--  
+			    					<li>
+			    						<a href="../../settings/{{uname}}">{{uname}}</a> 
+			    					</li>
+			    					-->
+									<li>
+										<a href="../../workspace/{{creator_uname}}">Workspace</a>
+									</li>
+									<li>
+										<a href="../../doi/{{creator_uname}}">DOI</a>
+									</li>
+									
+									<li>
+										<a href="../../search/{{creator_uname}}">Search</a>
+									</li>
+									<!-- 
+									<li>
+										<form class="navbar-search pull-left">
+											<input class="search-query span2" placeholder="Search this workspace" name="query" type="text">
+										</form>
+									</li>
+									 -->
+								</ul>
+							</div>
+							<div class="span1">
+							<ul class="nav" style="font-size:15px">
+								<li>
+									<a href="../../search/{{creator_uname}}">{{uname}}</a>
+								</li>
+							</ul>
+							</div>
+						</div>
+					
+					
+					</div>
+    				<!--  
+    					<ul class="nav"  style="font-size:15px">
+    						<li>
+    							<img src="{% static 'common/img/Pleiades.JPG' %}" style="max-width:50px; max-height:40px;"/></link>
+	  
+    						</li>
+    						
+    						<li>
+	    						<a href="../../settings/{{uname}}">Constellation</a> 
+	    					</li>
+	    					
+    						<li>
+	    						<a href="../../workspace/{{uname}}">Workspace</a> 
+	    					</li>
+    						<li>
+	    						<a href="../../doi/{{uname}}">DOI</a> 
+	    					</li>
+    						<li>
+	    						<a href="#" id="search_button">Search</a> 
+	    					</li>
+	    					
+	    					
+    				
+    					</ul>
+    					-->
+    				</div>
+    			</div>
+    		
+    		</div>
+    		
+    	</div>
+    	
+    	<div class="container-fluid">
+    		<div class="row-fluid">
+    			<div class="span12">
+    				<div>
+    					<ul class="breadcrumb">
+    						<li>
+    							<a href="#">
+    								<span id="user_id_label">
+    									{{ uname }}
+    								</span>
+    							</a>
+    							<span>/</span>
+    						</li>
+    						<li>
+    							<a href="#" id="tag_create">Workspace</a>
+    						</li>
+    					</ul>
+    				</div>
+    			</div>
+    		</div>
+    		<div class="row-fluid">
+    			<div class="span12" id="user_info_space">
+    				<p id="curUserNid" style="display:none">{{ nid }}</p>
+    				<p id="curUserEmail" style="display:none">{{ email }}</p>
+    				<p id="curUserName" style="display:none">{{ name }}</p>
+    				<p id="curUserNumber" style="display:none">{{ uid }}</p>
+    				<p id="curUserUname" style="display:none">{{ uname }}</p>
+    	
+          
+    			</div>
+    		</div>
+    		
+    		<div class="row-fluid">
+    			<div class="span12">
+    				<div>
+    					<p class="user_info">
+    					</p>
+    				</div>
+    			</div>
+    		</div>
+    		
+    		
+    		
+    		<div class="row-fluid">
+    	
+	    		<div class="span2 main-menu-span">
+	    			
+	    			<div class="well nav-collapse sidebar-nav" style="padding-bottom:10px;">
+	    				<ui class="nav nav-tabs nav-stacked main-menu">
+	    					<li class="nav-header hidden-tablet">
+	    						Main
+	    					</li>
+	    					<li>
+	    						<a href="#" id="add_doi_button">
+	    							<span class="hidden-tablet">Create DOI</span>
+	    						</a>
+	    					</li>
+	    					<li class="nav-header hidden-tablet">
+	    						Tags
+	    					</li>
+	    					<li>
+	    						<a href="#" id="create_tag" data-toggle="modal" data-target="#tagModal">
+	    							<span class="hidden-tablet">Add Tag</span>
+	    						</a>
+	    					</li>
+	    					<li>
+	    						<a id="show_table_button" class="ajax-link" data-toggle="modal" data-target="#tableModal" style="margin-bottom:20px" href="#">
+	    							<span class="hidden-tablet">Review Tags</span>
+	    						</a>
+	    					</li>
+	    					<li class="nav-header hidden-tablet">
+	    						Search
+	    					</li>
+	    					<li>
+	    						<a href="#" id="search_view">
+	    							<span class="hidden-tablet">Search Workspace</span>
+	    						</a>
+	    					</li>
+	    					<li class="nav-header hidden-tablet">
+	    						Archive
+	    					</li>
+	    					<li>
+	    						<a href="#" id="archive">
+	    							<span class="hidden-tablet">Save to HPSS</span>
+	    						</a>
+	    					</li>
+	    				</ui>
+	    			</div>
+	    			
+	    			<div id="tagCloud" class="well nav-collapse sidebar-nav" style="margin-top:15px;padding:7px;">
+	    			
+	    			</div>
+	    		
+	    		</div>
+	    		
+	    		
+	    		
+	    		
+	    		<div class="span8">
+	    		
+	    			<div class="row-fluid sortable">
+	    			
+	    				<!-- Collaborators -->
+	    				<div id="collabBox" class="box span3">
+	    				
+	    					<div class="box-header well">
+	    					
+	    						<span id="collabSearchIcon" style="cursor:default"> 
+	    						
+	    							<h2>Collaborators</h2>
+	    							<i class="icon-search" id="collabSearchIcon" title="Search Collaborators" style="margin-top:5px;margin-bottom:12px;margin-left:12px;margin-right:12px;padding:5px"></i>
+	    						
+	    						</span>
+	    						<div class="box-icon">
+	    							<a class="btn btn-close btn-round" href="#">
+	    								<i class="icon-remove"></i>
+	    							</a>
+	    						
+	    						</div>
+	    					</div>
+	    					
+	    					<div class="box-content">
+	    					
+	    						<span id="collabSearchPanel" style="display:none;position:absolute;z-index:1;border-style:none;background-color:white">
+	    							<input id="collabSearchText" type="text" style="width:100px" />
+	    							<button id="collabSearchButton">Search</button>
+	    							<button id="clearCollabSearchButton">Clear</button>
+	    						</span>
+	    						<div id="collaborators_tree" style="height:200px">
+	    							
+	    						</div>
+	    					
+	    					</div>
+	    				
+	    				</div>
+	    			
+	    				<!-- PROJECT SPACE -->
+	    				<div id="projectsBox" class="box span5">
+	    					<div class="box-header well">
+	    						<h2 id="myProjectHeader"> OLCF Project Space	</h2>
+	    						<div class="box-icon">
+	    							<a class="btn btn-minimize btn-round" href="#">
+	    								<i class="icon-chevron-up"></i>
+	    							</a>
+	    							<a class="btn btn-close btn-round" href="#">
+	    								<i class="icon-remove"></i>
+	    							</a>
+	    						</div>
+	    					</div>
+	    					<div class="box-content">
+	    						<div id="files_tree" style="height:200px"></div>
+	    					</div>
+	    				</div>
+	    				
+	    				<!--  JOBS SPACE -->
+	    				<div class="box span4">
+	    					<div class="box-header well">
+	    						<span id="jobSearchIcon" style="cursor:default">
+	    							<h2>Titan Jobs</h2>
+	    							<i class="icon-search" title="Search Jobs" style="margin-top:5px;margin-bottom:12px;margin-left:12px;margin-right:12px"></i>
+	    						</span>
+	    						<div class="box-icon">
+	    							<a class="btn btn-minimize btn-round" href="#">
+	    								<i class="icon-chevron-up"></i>
+	    							</a>
+	    							<a class="btn btn-close btn-round" href="#">
+	    								<i class="icon-remove"></i>
+	    							</a>
+	    						</div>
+	    					</div>
+	    					<div class="box-content">
+	    						<span id="jobsSearchPanel" style="display:none;position:absolute;z-index:1;border-style:none;background-color:white;">
+	    							<input id="jobsSearchText" type="text" style="width:100px" />
+	    							<button id="jobsSearchButton">Search</button>
+	    							<button id="clearJobsSearchButton">Clear</button>
+	    						
+	    						</span>
+	    						<div id="jobs_tree" style="height:200px"></div>
+	    					</div>
+	    				</div>
+	    				
+	    				
+	    				
+	    				
+	    			</div>
+	    			
+	    			
+	    			
+	    			
+	    			<!-- TAG WORKSPACE -->
+	    			<div class="row-fluid sortable">
+	    			
+	    				<div class="box span12">
+	    				
+	    					<div class="box-header well">
+	    					
+	    						<span id="jobSearchIcon">
+	    							<h2>Tags Workspace</h2>
+	    						</span>
+	    						<div class="box-icon">
+	    							<a class="btn btn-minimize btn-round" href="#">
+	    								<i class="icon-chevron-up"></i>
+	    							</a>
+	    							<a class="btn btn-close btn-round" href="#">
+	    								<i class="icon-remove"></i>
+	    							</a>
+	    						</div>
+	    					
+	    					</div>
+	    					
+	    					<div class="box-content">
+	    						<div class="row-fluid">
+	    							<div class="span6">
+	    								<ul id="tagButtonList" style="list-style:none"></ul>
+	    							</div>
+	    							<div class="span6">
+	    								<div class="tagInfoPane" class="row-fluid" ></div>
+	    							</div>
+	    						</div>
+	    					</div>
+	    				
+	    				</div>
+	    			
+	    			</div>
+	    			
+	    			<div class="row-fluid sortable">
+	    				<div class="span12">
+	    				
+	    					<div class="box span12">
+	    						<div class="box-header well">
+	    							<h2>User DOIs</h2>
+	    						</div>
+	    						<div class="box-content">
+	    							<div id="doi_tree">
+	    							</div>
+	    						</div>
+	    					</div>
+	    				
+	    				</div>
+	    			</div>
+	    			
+	    		</div>
+	    		
+	    		
+    			<div class="span2 main-menu-span" style="display:none">
+    				<div class="well nav-collapse sidebar-nav">
+    				
+	    				<div class="row-fluid sortable" style="border-bottom: 3px;border-color: black">
+		    				<div class="span12">
+		    				<span style="margin-left:65px;padding: 5px">Feed</span>
+	    					</div>
+	    				</div>
+	    				
+	    				  
+	    				<hr style="color: black; background: black; height: 1px;" > 
+	    				
+	    				
+	    				<div class="row-fluid sortable"  style="background-color:white;padding:2px;margin-bottom:10px">
+	    					<div class="span12" style="padding:2px">
+		    					Resource a associated with resource b
+		    				</div>
+		    				<div class="span12">
+		    					Confirm? <button>Yes</button> <button>No</button> 
+		    				</div>
+			    		</div>
+		    			
+	    				<div class="row-fluid sortable"  style="background-color:white;padding:2px;margin-bottom:10px">
+	    					<div class="span12" style="padding:2px">
+		    					Resource x associated with resource y
+		    				</div>
+		    				<div class="span12">
+		    					Confirm? <button>Yes</button> <button>No</button> 
+		    				</div>
+			    		</div>
+		    		
+	    			</div>
+
+
+
+
+
+    			
+    			</div>
+    		</div>
+    		<div class="row-fluid">
+    		
+    		</div>
+    	
+    	
+    	
+    	</div>
+    	
+    	<script src="{% static 'common/js/bootstrap/bootstrap-transition.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-alert.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-modal.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-dropdown.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-scrollspy.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-tab.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-tooltip.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-popover.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-button.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-carousel.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-typeahead.js' %}" ></script>
+    	<script src="{% static 'common/js/bootstrap/bootstrap-tour.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.cookie.js' %}" ></script>
+    	<script src="{% static 'common/js/fullcalendar.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/DataTables/jquery.dataTables.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/DataTables/ColVis/ColVis.js' %}" ></script>
+    	
+    	<script src="{% static 'common/js/excanvas.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.flot.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.flot.pie.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.flot.stack.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.flot.resize.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.chosen.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.uniform.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.colorbox.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.cleditor.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.colorbox.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.noty.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.elfinder.min.js' %}"></script>
+    	<script src="{% static 'common/js/jquery/jquery.colorbox.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.raty.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.raty.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.iphone.toggle.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.autogrow-textarea.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.uploadify-3.1.min.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.history.js' %}" ></script>
+    	<script src="{% static 'common/js/charisma.js' %}" ></script>
+    	<script src="{% static 'common/js/jquery/jquery.dynatree.min.js' %}" ></script>
+    	
+    	
+    	<script src="{% static 'workspace/js/ajax/userinfo.js' %}" ></script>
+    	 
+    	<script src="{% static 'workspace/js/ajax/groupinfo.js' %}" ></script>
+    	<script src="{% static 'workspace/js/ajax/fileinfo.js' %}" ></script>
+    	<script src="{% static 'workspace/js/ajax/jobinfo.js' %}" ></script>
+    	<script src="{% static 'workspace/js/ajax/doiTree.js' %}" ></script>
+    	<script src="{% static 'workspace/js/feed.js' %}" ></script>
+    	<script src="{% static 'workspace/js/ajax/tagstable.js' %}" ></script>
+    	<script src="{% static 'workspace/js/ajax/tagclouds.js' %}" ></script>
+    	<script src="{% static 'workspace/js/add_tag.js' %}" ></script>
+    	<script src="{% static 'workspace/js/add_doi.js' %}" ></script>
+    	<script src="{% static 'workspace/js/main.js' %}" ></script>
+     	
+    	
+    	
+ 	</body>
+ 	
+ 	
+ 	
+</html>

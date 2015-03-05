@@ -1,0 +1,36 @@
+
+=CRASH REPORT==== 21-Jan-2015::11:43:33 ===
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.92.0>
+    registered_name: []
+    exception exit: {bad_return,
+                     {{rabbit,start,[normal,[]]},
+                      {'EXIT',
+                       {rabbit,failure_during_boot,
+                        {boot_step,file_handle_cache,
+                         {noproc,
+                          {gen_server,call,
+                           [rabbit_sup,
+                            {start_child,
+                             {file_handle_cache_sup,
+                              {rabbit_restartable_sup,start_link,
+                               [file_handle_cache_sup,
+                                {file_handle_cache,start_link,
+                                 [#Fun<rabbit_alarm.set_alarm.1>,
+                                  #Fun<rabbit_alarm.clear_alarm.1>]},
+                                false]},
+                              transient,infinity,supervisor,
+                              [rabbit_restartable_sup]}},
+                            infinity]}}}}}}}
+      in function  application_master:init/4 (application_master.erl, line 133)
+    ancestors: [<0.91.0>]
+    messages: [{'EXIT',<0.93.0>,normal}]
+    links: [<0.91.0>,<0.7.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 4185
+    stack_size: 27
+    reductions: 318
+  neighbours:

@@ -1,0 +1,33 @@
+
+doctype 5
+head
+  title Example add tag app
+
+  //jsprefix = "http://" + #{ui_hostname} + ":" + #{ui_port} + "/js/"
+  //cssprefix = "http://" + #{ui_hostname} + ":" + #{ui_port} + "/css/"
+
+  link(href="http://localhost:8001/css/dynatree/ui.dynatree.css" rel="stylesheet" type="text/css")
+  link(href="css/bootstrap/bootstrap.css" rel="stylesheet")
+  link(href="css/modal.css" rel="stylesheet")
+  
+html
+  body
+    
+    div Submitted
+    div #{b}
+      
+    //script(src=jsprefix + 'core.js')
+    script(src='js/jquery-1.7.2.min.js')
+    script(src='js/jquery-ui-1.8.21.custom.min.js')
+    script(src='js/jquery.dynatree.min.js')
+    script(src="js/bootstrap/bootstrap.min.js") 
+    script(src='js/bootstrap/bootstrap-combobox.js')
+    script(src="js/tree_options/multiselect.js") 
+    script(src="js/tag_autocomplete.js") 
+    script(src="js/formtest.js") 
+    
+           
+          
+          
+  
+    

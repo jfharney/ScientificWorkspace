@@ -1,0 +1,32 @@
+doctype html
+ 
+html
+  head
+    style(type="text/css", media="screen")
+      @import "css/jquery-ui-1.10.4.custom.css";
+      @import "css/site_jui.ccss";
+      @import "css/demo_table_jui.css";
+      //@import "css/demo_page.css";
+      @import "css/ColVisAlt.css";
+      @import "css/dataTables.colVis.css"; 
+      .dataTables_info { padding-top: 0; }
+      .dataTables_paginate { padding-top: 0; }
+      .css_right { float: right; }
+      #example_wrapper .fg-toolbar { font-size: 0.8em }
+      #theme_links span { float: left; padding: 2px 10px; }
+  body
+    h3 Tags Table
+    table#tagsTable.dataTables_info.dataTables_paginate.css_right
+      thead
+        tr
+          th Tag Name
+          th Description
+          th User ID
+          th Visibility
+          th Create Time
+      tbody
+  
+script(src="js/jquery-1.7.2.min.js")
+script(src="js/jquery.dataTables.js")
+script(src="js/dataTables.colVis.js")
+script(src="js/tagsTable.js")
