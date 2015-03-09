@@ -13,7 +13,7 @@ from msgschema import MsgSchema_pb2, Connection
 
 tcp_connection = utils.tcp_connection
 
-import services
+from servicewrappers import services
 import transform
 
 def useGetFileZmqByOID(request,user_id):

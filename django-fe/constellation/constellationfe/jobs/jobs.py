@@ -13,7 +13,8 @@ tcp_connection = utils.tcp_connection
 
 from msgschema import MsgSchema_pb2, Connection
 
-import services
+print 'sys.path: ' + str(sys.path)
+from servicewrappers import services
 import transform
 
 def useGetJobZmq(request,user_id):
@@ -27,6 +28,7 @@ def useGetJobZmq(request,user_id):
     #get the user_oid
     user_oid = utils.getOidFromUserId(user_id)
     header_token = int(utils.JOBS_JobCmd_GetByUser_TOKEN)
+    
     
     reply_type, reply = services.JobCmd_GetByUserWrapper(api,user_oid,header_token)
     

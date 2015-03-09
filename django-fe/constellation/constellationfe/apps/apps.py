@@ -10,7 +10,7 @@ sys.path.append(utils.path_append)
 
 from msgschema import MsgSchema_pb2, Connection
 
-import services
+from servicewrappers import services
 import transform
 
 tcp_connection = utils.tcp_connection

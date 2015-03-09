@@ -13,7 +13,7 @@ sys.path.append(utils.path_append)
 
 tcp_connection = utils.tcp_connection
 
-import services
+from servicewrappers import services
 import transform
 
 def createTag(request,user_id):
@@ -94,6 +94,44 @@ def associate(request,user_id):
         if utils.tagFlag:
             print '\tmessage type: ' + classname
             print '\tMessage output token: ' + str(reply.header)
+
+
+
+def associationallproxy(request,user_id):
+
+    print 'in tags.associationallproxy'
+
+    res = ''
+
+    for key in request.POST:
+        print 'key: ' + key
+    
+    resource_oids = []
+    for nid in request.POST.getlist("resource_nid[]"):
+        #linked_oids.append(str(nid))
+        print 'nid: ' + nid
+        resource_oids.append(nid)
+    
+    
+    #bind to the socket
+    api = Connection.cdsapi(str(tcp_connection))
+    
+    tag_oid = request.GET.get(utils.TAG_OID)
+    header_token = 11143
+    
+    reply_type, reply = services.TagCmd_AttachWrapper(api,tag_oid,resource_oids,header_token)
+    
+    
+    if reply_type > 0:
+        #print 'there is a reply for file command list'
+        classname = api.getMessageTypeName( reply_type )
+        #if utils.tagFlag:
+        print '\tmessage type: ' + classname
+        print '\tTags Message output : ' + str(reply)
+    
+
+    return res
+
           
 
 def useGetTagZmq(request,user_id):
