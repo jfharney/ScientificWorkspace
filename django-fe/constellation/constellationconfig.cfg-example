@@ -3,9 +3,12 @@
 [data]
 
 [options]
-# path_append is added to sys.path. $GIT_REPO must be replaced with
-# the correct path to the local working copy of the git repository
-path_append = $GIT_REPO/django-fe/constellation/constellationfe
+# GIT_REPO must be replaced with the path to the local working copy of the
+# git repository
+prefix = GIT_REPO
+
+# path_append is added to sys.path.
+path_append = %(prefix)s/django-fe/constellation/constellationfe
 
 # tcp_connection tells constellation where to go for backend services
 tcp_connection = tcp://techint-b117:5555
