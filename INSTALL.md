@@ -7,15 +7,18 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
          $ virtualenv $HOME/venv/constellation
          $ . $HOME/venv/constellation/bin/activate
  
+
  - Install Google Protobuf and the python binding
 
          $ brew install protobuf
          $ pip install protobuf
 
+
  - Install zeroMQ and the python binding
 
          $ brew install zeromq
          $ pip install pyzmq
+
 
  - Install django and the pieces it uses
 
@@ -23,10 +26,12 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
          $ pip install celery
          $ pip install pyjade
 
+
  - Fetch the ScientifcWorkspace software
 
          $ git clone git@github.com:jfharney/ScientificWorkspace.git
          $ export SW=./ScientificWorkspace
+
 
  - Edit $SW/django-fe/constellation/constellation/settings.py and add the line
 
@@ -34,6 +39,7 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
 
    This suppresses a warning about some project unittests not executing as
    expected after upgrades beyond Django 1.5.
+
 
  - Make sure the configuration is correct and activate it.
 
@@ -50,7 +56,24 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
         prefix = /Users/tpb/prj/stella/sciwork
 
 
- - You may get a message like
+ - Run the django server with the command
+
+         $ python manage.py runserver 8080
+
+
+ - In your browser, visit URL
+
+         http://localhost:8080/constellation/workspace/USERNAME
+
+## Troubleshooting
+
+ - If you get tracebacks about not being able to import from msgschema,
+   add $SW/django-fe/constellation/constellationfe to PYTHONPATH.
+
+         $ PYTHONPATH=${PYTHONPATH}:$SW/django-fe/constellation/constellationfe
+
+
+ - When running the server, you may get a message like
 
          You have unapplied migrations; your app may not work properly until
          they are applied.
@@ -60,18 +83,6 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
 
          $ python manage.py migrate
 
- - If you get tracebacks about not being able to import from msgschema,
-   add $SW/django-fe/constellation/constellationfe to PYTHONPATH.
-
-         $ PYTHONPATH=${PYTHONPATH}:$SW/django-fe/constellation/constellationfe
-
- - Run the django server with the command
-
-         $ python manage.py runserver 8080
-
- - In your browser, visit URL
-
-         http://localhost:8080/constellation/workspace/USERNAME
 
 <a name="homebrew">
 ### homebrew
