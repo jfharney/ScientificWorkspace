@@ -7,6 +7,10 @@
 fe_host = localhost
 fe_port = 8080
 
+# Host and port for service requests
+service_host = techint-b117.ornl.gov
+service_port = 8080
+
 # GIT_REPO must be replaced with the path to the local working copy of the
 # git repository
 prefix = GIT_REPO

@@ -1,5 +1,5 @@
-serviceHost = 'techint-b117.ornl.gov';
-servicePort = '8080';
+# serviceHost = 'techint-b117.ornl.gov';
+# servicePort = '8080';
 
 brokerHost = 'localhost'
 brokerPort = '5555'
@@ -24,6 +24,10 @@ config.read('constellationconfig.cfg')
 
 fe_host = config.get("options", "fe_host")
 fe_port = config.get("options", "fe_port")
+
+serviceHost = config.get("options", "service_host")
+servicePort = config.get("options", "service_port")
+
 tcp_connection = str(config.get("options", "tcp_connection"))
 messaging_timeout = str(config.get("options", "messaging_timeout"))
 workspace_page = str(config.get("options", "workspace_page"))

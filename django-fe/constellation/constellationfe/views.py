@@ -15,9 +15,6 @@ testFlag = False
 import urllib2
 import urllib
     
-serviceHost = 'techint-b117.ornl.gov';
-servicePort = '8080';
-
 tcp_connection = utils.tcp_connection
 
 celeryFlag = False
@@ -380,13 +377,3 @@ def taglinks(request,tag_id):
       data_string = json.dumps(res,sort_keys=False,indent=2)
     
       return HttpResponse(data_string)
- 
- 
- 
- 
- 
- 
-  
-
-
- 
