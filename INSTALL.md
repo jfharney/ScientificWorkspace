@@ -4,8 +4,8 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
 
  - Create a virtual environment to work in and activate it
 
-     $ virtualenv $HOME/venv/constellation
-     $ . $HOME/venv/constellation/bin/activate
+         $ virtualenv $HOME/venv/constellation
+         $ . $HOME/venv/constellation/bin/activate
  
  - Install Google Protobuf and the python binding
 
