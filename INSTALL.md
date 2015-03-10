@@ -67,7 +67,7 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
 
  - Run the django server with the command
 
-         $ python manage.py runserver
+         $ python manage.py runserver 8080
 
  - In your browser, visit URL
 
