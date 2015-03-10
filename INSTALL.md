@@ -1,6 +1,6 @@
 # INSTALL INSTRUCTIONS
 
-Using homebrew, virtualenv, and pip
+Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
 
  - Create a virtual environment to work in and activate it
 
@@ -63,14 +63,18 @@ Using homebrew, virtualenv, and pip
 
        http://localhost:8080/constellation/workspace/USERNAME
 
-
-
-
 <a name="homebrew">
+### homebrew
 
+Visit (http://brew.sh) and follow the instructions.
 
 <a name="virtualenv">
+### virtualenv
 
-
+Follow the instructions at (https://virtualenv.pypa.io/en/latest/installation.html).
 
 <a name="pip">
+### pip
+
+Platform- and situation-specific Instructions for installing pip are
+available at (https://pip.pypa.io/en/latest/installing.html).
