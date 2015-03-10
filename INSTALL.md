@@ -35,18 +35,20 @@ Using [homebrew](#homebrew), [virtualenv](#virtualenv), and [pip](#pip)
    This suppresses a warning about some project unittests not executing as
    expected after upgrades beyond Django 1.5.
 
- - Edit the following files to make sure the path prefix is correct.
-   "/Users/8x0/sciworkspace/2-26/ScientificWorkspace" must be changed to
-   whatever is in $SW (set two steps above).
+ - Make sure the configuration is correct and activate it.
 
-        $SW/django-fe/constellation/constellation/settings.py
-        $SW/django-fe/constellation/constellationconfig.cfg
-        $SW/django-fe/constellation/constellationfe/common/utils.py
 
-   For example, in $SW/django-fe/constellation/constellation/settings.py,
-   the database name must be correct in the DATABASES dictionary
+        $ cd $SW/django-fe/constellation
+        $ vi constellationconfig.cfg
 
-        'NAME': '/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation.db',
+   Change the line
+
+        prefix = GIT_REPO
+
+   To reflect the path to the local copy of the git repository. For example,
+
+        prefix = /Users/tpb/prj/stella/sciwork
+
 
  - You may get a message like
 
