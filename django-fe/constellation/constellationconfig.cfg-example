@@ -3,8 +3,13 @@
 [data]
 
 [options]
-path_append = /Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe
+# path_append is added to sys.path. $GIT_REPO must be replaced with
+# the correct path to the local working copy of the git repository
+path_append = $GIT_REPO/django-fe/constellation/constellationfe
+
+# tcp_connection tells constellation where to go for backend services
 tcp_connection = tcp://techint-b117:5555
+
 messaging_timeout = 20000
 workspace_page = constellationfe/index.html
 doi_page = constellationfe/doi.html
