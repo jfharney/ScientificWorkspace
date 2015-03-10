@@ -22,6 +22,8 @@ import ConfigParser
 config = ConfigParser.ConfigParser()
 config.read('constellationconfig.cfg')
 
+fe_host = config.get("options", "fe_host")
+fe_port = config.get("options", "fe_port")
 tcp_connection = str(config.get("options", "tcp_connection"))
 messaging_timeout = str(config.get("options", "messaging_timeout"))
 workspace_page = str(config.get("options", "workspace_page"))

@@ -66,7 +66,7 @@ def workspace(request,user_id):
     
       url = "http://" + utils.serviceHost + ":" + utils.servicePort + "/sws/user?uname=" + user_id
       
-      print 'url: ' + url
+      print 'workspace: url = ' + url
       
       data = urllib2.urlopen(url).read()
 

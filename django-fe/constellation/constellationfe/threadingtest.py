@@ -30,9 +30,9 @@ import urllib2
 def getUserURL(user_id,randNum,usersMap):
     print 'getUser input...header: ' + str(randNum) + ' user_id: ' + str(user_id) 
     
-    
-    url = 'http://localhost:8080/constellation/testWrapper/?randNum=' + str(randNum) + '&user_id=' + str(user_id)
-
+    url = 'http://' + utils.fe_host + ":" + utils.fe_port
+    url += '/constellation/testWrapper/?randNum=' + str(randNum)
+    url += '&user_id=' + str(user_id)
     data = urllib2.urlopen(url).read()
 
 '''

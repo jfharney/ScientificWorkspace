@@ -3,6 +3,10 @@
 [data]
 
 [options]
+# Host and port for the browser
+fe_host = localhost
+fe_port = 8080
+
 # GIT_REPO must be replaced with the path to the local working copy of the
 # git repository
 prefix = GIT_REPO
