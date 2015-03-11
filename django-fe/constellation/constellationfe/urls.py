@@ -4,6 +4,9 @@ from constellationfe import views
 urlpatterns = patterns('',
     url(r'^$',views.index,name='index'),
     
+    url(r'auth/$',views.auth,name='auth'),
+    
+    url(r'^login/$',views.login1,name='login1'),
     
     url(r'^workspace/(?P<user_id>\w+)/$',views.workspace,name='workspace'),
     url(r'^doi/(?P<user_id>\w+)/$',views.doi,name='doi'),

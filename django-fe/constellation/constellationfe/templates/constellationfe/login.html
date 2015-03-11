@@ -1,0 +1,234 @@
+{% load staticfiles %}
+
+
+<html>
+
+<head>
+ 	
+ 		<title>ORNL Constellation Login</title> 
+ 		<!--  
+ 		<link id="bs-css", href="{% static 'common/css/bootstrap-cerulean.css' %}", rel="stylesheet", type="text/css" ></link>
+		-->
+		
+	  	<link id="bs-css", href="{% static 'common/css/bootstrap-classic.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/bootstrap-responsive.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/charisma-app.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery-ui-1.8.21.custom.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/fullcalendar.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/fullcalendar.print.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/chosen.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/uniform.default.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/colorbox.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery.cleditor.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery.noty.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/noty_theme_default.css' %}", rel="stylesheet", type="text/css"></link>
+	    <link href="{% static 'common/css/elfinder.min.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/elfinder.theme.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/jquery.iphone.toggle.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/opa-icons.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/uploadify.css' %}", rel="stylesheet", type="text/css" ></link>
+	    <link href="{% static 'common/css/dynatree/ui.dynatree.css' %}", rel="stylesheet", type="text/css"></link>
+	    <link href="{% static 'common/css/modal.css' %}" rel="stylesheet"></link>
+	  
+	    <link href="{% static 'common/css/DataTables/jquery.dataTables_themeroller.css' %}", rel="stylesheet"></link>
+	    <link href="{% static 'common/css/DataTables/jquery.dataTables.css' %}", rel="stylesheet" ></link>
+	    <link href="{% static 'common/css/DataTables/ColVis/ColVis.css' %}", rel="stylesheet"></link>
+	  
+	    <script src="{% static 'common/js/jquery/jquery-1.7.2.min.js' %}"></script> 
+	    <script src="{% static 'common/js/jquery/jquery-ui-1.8.21.custom.min.js' %}"></script>
+	    
+	    <script src="{% static 'common/js/core2.js' %}"></script>
+	    <script src="{% static 'common/js/security/signin.js' %}"></script>
+	 
+	    <style type="text/css">
+	    
+	    .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+
+		html {
+			overflow-y: scroll;
+		}
+	    
+	    .universe {
+	    	background-image: url("{% static 'common/img/heic0107e.jpg' %}");
+	    }
+	    
+	    .my-block {
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+        }
+	    </style>
+</head>
+
+<body>
+
+<!--  NAVIGATION BAR -->
+<!-- Photo from https://images.search.yahoo.com/images/view;_ylt=AwrB8p6ID_5UW2gAzeKJzbkF;_ylu=X3oDMTI0dG1sbTEzBHNlYwNzcgRzbGsDaW1nBG9pZANmYjBiMzU0YmRlYWFiZGE0MGRiMWM1ZmU2ZTEyMzJjMwRncG9zAzc0MgRpdANiaW5n?.origin=&back=https%3A%2F%2Fimages.search.yahoo.com%2Fyhs%2Fsearch%3Fp%3Dconstellation%2Bpictures%26fr2%3Dpiv-web%26hsimp%3Dyhs-002%26hspart%3Dmozilla%26nost%3D1%26tab%3Dorganic%26ri%3D742&w=1280&h=1116&imgurl=www.spacetelescope.org%2Fstatic%2Farchives%2Fimages%2Fscreen%2Fheic0107e.jpg&rurl=http%3A%2F%2Fwww.spacetelescope.org%2Fimages%2Fheic0107e%2F&size=647.6KB&name=the+%3Cb%3Econstellation%3C%2Fb%3E+sagittarius+ground+based+image&p=constellation+pictures&oid=fb0b354bdeaabda40db1c5fe6e1232c3&fr2=piv-web&fr=&tt=the+%3Cb%3Econstellation%3C%2Fb%3E+sagittarius+ground+based+image&b=721&ni=21&no=742&ts=&tab=organic&sigr=11flf1jts&sigb=146fdndq0&sigi=122413m99&sigt=11n6f9sse&sign=11n6f9sse&.crumb=6mOiDOHgCDx&fr2=piv-web&hsimp=yhs-002&hspart=mozilla -->
+				
+		
+    	 
+    	<div class="navbar">
+    		<div class="navbar-inner">
+    			<div class="container-fluid">
+    				<div class="top-nav.nav-collapse">
+    				
+    					<div class="row-fluid">
+					
+							<div class="span12">
+								<div class="span11">
+									<ul class="nav" style="font-size:15px">
+									  
+										<li>
+				    						<img src="{% static 'common/img/heic0107e.jpg' %}" style="max-width:50px; max-height:40px;"/>
+				    					</li>
+				    					<!--  
+										<li>
+				    						<a href="../../settings/{{uname}}">Constellation</a> 
+				    					</li>
+				    					-->
+									</ul>
+								</div>
+								<div class="span1">
+								
+								</div>
+							</div>
+					
+					
+						</div>
+						
+						
+    				
+    				</div>
+    			</div>
+    		
+    		</div>
+    		
+    	</div>
+    	 		
+    	 
+    	<div class="container-fluid">
+    		
+    		  
+    		<div class="row-fluid">
+    		
+    			<div class="span4">
+    				
+    			</div>
+    			<div class="span4">
+    				<div class="page-header">
+		     			<h1 style="margin-left:200px">Constellation</h1>
+		   			</div>
+		   		
+    			</div>
+    			<div class="span4">
+    				
+    			</div>
+    			
+    		</div>
+    		
+    		
+    		<div class="row-fluid" style="text-align: center;">
+    			<div class="span1">
+    			</div>
+    			<div class="span5">
+    				<div class="row-fluid">
+						
+						<div class="span12">
+								<img src="{% static 'common/img/heic0107e.jpg' %}" style=""/>
+	    				</div>
+	    				
+					</div>
+					<div class="row-fluid">
+    		
+    					<div class="span12">
+							<p class="lead">Connecting the universe of scientific discovery.
+    					</div>
+    					
+    				</div>
+    			</div>
+    			<div class="span5">
+    				
+    				<div class="row-fluid">
+    		
+    					<div class="span12">
+							
+							
+							<div class="form-signin">
+							        <h2 class="form-signin-heading">Please sign in</h2>
+							        <input type="text" class="input-block-level" id='username' placeholder="Username">
+							        <input type="password" class="input-block-level" id='password' placeholder="Password">
+							        
+							        <button class="btn btn-large btn-primary" type="submit" id="signin">Sign in</button>
+							        
+							     	<div id="registration_form" style="display:none">
+								     	<br>
+								        </br>
+								        
+								     	<input type="text" class="input-block-level" id='register_username' placeholder="Username">
+								        <input type="password" class="input-block-level" id='register_password' placeholder="Password">
+								        <input type="text" class="input-block-level" id='register_email' placeholder="email">
+								        
+							     	</div>
+						
+									<!--  
+							     	<div id="register_notice" style="color:black;margin-top:15px">
+							     		Not a user? Register for an 
+							     		<a href="http://esg.ccs.ornl.gov/esgf-web-fe/createAccount" target="_blank" style="color:blue">
+							     		ESGF account</a>.
+							     	</div>
+							     	-->
+							     	<div id="auth_notice" style="display:none;color:red;margin-top:15px">Username or password are incorrect</div>
+							     	
+							</div>	
+							
+							
+							
+    					</div>
+    					
+    				</div>
+    			</div>
+    			<div class="span1">
+    			</div>
+    		</div>
+    		
+    		<div class="row-fluid">
+    			<div class="span2">
+    			</div>
+    			<div class="span8">
+    			</div>
+    			<div class="span2">
+    			</div>
+    			
+    		</div>
+    		
+    		
+    	</div>
+
+
+</body>
+
+</html>

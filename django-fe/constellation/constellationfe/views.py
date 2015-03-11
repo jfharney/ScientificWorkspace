@@ -29,16 +29,67 @@ sys.path.append(utils.path_append)
 
 from msgschema import MsgSchema_pb2, Connection
  
- 
-
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 #---------------Views-----------------
+
+def login1(request):
+    template = loader.get_template('constellationfe/login.html')
+    context = RequestContext(request, {
+    })    
+    #return HttpResponse("Index\n")
+    return HttpResponse(template.render(context))
+   
+def auth(request):
+    
+    print 'request: ' + str(request.body)
+    
+    username = ''
+    password = ''
+    csrftoken = ''
+    
+    for key in request.POST:
+        print 'key: ' + key
+        if key == 'username':
+            username = request.POST[key]
+        elif key == 'password':
+            password = request.POST[key]
+        elif key == 'csrftoken':
+            csrftoken = request.POST[key]
+        
+    user = authenticate(username=username,password=password)
+    if user is not None:
+                
+        #authenticate to django        
+        print 'user n: ' + str(user.username) + ' ' + str(user.password)
+    
+        #login to the app and return the string "Authenticated"
+        login(request,user)
+        
+        
+        return HttpResponse('Authenticated')
+    
+    else:
+        return HttpResponse("Not Authenticated")
+            
+        
+    #json_data = json.loads(request.body)
+    #username = json_data['username'] #should be a string
+    #password = json_data['password'] #should be a list
+    
+    #print 'username: ' + username
+    #print 'password: ' + password
+    
+    print 'in auth'
+    
+    return HttpResponse('returning auth') 
 
 def index(request):
 
     
     #template = loader.get_template('constellationfe/index.html')
-    template = loader.get_template('constellationfe/workspace.jade')
+    template = loader.get_template('constellationfe/index1.html')
     context = RequestContext(request, {
       'loggedIn' : '',
     })    
@@ -50,7 +101,29 @@ def index(request):
 #Example url 
 def workspace(request,user_id):
 
+    user_current = str(request.user)
+    user_url = user_id
     
+    print 'user_current: ' + user_current + ' user_id: ' + user_id
+    if user_url == user_current:
+        
+        if not request.user.is_authenticated():
+            print '\n\n\n\nNOT AUTHENTICATED\n\n\n'
+            print 'dir...' + str(dir(request.user))
+        else:
+            print '\n\n\n\nAUTHENTICATED\n\n\n'
+            print 'dir...' + str(request.user)
+        
+    else:
+        print '\n\n\n\nREDIRECT TO LOGIN PAGE\n\n\n'
+        template = loader.get_template('constellationfe/login.html')
+        
+        context = RequestContext(request, {
+        })    
+        #return HttpResponse("Index\n")
+        
+        return HttpResponseRedirect('constellationfe/login.html')
+        
     template = loader.get_template('constellationfe/index.html')
     
     context = RequestContext(request, {
