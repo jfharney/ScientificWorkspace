@@ -15,9 +15,6 @@ testFlag = False
 import urllib2
 import urllib
     
-serviceHost = 'techint-b117.ornl.gov';
-servicePort = '8080';
-
 tcp_connection = utils.tcp_connection
 
 celeryFlag = False
@@ -139,7 +136,7 @@ def workspace(request,user_id):
     
       url = "http://" + utils.serviceHost + ":" + utils.servicePort + "/sws/user?uname=" + user_id
       
-      print 'url: ' + url
+      print 'workspace: url = ' + url
       
       data = urllib2.urlopen(url).read()
 
@@ -453,13 +450,3 @@ def taglinks(request,tag_id):
       data_string = json.dumps(res,sort_keys=False,indent=2)
     
       return HttpResponse(data_string)
- 
- 
- 
- 
- 
- 
-  
-
-
- 

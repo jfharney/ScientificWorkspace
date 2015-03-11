@@ -3,8 +3,24 @@
 [data]
 
 [options]
-path_append = /Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe
+# Host and port for the browser
+fe_host = localhost
+fe_port = 8080
+
+# Host and port for service requests
+service_host = techint-b117.ornl.gov
+service_port = 8080
+
+# GIT_REPO must be replaced with the path to the local working copy of the
+# git repository
+prefix = GIT_REPO
+
+# path_append is added to sys.path.
+path_append = %(prefix)s/django-fe/constellation/constellationfe
+
+# tcp_connection tells constellation where to go for backend services
 tcp_connection = tcp://techint-b117:5555
+
 messaging_timeout = 20000
 workspace_page = constellationfe/index.html
 doi_page = constellationfe/doi.html

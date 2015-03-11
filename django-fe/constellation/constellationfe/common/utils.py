@@ -1,5 +1,5 @@
-serviceHost = 'techint-b117.ornl.gov';
-servicePort = '8080';
+# serviceHost = 'techint-b117.ornl.gov';
+# servicePort = '8080';
 
 brokerHost = 'localhost'
 brokerPort = '5555'
@@ -15,20 +15,25 @@ userFlag = False
 
 
 import sys
-sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
 
 from msgschema import MsgSchema_pb2, Connection
     
 import ConfigParser
 config = ConfigParser.ConfigParser()
-config.read('constellationconfig.cfg')    
-    
+config.read('constellationconfig.cfg')
+
+fe_host = config.get("options", "fe_host")
+fe_port = config.get("options", "fe_port")
+
+serviceHost = config.get("options", "service_host")
+servicePort = config.get("options", "service_port")
+
 tcp_connection = str(config.get("options", "tcp_connection"))
 messaging_timeout = str(config.get("options", "messaging_timeout"))
 workspace_page = str(config.get("options", "workspace_page"))
 doi_page = str(config.get("options", "doi_page"))
 path_append = str(config.get("options", "path_append"))
-
+sys.path.append(config.get("options", "prefix") + "/django-fe/constellation/constellationfe")
 
 TAG_OID = str(config.get("request_parameters", "TAG_OID"))
 TAG_RESOURCE_OID = str(config.get("request_parameters", "TAG_RESOURCE_OID"))
@@ -354,14 +359,3 @@ def replace_all(text, dic):
         pass
     
     '''
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
