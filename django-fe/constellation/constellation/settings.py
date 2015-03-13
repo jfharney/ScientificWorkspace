@@ -1,8 +1,8 @@
 # Django settings for constellation project.
 
-from __future__ import absolute_import
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+#from __future__ import absolute_import
+#CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+#CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -96,10 +96,10 @@ SECRET_KEY = '3fk8uf$c&v!tcj%#1-s3yd%58ytn%!c!lmpm@6zs(8n!y9%vpd'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-                    ('pyjade.ext.django.Loader',(
+#                    ('pyjade.ext.django.Loader',(
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    )),
+#    )),
 #     'django.template.loaders.eggs.Loader',
 )
 
@@ -133,7 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'constellationfe',
-    'djcelery',
+    #'djcelery',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:

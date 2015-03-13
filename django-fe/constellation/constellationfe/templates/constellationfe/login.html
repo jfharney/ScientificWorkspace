@@ -1,6 +1,7 @@
 {% load staticfiles %}
 
 
+{% block content %}
 <html>
 
 <head>
@@ -89,8 +90,11 @@
 <!--  NAVIGATION BAR -->
 <!-- Photo from https://images.search.yahoo.com/images/view;_ylt=AwrB8p6ID_5UW2gAzeKJzbkF;_ylu=X3oDMTI0dG1sbTEzBHNlYwNzcgRzbGsDaW1nBG9pZANmYjBiMzU0YmRlYWFiZGE0MGRiMWM1ZmU2ZTEyMzJjMwRncG9zAzc0MgRpdANiaW5n?.origin=&back=https%3A%2F%2Fimages.search.yahoo.com%2Fyhs%2Fsearch%3Fp%3Dconstellation%2Bpictures%26fr2%3Dpiv-web%26hsimp%3Dyhs-002%26hspart%3Dmozilla%26nost%3D1%26tab%3Dorganic%26ri%3D742&w=1280&h=1116&imgurl=www.spacetelescope.org%2Fstatic%2Farchives%2Fimages%2Fscreen%2Fheic0107e.jpg&rurl=http%3A%2F%2Fwww.spacetelescope.org%2Fimages%2Fheic0107e%2F&size=647.6KB&name=the+%3Cb%3Econstellation%3C%2Fb%3E+sagittarius+ground+based+image&p=constellation+pictures&oid=fb0b354bdeaabda40db1c5fe6e1232c3&fr2=piv-web&fr=&tt=the+%3Cb%3Econstellation%3C%2Fb%3E+sagittarius+ground+based+image&b=721&ni=21&no=742&ts=&tab=organic&sigr=11flf1jts&sigb=146fdndq0&sigi=122413m99&sigt=11n6f9sse&sign=11n6f9sse&.crumb=6mOiDOHgCDx&fr2=piv-web&hsimp=yhs-002&hspart=mozilla -->
 				
-		
-    	 
+		<!-- 
+    	<div>
+    	user_id: {{ user_id }}
+    	</div>
+    	 -->
     	<div class="navbar">
     		<div class="navbar-inner">
     			<div class="container-fluid">
@@ -188,7 +192,7 @@
 								     	<br>
 								        </br>
 								        
-								     	<input type="text" class="input-block-level" id='register_username' placeholder="Username">
+								     	<input type="text" class="input-block-level" id='register_username' placeholder="{{user_id}}">
 								        <input type="password" class="input-block-level" id='register_password' placeholder="Password">
 								        <input type="text" class="input-block-level" id='register_email' placeholder="email">
 								        
@@ -208,8 +212,26 @@
 							
 							
     					</div>
+		    			
     					
     				</div>
+    				<div  class="row-fluid">
+    				
+    					<div class="span1">
+    					</div>
+		    			
+		    			<div class="span10" style="font-size:16pt;font-style:italics">
+		    					"Just as a stargazer looks up at the night sky with billions of stars to
+								see the patterns he desires, a user should be able to derive patterns and
+								insights from the scientific data products, the processes that produced
+								them, and the associated metadata."
+		    			</div>
+		    			
+		    			<div class="span1">
+    					</div>
+    					
+		    		</div>		 
+    					
     			</div>
     			<div class="span1">
     			</div>
@@ -232,3 +254,6 @@
 </body>
 
 </html>
+
+
+{% endblock %}

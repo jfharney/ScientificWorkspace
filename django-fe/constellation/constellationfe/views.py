@@ -1,13 +1,13 @@
 # Create your views here.
 
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 import json
 
-from celery import Celery
+#from celery import Celery
 
-from app1 import tasks
+#from app1 import tasks
 
 from common import utils
   
@@ -17,7 +17,7 @@ import urllib
     
 tcp_connection = utils.tcp_connection
 
-celeryFlag = False
+#celeryFlag = False
 import time
 
 import sys
@@ -116,12 +116,21 @@ def workspace(request,user_id):
         template = loader.get_template('constellationfe/login.html')
         
         context = RequestContext(request, {
+            'user_id' : user_id
         })    
         #return HttpResponse("Index\n")
         
-        return HttpResponseRedirect('constellationfe/login.html')
+        return HttpResponse(template.render(context))
         
     template = loader.get_template('constellationfe/index.html')
+    
+    from workspace import workspace
+    
+    user = workspace.workspace(request,user_id)
+    
+    #for key in user:
+    #    print 'key: ' + str(key)
+    
     
     context = RequestContext(request, {
       'nid' : '39644',
@@ -131,6 +140,24 @@ def workspace(request,user_id):
       'uname' : '8xo',
       "type":"0",
     })    
+    
+    context = RequestContext(request, {
+      'nid' : user.oid,
+      'email' : user.email,
+      'name' : user.name,
+      'uid' : user.uid,
+      'uname' : user.uname
+                                       
+    })
+    
+    '''
+    user: oid: 2108992
+uid: 9328
+uname: "jamroz"
+name: "Benjamin Jamroz"
+email: "jamroz@ucar.edu"
+    '''
+    
     
     if not testFlag:
     

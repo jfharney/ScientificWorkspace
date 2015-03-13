@@ -13,14 +13,20 @@ fileFlag = False
 
 userFlag = False
 
-
 import sys
+sys.path.append('/Users/8xo/sciworkspace/2-26/ScientificWorkspace/django-fe/constellation/constellationfe')
 
-from msgschema import MsgSchema_pb2, Connection
     
 import ConfigParser
 config = ConfigParser.ConfigParser()
 config.read('constellationconfig.cfg')
+
+import sys
+sys.path.append(config.get("options","prefix")+"/django-fe/constellation/constellationfe")
+print 'sys.path: ' + str(sys.path)
+
+from msgschema import MsgSchema_pb2, Connection
+
 
 fe_host = config.get("options", "fe_host")
 fe_port = config.get("options", "fe_port")

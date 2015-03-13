@@ -43,7 +43,6 @@ $(document).ready(function(){
 		var url = 'http://' + SW.hostname + ':' + SW.port + '/constellation/auth/';
 		  
 		
-		//$('#auth_notice').hide();
 		
 		for (var key in input_data) {
 			console.log('key: ' + key + ' value: ' + input_data[key]);
@@ -55,10 +54,7 @@ $(document).ready(function(){
 			  data: input_data,
 			  success: function(data)
 			  { 
-				  alert('data: ' + data);
-				  
-				  
-				  
+				    
 				  if(data == 'Authenticated') {
 					  //alert('Authenticated - go to the main page with the username');
 					  //window.location = 'http://localhost:8081/exploratory_analysis/main/' + username;
