@@ -158,7 +158,7 @@ name: "Benjamin Jamroz"
 email: "jamroz@ucar.edu"
     '''
     
-    
+    '''
     if not testFlag:
     
       url = "http://" + utils.serviceHost + ":" + utils.servicePort + "/sws/user?uname=" + user_id
@@ -183,6 +183,7 @@ email: "jamroz@ucar.edu"
         'uname' : uname,
         "type" : type,
       }) 
+    '''
     
     return HttpResponse(template.render(context))
 
