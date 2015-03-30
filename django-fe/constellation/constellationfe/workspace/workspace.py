@@ -26,11 +26,14 @@ def workspace(request,user_id):
     
     user = None
     
+    print 'reply_type: ' + str(reply_type)
+    
     if reply_type > 0:
         classname = api.getMessageTypeName( reply_type )
         
         if classname == 'UserDataMsg':
             print 'in user data msg'
+            #print 'reply: ' + str(reply) + '\n\n'
             for user in reply.users:
                 user = user
                 print 'user: ' + str(user)

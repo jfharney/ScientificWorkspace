@@ -10,8 +10,12 @@
  	<head>
  	
  		<title>ORNL Constellation</title> 
-		
+		<!-- 
 	  	<link id="bs-css" href="{% static 'common/css/bootstrap-cerulean.css' %}" rel="stylesheet" type="text/css" ></link>
+	  	 -->
+ 		<link id="bs-css", href="{% static 'common/css/bootstrap-classic.css' %}", rel="stylesheet", type="text/css" ></link>
+		 
+	  	<link id="bs-css", href="{% static 'common/css/bootstrap-classic.css' %}", rel="stylesheet", type="text/css" ></link>
 	    <link href="{% static 'common/css/bootstrap-responsive.css' %}" rel="stylesheet" type="text/css" ></link>
 	    <link href="{% static 'common/css/charisma-app.css' %}" rel="stylesheet" type="text/css" ></link>
 	    <link href="{% static 'common/css/jquery-ui-1.8.21.custom.css' %}" rel="stylesheet" type="text/css" ></link>
@@ -52,9 +56,10 @@
 <body>
 
 	
-	<!-- style="display:none" -->
-	<div style="display:none">
-	
+	<!--  
+	<div style=""> 
+	-->
+	<div style="display:none"> 
 	
 	<div>Creator NID: <span id="creator_nid">{{ creator_nid }}</span></div>
 	<div>Creator UID: <span id="creator_uid">{{ creator_uid }}</span></div>
@@ -300,13 +305,16 @@
 										<br />
 									</div>
 								</div>
-								<div class="row-fluid" style="display:none">
+								<div class="row-fluid" >
 									<div class="span4">Files</div>
 									<div class="span6">
-										<input id="text" name="input_files" value="{{fileNames}}"></input>
-										<!--  --><!-- <input id="text" name="input_nids" value="{{nids}}"></input>   -->
-										
-										<input id="text" name="creator_nid" value="{{creator_nid}}"></input>
+										<span>
+											{% for fileName in fileNames %}
+		    									{{ fileName }}
+		    									<br>
+											{% endfor %}
+										</span>
+										<!-- <input id="text" name="input_resources" value="aaa"></input>  -->
 									</div>
 								</div>
 								<br />
@@ -329,14 +337,16 @@
 										<h3>Miscellaneous</h3>
 									</div>
 								</div>
-								
-								<div class="row-fluid">
+								<!-- 
+								<div class="row-fluid"  style="margin-bottom:10px;">
 									<div class="span4">Resources</div>
 									<div class="span6">
-										<input id="text" name="input_resources"></input>
+										
+										
 									</div>
 									<div class="span2"></div>
 								</div>
+								 -->
 								<div class="row-fluid">
 									<div class="span4">Language</div>
 									<div class="span6">

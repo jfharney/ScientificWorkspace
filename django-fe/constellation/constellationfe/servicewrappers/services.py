@@ -1,5 +1,6 @@
 from msgschema import MsgSchema_pb2, Connection
 from common import utils
+from transform import transform
 
 def JobCmd_GetByUserWrapper(api,user_oid,header_token):
     #obtain message object and bind the group oid and header token
@@ -187,7 +188,7 @@ def DOICmd_CreateWrapper(api,user_oid,linked_oids,metadata,header_token):
     
     
     #m_doi_metadata = transform.trasnformMetadataToXML()
-    m_doi_metadata = transform.trasnformMetadataToXML(metadata)
+    m_doi_metadata = transform.transformMetadataToXML(metadata)
     #m_doi_metadata = transform.trasnformMetadataToXML(title,description,creators,creators_email,contact_email,files,resources,keywords,language,sponsor_org)
     
     doidatamsg.metadata = m_doi_metadata
